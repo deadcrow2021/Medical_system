@@ -9,7 +9,20 @@
     <title>Med-system</title>
 </head>
 <body>
-    
+    {% if user != "anonimus" %}
+        {% if user == "admin" or user == "doctor" %}
+        <header style="grid-template-columns: repeat(4, 1fr);">
+        {% else %}
+        <header style="grid-template-columns: repeat(3, 1fr);">
+        {% endif %}
+            <a href="#"><div>Главная</div></a><!--
+        --><a href="#"><div>Личный кабинет</div></a><!--
+        -->{% if user == "doctor" %}<a href="#"><div>Добавить пациента</div></a><!--
+        -->{% elif user == "admin" %}<a href="#"><div>Добавить врача</div></a><!--
+        -->{% endif %}<a href="login.html"><div>Выход</div></a>
+        </header>
+    {% endif %}
+        
     {% block content %}
     {% endblock%}
 
