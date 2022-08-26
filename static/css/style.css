@@ -151,3 +151,8 @@ form {
 .btn:hover {
     background-color: #fff;
 }
+
+.active {
+    color: #000;
+    background-color: #fff;
+}

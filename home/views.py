@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .models import User
+from .forms import LoginForm
 
 def home_page(request):
     # user = "admin"
@@ -7,5 +9,10 @@ def home_page(request):
     return render(request, 'home/index.html', { "user": user })
 
 def login_page(request):
-    user="anonimus"
-    return render(request, 'home/login.html', { "user": user })
+    form = LoginForm()
+    
+    data = {
+        "user": "anonimus",
+        "form": form
+    }
+    return render(request, 'home/login.html', data)
