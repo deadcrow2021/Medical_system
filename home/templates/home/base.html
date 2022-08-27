@@ -9,17 +9,17 @@
     <title>Med-system</title>
 </head>
 <body>
-    {% if user != "anonimus" %}
+    {% if not user.is_anonymous %}
         {% if user == "admin" or user == "doctor" %}
         <header style="grid-template-columns: repeat(4, 1fr);">
         {% else %}
         <header style="grid-template-columns: repeat(3, 1fr);">
         {% endif %}
-            <a href="#"><div class="active">Главная</div></a><!--
-        --><a href="#"><div>Личный кабинет</div></a><!--
-        -->{% if user == "doctor" %}<a href="#"><div>Добавить пациента</div></a><!--
-        -->{% elif user == "admin" %}<a href="#"><div>Добавить врача</div></a><!--
-        -->{% endif %}<a href="{% url 'login' %}"><div>Выход</div></a>
+            <a href="{% url 'home' %}"><div class="active">Главная</div></a>
+            <a href="#"><div>Личный кабинет</div></a>
+            {% if user == "doctor" %}<a href="#"><div>Добавить пациента</div></a>
+            {% elif user == "admin" %}<a href="#"><div>Добавить врача</div></a>
+            {% endif %}<a href="{% url 'logout' %}"><div>Выход</div></a>
         </header>
     {% endif %}
         
