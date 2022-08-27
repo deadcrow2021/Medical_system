@@ -24,11 +24,8 @@ class RegisterView(CreateView):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-            
-            # Multiple groups
-            for form_ug in form.cleaned_data['groups']:
-                user_group = Group.objects.get(name=form_ug.name)
-                user.groups.add(user_group)
+            user_group = Group.objects.get(name=form.cleaned_data['groups'])
+            user.groups.add(user_group)
             return redirect('home')
         else:
             return render(request, self.template_name, {'form':form})
