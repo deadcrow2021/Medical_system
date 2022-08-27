@@ -9,17 +9,21 @@
     <title>Med-system</title>
 </head>
 <body>
-    {% if role %}
-        {% if role != "Patient" %}
+    {% if user.groups.all.0 %}
+        {% if user.groups.all.0.name != "Patient" %}
         <header style="grid-template-columns: repeat(4, 1fr);">
         {% else %}
         <header style="grid-template-columns: repeat(3, 1fr);">
         {% endif %}
             <a href="{% url 'home' %}"><div class="active">Главная</div></a>
             <a href="#"><div>Личный кабинет</div></a>
-            {% if role == "Doctor" %}<a href="#"><div>Добавить пациента</div></a>
-            {% elif role == "Admin" %}<a href="{% url 'add-doctor' %}"><div>Добавить врача</div></a>
-            {% endif %}<a href="{% url 'logout' %}"><div>Выход</div></a>
+            {% if user.groups.all.0.name == "Doctor" %}
+                <a href="{% url 'add-patient' %}"><div>Добавить пациента</div></a>
+            {% elif user.groups.all.0.name == "Admin" %}
+                <a href="{% url 'add-doctor' %}"><div>Добавить врача</div></a>
+            {% endif %}
+            <a href="{% url 'logout' %}">
+                <div>Выход</div></a>
         </header>
     {% endif %}
         

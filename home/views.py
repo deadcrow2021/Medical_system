@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import Group
-from django.http import HttpRequest
 from .models import CustomUser
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView
@@ -9,10 +8,13 @@ from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy
 
 @login_required
-def home_page(request: HttpRequest):
-    patients = CustomUser.objects.filter(groups__name="Patient")
+def home_page(request):
     role = request.user.groups.all()[0].name
-    return render(request, 'home/home.html', { "patients": patients, "role": role })
+    return render(request, 'home/home.html', {"role": role })
+
+def patients(request):
+    patients = CustomUser.objects.filter(groups__name="Patient")
+    return render(request, 'home/patients.html', {"patients": patients})
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
@@ -29,6 +31,20 @@ class RegisterView(CreateView):
             return redirect('home')
         else:
             return render(request, self.template_name, {'form':form})
+
+
+def create_patient(request):
+    form = CustomUserCreationForm()
+    if request.method == 'POST':
+        print(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            user_group = Group.objects.get(name=form.cleaned_data['groups'])
+            user.groups.add(user_group)
+            return redirect('home')
+    else:
+        return render(request, 'home/add_patient.html', {'form':form})
             
 
 def login_page(request):

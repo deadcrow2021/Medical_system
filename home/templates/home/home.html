@@ -1,13 +1,8 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<h1>Patients</h1>
-<div class="patients">
-    {% for patient in patients %}
-    <div style="margin-bottom: 30px;">
-        <p>ФИО: {{ patient.fio }}</p>
-        <p>Дата рождения: {{ patient.date_of_birth }}</p>
-    </div>
-    {% endfor %}
-</div>
+
+{% if user.groups.all.0.name == "Doctor"%}
+    <p><a href="{% url 'patients' %}">Пациенты</a></p>
+{% endif %}
 {% endblock %}
