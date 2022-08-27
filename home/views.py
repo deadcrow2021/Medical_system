@@ -1,18 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import Group
+from django.http import HttpRequest
+from .models import CustomUser
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy
 
 @login_required
-def home_page(request):
-    # user = "admin"
-    user = "doctor"
-    # user = "pat"
-    return render(request, 'home/home.html', { "user": user })
-
+def home_page(request: HttpRequest):
+    patients = CustomUser.objects.filter(groups__name="Patient")
+    role = request.user.groups.all()[0].name
+    return render(request, 'home/home.html', { "patients": patients, "role": role })
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
