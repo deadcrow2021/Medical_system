@@ -153,3 +153,10 @@ form {
     color: #000;
     background-color: #fff;
 }
+
+.patients {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
