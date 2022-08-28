@@ -3,7 +3,9 @@
 {% block active_class %}"main"{% endblock %}
 
 {% block content %}
-
+{% if user.groups.all.0.name == "Admin"%}
+    <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
+{% endif %}
 {% if user.groups.all.0.name == "Doctor"%}
     <p><a href="{% url 'patients' %}">Пациенты</a></p>
 {% endif %}

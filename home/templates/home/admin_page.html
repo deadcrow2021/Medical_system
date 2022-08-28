@@ -1,0 +1,13 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+{% for user_i in users %}
+    <p>{{ user_i.username }}</p>
+    <p>{{ user_i.fio }}</p>
+    <p><a href="{% url 'profile' user_i.id %}">Профиль</a></p>
+    
+</br>
+</br>
+</br>
+{% endfor %}
+{% endblock %}

@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from .models import CustomUser
 import uuid
 
+### Add check if exist
 def generate_password():
     password = str(uuid.uuid4())[:8]
     return password
@@ -24,9 +25,20 @@ def home_page(request):
     role = request.user.groups.all()[0].name
     return render(request, 'home/home.html', {"role": role })
 
+
+def admin_page(request):
+    all_users = CustomUser.objects.exclude(groups__name="Admin")
+    return render(request, 'home/admin_page.html', {'users':all_users})
+
+def profile(request, profile_id):
+    user_profile = CustomUser.objects.get(pk=profile_id)
+    return render(request, 'home/profile.html', {'profile':user_profile})
+
+
 def patients(request):
     patients = CustomUser.objects.filter(groups__name="Patient")
     return render(request, 'home/patients.html', {"patients": patients})
+
 
 class RegisterDoctorView(CreateView):
     form_class = CustomUserCreationForm
@@ -61,6 +73,7 @@ class RegisterPatientView(CreateView):
             password = generate_password()
             user.set_password(password)
             user.username = generate_username(user.fio, user.date_of_birth)
+            user.gender = 'f'
             # print(user.username, user.fio, password)
             user.save()
             user_group = Group.objects.get(name='Patient')
