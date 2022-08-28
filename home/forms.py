@@ -8,6 +8,14 @@ class DateInput(forms.DateInput):
 
 class CustomUserCreationForm(UserCreationForm):
     groups = forms.ModelChoiceField(queryset=Group.objects.all())
+    
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
+        self.fields['username'].required = False
+        self.fields['password1'].required = False
+        self.fields['password2'].required = False
+        self.fields.pop('groups')
+
     class Meta:
         model = CustomUser
         fields = ('username', 'fio', 'date_of_birth')
@@ -15,11 +23,6 @@ class CustomUserCreationForm(UserCreationForm):
             'date_of_birth': DateInput(),
         }
         
-    def __init__(self, *args, **kwargs):
-        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
-        self.fields.pop('groups')
-        self.fields.pop('password1')
-        self.fields.pop('password2')
         
 
 
