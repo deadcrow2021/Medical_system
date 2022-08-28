@@ -16,7 +16,7 @@ def patients(request):
     patients = CustomUser.objects.filter(groups__name="Patient")
     return render(request, 'home/patients.html', {"patients": patients})
 
-class RegisterView(CreateView):
+class RegisterDoctorView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('home')
     template_name = 'home/add_doctor.html'
@@ -33,18 +33,22 @@ class RegisterView(CreateView):
             return render(request, self.template_name, {'form':form})
 
 
-def create_patient(request):
-    form = CustomUserCreationForm()
-    if request.method == 'POST':
-        print(request.POST)
+class RegisterPatientView(CreateView):
+    form_class = CustomUserCreationForm
+    success_url = reverse_lazy('home')
+    template_name = 'home/add_patient.html'
+    
+    def post(self, request, *args, **kwargs):
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            request.user.set_unusable_password()
             user = form.save(commit=False)
             user.save()
-            user_group = Group.objects.get(name=form.cleaned_data['groups'])
+            user_group = Group.objects.get(name='Patient')
             user.groups.add(user_group)
             return redirect('home')
-    else:
-        return render(request, 'home/add_patient.html', {'form':form})
+        else:
+            return render(request, self.template_name, {'form':form})
             
 
 def login_page(request):
