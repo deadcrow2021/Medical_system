@@ -1,5 +1,7 @@
 {% extends 'home/base.html' %}
 
+{% block active_class %}"main"{% endblock %}
+
 {% block content %}
 
 {% if user.groups.all.0.name == "Doctor"%}
