@@ -160,3 +160,10 @@ form {
     justify-content: center;
     align-items: center;
 }
+
+.patient_record {
+    width: max(30vw, 200px);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #444;
+}
