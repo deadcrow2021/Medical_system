@@ -23,7 +23,6 @@ class CustomUserCreationForm(UserCreationForm):
             'date_of_birth': DateInput(),
         }
         
-        
 
 
 class CustomUserChangeForm(UserChangeForm):
