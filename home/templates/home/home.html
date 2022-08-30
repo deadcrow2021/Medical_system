@@ -9,4 +9,7 @@
 {% if user.groups == "d"%}
     <p><a href="{% url 'patients' %}">Пациенты</a></p>
 {% endif %}
+<div>
+    <p><a href="{% url 'files-page' %}">Файлы</a></p>
+</div>
 {% endblock %}

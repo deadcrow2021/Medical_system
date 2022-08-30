@@ -1,9 +1,6 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<div>
-    <p><a href="{% url 'files-page' %}">Файлы</a></p>
-</div>
 {% for user_i in users %}
     <p>{{ user_i.username }}</p>
     <p>{{ user_i.fio }}</p>
