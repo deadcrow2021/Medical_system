@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block active_class %}"add_patient"{% endblock %}
+{% block active_class %}add_patient{% endblock %}
 
 {% block content %}
     <form action="" method="POST">
@@ -8,7 +8,7 @@
         {% for p in form %}
         <p>{{ p.label }} {{ p }}</p>
         {% endfor %}
-        <button type="submit">Add patient</button>
+        <button type="submit">Добавить пациента</button>
     </form>
     <script text="text/javascript">
         

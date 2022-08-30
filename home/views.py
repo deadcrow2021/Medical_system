@@ -4,5 +4,5 @@ from django.shortcuts import render
 
 @login_required
 def home_page(request):
-    role = request.user.groups.all()[0].name
+    role = request.user._wrapped.groups
     return render(request, 'home/home.html', {"role": role })
