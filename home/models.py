@@ -86,3 +86,6 @@ class CustomUser(AbstractUser):
     city_village = models.CharField('Житель города/села', max_length=1, choices=CITYVILLAGE)
     address      = models.CharField('Адресс', max_length=150, blank=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
+    
+    def get_full_name(self) -> str:
+        return f"{self.first_name} {self.last_name} {self.father_name}"
