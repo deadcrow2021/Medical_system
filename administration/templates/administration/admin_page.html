@@ -1,13 +1,28 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
+<div class="center-div">
 {% for user_i in users %}
-    <p>{{ user_i.username }}</p>
-    <p>{{ user_i.fio }}</p>
+<div class="center-div-record">
+    <p>{{ user_i.get_full_name }}</p>
+    {% if user_i.groups == 'p' %}
+    <p>Пациент</p>
+    {% else %}
+    <p>Доктор</p>
+    {% endif %}
     <p><a href="{% url 'profile' user_i.id %}">Профиль</a></p>
-    
-</br>
-</br>
-</br>
+</div>
 {% endfor %}
+</div>
+<div class="pagination">
+    {% for p in paginator.page_range %}
+    <p>
+        {% if page_obj.number == p %}
+        <span>{{ p }}</span>
+        {% else %}
+        <a href="?page={{ p }}">{{ p }}</a>
+        {% endif %}
+    </p>
+    {% endfor %}
+</div>
 {% endblock %}

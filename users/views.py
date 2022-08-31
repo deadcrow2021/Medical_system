@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
@@ -14,7 +14,7 @@ def generate_username(first_name, date):
 
 def profile(request, profile_id):
     user_profile = CustomUser.objects.get(pk=profile_id)
-    return render(request, 'users/profile.html', {'profile':user_profile})
+    return render(request, 'users/profile.html', { 'profile': user_profile })
 
 
 class PatientsView(ListView):
@@ -24,13 +24,12 @@ class PatientsView(ListView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context.update({ 'patients': CustomUser.objects.filter(groups='p') })
+        context |= { 'patients': CustomUser.objects.filter(groups='p') }
         return context
 
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('home')
     
     def post(self, request, template_name, groups, *args, **kwargs):
         form = CustomUserCreationForm(request.POST)
@@ -43,13 +42,14 @@ class RegisterView(CreateView):
             user.username = generate_username(user.first_name, user.date_of_birth)
             user.groups = groups
             user.save()
-            return redirect('home')
+            return redirect(self.success_url)
         else:
             return render(request, template_name, { 'form': form })
 
 
 class RegisterDoctorView(RegisterView):
     template_name = 'users/add_doctor.html'
+    success_url: Optional[str] = reverse_lazy('admin-page')
     
     def post(self, request, *args, **kwargs):
         return super().post(request, template_name=self.template_name, groups='d')
@@ -57,6 +57,7 @@ class RegisterDoctorView(RegisterView):
 
 class RegisterPatientView(RegisterView):
     template_name = 'users/add_patient.html'
+    success_url: Optional[str] = reverse_lazy('patients')
     
     def post(self, request, *args, **kwargs):
         return super().post(request, template_name=self.template_name, groups='p')

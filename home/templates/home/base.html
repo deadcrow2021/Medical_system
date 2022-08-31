@@ -29,6 +29,18 @@
     <div>{{ user.terrritory }}</div>
     {% block content %}
     {% endblock %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message-block">
+                <div class="message-content">
+                    <p>{{ message }}</p>
+                </div>
+                <div class="message-content">
+                    <a href="">X</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
     <script type="text/javascript">
         document.getElementById('{% block active_class %}{% endblock %}').setAttribute("class", "active");
     </script>
