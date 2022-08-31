@@ -1,23 +1,15 @@
+from typing import Any
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from home.forms import CustomUserCreationForm
 from django.urls import reverse_lazy
 from home.models import CustomUser
-import uuid
+from django.utils.crypto import get_random_string
 
 
-### Add check if exist
-def generate_password():
-    password = str(uuid.uuid4())[:8]
-    return password
-
-
-def generate_username(fio, date):
-    # users = CustomUser.objects.all()
-    fio_parsed = fio.split(' ')[0]
-    return f'{fio_parsed}_{date.strftime("%d%m%Y")}'
+def generate_username(first_name, date):
+    return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
 def profile(request, profile_id):
@@ -25,9 +17,15 @@ def profile(request, profile_id):
     return render(request, 'users/profile.html', {'profile':user_profile})
 
 
-def patients(request):
-    patients = CustomUser.objects.filter(groups__name="Patient")
-    return render(request, 'users/patients.html', {"patients": patients})
+class PatientsView(ListView):
+    model = CustomUser
+    template_name: str = 'users/patients.html'
+    # context_object_name = 'patients'
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context.update({ 'patients': CustomUser.objects.filter(groups='p') })
+        return context
 
 
 class RegisterView(CreateView):
@@ -40,7 +38,7 @@ class RegisterView(CreateView):
             form.cleaned_data['password1'] = ''
             form.cleaned_data['password2'] = ''
             user: CustomUser = form.save(commit=False)
-            password = generate_password()
+            password = get_random_string(length=8)
             user.set_password(password)
             user.username = generate_username(user.first_name, user.date_of_birth)
             user.groups = groups
