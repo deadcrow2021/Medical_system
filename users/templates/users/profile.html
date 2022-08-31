@@ -1,7 +1,25 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-{% for field in profile %}
-{{ field }}
-{% endfor %}
+<div class="center-div">
+    <div>
+    <p>Имя: {{ profile.first_name }}</p>
+    <p>Фамилия: {{ profile.last_name }}</p>
+    <p>Отчество: {{ profile.father_name }}</p>
+    <p>Дата рождения: {{ profile.date_of_birth }}</p>
+    <p>Пол: {{ profile.get_gender_display }}</p>
+    <p>Группа: {{ profile.get_groups_display }}</p>
+    <p>Соц. статус: {{ profile.get_social_status_display }}</p>
+    <p>Инвалидность: {{ profile.get_disability_display }}</p>
+    <p>Группа крови: {{ profile.get_blood_display }}</p>
+    <p>Телефонный номер: {{ profile.telephone }}</p>
+    <p>Адресс работы: {{ profile.work_address }}</p>
+    <p>Полис ОМС: {{ profile.oms_policy }}</p>
+    <p>Страховая компания: {{ profile.get_insurance_display }}</p>
+    <p>СНИЛС: {{ profile.snils}}</p>
+    <p>Житель города/села: {{ profile.get_city_village_display }}</p>
+    <p>Адресс: {{ profile.address }}</p>
+    <p>Территория: {{ profile.get_territory_display }}</p>
+    </div>
+</div>
 {% endblock %}

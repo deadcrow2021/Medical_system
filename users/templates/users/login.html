@@ -1,6 +1,7 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
+<div class="center-div">
     <h2>Login</h2>
     <form method="POST" action="">
         {% csrf_token %}
@@ -10,4 +11,5 @@
         <p><input type="password" name="password"></p>
         <input type="submit" value="Войти">
     </form>
+</div>
 {% endblock %}
