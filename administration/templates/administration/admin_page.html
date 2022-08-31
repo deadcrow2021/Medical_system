@@ -14,4 +14,15 @@
 </div>
 {% endfor %}
 </div>
+<div class="pagination">
+    {% for p in paginator.page_range %}
+    <p>
+        {% if page_obj.number == p %}
+        <span>{{ p }}</span>
+        {% else %}
+        <a href="?page={{ p }}">{{ p }}</a>
+        {% endif %}
+    </p>
+    {% endfor %}
+</div>
 {% endblock %}

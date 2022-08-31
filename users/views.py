@@ -14,7 +14,7 @@ def generate_username(first_name, date):
 
 def profile(request, profile_id):
     user_profile = CustomUser.objects.get(pk=profile_id)
-    return render(request, 'users/profile.html', {'profile':user_profile})
+    return render(request, 'users/profile.html', { 'profile': user_profile })
 
 
 class PatientsView(ListView):
