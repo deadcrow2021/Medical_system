@@ -4,10 +4,10 @@
     <h2>Login</h2>
     <form method="POST" action="">
         {% csrf_token %}
-        <p>Username:</p>
+        <p>Имя пользователя:</p>
         <p><input type="text" name="username"></p>
-        <p>Password: </p>
+        <p>Пароль: </p>
         <p><input type="password" name="password"></p>
-        <input type="submit" value="Log In">
+        <input type="submit" value="Войти">
     </form>
 {% endblock %}

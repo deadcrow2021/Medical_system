@@ -1,12 +1,15 @@
 {% extends 'home/base.html' %}
 
-{% block active_class %}"main"{% endblock %}
+{% block active_class %}main{% endblock %}
 
 {% block content %}
-{% if user.groups.all.0.name == "Admin"%}
+{% if user.groups == "a"%}
     <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
 {% endif %}
-{% if user.groups.all.0.name == "Doctor"%}
+{% if user.groups == "d"%}
     <p><a href="{% url 'patients' %}">Пациенты</a></p>
 {% endif %}
+<div>
+    <p><a href="{% url 'files-page' %}">Файлы</a></p>
+</div>
 {% endblock %}

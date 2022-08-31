@@ -30,47 +30,38 @@ def patients(request):
     return render(request, 'users/patients.html', {"patients": patients})
 
 
-class RegisterDoctorView(CreateView):
+class RegisterView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('home')
+    
+    def post(self, request, template_name, groups, *args, **kwargs):
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.cleaned_data['password1'] = ''
+            form.cleaned_data['password2'] = ''
+            user: CustomUser = form.save(commit=False)
+            password = generate_password()
+            user.set_password(password)
+            user.username = generate_username(user.first_name, user.date_of_birth)
+            user.groups = groups
+            user.save()
+            return redirect('home')
+        else:
+            return render(request, template_name, { 'form': form })
+
+
+class RegisterDoctorView(RegisterView):
     template_name = 'users/add_doctor.html'
-
+    
     def post(self, request, *args, **kwargs):
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            password = generate_password()
-            user.set_password(password)
-            user.username = generate_username(user.fio, user.date_of_birth)
-            # print(user.username, user.fio, password)
-            user.save()
-            user_group = Group.objects.get(name='Doctor')
-            user.groups.add(user_group)
-            return redirect('home')
-        else:
-            return render(request, self.template_name, {'form':form})
+        return super().post(request, template_name=self.template_name, groups='d')
 
 
-class RegisterPatientView(CreateView):
-    form_class = CustomUserCreationForm
-    success_url = reverse_lazy('home')
+class RegisterPatientView(RegisterView):
     template_name = 'users/add_patient.html'
-
+    
     def post(self, request, *args, **kwargs):
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            password = generate_password()
-            user.set_password(password)
-            user.username = generate_username(user.fio, user.date_of_birth)
-            user.gender = 'f'
-            # print(user.username, user.fio, password)
-            user.save()
-            user_group = Group.objects.get(name='Patient')
-            user.groups.add(user_group)
-            return redirect('home')
-        else:
-            return render(request, self.template_name, {'form':form})
+        return super().post(request, template_name=self.template_name, groups='p')
 
 
 def login_page(request):

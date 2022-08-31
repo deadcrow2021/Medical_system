@@ -1,0 +1,13 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+{% if user.groups == 'a' %}
+<p><a href="{% url 'upload-files-page' %}">Загрузить Файлы</a></p>
+{% endif %}
+{% for f in files %}
+<div>
+    <p>{{ f.title }}</p>
+    <p>{{ f.description }}</p>
+</div>
+{% endfor %}
+{% endblock %}

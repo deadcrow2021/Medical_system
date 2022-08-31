@@ -9,30 +9,30 @@
     <title>Med-system</title>
 </head>
 <body>
-    {% if user.groups.all.0 %}
-        {% if user.groups.all.0.name != "Patient" %}
+    {% if user.is_authenticated %}
+        {% if user.groups != "p" %}
         <header style="grid-template-columns: repeat(4, 1fr);">
         {% else %}
         <header style="grid-template-columns: repeat(3, 1fr);">
         {% endif %}
             <a href="{% url 'home' %}"><div id="main">Главная</div></a>
             <a href="#"><div id="cabinet">Личный кабинет</div></a>
-            {% if user.groups.all.0.name == "Doctor" %}
+            {% if user.groups == "d" %}
             <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
-            {% elif user.groups.all.0.name == "Admin" %}
+            {% elif user.groups == "a" %}
             <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
             {% endif %}
             <a href="{% url 'logout' %}">
                 <div>Выход</div></a>
         </header>
     {% endif %}
-        
+    <div>{{ user.terrritory }}</div>
     {% block content %}
-    {% endblock%}
+    {% endblock %}
     <script type="text/javascript">
-        document.getElementById({% block active_class %}{% endblock %}).setAttribute("class", "active");
+        document.getElementById('{% block active_class %}{% endblock %}').setAttribute("class", "active");
     </script>
-    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/script.js' %}" defer></script>
 
 </body>
 </html>

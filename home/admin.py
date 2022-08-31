@@ -2,36 +2,35 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
 from .models import CustomUser
 
-@admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser
+admin.site.register(CustomUser)
+
+# @admin.register(CustomUser)
+# class CustomUserAdmin(UserAdmin):
+    # model = CustomUser
+    # filter_horizontal = ('groups' ,)
+    # add_fieldsets = (
+    #     *UserAdmin.add_fieldsets,
+    #     (
+    #         'Custom fields',
+    #         {
+    #             'fields': (
+    #                 'gender',
+    #                 'date_of_birth',
+    #                 'groups',
+    #             )
+    #         }
+    #     )
+    # )
     
-    add_fieldsets = (
-        *UserAdmin.add_fieldsets,
-        (
-            'Custom fields',
-            {
-                'fields': (
-                    'fio',
-                    'gender',
-                    'date_of_birth',
-                    'groups',
-                )
-            }
-        )
-    )
-    
-    fieldsets = (
-        *UserAdmin.fieldsets,
-        (
-            'Custom fields',
-            {
-                'fields': (
-                    'fio',
-                    'gender',
-                    'date_of_birth',
-                )
-            }
-        )
-    )
-    
+    # fieldsets = (
+    #     *UserAdmin.fieldsets,
+    #     (
+    #         'Custom fields',
+    #         {
+    #             'fields': (
+    #                 'gender',
+    #                 'date_of_birth',
+    #             )
+    #         }
+    #     )
+    # )
