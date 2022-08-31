@@ -5,12 +5,17 @@ from django.urls import reverse_lazy
 from home.models import CustomUser
 from .models import Files
 from .forms import FileUploadForm
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 
-def admin_page(request):
-    all_users = CustomUser.objects.exclude(groups="a")
-    return render(request, 'administration/admin_page.html', { 'users': all_users })
+class AdminPageView(ListView):
+    model = CustomUser
+    template_name: str = 'administration/admin_page.html'
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context |= { 'users': CustomUser.objects.exclude(groups='a') }
+        return context
 
 
 def files_page(request):

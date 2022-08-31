@@ -4,10 +4,12 @@
 {% if user.groups == 'a' %}
 <p><a href="{% url 'upload-files-page' %}">Загрузить Файлы</a></p>
 {% endif %}
-{% for f in files %}
-<div>
-    <p>{{ f.title }}</p>
-    <p>{{ f.description }}</p>
+<div class="center-div">
+    {% for f in files %}
+    <div class="center-div-record">
+        <p>{{ f.title }}</p>
+        <p>{{ f.description }}</p>
+    </div>
+    {% endfor %}
 </div>
-{% endfor %}
 {% endblock %}

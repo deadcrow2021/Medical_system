@@ -1,10 +1,10 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<div class="patients">
-<h1>Patients</h1>
+<div class="center-div">
+<h1>Пациенты</h1>
     {% for patient in patients %}
-    <div class="patient_record">
+    <div class="center-div-record">
         <p>ФИО: {{ patient.get_full_name }}</p>
         <p>Дата рождения: {{ patient.date_of_birth }}</p>
     </div>
