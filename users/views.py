@@ -2,10 +2,12 @@ from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import CustomUserCreationForm
+from home.forms import CustomUserCreationForm, CustomUserChangeForm
 from django.urls import reverse_lazy
 from home.models import CustomUser
 from django.utils.crypto import get_random_string
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 def generate_username(first_name, date):
@@ -15,6 +17,25 @@ def generate_username(first_name, date):
 def profile(request, profile_id):
     user_profile: CustomUser = CustomUser.objects.get(pk=profile_id)
     return render(request, 'users/profile.html', { 'profile': user_profile })
+
+
+def update_profile(request, profile_id):
+    user_profile: CustomUser = CustomUser.objects.get(pk=profile_id)
+    form = CustomUserChangeForm(request.POST or None, instance=user_profile)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
+    context = {'profile': user_profile, 'form': form}
+    return render(request, 'users/update_profile.html', context)
+
+
+def delete_profile(request, profile_id):
+    user_profile: CustomUser = CustomUser.objects.get(pk=profile_id)
+    if request.POST:
+        user_profile.delete()
+        return redirect('patients')
+    context = {'profile': user_profile}
+    return render(request, 'users/delete_profile.html', context)
 
 
 class PatientsView(ListView):
