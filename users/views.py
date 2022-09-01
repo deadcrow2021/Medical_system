@@ -3,27 +3,50 @@ from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import DoctorCreationForm, PatientCreationForm
+from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient
 from django.utils.crypto import get_random_string
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 import django.contrib.messages as messages
-from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
+
 
 def generate_username(first_name, date):
     return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
 def profile(request, profile_id):
-    user = User.objects.get(id=profile_id)
+    user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+    
     if user_type == "doctor":
         user_profile = user.doctor
     else:
         user_profile = user.patient
     return render(request, 'users/profile.html', { 'profile': user_profile })
+
+
+def update_profile(request, profile_id):
+    user_profile: User = User.objects.get(pk=profile_id)
+    form = PatientChangeForm(request.POST or None, instance=user_profile)
+    
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
+    context = {'profile': user_profile, 'form': form}
+    return render(request, 'users/update_profile.html', context)
+
+
+def delete_profile(request, profile_id):
+    user_profile: User = User.objects.get(pk=profile_id)
+    if request.POST:
+        user_profile.delete()
+        return redirect('patients')
+    context = {'profile': user_profile}
+    return render(request, 'users/delete_profile.html', context)
 
 
 class PatientsView(ListView):
