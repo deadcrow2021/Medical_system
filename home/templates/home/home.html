@@ -7,7 +7,7 @@
     {% if user.is_superuser %}
         <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
     {% endif %}
-    {% if user.groups == "d"%}
+    {% if user.doctor %}
         <p><a href="{% url 'patients' %}">Пациенты</a></p>
     {% endif %}
     <div>

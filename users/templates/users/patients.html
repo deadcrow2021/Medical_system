@@ -7,7 +7,21 @@
     <div class="center-div-record">
         <p>ФИО: {{ patient.get_full_name }}</p>
         <p>Дата рождения: {{ patient.date_of_birth }}</p>
+        <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
     </div>
     {% endfor %}
 </div>
+{% if page_obj.has_other_page %}
+<div class="pagination">
+    {% for p in paginator.page_range %}
+    <p>
+        {% if page_obj.number == p %}
+        <span>{{ p }}</span>
+        {% else %}
+        <a href="?page={{ p }}">{{ p }}</a>
+        {% endif %}
+    </p>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

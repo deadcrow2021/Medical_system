@@ -17,7 +17,7 @@
         {% endif %}
             <a href="{% url 'home' %}"><div id="main">Главная</div></a>
             <a href="#"><div id="cabinet">Личный кабинет</div></a>
-            {% if user.groups == "d" %}
+            {% if user.doctor %}
             <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
             {% elif user.is_superuser %}
             <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
