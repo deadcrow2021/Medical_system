@@ -5,16 +5,19 @@
 {% for user_i in users %}
 <div class="center-div-record">
     <p>{{ user_i.get_full_name }}</p>
-    {% if user_i.groups == 'p' %}
-    <p>Пациент</p>
-    {% else %}
+    <!-- <p>{{ user_i.user.doctor }}</p> -->
+    {% if user_i.user.doctor %}
     <p>Доктор</p>
+    <p><a href="{% url 'profile' user_i.user.doctor.id %}?type=doctor">Профиль</a></p>
+    {% else %}
+    <p>Пациент</p>
+    <p><a href="{% url 'profile' user_i.user.patient.id %}?type=patient">Профиль</a></p>
     {% endif %}
-    <p><a href="{% url 'profile' user_i.id %}">Профиль</a></p>
 </div>
 {% endfor %}
 </div>
 <div class="pagination">
+    {% if page_obj.has_other_page %}
     {% for p in paginator.page_range %}
     <p>
         {% if page_obj.number == p %}
@@ -24,5 +27,6 @@
         {% endif %}
     </p>
     {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
