@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="center-div">
-    {% if user.groups == "a"%}
+    {% if user.is_superuser %}
         <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
     {% endif %}
     {% if user.groups == "d"%}

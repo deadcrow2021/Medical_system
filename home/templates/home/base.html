@@ -19,7 +19,7 @@
             <a href="#"><div id="cabinet">Личный кабинет</div></a>
             {% if user.groups == "d" %}
             <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
-            {% elif user.groups == "a" %}
+            {% elif user.is_superuser %}
             <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
             {% endif %}
             <a href="{% url 'logout' %}">

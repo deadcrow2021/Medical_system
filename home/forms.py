@@ -1,20 +1,15 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
 from django import forms
-from .models import CustomUser
+from .models import Patient, Doctor
 
 class DateInput(forms.DateInput):
     input_type = 'date'
 
-class CustomUserCreationForm(UserCreationForm):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        del self.fields['password1']
-        del self.fields['password2']
-    
+class PatientCreationForm(forms.ModelForm):
     class Meta:
-        model = CustomUser
-        fields = [
+        model = Patient
+        fields = (
             'first_name',
             'last_name',
             'father_name',
@@ -31,12 +26,24 @@ class CustomUserCreationForm(UserCreationForm):
             'city_village',
             'address',
             'territory'
-        ]
+        )
         widgets = {
             'date_of_birth': DateInput(),
         }
 
+
+class DoctorCreationForm(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = (
+            'first_name',
+            'last_name',
+            'father_name',
+            'cabinet',
+            )
+
+
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
-        model = CustomUser
+        model = Patient
         fields = '__all__'
