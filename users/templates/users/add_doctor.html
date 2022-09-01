@@ -5,7 +5,9 @@
 {% block content %}
     <form action="" method="post">
         {% csrf_token %}
-        {{ form2.as_p }}
+        {% for p in form2 %}
+        <p>{{ p.label }} {{ p }}</p>
+        {% endfor %}
         <button type="submit">Добавить доктора</button>
     </form>
 {% endblock %}

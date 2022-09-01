@@ -3,6 +3,7 @@
 {% block content %} 
     <form method="POST" action="">
         {% csrf_token %}
+        <p>Вы уверены, что хотете удалить?</p>
         <input type="submit" value="Delete">
     </form>
 {% endblock %}

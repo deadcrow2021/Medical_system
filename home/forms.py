@@ -43,9 +43,9 @@ class DoctorCreationForm(forms.ModelForm):
             )
 
 
-class CustomUserChangeForm(UserChangeForm):
+class PatientChangeForm(UserChangeForm):
     class Meta:
-        model = CustomUser
+        model = Patient
         fields = [
             'first_name',
             'last_name',

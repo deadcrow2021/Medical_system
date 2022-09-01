@@ -28,6 +28,9 @@ class Patient(models.Model):
         verbose_name = 'Пациент'
         verbose_name_plural = 'Пациенты'
     
+    def __str__(self) -> str:
+        return self.user.username
+    
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
@@ -42,6 +45,9 @@ class Doctor(models.Model):
     class Meta:
         verbose_name = 'Доктор'
         verbose_name_plural = 'Доктора'
+        
+    def __str__(self) -> str:
+        return self.user.username
     
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"

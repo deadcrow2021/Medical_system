@@ -8,16 +8,16 @@
     <!-- <p>{{ user_i.user.doctor }}</p> -->
     {% if user_i.user.doctor %}
     <p>Доктор</p>
-    <p><a href="{% url 'profile' user_i.user.doctor.id %}?type=doctor">Профиль</a></p>
+    <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
     {% else %}
     <p>Пациент</p>
-    <p><a href="{% url 'profile' user_i.user.patient.id %}?type=patient">Профиль</a></p>
+    <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
     {% endif %}
 </div>
 {% endfor %}
 </div>
+{% if page_obj.has_other_page %}
 <div class="pagination">
-    {% if page_obj.has_other_page %}
     {% for p in paginator.page_range %}
     <p>
         {% if page_obj.number == p %}
@@ -27,6 +27,6 @@
         {% endif %}
     </p>
     {% endfor %}
-    {% endif %}
 </div>
+{% endif %}
 {% endblock %}
