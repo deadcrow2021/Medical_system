@@ -10,4 +10,5 @@ urlpatterns = [
     path('profile/<profile_id>', views.profile, name='profile'),
     path('profile/update/<profile_id>', views.update_profile, name='update-profile'),
     path('profile/delete/<profile_id>', views.delete_profile, name='delete-profile'),
+    path('profile/<profile_id>/add_disease', views.add_disease, name='add-disease'),
 ]

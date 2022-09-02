@@ -23,7 +23,20 @@
     </div>
 </div>
 <div>
-    <p><a href="{% url 'update-profile' profile.id %}">Изменить</a></p>
-    <p><a href="{% url 'delete-profile' profile.id %}">Удалить</a></p>
+    <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
+    <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
+
+    {% if user_type != 'doctor' %}
+        <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
+    {% endif %}
 </div>
+
+{% if user_type != 'doctor' %}
+    <div class="diseases">
+        {% for disease in diseases %}
+            <p>{{ disease.disease }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% endblock %}

@@ -35,6 +35,16 @@ class Patient(models.Model):
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
 
+class MedicalHistory(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
+    disease = models.CharField('Заболевание', max_length=100, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.disease
+
+
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name   = models.CharField("Имя", max_length=50, default='usr')
@@ -50,4 +60,4 @@ class Doctor(models.Model):
         return self.user.username
     
     def get_full_name(self) -> str:
-        return f"{self.first_name} {self.last_name} {self.father_name}"
+        return f"{self.last_name} {self.first_name} {self.father_name}"

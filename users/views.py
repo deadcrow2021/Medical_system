@@ -1,11 +1,10 @@
-from itertools import chain
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm
+from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm
 from django.urls import reverse_lazy
-from home.models import Doctor, Patient
+from home.models import Doctor, Patient, MedicalHistory
 from django.utils.crypto import get_random_string
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -18,21 +17,43 @@ def generate_username(first_name, date):
     return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
+def add_disease(request, profile_id):
+    user: User = User.objects.get(id=profile_id)
+    form = DiseaseCreationForm()
+    if request.method == 'POST':
+        form = DiseaseCreationForm(request.POST)
+        if form.is_valid():
+            disease = form.save(commit=False)
+            disease.patient = Patient.objects.get(user=user)
+            disease.save()
+            return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
+    context = {'form': form}
+    return render(request, 'users/add_disease.html', context)
+
+
 def profile(request, profile_id):
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
-    
+
+    if user_type == "doctor":
+        user_profile = user.doctor
+        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type })
+    else:
+        user_profile = user.patient
+        diseases = user_profile.history.all()
+        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'diseases': diseases })
+
+
+def update_profile(request, profile_id):
+    user: User = User.objects.get(pk=profile_id)
+    user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+
     if user_type == "doctor":
         user_profile = user.doctor
     else:
         user_profile = user.patient
-    return render(request, 'users/profile.html', { 'profile': user_profile })
-
-
-def update_profile(request, profile_id):
-    user_profile: User = User.objects.get(pk=profile_id)
     form = PatientChangeForm(request.POST or None, instance=user_profile)
-    
+
     if form.is_valid():
         form.save()
         return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
@@ -46,7 +67,7 @@ def delete_profile(request, profile_id):
         user_profile.delete()
         return redirect('patients')
     context = {'profile': user_profile}
-    return render(request, 'users/delete_profile.html', context)
+    return render(request, 'users/home_page.html', context)
 
 
 class PatientsView(ListView):
@@ -64,9 +85,7 @@ class RegisterView(CreateView):
             patient: Patient = form2.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
-            # user.set_password('1234')
             user.username = generate_username(patient.first_name, user.date_joined)
-            # user.username = 'doc1'
             user.save()
             patient.user = user
             patient.save()
@@ -121,5 +140,3 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
-
