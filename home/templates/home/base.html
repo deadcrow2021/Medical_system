@@ -16,7 +16,9 @@
         <header style="grid-template-columns: repeat(3, 1fr);">
         {% endif %}
             <a href="{% url 'home' %}"><div id="main">Главная</div></a>
-            <a href="{% url 'account' user.id %}"><div id="cabinet">Личный кабинет</div></a>
+            {% if not user.is_superuser %}
+                <a href="{% url 'account' user.id %}"><div id="cabinet">Личный кабинет</div></a>
+            {% endif %}
             {% if user.doctor %}
             <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
             {% elif user.is_superuser %}

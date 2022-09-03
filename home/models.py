@@ -23,14 +23,16 @@ class Patient(models.Model):
     city_village = models.CharField('Житель города/села', max_length=1, choices=CITYVILLAGE)
     address      = models.CharField('Адресс', max_length=150, blank=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
-    
+    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+
+
     class Meta:
         verbose_name = 'Пациент'
         verbose_name_plural = 'Пациенты'
-    
+
     def __str__(self) -> str:
         return self.user.username
-    
+
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
@@ -39,13 +41,18 @@ class SelfMonitoringRecords(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')
     title = models.CharField('Краткое описание', max_length=150)
     description = models.TextField('Описание', max_length=1000, blank=True)
+    date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class MedicalHistory(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
     disease = models.CharField('Заболевание', max_length=100, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
 
     def __str__(self) -> str:
         return self.disease
@@ -57,6 +64,8 @@ class Doctor(models.Model):
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     cabinet      = models.CharField('Кабинет', max_length=6, default='301')
+    patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
+    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
     class Meta:
         verbose_name = 'Доктор'

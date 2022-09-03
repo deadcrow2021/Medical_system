@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="center-div">
-{% if user.groups == 'a' %}
+{% if user.is_superuser%}
 <p><a href="{% url 'upload-files-page' %}">Загрузить Файлы</a></p>
 {% endif %}
     {% for f in files %}

@@ -37,11 +37,13 @@ def profile(request, profile_id):
 
     if user_type == "doctor":
         user_profile = user.doctor
-        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type })
+        form = DoctorCreationForm(request.POST or None, instance=user_profile)
+        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'form':form })
     else:
         user_profile = user.patient
+        form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
-        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'diseases': diseases })
+        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'diseases': diseases, 'form':form })
 
 
 def update_profile(request, profile_id):
@@ -67,7 +69,7 @@ def delete_profile(request, profile_id):
         user_profile.delete()
         return redirect('patients')
     context = {'profile': user_profile}
-    return render(request, 'users/home_page.html', context)
+    return render(request, 'users/delete_profile.html', context)
 
 
 class PatientsView(ListView):
