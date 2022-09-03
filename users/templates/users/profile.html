@@ -7,8 +7,16 @@
     <div class="fields">
         {% for p in form %}
 
-            {% if p.value %}
-                <p>{{ p.label }} {{ p.get_prep_value }}</p>
+            {% if p.field.choices %}
+                <p>{{ p.label }}
+                    {% for i in p.field.choices %}
+                        {% if p.value == i.0 %}
+                            {{i.1}}
+                        {% endif %}
+                    {% endfor %}
+                </p>
+            {% elif p.value %}
+                <p>{{ p.label }} {{ p.value }}</p>
             {% elif not p.value %}
                 <p>{{ p.label }} ---</p>
             {% endif %}

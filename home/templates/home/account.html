@@ -5,4 +5,14 @@
 {% block content %}
 <p>{{ account.first_name }}</p>
 <p>{{ account.last_name }}</p>
+
+{% if user.patient %}
+    <p><a href="{% url 'add-record' %}">Добавить запись</a></p>
+    {% for record in records %}
+        <p>{{ record.title }}</p>
+        <p>{{ record.description }}</p>
+    {% endfor %}
+{% endif %}
+
+
 {% endblock %}

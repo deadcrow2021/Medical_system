@@ -10,22 +10,22 @@
 </head>
 <body>
     {% if user.is_authenticated %}
-        {% if user.groups != "p" %}
+        {% if user.doctor %}
         <header style="grid-template-columns: repeat(4, 1fr);">
         {% else %}
         <header style="grid-template-columns: repeat(3, 1fr);">
         {% endif %}
+
             <a href="{% url 'home' %}"><div id="main">Главная</div></a>
             {% if not user.is_superuser %}
-                <a href="{% url 'account' user.id %}"><div id="cabinet">Личный кабинет</div></a>
+                <a href="{% url 'account' %}"><div id="cabinet">Личный кабинет</div></a>
             {% endif %}
             {% if user.doctor %}
             <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
             {% elif user.is_superuser %}
             <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
             {% endif %}
-            <a href="{% url 'logout' %}">
-                <div>Выход</div></a>
+            <a href="{% url 'logout' %}"><div>Выход</div></a>
         </header>
     {% endif %}
     <div>{{ user.terrritory }}</div>

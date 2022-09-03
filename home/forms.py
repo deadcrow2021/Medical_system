@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
-from .models import Patient, Doctor, MedicalHistory
+from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -70,4 +70,13 @@ class DiseaseCreationForm(forms.ModelForm):
         model = MedicalHistory
         fields = (
             'disease',
+            )
+
+
+class RecordCreationForm(forms.ModelForm):
+    class Meta:
+        model = SelfMonitoringRecords
+        fields = (
+            'title',
+            'description',
             )
