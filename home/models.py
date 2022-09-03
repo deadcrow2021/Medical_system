@@ -35,6 +35,12 @@ class Patient(models.Model):
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
 
+class SelfMonitoringRecords(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')
+    title = models.CharField('Краткое описание', max_length=150)
+    description = models.TextField('Описание', max_length=1000, blank=True)
+
+
 class MedicalHistory(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
     disease = models.CharField('Заболевание', max_length=100, blank=True)
