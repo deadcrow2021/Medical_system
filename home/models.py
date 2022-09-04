@@ -29,6 +29,7 @@ class Patient(models.Model):
     class Meta:
         verbose_name = 'Пациент'
         verbose_name_plural = 'Пациенты'
+        ordering = ['-date_updated']
 
     def __str__(self) -> str:
         return self.user.username
@@ -70,6 +71,7 @@ class Doctor(models.Model):
     class Meta:
         verbose_name = 'Доктор'
         verbose_name_plural = 'Доктора'
+        ordering = ['-date_updated']
         
     def __str__(self) -> str:
         return self.user.username

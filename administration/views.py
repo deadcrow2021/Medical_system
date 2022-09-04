@@ -11,7 +11,7 @@ from django.contrib import messages
 
 
 class AdminPageView(ListView):
-    paginate_by: int = 6
+    paginate_by: int = 3 ## Не работает из-за модели
     model = Patient
     template_name: str = 'administration/admin_page.html'
     context_object_name: Optional[str] = 'users'

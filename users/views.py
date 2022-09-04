@@ -84,17 +84,21 @@ class RegisterView(CreateView):
         form2 = self.form_class(request.POST)
         if form2.is_valid():
             user: User = User()
-            patient: Patient = form2.save(commit=False)
+            personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
-            user.username = generate_username(patient.first_name, user.date_joined)
+            user.username = generate_username(personal.first_name, user.date_joined)
             user.save()
-            patient.user = user
-            patient.save()
+            personal.user = user
+            personal.save()
+            
+            if isinstance(personal, Patient) and request.user.doctor:
+                personal.doctors.add(request.user.doctor)
+                personal.save()
             messages.success(request, 'Запись успешно добавлена!')
             return redirect(self.success_url)
         else:
-            return render(request, self.template_name, { 'form1': 'form1', 'form2': form2 })
+            return render(request, self.template_name, { 'form2': form2 })
 
 
 class RegisterDoctorView(RegisterView):
