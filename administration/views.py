@@ -32,8 +32,8 @@ class AdminPageView(ListView):
                     context = one_word_even(longStr)
             case name, surname, fathername:
                 context = three_words(name, surname, fathername)
-            case name, surname, fathername, params:
-                context = four_words(name, surname, fathername, params)
+            # case name, surname, fathername, params:
+            #     context = four_words(name, surname, fathername, params)
             case _:
                 return self.get(request)
         
