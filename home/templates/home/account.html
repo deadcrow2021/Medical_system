@@ -15,4 +15,12 @@
 {% endif %}
 
 
+{% if user.doctor %}
+    <p>Мои пациенты:</p>
+    {% for patient in related_patients %}
+        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
+    {% endfor %}
+    
+{% endif %}
+
 {% endblock %}

@@ -16,7 +16,8 @@ def account(request):
 
     if user_type == 'doctor':
         user_account = user.doctor
-        return render(request, 'home/account.html', { 'account': user_account })
+        related_patients = user_account.patients.all()
+        return render(request, 'home/account.html', { 'account': user_account, 'related_patients': related_patients })
     else:
         user_account = user.patient
         records = user_account.records.all()

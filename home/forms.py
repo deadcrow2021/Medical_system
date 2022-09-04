@@ -42,10 +42,10 @@ class DoctorCreationForm(forms.ModelForm):
             )
 
 
-class PatientChangeForm(UserChangeForm):
+class PatientChangeForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = [
+        fields = (
             'first_name',
             'last_name',
             'father_name',
@@ -62,7 +62,7 @@ class PatientChangeForm(UserChangeForm):
             'city_village',
             'address',
             'territory'
-        ]
+        )
 
 
 class DiseaseCreationForm(forms.ModelForm):
