@@ -6,7 +6,11 @@
         {% csrf_token %}
         <div>
             <input type="text" name="search">
+            {% if btn %}
+            <button type="submit">{{ btn }}</button>
+            {% else %}
             <button type="submit">Искать</button>
+            {% endif %}
         </div>
     </form>
 {% for user_i in users %}

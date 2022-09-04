@@ -95,7 +95,6 @@ class PatientsView(ListView):
                 return self.get(request)
         
         context |= { 'btn': 'Вернуться' }
-        print(f"{context=}")
         return render(request, 'users/patients.html', context)
 
 
