@@ -6,10 +6,11 @@ from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationFor
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, MedicalHistory
 from django.utils.crypto import get_random_string
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .search_patterns import *
 import django.contrib.messages as messages
 
 
@@ -76,7 +77,25 @@ class PatientsView(ListView):
     paginate_by: int = 6
     model = Patient
     template_name: str = 'users/patients.html'
-    context_object_name = 'patients'
+    context_object_name = 'users'
+    
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        pattern: list[str] =  str(request.POST['search']).lower().split()
+        match pattern:
+            case longStr, :
+                if len(longStr) % 2 == 1:
+                    context = one_word_odd(longStr)
+                else:
+                    context = one_word_even(longStr)
+            case name, surname, fathername:
+                context = three_words(name, surname, fathername)
+            case name, surname, fathername, params:
+                context = four_words(name, surname, fathername, params)
+            case _:
+                return self.get(request)
+        
+        context |= { 'btn': 'Вернуться' }
+        return render(request, 'users/patients.html', context)
 
 
 class RegisterView(CreateView):
@@ -84,17 +103,21 @@ class RegisterView(CreateView):
         form2 = self.form_class(request.POST)
         if form2.is_valid():
             user: User = User()
-            patient: Patient = form2.save(commit=False)
+            personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
-            user.username = generate_username(patient.first_name, user.date_joined)
+            user.username = generate_username(personal.first_name, user.date_joined)
             user.save()
-            patient.user = user
-            patient.save()
+            personal.user = user
+            personal.save()
+            
+            if isinstance(personal, Patient) and request.user.doctor:
+                personal.doctors.add(request.user.doctor)
+                personal.save()
             messages.success(request, 'Запись успешно добавлена!')
             return redirect(self.success_url)
         else:
-            return render(request, self.template_name, { 'form1': 'form1', 'form2': form2 })
+            return render(request, self.template_name, { 'form2': form2 })
 
 
 class RegisterDoctorView(RegisterView):

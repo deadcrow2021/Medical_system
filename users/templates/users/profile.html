@@ -8,7 +8,7 @@
         {% for p in form %}
 
             {% if p.field.choices %}
-                <p>{{ p.label }}
+                <p>{{ p.label_tag }}
                     {% for i in p.field.choices %}
                         {% if p.value == i.0 %}
                             {{i.1}}
@@ -16,9 +16,9 @@
                     {% endfor %}
                 </p>
             {% elif p.value %}
-                <p>{{ p.label }} {{ p.value }}</p>
+                <p>{{ p.label_tag }} {{ p.value }}</p>
             {% elif not p.value %}
-                <p>{{ p.label }} ---</p>
+                <p>{{ p.label_tag }}  ---------</p>
             {% endif %}
 
         {% endfor %}

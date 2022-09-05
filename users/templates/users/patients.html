@@ -3,7 +3,18 @@
 {% block content %}
 <div class="center-div">
 <h1>Пациенты</h1>
-    {% for patient in patients %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+            <input type="text" name="search">
+            {% if btn %}
+            <button type="submit">{{ btn }}</button>
+            {% else %}
+            <button type="submit">Искать</button>
+            {% endif %}
+        </div>
+    </form>
+    {% for patient in users %}
     <div class="center-div-record">
         <p>ФИО: {{ patient.get_full_name }}</p>
         <p>Дата рождения: {{ patient.date_of_birth }}</p>

@@ -8,10 +8,11 @@ from .models import Files
 from .forms import FileUploadForm
 from django.views.generic import CreateView, ListView
 from django.contrib import messages
+from .search_patterns import *
 
 
 class AdminPageView(ListView):
-    paginate_by: int = 6
+    paginate_by: int = 3 ## Не работает из-за модели
     model = Patient
     template_name: str = 'administration/admin_page.html'
     context_object_name: Optional[str] = 'users'
@@ -20,6 +21,24 @@ class AdminPageView(ListView):
         context = super().get_context_data(**kwargs)
         context |= { 'users': chain(Patient.objects.all(), Doctor.objects.all()) }
         return context
+    
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        pattern: list[str] =  str(request.POST['search']).lower().split()
+        match pattern:
+            case longStr, :
+                if len(longStr) % 2 == 1:
+                    context = one_word_odd(longStr)
+                else:
+                    context = one_word_even(longStr)
+            case name, surname, fathername:
+                context = three_words(name, surname, fathername)
+            # case name, surname, fathername, params:
+            #     context = four_words(name, surname, fathername, params)
+            case _:
+                return self.get(request)
+        
+        context |= { 'btn': 'Вернуться' }
+        return render(request, 'administration/admin_page.html', context)
     
     # def get_queryset(self):
     #     return Patient.objects.exclude(groups='a')
