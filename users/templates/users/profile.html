@@ -29,6 +29,15 @@
     <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
 
     {% if user_type != 'doctor' %}
+    <form action="{% url 'follow-unfollow' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="profile_pk" value="{{profile.pk}}">
+        {% if follow %}
+            <button id="unfollow-btn" type="submit">Убрать</button>
+        {% else %}
+            <button id="follow-btn" type="submit">Добавить</button>
+        {% endif %}
+            </form>
         <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
     {% endif %}
 </div>
