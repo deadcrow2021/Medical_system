@@ -24,16 +24,16 @@ class Patient(models.Model):
     address      = models.CharField('Адресс', max_length=150, blank=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
-
+    
+    
     class Meta:
         verbose_name = 'Пациент'
         verbose_name_plural = 'Пациенты'
         ordering = ['-date_updated']
-
+    
     def __str__(self) -> str:
         return self.user.username
-
+    
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
@@ -44,7 +44,7 @@ class SelfMonitoringRecords(models.Model):
     description = models.TextField('Описание', max_length=1000, blank=True)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    
     def __str__(self) -> str:
         return self.title
 
@@ -54,7 +54,7 @@ class MedicalHistory(models.Model):
     disease = models.CharField('Заболевание', max_length=100, blank=True)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    
     def __str__(self) -> str:
         return self.disease
 
@@ -65,8 +65,9 @@ class Doctor(models.Model):
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     cabinet      = models.CharField('Кабинет', max_length=6, default='301')
-    patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+    # territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
+    patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
     
     class Meta:
         verbose_name = 'Доктор'

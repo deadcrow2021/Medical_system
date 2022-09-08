@@ -18,9 +18,9 @@
 {% if user.doctor %}
     <p>Мои пациенты:</p>
     {% for patient in related_patients %}
-        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
+        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}
+        <a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
     {% endfor %}
-    
 {% endif %}
 
 {% endblock %}
