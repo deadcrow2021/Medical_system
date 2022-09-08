@@ -7,6 +7,7 @@ urlpatterns = [
     path('add_doctor', views.RegisterDoctorView.as_view(), name='add-doctor'),
     path('add_patient', views.RegisterPatientView.as_view(), name='add-patient'),
     path('patients', views.PatientsView.as_view(), name='patients'),
+    path('recent_patients', views.recent_patients, name='recent-patients'),
     path('profile/<profile_id>', views.profile, name='profile'),
     path('profile/update/<profile_id>', views.update_profile, name='update-profile'),
     path('profile/delete/<profile_id>', views.delete_profile, name='delete-profile'),

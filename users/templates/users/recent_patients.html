@@ -1,0 +1,26 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+
+<p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
+<p><a href="{% url 'recent-patients' %}">Недавние</a></p>
+
+<div class="center-div">
+<h1>Пациенты</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for f in form %}
+            <p>{{ f.label }}: {{ f }}</p>
+        {% endfor %}
+        <input type="submit">
+    </form>
+
+    {% for patient in patients %}
+        <div class="center-div-record">
+            <p>ФИО: {{ patient.get_full_name }}</p>
+            <p>Дата рождения: {{ patient.date_of_birth }}</p>
+            <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

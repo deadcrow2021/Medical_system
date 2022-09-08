@@ -1,8 +1,9 @@
+from datetime import datetime, timedelta
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm
+from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm, PatientFilterForm
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, MedicalHistory
 from django.utils.crypto import get_random_string
@@ -12,6 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .search_patterns import *
 import django.contrib.messages as messages
+import time
 
 
 def generate_username(first_name, date):
@@ -37,7 +39,7 @@ def follow_unfollow_patient(request):
         my_profile = Doctor.objects.get(user=request.user)
         pk = request.POST.get('profile_pk')
         patient = Patient.objects.get(pk=pk)
-        
+
         if patient in my_profile.patients.all():
             my_profile.patients.remove(patient)
         else:
@@ -121,6 +123,37 @@ class PatientsView(ListView):
         
         context |= { 'btn': 'Вернуться' }
         return render(request, 'users/patients.html', context)
+
+
+def recent_patients(request):
+    patients = Patient.objects.all()
+    form = PatientFilterForm()
+
+    if request.method == 'POST':
+        form = PatientFilterForm(request.POST or None)
+        if form.is_valid():
+            time_interval = form.cleaned_data['time_interval']
+            offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+            today = datetime.now()
+            today = today.strftime('%d/%b/%Y')
+            dt = datetime.strptime(today, '%d/%b/%Y') - timedelta(hours=offset)
+
+            if time_interval == 'd':
+                patients = patients.filter(date_updated__gte=dt,)
+            elif time_interval == 'w':
+                week_start = dt - timedelta(days=dt.weekday())
+                patients = patients.filter(date_updated__gte=week_start,)
+            elif time_interval == 'm':
+                mounth_start = dt - timedelta(days=dt.day-1)
+                patients = patients.filter(date_updated__gte=mounth_start,)
+            elif time_interval == '30':
+                mounth_ago = dt - timedelta(days=30)
+                patients = patients.filter(date_updated__gte=mounth_ago,)
+            if form.cleaned_data['territory']:
+                pass
+
+    context = {'patients':patients, 'form':form}
+    return render(request, 'users/recent_patients.html', context)
 
 
 class RegisterView(CreateView):

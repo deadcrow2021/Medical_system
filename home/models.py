@@ -61,11 +61,12 @@ class MedicalHistory(models.Model):
 
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
     first_name   = models.CharField("Имя", max_length=50, default='usr')
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     cabinet      = models.CharField('Кабинет', max_length=6, default='301')
-    patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
+    territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
     class Meta:

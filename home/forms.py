@@ -1,6 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django import forms
 from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords
+from django import forms
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -80,3 +79,14 @@ class RecordCreationForm(forms.ModelForm):
             'title',
             'description',
             )
+
+
+class PatientFilterForm(forms.Form):
+    CHOICES = (
+        ('d', 'Текущий день'),
+        ('w', 'Текущая неделя'),
+        ('m', 'Текущий месяц'),
+        ('30', '30 дней'),
+        )
+    time_interval = forms.ChoiceField(label='Временной промежуток', choices=CHOICES)
+    territory = forms.BooleanField(label='Мои территории', required=False)
