@@ -48,8 +48,8 @@ def follow_unfollow_patient(request):
     return redirect('patients')
 
 
-def profile(request, profile_id):
-    my_profile = Doctor.objects.get(user=request.user)
+def profile(request: HttpRequest, profile_id):
+    follow = False
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
 
@@ -59,12 +59,12 @@ def profile(request, profile_id):
         return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'form':form })
     else:
         user_profile = user.patient
+        if hasattr(request.user, 'doctor'):
+            my_profile = Doctor.objects.get(user=request.user)
+            if user_profile in my_profile.patients.all():
+                follow = True
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
-        if user_profile in my_profile.patients.all():
-            follow = True
-        else:
-            follow = False
         return render(request, 'users/profile.html', {
             'profile': user_profile,
             'user_type': user_type,
@@ -125,7 +125,7 @@ class PatientsView(ListView):
         return render(request, 'users/patients.html', context)
 
 
-def recent_patients(request):
+def recent_patients(request: HttpRequest):
     patients = Patient.objects.all()
     form = PatientFilterForm()
 
@@ -138,21 +138,23 @@ def recent_patients(request):
             today = today.strftime('%d/%b/%Y')
             dt = datetime.strptime(today, '%d/%b/%Y') - timedelta(hours=offset)
 
-            if time_interval == 'd':
-                patients = patients.filter(date_updated__gte=dt,)
-            elif time_interval == 'w':
-                week_start = dt - timedelta(days=dt.weekday())
-                patients = patients.filter(date_updated__gte=week_start,)
-            elif time_interval == 'm':
-                mounth_start = dt - timedelta(days=dt.day-1)
-                patients = patients.filter(date_updated__gte=mounth_start,)
-            elif time_interval == '30':
-                mounth_ago = dt - timedelta(days=30)
-                patients = patients.filter(date_updated__gte=mounth_ago,)
+            match time_interval:
+                case 'd':
+                    patients = patients.filter(date_updated__gte=dt,)
+                case 'w':
+                    week_start = dt - timedelta(days=dt.weekday())
+                    patients = patients.filter(date_updated__gte=week_start,)
+                case 'm':
+                    mounth_start = dt - timedelta(days=dt.day-1)
+                    patients = patients.filter(date_updated__gte=mounth_start,)
+                case '30':
+                    mounth_ago = dt - timedelta(days=30)
+                    patients = patients.filter(date_updated__gte=mounth_ago,)
+            
             if form.cleaned_data['territory']:
-                pass
+                patients = patients.filter(territory=request.user.doctor.territory)
 
-    context = {'patients':patients, 'form':form}
+    context = {'patients': patients, 'form': form}
     return render(request, 'users/recent_patients.html', context)
 
 

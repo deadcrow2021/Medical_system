@@ -28,7 +28,7 @@
     <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
     <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
 
-    {% if user_type != 'doctor' %}
+    {% if user.doctor %}
     <form action="{% url 'follow-unfollow' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="profile_pk" value="{{profile.pk}}">
@@ -37,12 +37,13 @@
         {% else %}
             <button id="follow-btn" type="submit">Добавить</button>
         {% endif %}
-            </form>
-        <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
+    </form>
+    <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
     {% endif %}
 </div>
 
 {% if user_type != 'doctor' %}
+    <p><strong>История заболеваний:</strong></p>
     <div class="diseases">
         {% for disease in diseases %}
             <p>{{ disease.disease }}</p>
