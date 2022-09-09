@@ -49,9 +49,14 @@ def follow_unfollow_patient(request):
 
 
 def profile(request, profile_id):
-    my_profile = Doctor.objects.get(user=request.user)
+    follow = False
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+
+    if hasattr(request.user, 'doctor'):
+        my_profile = Doctor.objects.get(user=request.user)
+        if user_profile in my_profile.patients.all():
+            follow = True
 
     if user_type == "doctor":
         user_profile = user.doctor
@@ -61,10 +66,6 @@ def profile(request, profile_id):
         user_profile = user.patient
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
-        if user_profile in my_profile.patients.all():
-            follow = True
-        else:
-            follow = False
         return render(request, 'users/profile.html', {
             'profile': user_profile,
             'user_type': user_type,
