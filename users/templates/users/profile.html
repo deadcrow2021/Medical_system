@@ -28,7 +28,7 @@
     <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
     <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
 
-    {% if user_type != 'doctor' %}
+    {% if user.doctor %}
     <form action="{% url 'follow-unfollow' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="profile_pk" value="{{profile.pk}}">
