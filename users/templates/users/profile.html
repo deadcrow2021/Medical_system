@@ -37,12 +37,13 @@
         {% else %}
             <button id="follow-btn" type="submit">Добавить</button>
         {% endif %}
-            </form>
-        <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
+    </form>
+    <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
     {% endif %}
 </div>
 
 {% if user_type != 'doctor' %}
+    <p><strong>История заболеваний:</strong></p>
     <div class="diseases">
         {% for disease in diseases %}
             <p>{{ disease.disease }}</p>
