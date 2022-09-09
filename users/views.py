@@ -125,7 +125,7 @@ class PatientsView(ListView):
         return render(request, 'users/patients.html', context)
 
 
-def recent_patients(request):
+def recent_patients(request: HttpRequest):
     patients = Patient.objects.all()
     form = PatientFilterForm()
 
@@ -138,21 +138,23 @@ def recent_patients(request):
             today = today.strftime('%d/%b/%Y')
             dt = datetime.strptime(today, '%d/%b/%Y') - timedelta(hours=offset)
 
-            if time_interval == 'd':
-                patients = patients.filter(date_updated__gte=dt,)
-            elif time_interval == 'w':
-                week_start = dt - timedelta(days=dt.weekday())
-                patients = patients.filter(date_updated__gte=week_start,)
-            elif time_interval == 'm':
-                mounth_start = dt - timedelta(days=dt.day-1)
-                patients = patients.filter(date_updated__gte=mounth_start,)
-            elif time_interval == '30':
-                mounth_ago = dt - timedelta(days=30)
-                patients = patients.filter(date_updated__gte=mounth_ago,)
+            match time_interval:
+                case 'd':
+                    patients = patients.filter(date_updated__gte=dt,)
+                case 'w':
+                    week_start = dt - timedelta(days=dt.weekday())
+                    patients = patients.filter(date_updated__gte=week_start,)
+                case 'm':
+                    mounth_start = dt - timedelta(days=dt.day-1)
+                    patients = patients.filter(date_updated__gte=mounth_start,)
+                case '30':
+                    mounth_ago = dt - timedelta(days=30)
+                    patients = patients.filter(date_updated__gte=mounth_ago,)
+            
             if form.cleaned_data['territory']:
-                pass
+                patients = patients.filter(territory=request.user.doctor.territory)
 
-    context = {'patients':patients, 'form':form}
+    context = {'patients': patients, 'form': form}
     return render(request, 'users/recent_patients.html', context)
 
 
