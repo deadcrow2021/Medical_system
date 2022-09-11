@@ -60,7 +60,7 @@ class MedicalHistory(models.Model):
 
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user         = models.OneToOneField(User, on_delete=models.CASCADE)
     patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
     first_name   = models.CharField("Имя", max_length=50, default='usr')
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
@@ -79,3 +79,14 @@ class Doctor(models.Model):
     
     def get_full_name(self) -> str:
         return f"{self.last_name} {self.first_name} {self.father_name}"
+
+
+class ChangeControlLog(models.Model):
+    who_changed = models.CharField("Кто изменил", max_length=100, default='')
+    modified_model = models.CharField("Кого изменили", max_length=100, default='')
+    before = models.CharField('Было', max_length=500, default='')
+    after = models.CharField('Стало', max_length=500, default='')
+    date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.who_changed
