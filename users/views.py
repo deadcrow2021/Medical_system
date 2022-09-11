@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
 from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm, PatientFilterForm
 from django.urls import reverse_lazy
-from home.models import Doctor, Patient, MedicalHistory
+from home.models import Doctor, Patient
 from django.utils.crypto import get_random_string
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse

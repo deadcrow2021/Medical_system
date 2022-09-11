@@ -3,7 +3,7 @@ from typing import Any, Optional
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from home.models import Doctor, Patient
+from home.models import Doctor, Patient, ChangeControlLog
 from .models import Files
 from .forms import FileUploadForm
 from django.views.generic import CreateView, ListView
@@ -62,3 +62,8 @@ class UploadFilesView(CreateView):
             return redirect(self.success_url)
         else:
             return render(request, self.template_name, { 'form': form })
+
+
+def change_logs_page(request):
+    logs = ChangeControlLog.objects.all()
+    return render(request, 'administration/change_logs.html', {'logs':logs})

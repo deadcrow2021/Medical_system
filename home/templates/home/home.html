@@ -6,6 +6,7 @@
 <div class="center-div">
     {% if user.is_superuser %}
         <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
+        <p><a href="{% url 'logs-page' %}">Журнал изменений</a></p>
     {% endif %}
     {% if user.doctor %}
         <p><a href="{% url 'patients' %}">Пациенты</a></p>

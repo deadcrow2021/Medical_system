@@ -1,0 +1,10 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="center-div">
+    {% for log in logs %}
+        <p>{{ log.who_changed }} {{ log.modified_model }} 
+            {{ log.before }} {{ log.after }} {{ log.date_created }}</p>
+    {% endfor %}
+</div>
+{% endblock %}

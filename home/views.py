@@ -2,8 +2,24 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .forms import RecordCreationForm
-from .models import Patient
+from .models import Patient, ChangeControlLog
 
+
+def add_log(who: User, what, before, after):
+    user_type = 'doctor' if hasattr(who, 'doctor') else 'patient' if hasattr(who, 'patient') else 'Admin'
+    if user_type in 'doctor':
+        fio = who.doctor.get_full_name()
+    if user_type in 'patient':
+        fio = who.patient.get_full_name()
+    else:
+        fio = who.username
+    who_changed = f'{user_type} {fio}'
+    return ChangeControlLog.objects.create(
+        who_changed=who_changed,
+        modified_model = what,
+        before=before,
+        after=after,
+    )
 
 @login_required
 def home_page(request):
@@ -32,6 +48,8 @@ def add_selfmonitor_record(request):
         if form.is_valid():
             record = form.save(commit=False)
             record.patient = Patient.objects.get(user=user)
+            add_log(user, 'Запись в журнал самонаблюдения', '-',
+                    f'Название: {form.cleaned_data["title"]}, Описание: {form.cleaned_data["description"]}')
             record.save()
             return redirect('account')
     context = {'form': form}
