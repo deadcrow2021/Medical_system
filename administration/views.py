@@ -9,20 +9,19 @@ from .forms import FileUploadForm
 from django.views.generic import CreateView, ListView
 from django.contrib import messages
 from .search_patterns import *
+from django.core.paginator import Paginator
 
 
-class AdminPageView(ListView):
-    paginate_by: int = 3 ## Не работает из-за модели
-    model = Patient
+def admin_page(request: HttpRequest):
     template_name: str = 'administration/admin_page.html'
-    context_object_name: Optional[str] = 'users'
+    context = { 'users': chain(Patient.objects.all(), Doctor.objects.all()) }
+    paginator = Paginator(list(context['users']), 6)
+    page_number: int = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    print(f"{page_obj}")
+    context |= { 'page_obj': page_obj, 'paginator': paginator }
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context |= { 'users': chain(Patient.objects.all(), Doctor.objects.all()) }
-        return context
-    
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    if request.method == 'POST':
         pattern: list[str] =  str(request.POST['search']).lower().split()
         match pattern:
             case longStr, :
@@ -35,13 +34,14 @@ class AdminPageView(ListView):
             # case name, surname, fathername, params:
             #     context = four_words(name, surname, fathername, params)
             case _:
-                return self.get(request)
-        
+                return render(request, template_name, context)
+        paginator = Paginator(list(context['users']), 6)
+        page_obj = paginator.get_page(page_number)
+        context.update({ 'page_obj': page_obj, 'paginator': paginator })
         context |= { 'btn': 'Вернуться' }
-        return render(request, 'administration/admin_page.html', context)
-    
-    # def get_queryset(self):
-    #     return Patient.objects.exclude(groups='a')
+        return render(request, template_name, context)
+    else:
+        return render(request, template_name, context)
 
 
 def files_page(request):
