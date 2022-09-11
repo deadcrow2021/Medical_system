@@ -14,9 +14,8 @@ from django.core.paginator import Paginator
 
 def admin_page(request: HttpRequest):
     template_name: str = 'administration/admin_page.html'
-    users_list: list = list(chain(Patient.objects.all(), Doctor.objects.all()))
-    context = { 'users': users_list }
-    paginator = Paginator(users_list, 6)
+    context = { 'users': chain(Patient.objects.all(), Doctor.objects.all()) }
+    paginator = Paginator(list(context['users']), 6)
     page_number: int = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     print(f"{page_obj}")
@@ -35,8 +34,12 @@ def admin_page(request: HttpRequest):
             # case name, surname, fathername, params:
             #     context = four_words(name, surname, fathername, params)
             case _:
-                context |= { 'btn': 'Вернуться' }
                 return render(request, template_name, context)
+        paginator = Paginator(list(context['users']), 6)
+        page_obj = paginator.get_page(page_number)
+        context.update({ 'page_obj': page_obj, 'paginator': paginator })
+        context |= { 'btn': 'Вернуться' }
+        return render(request, template_name, context)
     else:
         return render(request, template_name, context)
 
