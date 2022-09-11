@@ -5,11 +5,11 @@ from .forms import RecordCreationForm
 from .models import Patient, ChangeControlLog
 
 
-def add_log(who: User, what, before, after):
+def add_log(who: User, what, before, after) -> ChangeControlLog:
     user_type = 'doctor' if hasattr(who, 'doctor') else 'patient' if hasattr(who, 'patient') else 'Admin'
-    if user_type in 'doctor':
+    if user_type == 'doctor':
         fio = who.doctor.get_full_name()
-    if user_type in 'patient':
+    elif user_type == 'patient':
         fio = who.patient.get_full_name()
     else:
         fio = who.username

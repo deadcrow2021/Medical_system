@@ -1,15 +1,16 @@
 from itertools import chain
-from typing import Any, Optional
+from typing import Any
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, ChangeControlLog
 from .models import Files
 from .forms import FileUploadForm
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView
 from django.contrib import messages
 from .search_patterns import *
 from django.core.paginator import Paginator
+from home.views import add_log
 
 
 def admin_page(request: HttpRequest):
@@ -18,7 +19,6 @@ def admin_page(request: HttpRequest):
     paginator = Paginator(list(context['users']), 6)
     page_number: int = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    print(f"{page_obj}")
     context |= { 'page_obj': page_obj, 'paginator': paginator }
     
     if request.method == 'POST':
@@ -58,6 +58,8 @@ class UploadFilesView(CreateView):
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(commit=True)
+            add_log(request.user, f'Добавлен файл.',
+                    '-', f'Файл {form.cleaned_data["title"]} был создан.')
             messages.success(request, message='Файл успешно добавлен')
             return redirect(self.success_url)
         else:

@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .search_patterns import *
 import django.contrib.messages as messages
+from home.views import add_log
 import time
 
 
@@ -27,7 +28,10 @@ def add_disease(request, profile_id):
         form = DiseaseCreationForm(request.POST)
         if form.is_valid():
             disease = form.save(commit=False)
-            disease.patient = Patient.objects.get(user=user)
+            patient = Patient.objects.get(user=user)
+            disease.patient = patient
+            add_log(user, f'Пациент {patient.get_full_name()}. Добавлена история болезни.',
+                    '-', f'Болезнь: {form.cleaned_data["disease"]}')
             disease.save()
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     context = {'form': form}
@@ -42,7 +46,11 @@ def follow_unfollow_patient(request):
 
         if patient in my_profile.patients.all():
             my_profile.patients.remove(patient)
+            add_log(my_profile, f'Пациент {patient.get_full_name()} был отвязан от доктора.',
+                    '-', '-')
         else:
+            add_log(my_profile, f'Пациент {patient.get_full_name()} был привязан к доктору.',
+                    '-', '-')
             my_profile.patients.add(patient)
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect('patients')
@@ -80,11 +88,15 @@ def update_profile(request, profile_id):
 
     if user_type == "doctor":
         user_profile = user.doctor
+        form = DoctorCreationForm(request.POST or None, instance=user_profile)
     else:
         user_profile = user.patient
-    form = PatientChangeForm(request.POST or None, instance=user_profile)
-
+        form = PatientChangeForm(request.POST or None, instance=user_profile)
+    # print(user_profile._meta.get_fields())
     if form.is_valid():
+        # print(form.__dict__)
+        # add_log(request.user, f'{user_type} {user_profile.get_full_name()} был изменен.',
+        #             '-', '-')
         form.save()
         return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     context = {'profile': user_profile, 'form': form}
@@ -93,8 +105,11 @@ def update_profile(request, profile_id):
 
 def delete_profile(request, profile_id):
     user_profile: User = User.objects.get(pk=profile_id)
+    user_type = 'doctor' if hasattr(user_profile, 'doctor') else 'patient'
     if request.POST:
         user_profile.delete()
+        add_log(request.user, f'{user_type} {user_profile.get_full_name()} был удален.',
+                    '-', 'Пользователь был удален.')
         return redirect('patients')
     context = {'profile': user_profile}
     return render(request, 'users/delete_profile.html', context)
@@ -170,7 +185,9 @@ class RegisterView(CreateView):
             user.save()
             personal.user = user
             personal.save()
-            
+            user_type = 'doctor' if hasattr(personal, 'doctor') else 'patient'
+            add_log(request.user, f'{user_type} {personal.get_full_name()} был создан.',
+                    '-', 'Пользователь был создан.')
             if isinstance(personal, Patient) and request.user.doctor:
                 personal.doctors.add(request.user.doctor)
                 personal.save()
