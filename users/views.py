@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
@@ -46,10 +47,10 @@ def follow_unfollow_patient(request):
 
         if patient in my_profile.patients.all():
             my_profile.patients.remove(patient)
-            add_log(my_profile, f'Пациент {patient.get_full_name()} был отвязан от доктора.',
+            add_log(my_profile.user, f'Пациент {patient.get_full_name()} был отвязан от доктора.',
                     '-', '-')
         else:
-            add_log(my_profile, f'Пациент {patient.get_full_name()} был привязан к доктору.',
+            add_log(my_profile.user, f'Пациент {patient.get_full_name()} был привязан к доктору.',
                     '-', '-')
             my_profile.patients.add(patient)
         return redirect(request.META.get('HTTP_REFERER'))
@@ -85,6 +86,8 @@ def profile(request: HttpRequest, profile_id):
 def update_profile(request, profile_id):
     user: User = User.objects.get(pk=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+    before = ''
+    after = ''
 
     if user_type == "doctor":
         user_profile = user.doctor
@@ -92,13 +95,18 @@ def update_profile(request, profile_id):
     else:
         user_profile = user.patient
         form = PatientChangeForm(request.POST or None, instance=user_profile)
-    # print(user_profile._meta.get_fields())
-    if form.is_valid():
-        # print(form.__dict__)
-        # add_log(request.user, f'{user_type} {user_profile.get_full_name()} был изменен.',
-        #             '-', '-')
-        form.save()
-        return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
+    user_before = deepcopy(user_profile.__dict__)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save(commit=False)
+            for field, data in form.cleaned_data.items():
+                if data != user_before[field]:
+                    before += f'{field}: {user_before[field]};'
+                    after += f'{field}: {form.cleaned_data[field]}'
+            add_log(request.user, f'{user_type} {user_profile.get_full_name()} был изменен.',
+                        before, after)
+            form.save()
+            return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     context = {'profile': user_profile, 'form': form}
     return render(request, 'users/update_profile.html', context)
 
@@ -120,7 +128,7 @@ class PatientsView(ListView):
     model = Patient
     template_name: str = 'users/patients.html'
     context_object_name = 'users'
-    
+
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         pattern: list[str] =  str(request.POST['search']).lower().split()
         match pattern:
@@ -135,7 +143,7 @@ class PatientsView(ListView):
                 context = four_words(name, surname, fathername, params)
             case _:
                 return self.get(request)
-        
+
         context |= { 'btn': 'Вернуться' }
         return render(request, 'users/patients.html', context)
 
@@ -165,7 +173,7 @@ def recent_patients(request: HttpRequest):
                 case '30':
                     mounth_ago = dt - timedelta(days=30)
                     patients = patients.filter(date_updated__gte=mounth_ago,)
-            
+
             if form.cleaned_data['territory']:
                 patients = patients.filter(territory=request.user.doctor.territory)
 

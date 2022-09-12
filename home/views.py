@@ -12,7 +12,7 @@ def add_log(who: User, what, before, after) -> ChangeControlLog:
     elif user_type == 'patient':
         fio = who.patient.get_full_name()
     else:
-        fio = who.username
+        fio = f'{who.first_name} {who.last_login}'
     who_changed = f'{user_type} {fio}'
     return ChangeControlLog.objects.create(
         who_changed=who_changed,
