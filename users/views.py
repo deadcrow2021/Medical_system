@@ -15,6 +15,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .search_patterns import *
 import django.contrib.messages as messages
 from home.views import add_log
+from .mkb10 import mkb10_deseases
 import time
 
 
@@ -35,7 +36,7 @@ def add_disease(request, profile_id):
                     '-', f'Болезнь: {form.cleaned_data["disease"]}')
             disease.save()
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
-    context = {'form': form}
+    context = { 'form': form, 'deseases': mkb10_deseases }
     return render(request, 'users/add_disease.html', context)
 
 
@@ -44,7 +45,7 @@ def follow_unfollow_patient(request):
         my_profile = Doctor.objects.get(user=request.user)
         pk = request.POST.get('profile_pk')
         patient = Patient.objects.get(pk=pk)
-
+        
         if patient in my_profile.patients.all():
             my_profile.patients.remove(patient)
             add_log(my_profile.user, f'Пациент {patient.get_full_name()} был отвязан от доктора.',
@@ -61,7 +62,7 @@ def profile(request: HttpRequest, profile_id):
     follow = False
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
-
+    
     if user_type == "doctor":
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
@@ -88,7 +89,7 @@ def update_profile(request, profile_id):
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     before = ''
     after = ''
-
+    
     if user_type == "doctor":
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
@@ -128,7 +129,7 @@ class PatientsView(ListView):
     model = Patient
     template_name: str = 'users/patients.html'
     context_object_name = 'users'
-
+    
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         pattern: list[str] =  str(request.POST['search']).lower().split()
         match pattern:
@@ -143,7 +144,7 @@ class PatientsView(ListView):
                 context = four_words(name, surname, fathername, params)
             case _:
                 return self.get(request)
-
+        
         context |= { 'btn': 'Вернуться' }
         return render(request, 'users/patients.html', context)
 
@@ -151,7 +152,7 @@ class PatientsView(ListView):
 def recent_patients(request: HttpRequest):
     patients = Patient.objects.all()
     form = PatientFilterForm()
-
+    
     if request.method == 'POST':
         form = PatientFilterForm(request.POST or None)
         if form.is_valid():
@@ -160,7 +161,7 @@ def recent_patients(request: HttpRequest):
             today = datetime.now()
             today = today.strftime('%d/%b/%Y')
             dt = datetime.strptime(today, '%d/%b/%Y') - timedelta(hours=offset)
-
+            
             match time_interval:
                 case 'd':
                     patients = patients.filter(date_updated__gte=dt,)
@@ -173,10 +174,10 @@ def recent_patients(request: HttpRequest):
                 case '30':
                     mounth_ago = dt - timedelta(days=30)
                     patients = patients.filter(date_updated__gte=mounth_ago,)
-
+            
             if form.cleaned_data['territory']:
                 patients = patients.filter(territory=request.user.doctor.territory)
-
+    
     context = {'patients': patients, 'form': form}
     return render(request, 'users/recent_patients.html', context)
 

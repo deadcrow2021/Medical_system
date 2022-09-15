@@ -4,8 +4,41 @@
     <form action="" method="post">
         {% csrf_token %}
         {% for p in form %}
-        <p>{{ p.label }} {{ p }}</p>
+        <div style="display: flex;"><p>{{ p.label }} {{ p }}</p><input type="button" id="clear" value="Очистить"></div>
         {% endfor %}
         <button type="submit">Добавить историю болезни</button>
     </form>
+    <div id="diseases" class="center-div">
+        <button class="data_btn"></button><br>
+        <button class="data_btn"></button><br>
+        <button class="data_btn"></button><br>
+        <button class="data_btn"></button><br>
+        <button class="data_btn"></button><br>
+    </div>
+    <div class="data">{{ deseases }}</div>
+
+    <script type="text/javascript">
+        var data = document.getElementsByClassName('data')[0].innerHTML.split(';')
+        
+        var buttons = document.getElementsByClassName('data_btn')
+        for (let btn of buttons) {
+            btn.onclick = () => {
+                document.getElementById('id_disease').value = btn.innerHTML
+            }
+        }
+        var search_field = document.getElementById('id_disease')
+        
+        search_field.onkeyup = (e) => {
+            let pattern = search_field.value.toLowerCase()
+            let sliced_data = data.filter(x => x.toLowerCase().includes(pattern)).slice(0, 5)
+            for (let i = 0; i < 5; i++)
+                buttons[i].innerHTML = sliced_data[i] ? sliced_data[i] : ''
+        }
+        search_field.onkeyup()
+        
+        document.getElementById('clear').onclick = e => {
+            document.getElementById('id_disease').value = ''
+            search_field.onkeyup()
+        }
+    </script>
 {% endblock %}

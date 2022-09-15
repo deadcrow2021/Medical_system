@@ -195,3 +195,21 @@ form {
 .log > li {
     margin-left: 15px;
 }
+
+.data {
+    display: none;
+}
+
+.data_btn {
+    border: 0;
+    background-color: transparent;
+}
+
+.data_btn:hover {
+    background-color: #ccc;
+}
+
+.data_btn:active {
+    color: #ccc;
+    background-color: #333;
+}
