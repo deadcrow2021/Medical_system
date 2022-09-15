@@ -3,8 +3,41 @@
 {% block content %}
 <div class="center-div">
     {% for log in logs %}
-        <p>{{ log.who_changed }} {{ log.modified_model }} 
-            {{ log.before }} {{ log.after }} {{ log.date_created }}</p>
+    <div class="center-div-record">
+        <p><strong>Кто изменил:</strong> {{ log.who_changed }}</p>
+        <p><strong>Кого изменил:</strong> {{ log.modified_model }}</p>
+        <p><strong>Было:</strong> <ul class="log">{{ log.before }}</ul></p>
+        <p><strong>Стало:</strong> <ul class="log">{{ log.after }}</ul></p>
+        <p><strong>Дата изменения:</strong> {{ log.date_created }}</p>
+    </div>
     {% endfor %}
 </div>
+
+<!--PGINATION-->
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    {% for p in paginator.page_range %}
+    <p>
+        {% if page_obj.number == p %}
+        <span>{{ p }}</span>
+        {% else %}
+        <a href="?page={{ p }}">{{ p }}</a>
+        {% endif %}
+    </p>
+    {% endfor %}
+</div>
+{% endif %}
+<script type="text/javascript">
+    (function () {
+        ul = document.getElementsByClassName('log')
+        for (let li of ul) {
+            li_list = li.innerHTML.split(';').slice(0, -1)
+            HTML_string = ''
+            for (let li_data of li_list) {
+                HTML_string += '<li>' + li_data + '</li>'
+            }
+            li.innerHTML = HTML_string
+        }
+    }())
+</script>
 {% endblock %}

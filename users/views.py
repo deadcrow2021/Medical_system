@@ -102,7 +102,7 @@ def update_profile(request, profile_id):
             for field, data in form.cleaned_data.items():
                 if data != user_before[field]:
                     before += f'{field}: {user_before[field]};'
-                    after += f'{field}: {form.cleaned_data[field]}'
+                    after += f'{field}: {form.cleaned_data[field]};'
             add_log(request.user, f'{user_type} {user_profile.get_full_name()} был изменен.',
                         before, after)
             form.save()

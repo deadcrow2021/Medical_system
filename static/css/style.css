@@ -191,3 +191,7 @@ form {
     display: flex;
     justify-content: center;
 }
+
+.log > li {
+    margin-left: 15px;
+}
