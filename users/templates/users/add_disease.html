@@ -3,9 +3,8 @@
 {% block content %}
     <form action="" method="post">
         {% csrf_token %}
-        {% for p in form %}
-        <div style="display: flex;"><p>{{ p.label }} {{ p }}</p><input type="button" id="clear" value="Очистить"></div>
-        {% endfor %}
+        <div style="display: flex;"><p>{{ form.disease.label }}: {{ form.disease }}</p><input type="button" id="clear" value="Очистить"></div>
+        <p>{{ form.date_cured.label }}: {{ form.date_cured }}</p>
         <button type="submit">Добавить историю болезни</button>
     </form>
     <div id="diseases" class="center-div">

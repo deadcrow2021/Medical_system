@@ -75,7 +75,11 @@ class DiseaseCreationForm(forms.ModelForm):
         model = MedicalHistory
         fields = (
             'disease',
+            'date_cured',
             )
+        widgets = {
+            'date_cured': DateInput(),
+        }
 
 
 class RecordCreationForm(forms.ModelForm):
