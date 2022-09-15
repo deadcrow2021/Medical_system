@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from home.models import Doctor, Patient, ChangeControlLog
 from .models import Files
 from .forms import FileUploadForm
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from django.contrib import messages
 from .search_patterns import *
 from django.core.paginator import Paginator
@@ -66,6 +66,8 @@ class UploadFilesView(CreateView):
             return render(request, self.template_name, { 'form': form })
 
 
-def change_logs_page(request):
-    logs = ChangeControlLog.objects.all()
-    return render(request, 'administration/change_logs.html', {'logs':logs})
+class ChangeLogsView(ListView):
+    model = ChangeControlLog
+    paginate_by: int = 3
+    template_name: str = 'administration/change_logs.html'
+    context_object_name: str = 'logs'

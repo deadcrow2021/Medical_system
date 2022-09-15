@@ -89,3 +89,6 @@ class ChangeControlLog(models.Model):
 
     def __str__(self) -> str:
         return self.who_changed
+    
+    class Meta:
+        ordering = ['-date_created']
