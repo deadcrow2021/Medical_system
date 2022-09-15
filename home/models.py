@@ -23,7 +23,7 @@ class Patient(models.Model):
     address      = models.CharField('Адресс', max_length=150, blank=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    date_death = models.DateTimeField('Дата смерти', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Пациент'
@@ -50,8 +50,9 @@ class SelfMonitoringRecords(models.Model):
 
 class MedicalHistory(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
-    disease = models.CharField('Заболевание', max_length=100, blank=True)
+    disease = models.CharField('Заболевание', max_length=270)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+    date_cured = models.DateTimeField('Дата излечения', blank=True, null=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
 
     def __str__(self) -> str:
@@ -64,7 +65,7 @@ class Doctor(models.Model):
     first_name   = models.CharField("Имя", max_length=50, default='usr')
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
-    cabinet      = models.CharField('Кабинет', max_length=6, default='301')
+    cabinet      = models.CharField('Кабинет', max_length=6)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
@@ -83,6 +84,7 @@ class Doctor(models.Model):
 class ChangeControlLog(models.Model):
     who_changed = models.CharField("Кто изменил", max_length=100, default='')
     modified_model = models.CharField("Кого изменили", max_length=100, default='')
+    change_type = models.CharField("Изменение", max_length=100)
     before = models.CharField('Было', max_length=500, default='')
     after = models.CharField('Стало', max_length=500, default='')
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)

@@ -2,21 +2,28 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .forms import RecordCreationForm
-from .models import Patient, ChangeControlLog
+from .models import Doctor, Patient, ChangeControlLog
+from .choices import CHANGETYPE
 
 
-def add_log(who: User, what, before, after) -> ChangeControlLog:
-    user_type = 'doctor' if hasattr(who, 'doctor') else 'patient' if hasattr(who, 'patient') else 'Admin'
-    if user_type == 'doctor':
+def add_log(who: User,
+            whom: str,
+            change_type: str,
+            before: str,
+            after: str) -> ChangeControlLog:
+    user_type = 'доктор' if hasattr(who, 'doctor') else 'пациент' if hasattr(who, 'patient') else 'администратор'
+    
+    if user_type == 'доктор':
         fio = who.doctor.get_full_name()
-    elif user_type == 'patient':
+    elif user_type == 'пациент':
         fio = who.patient.get_full_name()
     else:
-        fio = f'{who.first_name} {who.last_login}'
+        fio = f'{who.first_name} {who.last_name}'
     who_changed = f'{user_type} {fio}'
     return ChangeControlLog.objects.create(
         who_changed=who_changed,
-        modified_model = what,
+        modified_model = whom,
+        change_type=change_type,
         before=before,
         after=after,
     )
@@ -48,7 +55,10 @@ def add_selfmonitor_record(request):
         if form.is_valid():
             record = form.save(commit=False)
             record.patient = Patient.objects.get(user=user)
-            add_log(user, 'Запись в журнал самонаблюдения', '-',
+            add_log(user,
+                    user,
+                    CHANGETYPE.Добавлена_запись_в_журнал_самонаблюдения,
+                    '-',
                     f'Название: {form.cleaned_data["title"]}, Описание: {form.cleaned_data["description"]}')
             record.save()
             return redirect('account')

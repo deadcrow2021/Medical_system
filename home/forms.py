@@ -23,10 +23,12 @@ class PatientCreationForm(forms.ModelForm):
             'snils',
             'city_village',
             'address',
-            'territory'
+            'territory',
+            'date_death'
         )
         widgets = {
             'date_of_birth': DateInput(),
+            'date_death': DateInput(),
         }
 
 
@@ -60,8 +62,12 @@ class PatientChangeForm(forms.ModelForm):
             'snils',
             'city_village',
             'address',
-            'territory'
+            'territory',
+            'date_death'
         )
+        widgets = {
+            'date_death': DateInput(),
+        }
 
 
 class DiseaseCreationForm(forms.ModelForm):
