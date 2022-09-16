@@ -24,15 +24,15 @@ class Patient(models.Model):
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     date_death = models.DateTimeField('Дата смерти', blank=True, null=True)
-
+    
     class Meta:
         verbose_name = 'Пациент'
         verbose_name_plural = 'Пациенты'
         ordering = ['-date_updated']
-
+    
     def __str__(self) -> str:
         return self.user.username
-
+    
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
@@ -43,7 +43,7 @@ class SelfMonitoringRecords(models.Model):
     description = models.TextField('Описание', max_length=1000, blank=True)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    
     def __str__(self) -> str:
         return self.title
 
@@ -54,7 +54,7 @@ class MedicalHistory(models.Model):
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_cured = models.DateTimeField('Дата излечения', blank=True, null=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    
     def __str__(self) -> str:
         return self.disease
 
@@ -81,6 +81,23 @@ class Doctor(models.Model):
         return f"{self.last_name} {self.first_name} {self.father_name}"
 
 
+class ReceptionNotes(models.Model):
+    doctor = models.OneToOneField(Doctor, on_delete=models.CASCADE)
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE)
+    date_meeting = models.DateTimeField('Время приема')
+    date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+    
+    def __str__(self) -> str:
+        return  f'Доктор {self.doctor.first_name} {self.doctor.last_name}, '\
+                f'пациент {self.patient.first_name} {self.patient.last_name}'
+    
+    class Meta:
+        verbose_name = 'Запись приема'
+        verbose_name_plural = 'Записи приема'
+        ordering = ['-date_meeting', '-date_updated']
+
+
 class ChangeControlLog(models.Model):
     who_changed = models.CharField("Кто изменил", max_length=100, default='')
     modified_model = models.CharField("Кого изменили", max_length=100, default='')
@@ -88,7 +105,7 @@ class ChangeControlLog(models.Model):
     before = models.CharField('Было', max_length=500, default='')
     after = models.CharField('Стало', max_length=500, default='')
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
-
+    
     def __str__(self) -> str:
         return self.who_changed
     
