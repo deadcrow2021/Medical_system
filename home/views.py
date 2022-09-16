@@ -1,8 +1,12 @@
+from typing import Any
 from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from .forms import RecordCreationForm
-from .models import Doctor, Patient, ChangeControlLog
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView
+from .forms import DoctorCreationForm, ReceptionAddForm, RecordCreationForm
+from .models import Doctor, Patient, ChangeControlLog, ReceptionNotes
 from .choices import CHANGETYPE
 
 
@@ -64,3 +68,33 @@ def add_selfmonitor_record(request):
             return redirect('account')
     context = {'form': form}
     return render(request, 'home/add_record.html', context)
+
+
+class ReceptionView(ListView):
+    template_name: str = 'home/reception.html'
+    model: ReceptionNotes = ReceptionNotes
+    context_object_name: str = 'notes'
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context |= { 'notes': self.model.objects.filter(doctor=self.request.user.doctor) }
+        return context
+
+
+class ReceptionAddView(CreateView):
+    template_name = 'home/add_reception.html'
+    success_url: str = reverse_lazy('reception')
+    form_class = ReceptionAddForm
+    context_object_name: str = 'form'
+    
+    def post(self, request: HttpRequest, profile_id: int, *args: Any, **kwargs: Any) -> HttpResponse:
+        form: ReceptionAddForm = self.form_class(request.POST)
+        if form.is_valid():
+            commit: ReceptionNotes = form.save(commit=False)
+            commit.doctor = request.user.doctor
+            commit.patient = User.objects.get(pk=profile_id).patient
+            print(f"\n\n{commit.doctor}\n\n")
+            commit.save()
+            return redirect(self.success_url)
+        else:
+            return render(request, self.template_name, { 'form': form })

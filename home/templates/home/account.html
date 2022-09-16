@@ -16,6 +16,9 @@
 
 
 {% if user.doctor %}
+<div>
+    <a href="{% url 'reception' %}">Записи приемов</a>
+</div>
 <div class="center-div">
     <h1>Мои пациенты:</h1>
     {% for patient in related_patients %}

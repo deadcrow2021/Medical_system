@@ -121,8 +121,8 @@ def update_profile(request, profile_id):
 
 def delete_profile(request, profile_id):
     user_profile: User = User.objects.get(pk=profile_id)
-    user_type = 'doctor' if hasattr(user_profile, 'doctor') else 'patient'
     if request.POST:
+        user_type = 'doctor' if hasattr(user_profile, 'doctor') else 'patient'
         user_profile.delete()
         add_log(request.user,
                 f'{user_type} {user_profile.get_full_name()}',

@@ -1,8 +1,11 @@
-from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords
+from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes
 from django import forms
 
 class DateInput(forms.DateInput):
     input_type = 'date'
+
+class DateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
 
 class PatientCreationForm(forms.ModelForm):
     class Meta:
@@ -100,3 +103,14 @@ class PatientFilterForm(forms.Form):
         )
     time_interval = forms.ChoiceField(label='Временной промежуток', choices=CHOICES)
     territory = forms.BooleanField(label='Мои территории', required=False)
+
+
+class ReceptionAddForm(forms.ModelForm):
+    class Meta:
+        model = ReceptionNotes
+        fields = (
+            'date_meeting',
+        )
+        widgets = {
+            'date_meeting': DateTimeInput()
+        }
