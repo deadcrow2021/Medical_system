@@ -1,6 +1,7 @@
 {% extends 'home/base.html' %}
 
-{% block content %}  
+{% block content %}
+    <a href="{% url 'profile' profile.user.id %}" class="back_btn">Вернуться</a>
     <form method="POST" action="">
         {% csrf_token %}
         {% for field in form %}

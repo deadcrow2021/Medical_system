@@ -26,6 +26,7 @@
             }
         }
         var search_field = document.getElementById('id_disease')
+        search_field.setAttribute('autocomplete', 'off')
         
         search_field.onkeyup = (e) => {
             let pattern = search_field.value.toLowerCase()
