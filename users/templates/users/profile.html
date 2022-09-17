@@ -1,6 +1,7 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
+<a href="{% url 'patients' %}" class="back_btn">Вернуться</a>
 
 <form action="" method="post">
     {% csrf_token %}
@@ -27,8 +28,9 @@
 <div>
     <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
     <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
-
+    
     {% if user.doctor %}
+    <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
     <form action="{% url 'follow-unfollow' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="profile_pk" value="{{profile.pk}}">

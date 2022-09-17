@@ -16,6 +16,7 @@ from .search_patterns import *
 import django.contrib.messages as messages
 from home.views import add_log
 from .mkb10 import mkb10_deseases
+from home.choices import CHANGETYPE
 import time
 
 
@@ -32,8 +33,11 @@ def add_disease(request, profile_id):
             disease = form.save(commit=False)
             patient = Patient.objects.get(user=user)
             disease.patient = patient
-            add_log(user, f'Пациент {patient.get_full_name()}. Добавлена история болезни.',
-                    '-', f'Болезнь: {form.cleaned_data["disease"]}')
+            add_log(request.user,
+                    f'пациент {patient.get_full_name()}',
+                    CHANGETYPE.Добавлена_история_болезни,
+                    '-',
+                    f'Болезнь: {form.cleaned_data["disease"]};')
             disease.save()
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     context = { 'form': form, 'deseases': mkb10_deseases }
@@ -48,10 +52,10 @@ def follow_unfollow_patient(request):
         
         if patient in my_profile.patients.all():
             my_profile.patients.remove(patient)
-            add_log(my_profile.user, f'Пациент {patient.get_full_name()} был отвязан от доктора.',
+            add_log(my_profile.user, f'пациент {patient.get_full_name()}', CHANGETYPE.Был_отвязан_от_доктора,
                     '-', '-')
         else:
-            add_log(my_profile.user, f'Пациент {patient.get_full_name()} был привязан к доктору.',
+            add_log(my_profile.user, f'пациент {patient.get_full_name()}', CHANGETYPE.Был_привязан_к_доктору,
                     '-', '-')
             my_profile.patients.add(patient)
         return redirect(request.META.get('HTTP_REFERER'))
@@ -104,8 +108,11 @@ def update_profile(request, profile_id):
                 if data != user_before[field]:
                     before += f'{field}: {user_before[field]};'
                     after += f'{field}: {form.cleaned_data[field]};'
-            add_log(request.user, f'{user_type} {user_profile.get_full_name()} был изменен.',
-                        before, after)
+            add_log(request.user,
+                    f'{user_type} {user_profile.get_full_name()}',
+                    CHANGETYPE.Изменена_личная_информация,
+                    before,
+                    after)
             form.save()
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     context = {'profile': user_profile, 'form': form}
@@ -114,11 +121,14 @@ def update_profile(request, profile_id):
 
 def delete_profile(request, profile_id):
     user_profile: User = User.objects.get(pk=profile_id)
-    user_type = 'doctor' if hasattr(user_profile, 'doctor') else 'patient'
     if request.POST:
+        user_type = 'doctor' if hasattr(user_profile, 'doctor') else 'patient'
         user_profile.delete()
-        add_log(request.user, f'{user_type} {user_profile.get_full_name()} был удален.',
-                    '-', 'Пользователь был удален.')
+        add_log(request.user,
+                f'{user_type} {user_profile.get_full_name()}',
+                CHANGETYPE.Пользователь_был_удален,
+                '-',
+                '-')
         return redirect('patients')
     context = {'profile': user_profile}
     return render(request, 'users/delete_profile.html', context)
@@ -195,8 +205,11 @@ class RegisterView(CreateView):
             personal.user = user
             personal.save()
             user_type = 'doctor' if hasattr(personal, 'doctor') else 'patient'
-            add_log(request.user, f'{user_type} {personal.get_full_name()} был создан.',
-                    '-', 'Пользователь был создан.')
+            add_log(request.user,
+                    f'{user_type} {personal.get_full_name()}',
+                    CHANGETYPE.Пользователь_был_создан,
+                    '-',
+                    '-')
             if isinstance(personal, Patient) and request.user.doctor:
                 personal.doctors.add(request.user.doctor)
                 personal.save()

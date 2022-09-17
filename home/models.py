@@ -23,16 +23,16 @@ class Patient(models.Model):
     address      = models.CharField('Адресс', max_length=150, blank=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
-
+    date_death = models.DateTimeField('Дата смерти', blank=True, null=True)
+    
     class Meta:
         verbose_name = 'Пациент'
         verbose_name_plural = 'Пациенты'
         ordering = ['-date_updated']
-
+    
     def __str__(self) -> str:
         return self.user.username
-
+    
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
@@ -43,17 +43,18 @@ class SelfMonitoringRecords(models.Model):
     description = models.TextField('Описание', max_length=1000, blank=True)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    
     def __str__(self) -> str:
         return self.title
 
 
 class MedicalHistory(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
-    disease = models.CharField('Заболевание', max_length=100, blank=True)
+    disease = models.CharField('Заболевание', max_length=270)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+    date_cured = models.DateTimeField('Дата излечения', blank=True, null=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-
+    
     def __str__(self) -> str:
         return self.disease
 
@@ -64,7 +65,7 @@ class Doctor(models.Model):
     first_name   = models.CharField("Имя", max_length=50, default='usr')
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
-    cabinet      = models.CharField('Кабинет', max_length=6, default='301')
+    cabinet      = models.CharField('Кабинет', max_length=6)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
@@ -80,13 +81,31 @@ class Doctor(models.Model):
         return f"{self.last_name} {self.first_name} {self.father_name}"
 
 
+class ReceptionNotes(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, default=1)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, default=1)
+    date_meeting = models.DateTimeField('Время приема')
+    date_created = models.DateTimeField('Дата создания', auto_now_add=True)
+    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+    
+    def __str__(self) -> str:
+        return  f'Доктор {self.doctor.first_name} {self.doctor.last_name}, '\
+                f'пациент {self.patient.first_name} {self.patient.last_name}'
+    
+    class Meta:
+        verbose_name = 'Запись приема'
+        verbose_name_plural = 'Записи приема'
+        ordering = ['-date_meeting', '-date_updated']
+
+
 class ChangeControlLog(models.Model):
     who_changed = models.CharField("Кто изменил", max_length=100, default='')
     modified_model = models.CharField("Кого изменили", max_length=100, default='')
+    change_type = models.CharField("Изменение", max_length=100)
     before = models.CharField('Было', max_length=500, default='')
     after = models.CharField('Стало', max_length=500, default='')
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
-
+    
     def __str__(self) -> str:
         return self.who_changed
     

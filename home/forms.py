@@ -1,8 +1,11 @@
-from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords
+from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes
 from django import forms
 
 class DateInput(forms.DateInput):
     input_type = 'date'
+
+class DateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
 
 class PatientCreationForm(forms.ModelForm):
     class Meta:
@@ -23,10 +26,12 @@ class PatientCreationForm(forms.ModelForm):
             'snils',
             'city_village',
             'address',
-            'territory'
+            'territory',
+            'date_death'
         )
         widgets = {
             'date_of_birth': DateInput(),
+            'date_death': DateInput(),
         }
 
 
@@ -60,8 +65,12 @@ class PatientChangeForm(forms.ModelForm):
             'snils',
             'city_village',
             'address',
-            'territory'
+            'territory',
+            'date_death'
         )
+        widgets = {
+            'date_death': DateInput(),
+        }
 
 
 class DiseaseCreationForm(forms.ModelForm):
@@ -69,7 +78,11 @@ class DiseaseCreationForm(forms.ModelForm):
         model = MedicalHistory
         fields = (
             'disease',
+            'date_cured',
             )
+        widgets = {
+            'date_cured': DateInput(),
+        }
 
 
 class RecordCreationForm(forms.ModelForm):
@@ -90,3 +103,14 @@ class PatientFilterForm(forms.Form):
         )
     time_interval = forms.ChoiceField(label='Временной промежуток', choices=CHOICES)
     territory = forms.BooleanField(label='Мои территории', required=False)
+
+
+class ReceptionAddForm(forms.ModelForm):
+    class Meta:
+        model = ReceptionNotes
+        fields = (
+            'date_meeting',
+        )
+        widgets = {
+            'date_meeting': DateTimeInput()
+        }

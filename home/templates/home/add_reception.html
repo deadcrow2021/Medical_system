@@ -1,0 +1,16 @@
+{% extends 'home/base.html' %}
+
+{% block active_class %}cabinet{% endblock %}
+
+{% block content %}
+
+<div class="center-div">
+    <div>{{ form.errors }}</div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.date_meeting.label }}: {{ form.date_meeting }}
+        <input type="submit" value="Добавить">
+    </form>
+</div>
+
+{% endblock %}

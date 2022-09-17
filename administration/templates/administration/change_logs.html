@@ -6,8 +6,13 @@
     <div class="center-div-record">
         <p><strong>Кто изменил:</strong> {{ log.who_changed }}</p>
         <p><strong>Кого изменил:</strong> {{ log.modified_model }}</p>
+        <p><strong>Тип изменения:</strong> {{ log.change_type }}</p>
+        {% if log.before != '-' %}
         <p><strong>Было:</strong> <ul class="log">{{ log.before }}</ul></p>
+        {% endif %}
+        {% if log.after != '-' %}
         <p><strong>Стало:</strong> <ul class="log">{{ log.after }}</ul></p>
+        {% endif %}
         <p><strong>Дата изменения:</strong> {{ log.date_created }}</p>
     </div>
     {% endfor %}

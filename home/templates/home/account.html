@@ -3,8 +3,8 @@
 {% block active_class %}cabinet{% endblock %}
 
 {% block content %}
-<p>{{ account.first_name }}</p>
-<p>{{ account.last_name }}</p>
+<p>Имя: {{ account.first_name }}</p>
+<p>Фамилия: {{ account.last_name }}</p>
 
 {% if user.patient %}
     <p><a href="{% url 'add-record' %}">Добавить запись</a></p>
@@ -16,12 +16,18 @@
 
 
 {% if user.doctor %}
-    <p>Мои пациенты:</p>
+<div>
+    <a href="{% url 'reception' %}">Записи приемов</a>
+</div>
+<div class="center-div">
+    <h1>Мои пациенты:</h1>
     {% for patient in related_patients %}
-        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}
-        <a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
+    <div class="center-div-record">
+        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
+        <a href="{% url 'profile' patient.user.id %}">Профиль</a>
+    </div>
     {% endfor %}
-    
+</div>
 {% endif %}
 
 {% endblock %}

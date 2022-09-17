@@ -1,0 +1,16 @@
+{% extends 'home/base.html' %}
+
+{% block active_class %}cabinet{% endblock %}
+
+{% block content %}
+
+<div class="center-div">
+    {% for note in notes %}
+    <div class="center-div-record">
+        <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+        <p><strong>Дата:</strong> {{ note.date_meeting }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
