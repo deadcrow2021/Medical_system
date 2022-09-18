@@ -26,9 +26,12 @@
     </div>
 </form>
 <div>
-    <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
-    <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
     
+    <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
+    {% if not user.patient %}
+        <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
+    {% endif %}
+
     {% if user.doctor %}
     <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
     <form action="{% url 'follow-unfollow' %}" method="post">

@@ -1,4 +1,6 @@
 from copy import deepcopy
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from datetime import datetime, timedelta
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
@@ -20,10 +22,27 @@ from home.choices import CHANGETYPE
 import time
 
 
+def user_is_doctor(user):
+    return hasattr(user, 'doctor')
+
+def user_is_not_patient(user):
+    return not hasattr(user, 'patient')
+
+class UserIsNotPatient(UserPassesTestMixin):
+    def test_func(self):
+        return not hasattr(self.request.user, 'patient')
+
+class UserIsAdmin(UserPassesTestMixin):
+    def test_func(self):
+        user_obj = self.request.user
+        return not (hasattr(user_obj, 'doctor') or hasattr(user_obj, 'patient'))
+
 def generate_username(first_name, date):
     return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
+@login_required
+@user_passes_test(user_is_doctor)
 def add_disease(request, profile_id):
     user: User = User.objects.get(id=profile_id)
     form = DiseaseCreationForm()
@@ -62,6 +81,7 @@ def follow_unfollow_patient(request):
     return redirect('patients')
 
 
+@login_required
 def profile(request: HttpRequest, profile_id):
     follow = False
     user: User = User.objects.get(id=profile_id)
@@ -88,6 +108,7 @@ def profile(request: HttpRequest, profile_id):
         })
 
 
+@login_required
 def update_profile(request, profile_id):
     user: User = User.objects.get(pk=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
@@ -119,6 +140,8 @@ def update_profile(request, profile_id):
     return render(request, 'users/update_profile.html', context)
 
 
+@login_required
+@user_passes_test(user_is_not_patient)
 def delete_profile(request, profile_id):
     user_profile: User = User.objects.get(pk=profile_id)
     if request.POST:
@@ -134,7 +157,7 @@ def delete_profile(request, profile_id):
     return render(request, 'users/delete_profile.html', context)
 
 
-class PatientsView(ListView):
+class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
     paginate_by: int = 6
     model = Patient
     template_name: str = 'users/patients.html'
@@ -159,6 +182,7 @@ class PatientsView(ListView):
         return render(request, 'users/patients.html', context)
 
 
+@login_required
 def recent_patients(request: HttpRequest):
     patients = Patient.objects.all()
     form = PatientFilterForm()
@@ -192,7 +216,7 @@ def recent_patients(request: HttpRequest):
     return render(request, 'users/recent_patients.html', context)
 
 
-class RegisterView(CreateView):
+class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form2 = self.form_class(request.POST)
         if form2.is_valid():
@@ -219,7 +243,7 @@ class RegisterView(CreateView):
             return render(request, self.template_name, { 'form2': form2 })
 
 
-class RegisterDoctorView(RegisterView):
+class RegisterDoctorView(UserIsAdmin, RegisterView):
     template_name = 'users/add_doctor.html'
     success_url: Optional[str] = reverse_lazy('admin-page')
     form_class = DoctorCreationForm

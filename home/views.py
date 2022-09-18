@@ -1,14 +1,24 @@
 from typing import Any
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .forms import DoctorCreationForm, ReceptionAddForm, RecordCreationForm
-from .models import Doctor, Patient, ChangeControlLog, ReceptionNotes
+from .forms import ReceptionAddForm, RecordCreationForm
+from .models import Patient, ChangeControlLog, ReceptionNotes
 from .choices import CHANGETYPE
 
+def user_is_admin(user):
+    return not (hasattr(user, 'doctor') or hasattr(user, 'patient'))
+
+def user_is_patient(user):
+    return hasattr(user, 'patient')
+
+class UserIsDoctor(UserPassesTestMixin):
+    def test_func(self):
+        return hasattr(self.request.user, 'doctor')
 
 def add_log(who: User,
             whom: str,
@@ -32,11 +42,13 @@ def add_log(who: User,
         after=after,
     )
 
+
 @login_required
 def home_page(request):
     return render(request, 'home/home.html')
 
 
+@login_required
 def account(request):
     user: User = User.objects.get(id=request.user.id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
@@ -51,6 +63,8 @@ def account(request):
         return render(request, 'home/account.html', { 'account': user_account, 'records': records })
 
 
+@login_required
+@user_passes_test(user_is_patient)
 def add_selfmonitor_record(request):
     user: User = User.objects.get(id=request.user.id)
     form = RecordCreationForm()
@@ -70,7 +84,7 @@ def add_selfmonitor_record(request):
     return render(request, 'home/add_record.html', context)
 
 
-class ReceptionView(ListView):
+class ReceptionView(LoginRequiredMixin, UserIsDoctor, ListView):
     template_name: str = 'home/reception.html'
     model: ReceptionNotes = ReceptionNotes
     context_object_name: str = 'notes'
@@ -81,7 +95,7 @@ class ReceptionView(ListView):
         return context
 
 
-class ReceptionAddView(CreateView):
+class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
     template_name = 'home/add_reception.html'
     success_url: str = reverse_lazy('reception')
     form_class = ReceptionAddForm
