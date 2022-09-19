@@ -84,14 +84,18 @@ def add_selfmonitor_record(request):
     return render(request, 'home/add_record.html', context)
 
 
-class ReceptionView(LoginRequiredMixin, UserIsDoctor, ListView):
+class ReceptionView(LoginRequiredMixin, ListView):
     template_name: str = 'home/reception.html'
     model: ReceptionNotes = ReceptionNotes
     context_object_name: str = 'notes'
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context |= { 'notes': self.model.objects.filter(doctor=self.request.user.doctor) }
+        user_type = 'doctor' if hasattr(self.request.user, 'doctor') else 'patient'
+        if user_type == 'doctor':
+            context |= { 'notes': self.model.objects.filter(doctor=self.request.user.doctor) }
+        else:
+            context |= { 'notes': self.model.objects.filter(patient=self.request.user.patient) }
         return context
 
 
@@ -107,7 +111,6 @@ class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
             commit: ReceptionNotes = form.save(commit=False)
             commit.doctor = request.user.doctor
             commit.patient = User.objects.get(pk=profile_id).patient
-            print(f"\n\n{commit.doctor}\n\n")
             commit.save()
             return redirect(self.success_url)
         else:

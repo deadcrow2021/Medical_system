@@ -7,7 +7,11 @@
 <div class="center-div">
     {% for note in notes %}
     <div class="center-div-record">
-        <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+        {% if user.patient %}
+            <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
+        {% else %}
+            <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+        {% endif %}
         <p><strong>Дата:</strong> {{ note.date_meeting }}</p>
     </div>
     {% endfor %}
