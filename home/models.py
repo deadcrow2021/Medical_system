@@ -23,7 +23,8 @@ class Patient(models.Model):
     address      = models.CharField('Адресс', max_length=150, blank=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-    date_death = models.DateTimeField('Дата смерти', blank=True, null=True)
+    date_death   = models.DateTimeField('Дата смерти', blank=True, null=True)
+    med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
     
     class Meta:
         verbose_name = 'Пациент'
@@ -68,6 +69,7 @@ class Doctor(models.Model):
     cabinet      = models.CharField('Кабинет', max_length=6)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+    med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
     
     class Meta:
         verbose_name = 'Доктор'

@@ -8,6 +8,11 @@
         <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
         <p><a href="{% url 'logs-page' %}">Журнал изменений</a></p>
     {% endif %}
+
+    {% if not user.patient %}
+    <p><a href="{% url 'data-sampling' %}">Выборка данных</a></p>
+    {% endif %}
+
     {% if user.doctor %}
         <p><a href="{% url 'patients' %}">Пациенты</a></p>
     {% endif %}

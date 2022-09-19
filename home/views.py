@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .forms import ReceptionAddForm, RecordCreationForm
+from .forms import ReceptionAddForm, RecordCreationForm, DataSamplingForm
 from .models import Patient, ChangeControlLog, ReceptionNotes
 from .choices import CHANGETYPE
 
@@ -15,6 +15,9 @@ def user_is_admin(user):
 
 def user_is_patient(user):
     return hasattr(user, 'patient')
+
+def user_is_not_patient(user):
+    return not hasattr(user, 'patient')
 
 class UserIsDoctor(UserPassesTestMixin):
     def test_func(self):
@@ -61,6 +64,19 @@ def account(request):
         user_account = user.patient
         records = user_account.records.all()
         return render(request, 'home/account.html', { 'account': user_account, 'records': records })
+
+
+@login_required
+@user_passes_test(user_is_not_patient)
+def data_sampling_page(request):
+    form = DataSamplingForm()
+    if request.method == 'POST':
+        form = DataSamplingForm(request.POST)
+        if form.is_valid():
+            find: DataSamplingForm = form.save(commit=False)
+            print(find.__dict__)
+            find.save()
+    return render(request, 'home/data_sampling.html', {'form':form})
 
 
 @login_required

@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="center-div">
+    <h1>Выборка данных</h1>
+        <form action="" method="post">
+            {% csrf_token %}
+            {% for f in form %}
+                <p>{{ f.label }}: {{ f }}</p>
+            {% endfor %}
+            <input type="submit" value="Сформировать данные">
+        </form>
+</div>
+{% endblock %}

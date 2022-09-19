@@ -1,5 +1,7 @@
 from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
+from .choices import *
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -114,3 +116,14 @@ class ReceptionAddForm(forms.ModelForm):
         widgets = {
             'date_meeting': DateTimeInput()
         }
+
+
+class DataSamplingForm(forms.Form):    
+    mkb_10 = forms.CharField(label='Заболевание по МКБ-10', max_length=270, required=False)
+    medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
+    territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
+    gender = forms.ChoiceField(label='Пол', choices=GENDERS, required=False)
+    age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
+    date_of_birth = forms.DateField(label='Дата рождения', required=False)
+    date_of_death = forms.DateTimeField(label='Дата смерти', required=False)
+    city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
