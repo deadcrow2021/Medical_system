@@ -8,6 +8,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from .forms import ReceptionAddForm, RecordCreationForm, DataSamplingForm
 from .models import Patient, ChangeControlLog, ReceptionNotes
+from dateutil.relativedelta import relativedelta
+import datetime
 from .choices import CHANGETYPE
 
 def user_is_admin(user):
@@ -69,13 +71,38 @@ def account(request):
 @login_required
 @user_passes_test(user_is_not_patient)
 def data_sampling_page(request):
+    # patient = Patient.objects.get(id=2)
+    # print([x.disease for x in patient.history.all()])
     form = DataSamplingForm()
     if request.method == 'POST':
+        patients = Patient.objects.all()
         form = DataSamplingForm(request.POST)
         if form.is_valid():
-            find: DataSamplingForm = form.save(commit=False)
-            print(find.__dict__)
-            find.save()
+            form_data = form.cleaned_data
+            age = form_data['age']
+            print(form.cleaned_data)
+            # if form_data['mkb_10']:
+            #     patients = patients.filter()
+            if form_data['medical_organization']:
+                patients = patients.filter(med_org=form_data['medical_organization'])
+            if form_data['territory']:
+                patients = patients.filter(territory=form_data['territory'])
+            if form_data['gender']:
+                patients = patients.filter(gender=form_data['gender'])
+            if age:
+                today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).date()
+                patients = patients.filter(
+                    date_of_birth__gte = today - relativedelta(years=age+1, days=-1),
+                    date_of_birth__lte = today - relativedelta(years=age),
+                )
+            if form_data['date_of_birth']:
+                patients = patients.filter(date_of_birth=form_data['date_of_birth'])
+            if form_data['date_of_death']:
+                patients = patients.filter(date_death=form_data['date_of_death'])
+            if form_data['city_village']:
+                patients = patients.filter(city_village=form_data['city_village'])
+                
+                
     return render(request, 'home/data_sampling.html', {'form':form})
 
 

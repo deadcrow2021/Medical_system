@@ -124,6 +124,6 @@ class DataSamplingForm(forms.Form):
     territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
     gender = forms.ChoiceField(label='Пол', choices=GENDERS, required=False)
     age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
-    date_of_birth = forms.DateField(label='Дата рождения', required=False)
-    date_of_death = forms.DateTimeField(label='Дата смерти', required=False)
+    date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
+    date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
     city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
