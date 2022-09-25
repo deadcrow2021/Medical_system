@@ -1,6 +1,8 @@
 {% extends 'home/base.html' %}
 
-{% block content %} 
+{% block content %}
+    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+
     <form method="POST" action="">
         {% csrf_token %}
         <p>Вы уверены, что хотете удалить?</p>

@@ -3,6 +3,7 @@
 {% block active_class %}cabinet{% endblock %}
 
 {% block content %}
+<a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
 
 <div class="center-div">
     <div>{{ form.errors }}</div>
