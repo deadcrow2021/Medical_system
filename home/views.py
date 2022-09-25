@@ -12,6 +12,12 @@ from dateutil.relativedelta import relativedelta
 import datetime
 from .choices import CHANGETYPE
 
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+import io
+
 def user_is_admin(user):
     return not (hasattr(user, 'doctor') or hasattr(user, 'patient'))
 
@@ -47,6 +53,23 @@ def add_log(who: User,
         after=after,
     )
 
+def generate_pdf(lines: list):
+    buf = io.BytesIO()
+    canv = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    textobj = canv.beginText()
+    textobj.setTextOrigin(inch, inch)
+    textobj.setFont('Times-Roman', 14)
+
+    for i in lines:
+        textobj.textLine(i)
+        
+    canv.drawText(textobj)
+    canv.showPage()
+    canv.save()
+    buf.seek(0)
+    
+    return FileResponse(buf, as_attachment=True, filename='sampled_patients.pdf')
+
 
 @login_required
 def home_page(request):
@@ -71,18 +94,22 @@ def account(request):
 @login_required
 @user_passes_test(user_is_not_patient)
 def data_sampling_page(request):
-    # patient = Patient.objects.get(id=2)
-    # print([x.disease for x in patient.history.all()])
+    lines = []
     form = DataSamplingForm()
     if request.method == 'POST':
         patients = Patient.objects.all()
         form = DataSamplingForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
+
+            if all(not x for x in [i for i in form_data.values()]):
+                # add message: fill any field
+                render(request, 'home/data_sampling.html', {'form':form})
+
             age = form_data['age']
-            print(form.cleaned_data)
-            # if form_data['mkb_10']:
-            #     patients = patients.filter()
+
+            if form_data['mkb_10']:
+                patients = Patient.objects.select_related().filter(history__disease = form_data['mkb_10'])
             if form_data['medical_organization']:
                 patients = patients.filter(med_org=form_data['medical_organization'])
             if form_data['territory']:
@@ -101,8 +128,16 @@ def data_sampling_page(request):
                 patients = patients.filter(date_death=form_data['date_of_death'])
             if form_data['city_village']:
                 patients = patients.filter(city_village=form_data['city_village'])
-                
-                
+
+            for patient in patients:
+                # may be change fields
+                lines.append(f'First name: {patient.first_name}')
+                lines.append(f'Last name: {patient.last_name}')
+                lines.append(f'Father name: {patient.father_name}')
+                lines.append(f'Gender: {patient.gender}')
+                lines.append('===============')
+            return generate_pdf(lines)  
+
     return render(request, 'home/data_sampling.html', {'form':form})
 
 
