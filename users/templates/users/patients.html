@@ -2,41 +2,93 @@
 
 {% block content %}
 
-<p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
-<p><a href="{% url 'recent-patients' %}">Недавние</a></p>
-
-<div class="center-div">
-<h1>Пациенты</h1>
-    <form action="" method="post">
-        {% csrf_token %}
-        <div>
-            <input type="text" name="search">
-            {% if btn %}
-            <button type="submit">{{ btn }}</button>
-            {% else %}
-            <button type="submit">Искать</button>
-            {% endif %}
-        </div>
-    </form>
-    {% for patient in users %}
-    <div class="center-div-record">
-        <p>ФИО: {{ patient.get_full_name }}</p>
-        <p>Дата рождения: {{ patient.date_of_birth }}</p>
-        <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
+<div class="block__lines">
+    <div class="lines__element">
+        <p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
     </div>
-    {% endfor %}
+    <div class="lines__element">
+        <p><a href="{% url 'recent-patients' %}">Недавние</a></p>
+    </div>
 </div>
-{% if page_obj.has_other_pages %}
-<div class="pagination">
-    {% for p in paginator.page_range %}
-    <p>
-        {% if page_obj.number == p %}
-        <span>{{ p }}</span>
-        {% else %}
-        <a href="?page={{ p }}">{{ p }}</a>
+
+<div class="title__block">
+    <h2>Пациенты</h2>
+</div>
+
+    <div class="form__block">
+        <form action="" method="POST">
+            {% csrf_token %}
+
+            <div class="fields">
+                <div class="fields__input">
+
+                    <div class="fields__input__field">
+                        <input type="text" name="search">
+                    </div>
+                    {% if btn %}
+                        <div class="fields__input__field">
+                            <button type="submit">{{ btn }}</button>
+                        </div>
+                    {% else %}
+                        <div class="fields__input__field">
+                            <button type="submit">Искать</button>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+
+    <div class="user__block">
+        {% for patient in users %}
+            <div class="user__block__row">
+                <div class="user__block__element">
+                    <p>ФИО: {{ patient.get_full_name }}</p>
+                </div>
+                <div class="user__block__element">
+                    <p>Дата рождения: {{ patient.date_of_birth }}</p>
+                </div>
+                <div class="user__block__element">
+                    <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="paginate">
+        {% if page_obj.has_previous %}
+            <div class="paginate__element">
+                <a href="?page=1">First</a>
+            </div>
+            <div class="paginate__element">
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </div>
         {% endif %}
-    </p>
-    {% endfor %}
-</div>
-{% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <div class="paginate__element">
+                    <a href="?page={{ num }}">{{ num }}</a>
+                </div>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <div class="paginate__element">
+                    <a href="?page={{ num }}">{{ num }}</a>
+                </div>    
+            {% endif %}
+        {% endfor %}
+    
+        {% if page_obj.has_next %}
+            <div class="paginate__element">
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            </div>
+            <div class="paginate__element">
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </div>
+        {% endif %}
+    </div>
+
 {% endblock %}

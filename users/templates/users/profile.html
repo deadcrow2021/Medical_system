@@ -1,59 +1,119 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
-
-<form action="" method="post">
-    {% csrf_token %}
-    <div class="fields">
-        {% for p in form %}
-
-            {% if p.field.choices %}
-                <p>{{ p.label_tag }}
-                    {% for i in p.field.choices %}
-                        {% if p.value == i.0 %}
-                            {{i.1}}
-                        {% endif %}
-                    {% endfor %}
-                </p>
-            {% elif p.value %}
-                <p>{{ p.label_tag }} {{ p.value }}</p>
-            {% elif not p.value %}
-                <p>{{ p.label_tag }}  ---------</p>
-            {% endif %}
-
-        {% endfor %}
-    </div>
-</form>
-<div>
-    
-    <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
-    {% if not user.patient %}
-        <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
-    {% endif %}
-
-    {% if user.doctor %}
-    <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
-    <form action="{% url 'follow-unfollow' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-        {% if follow %}
-            <button id="unfollow-btn" type="submit">Убрать</button>
-        {% else %}
-            <button id="follow-btn" type="submit">Добавить</button>
-        {% endif %}
-    </form>
-    <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
-    {% endif %}
+<div class="back__button">
+    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
 </div>
 
-{% if user_type != 'doctor' %}
-    <p><strong>История заболеваний:</strong></p>
-    <div class="diseases">
-        {% for disease in diseases %}
-            <p>{{ disease.disease }}</p>
-        {% endfor %}
-    </div>
-{% endif %}
+<div class="block__profile">
+    <div class="block__profile__info">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="fields">
+                {% for p in form %}
 
+                    {% if p.field.choices %}
+                        <div class="fields__input">
+                            <div class="fields__input__label">
+                                {{ p.label_tag }}
+                            </div>
+                            <div class="fields__input__field noborder">
+                                {% for i in p.field.choices %}
+                                    {% if p.value == i.0 %}
+                                        {{i.1}}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% elif p.value %}
+                        <div class="fields__input">
+                            <div class="fields__input__label">
+                                {{ p.label_tag }}
+                            </div>
+                            <div class="fields__input__field noborder">
+                                {{ p.value }}
+                            </div>
+                        </div>
+                    {% elif not p.value %}
+                        <div class="fields__input">
+                            <div class="fields__input__label">
+                                {{ p.label_tag }}
+                            </div>
+                            <div class="fields__input__field noborder">
+                                ---------
+                            </div>
+                        </div>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+        </form>
+    
+        <div class="block__lines">
+            
+            
+            <div class="lines__element">
+                <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
+            </div>
+            {% if not user.patient %}
+            <div class="lines__element">
+                <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
+            </div>
+            {% endif %}
+
+            {% if user.doctor %}
+            <div class="lines__element">
+                <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if user.doctor %}
+            <form action="{% url 'follow-unfollow' %}" method="post">
+                {% csrf_token %}
+                <div class="fields">
+                    <div class="fields__input">
+                        <div class="fields__input__field hide">
+                            <input type="hidden" name="profile_pk" value="{{profile.pk}}">
+                        </div>
+                        {% if follow %}
+                            <div class="fields__input__field">
+                                <button id="unfollow-btn" type="submit">Убрать</button>
+                            </div>
+                        {% else %}
+                            <div class="fields__input__field">
+                                <button id="follow-btn" type="submit">Добавить</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+
+
+    <div class="block__profile__disease">
+        <div class="block__lines">
+            <div class="lines__element">
+            </div>
+            
+            {% if user.doctor %}
+                <div class="lines__element">
+                    <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
+                </div>
+            {% endif %}
+            
+            {% if user_type != 'doctor' %}
+                <div class="lines__element">
+                    <p><strong>История заболеваний:</strong></p>
+                </div>
+                {% for disease in diseases %}
+                    <div class="lines__element disease">
+                        <p>{{ disease.disease }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

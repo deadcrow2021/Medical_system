@@ -1,23 +1,41 @@
 {% extends 'home/base.html' %}
 
-{% block active_class %}main{% endblock %}
-
 {% block content %}
-<div class="center-div">
-    {% if user.is_superuser %}
-        <p><a href="{% url 'admin-page' %}">Администрирование</a></p>
-        <p><a href="{% url 'logs-page' %}">Журнал изменений</a></p>
-    {% endif %}
 
-    {% if not user.patient %}
-    <p><a href="{% url 'data-sampling' %}">Выборка данных</a></p>
-    {% endif %}
-
+<div class="block__lines">
     {% if user.doctor %}
-        <p><a href="{% url 'patients' %}">Пациенты</a></p>
+        <div class="lines__element">
+            <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
+        </div>
+    {% elif user.is_superuser %}
+        <div class="lines__element">
+            <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
+        </div>
     {% endif %}
-    <div>
-        <p><a href="{% url 'files-page' %}">Файлы</a></p>
+            
+    {% if user.is_superuser %}
+        <div class="lines__element">
+            <a href="{% url 'admin-page' %}">Администрирование</a>
+        </div>
+        <div class="lines__element">
+            <a href="{% url 'logs-page' %}">Журнал изменений</a>
+        </div>
+    {% endif %}
+    
+    {% if not user.patient %}
+    <div class="lines__element">
+        <a href="{% url 'data-sampling' %}">Выборка данных</a>
+    </div>
+    {% endif %}
+    
+    {% if user.doctor %}
+    <div class="lines__element">
+        <a href="{% url 'patients' %}">Пациенты</a>
+    </div>
+    {% endif %}
+    <div class="lines__element">
+        <a href="{% url 'files-page' %}">Файлы</a>
     </div>
 </div>
+
 {% endblock %}

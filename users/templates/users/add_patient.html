@@ -1,16 +1,26 @@
 {% extends 'home/base.html' %}
 
-{% block active_class %}add_patient{% endblock %}
-
 {% block content %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        {% for p in form2 %}
-        <p>{{ p.label }} {{ p }}</p>
-        {% endfor %}
-        <button type="submit">Добавить пациента</button>
-    </form>
-    <script text="text/javascript">
-        
-    </script>
+    <div class="form__block">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="fields">
+                {% for p in form2 %}
+                
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            {{ p.label }}:
+                        </div>
+                        <div class="fields__input__field">
+                            {{ p }}
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+            <div class="submit-btn">
+                <button type="submit">Добавить пациента</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}

@@ -1,16 +1,29 @@
 {% extends 'home/base.html' %}
 
-{% block active_class %}cabinet{% endblock %}
 
 {% block content %}
-<a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+<div class="back__button">
+    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+</div>
 
-<div class="center-div">
-    <div>{{ form.errors }}</div>
-    <form action="" method="post">
+<div class="form__block">
+    <form action="" method="POST">
         {% csrf_token %}
-        {{ form.date_meeting.label }}: {{ form.date_meeting }}
-        <input type="submit" value="Добавить">
+
+        <div class="fields">
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    {{ form.date_meeting.label }}:
+                </div>
+                <div class="fields__input__field">
+                    {{ form.date_meeting }}
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-btn">
+            <input type="submit" value="Добавить">
+        </div>
     </form>
 </div>
 

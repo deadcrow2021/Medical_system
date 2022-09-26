@@ -9,40 +9,58 @@
     <title>Med-system</title>
 </head>
 <body>
-    {% if user.is_authenticated %}
-        {% if user.doctor %}
-        <header style="grid-template-columns: repeat(4, 1fr);">
-        {% else %}
-        <header style="grid-template-columns: repeat(3, 1fr);">
-        {% endif %}
 
-            <a href="{% url 'home' %}"><div id="main">Главная</div></a>
-            {% if not user.is_superuser %}
-                <a href="{% url 'account' %}"><div id="cabinet">Личный кабинет</div></a>
-            {% endif %}
-            {% if user.doctor %}
-            <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
-            {% elif user.is_superuser %}
-            <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
-            {% endif %}
-            <a href="{% url 'logout' %}"><div>Выход</div></a>
-        </header>
-    {% endif %}
-    <div>{{ user.terrritory }}</div>
-    {% block content %}
-    {% endblock %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="message-block">
-                <div class="message-content">
-                    <p>{{ message }}</p>
+    {% if user.is_authenticated %}
+        <div class="navbar">
+            <div class="navbar__row">
+
+                <div class="navbar__element">
+                    <a href="{% url 'home' %}">Главная</a>
                 </div>
-                <div class="message-content">
-                    <a href="">X</a>
+
+                {% if user.patient %}
+                <div class="navbar__element">
+                    <p>{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</p>
                 </div>
+                {% elif user.doctor %}
+                <div class="navbar__element">
+                    <p>{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</p>
+                </div>
+                {% endif %}
+
+                <div class="navbar__element">
+                    {% if not user.is_superuser %}
+                        <a href="{% url 'account' %}">Личный кабинет</a>
+                    {% endif %}
+                </div>
+
+                <div class="navbar__element">
+                    <a href="{% url 'logout' %}">Выход</a>
+                </div>
+
             </div>
-        {% endfor %}
+        </div>
     {% endif %}
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-block">
+                    <div class="message-content">
+                        <p>{{ message }}</p>
+                    </div>
+                    <div class="message-content">
+                        <a href="">X</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
     <script type="text/javascript">
         document.getElementById('{% block active_class %}{% endblock %}').setAttribute("class", "active");
     </script>

@@ -1,12 +1,30 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
-    <form method="POST" action="">
-        {% csrf_token %}
-        {% for field in form %}
-            <p>{{ field.label }}{{ field }}</p>
-        {% endfor %}
-        <input type="submit" value="Обновить">
-    </form>
+<div class="back__button">
+    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+</div>
+
+    <div class="form__block">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="fields">
+                {% for f in form %}
+                
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            {{ f.label }}:
+                        </div>
+                        <div class="fields__input__field">
+                            {{ f }}
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+            <div class="submit-btn">
+                <input type="submit" value="Обновить">
+            </div>
+        </form>
+    </div>
 {% endblock %}

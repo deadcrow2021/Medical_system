@@ -1,15 +1,22 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<div class="center-div">
-{% if user.is_superuser%}
-<p><a href="{% url 'upload-files-page' %}">Загрузить Файлы</a></p>
-{% endif %}
-    {% for f in files %}
-    <div class="center-div-record">
-        <p>{{ f.title }}</p>
-        <p>{{ f.description }}</p>
+<div class="file__page__block">
+    <div class="upload-file">
+        {% if user.is_superuser %}
+            <a href="{% url 'upload-files-page' %}">Загрузить Файлы</a>
+        {% endif %}
     </div>
-    {% endfor %}
+
+    <div class="files__block">
+        {% for f in files %}
+            <div class="files__block__element">
+                <p>{{ f.title }}</p>
+            </div>
+            <div class="files__block__element">
+                <p>{{ f.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

@@ -1,20 +1,26 @@
 {% extends 'home/base.html' %}
 
-{% block active_class %}cabinet{% endblock %}
-
 {% block content %}
-<a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+<div class="back__button">
+    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+</div>
 
-<div class="center-div">
+<div class="notes__block">
     {% for note in notes %}
-    <div class="center-div-record">
-        {% if user.patient %}
-            <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
-        {% else %}
-            <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
-        {% endif %}
-        <p><strong>Дата:</strong> {{ note.date_meeting }}</p>
-    </div>
+        <div class="notes__row">
+            {% if user.patient %}
+                <div class="notes__element">
+                    <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
+                </div>
+            {% else %}
+                <div class="notes__element">
+                    <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+                </div>
+            {% endif %}
+            <div class="notes__element">
+                <p><strong>Дата:</strong> {{ note.date_meeting }}</p>
+            </div>
+        </div>
     {% endfor %}
 </div>
 

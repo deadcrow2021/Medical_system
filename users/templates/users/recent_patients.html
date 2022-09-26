@@ -2,25 +2,58 @@
 
 {% block content %}
 
-<p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
-<p><a href="{% url 'recent-patients' %}">Недавние</a></p>
-
-<div class="center-div">
-<h1>Пациенты</h1>
-    <form action="" method="post">
-        {% csrf_token %}
-        {% for f in form %}
-            <p>{{ f.label }}: {{ f }}</p>
-        {% endfor %}
-        <input type="submit" value="Найти">
-    </form>
-
-    {% for patient in patients %}
-        <div class="center-div-record">
-            <p>ФИО: {{ patient.get_full_name }}</p>
-            <p>Дата рождения: {{ patient.date_of_birth }}</p>
-            <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
-        </div>
-    {% endfor %}
+<div class="block__lines">
+    <div class="lines__element">
+        <p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
+    </div>
+    <div class="lines__element">
+        <p><a href="{% url 'recent-patients' %}">Недавние</a></p>
+    </div>
 </div>
+
+
+<div class="title__block">
+    <h2>Пациенты</h2>
+</div>
+
+    <div class="form__block">
+        <form action="" method="POST">
+            {% csrf_token %}
+
+            <div class="fields">
+                {% for p in form %}
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            {{ p.label }}:
+                        </div>
+                        <div class="fields__input__field">
+                            {{ p }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="submit-btn">
+                <input type="submit" value="Найти">
+            </div>
+        </form>
+    </div>
+
+
+    <div class="user__block">
+        {% for patient in patients %}
+            <div class="user__block__row">
+                <div class="user__block__element">
+                    <p>ФИО: {{ patient.get_full_name }}</p>
+                </div>
+                <div class="user__block__element">
+                    <p>Дата рождения: {{ patient.date_of_birth }}</p>
+                </div>
+                <div class="user__block__element">
+                    <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}

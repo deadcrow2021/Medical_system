@@ -1,14 +1,30 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<div class="center-div">
-    <h1>Выборка данных</h1>
-        <form action="" method="post">
+    <div class="title__block">
+        <h2>Выборка данных</h2>
+    </div>
+
+    <div class="form__block">
+        <form action="" method="POST">
             {% csrf_token %}
-            {% for f in form %}
-                <p>{{ f.label }}: {{ f }}</p>
-            {% endfor %}
-            <input type="submit" value="Сформировать данные">
+
+            <div class="fields">
+                {% for p in form %}
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            {{ p.label }}:
+                        </div>
+                        <div class="fields__input__field">
+                            {{ p }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="submit-btn">
+                <input type="submit" value="Сформировать данные">
+            </div>
         </form>
-</div>
+    </div>
 {% endblock %}
