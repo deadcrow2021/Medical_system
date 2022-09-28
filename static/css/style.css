@@ -100,6 +100,14 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
     border: 1px solid black;
     border-radius: 5px;
     padding: 2px;
+    display: flex;
+    margin-right: 10px;
+}
+
+.fields__input__field button {
+    background-color: transparent;
+    font-size: 1.2rem;
+    color: #15539e;
 }
 
 .fields__input__field input{
@@ -281,7 +289,7 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
 }
 
 .menu__options {
-    width: 200%;
+    width: min(200%, 230px);
     position: absolute;
     top: 10px;
     background-color: #f6f5f4;

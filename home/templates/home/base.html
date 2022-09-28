@@ -34,11 +34,30 @@
                                 <div class="menu__element">
                                     <a href="{% url 'add-patient' %}">Добавить пациента</a>
                                 </div>
-                                {% if not user.patient %}
                                 <div class="menu__element">
                                     <a href="{% url 'data-sampling' %}">Выборка данных</a>
                                 </div>
-                                {% endif %}
+                                <div class="menu__element">
+                                    <a href="{% url 'patients' %}">Пациенты</a>
+                                </div>
+                                <div class="menu__element">
+                                    <a href="{% url 'files-page' %}">Файлы</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% elif user.is_superuser %}
+                <div class="navbar__element">
+                    <div class="menu">
+                        <button class="toggle_btn">Админнистратор</button>
+                        <div class="relative">
+                            <div class="menu__options">
+                                
+                                <div class="menu__element">
+                                    <a href="{% url 'data-sampling' %}">Выборка данных</a>
+                                </div>
                                 <div class="menu__element">
                                     <a href="{% url 'patients' %}">Пациенты</a>
                                 </div>

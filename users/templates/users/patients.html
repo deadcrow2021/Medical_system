@@ -59,6 +59,7 @@
     </div>
 
 
+{% if page_obj.has_other_pages %}
     <div class="paginate">
         {% if page_obj.has_previous %}
             <div class="paginate__element">
@@ -90,5 +91,5 @@
             </div>
         {% endif %}
     </div>
-
+{% endif %}
 {% endblock %}
