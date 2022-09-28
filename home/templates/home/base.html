@@ -20,11 +20,35 @@
 
                 {% if user.patient %}
                 <div class="navbar__element">
-                    <p>{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</p>
+                    <div class="menu">
+                        <button class="toggle_btn">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</button>
+                    </div>
                 </div>
                 {% elif user.doctor %}
                 <div class="navbar__element">
-                    <p>{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</p>
+                    <div class="menu">
+                        <button class="toggle_btn">{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</button>
+                        <div class="relative">
+                            <div class="menu__options">
+                                
+                                <div class="menu__element">
+                                    <a href="{% url 'add-patient' %}">Добавить пациента</a>
+                                </div>
+                                {% if not user.patient %}
+                                <div class="menu__element">
+                                    <a href="{% url 'data-sampling' %}">Выборка данных</a>
+                                </div>
+                                {% endif %}
+                                <div class="menu__element">
+                                    <a href="{% url 'patients' %}">Пациенты</a>
+                                </div>
+                                <div class="menu__element">
+                                    <a href="{% url 'files-page' %}">Файлы</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
 
@@ -62,7 +86,17 @@
     </div>
 
     <script type="text/javascript">
-        document.getElementById('{% block active_class %}{% endblock %}').setAttribute("class", "active");
+        let menu = document.getElementsByClassName('menu__options')[0];
+        let button = document.getElementsByClassName('toggle_btn')[0];
+        
+        menu.style.display = 'none';
+        
+        button.onclick = (e) => {
+            if (menu.style.display !== 'none')
+                menu.style.display = 'none';
+            else
+                menu.style.display = 'block';
+        };
     </script>
     <script src="{% static 'js/script.js' %}" defer></script>
 

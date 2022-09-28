@@ -57,6 +57,7 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
 .navbar__element {
     font-size: 32px;
     margin: 20px 30px;
+    line-height: 60px;
 }
 
 .navbar__element a{
@@ -264,4 +265,39 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
 
 .disease {
     font-size: 18px;
+}
+
+.toggle_btn {
+    font-size: 32px;
+    color: #15539e;
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.relative {
+    position: relative;
+}
+
+.menu__options {
+    width: 200%;
+    position: absolute;
+    top: 10px;
+    background-color: #f6f5f4;
+    border: 2px solid black;
+    border-radius: 5px;
+    line-height: 1.4rem;
+}
+
+.menu__element {
+    font-size: 1.4rem;
+    margin: 7px 0 7px 7px;
+}
+
+.menu__element a {
+    width: 100%;
+    padding: 0%;
+    border: none;
+    text-decoration: underline;
 }
