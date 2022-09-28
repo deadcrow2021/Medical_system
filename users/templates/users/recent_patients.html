@@ -19,18 +19,25 @@
 <div class="form__block">
     <form action="" method="POST">
         {% csrf_token %}
-
         <div class="fields">
-            {% for p in form %}
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        {{ p.label }}:
-                    </div>
-                    <div class="fields__input__field">
-                        {{ p }}
-                    </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    {{ form.time_interval.label }}:
                 </div>
-            {% endfor %}
+                <div class="fields__input__field">
+                    {{ form.time_interval }}
+                </div>
+            </div>
+            {% if user.doctor %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    {{ form.territory.label }}:
+                </div>
+                <div class="fields__input__field">
+                    {{ form.territory }}
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <div class="submit-btn">

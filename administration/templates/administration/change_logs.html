@@ -6,29 +6,29 @@
     {% for log in logs %}
         <div class="logs__row">
             <div class="logs__element">
-                <p>Кто изменил: {{ log.who_changed }}</p>
+                <p><strong>Кто изменил:</strong> {{ log.who_changed }}</p>
             </div>
             <div class="logs__element">
-                <p>Кого изменил: {{ log.modified_model }}</p>
+                <p><strong>Кого изменил:</strong> {{ log.modified_model }}</p>
             </div>
             <div class="logs__element">
-                <p>Тип изменения: {{ log.change_type }}</p>
+                <p><strong>Тип изменения:</strong> {{ log.change_type }}</p>
             </div>
     
             {% if log.before != '-' %}
-                <div class="logs__element">
-                    <p>Было: <ul class="log">{{ log.before }}</ul></p>
-                </div>
+            <div class="logs__element">
+                <p><strong>Было:</strong> <ul class="log">{{ log.before }}</ul></p>
+            </div>
             {% endif %}
     
             {% if log.after != '-' %}
-                <div class="logs__element">
-                    <p>Стало: <ul class="log">{{ log.after }}</ul></p>
-                </div>    
+            <div class="logs__element">
+                <p><strong>Стало:</strong> <ul class="log">{{ log.after }}</ul></p>
+            </div>    
             {% endif %}
 
             <div class="logs__element">
-                <p>Дата изменения: {{ log.date_created }}</p>
+                <p><strong>Дата изменения:</strong> {{ log.date_created }}</p>
             </div>
         </div>
     {% endfor %}
@@ -47,7 +47,7 @@
     {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
             <div class="paginate__element">
-                <a href="?page={{ num }}">{{ num }}</a>
+                <span>{{ num }}</span>
             </div>
         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
             <div class="paginate__element">

@@ -48,7 +48,6 @@ button:hover {
 
 a:hover {
     color: #018876;
-
 }
 
 .navbar {
@@ -77,6 +76,10 @@ a:hover {
     border-radius: 15px;
     background-color: #D9D8D0;
     color: #000;
+}
+
+.navbar__element > a:hover {
+    color: #018876;
 }
 
 .content {
@@ -229,6 +232,8 @@ a:hover {
     display: flex;
     flex-direction: column;
     margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
 }
 
 .logs__element {
@@ -344,3 +349,4 @@ a:hover {
     text-decoration: underline;
     margin-bottom: 5px;
 }
+

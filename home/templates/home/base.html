@@ -25,9 +25,6 @@
                             <div class="menu__options">
                                 
                                 <div class="menu__element">
-                                    <a href="{% url 'data-sampling' %}">Выборка данных</a>
-                                </div>
-                                <div class="menu__element">
                                     <a href="{% url 'files-page' %}">Файлы</a>
                                 </div>
                                 
@@ -62,6 +59,12 @@
                         <div class="relative">
                             <div class="menu__options">
                                 
+                                <div class="menu__element">
+                                    <a href="{% url 'admin-page' %}">Администрирование</a>
+                                </div>
+                                <div class="menu__element">
+                                    <a href="{% url 'logs-page' %}">Журнал изменений</a>
+                                </div>
                                 <div class="menu__element">
                                     <a href="{% url 'data-sampling' %}">Выборка данных</a>
                                 </div>
