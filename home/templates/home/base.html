@@ -20,8 +20,7 @@
 
                 {% if user.patient %}
                 <div class="navbar__element">
-                    <div class="menu">
-                        <button class="toggle_btn">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</button>
+                        <a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</a>
                         <div class="relative">
                             <div class="menu__options">
                                 
@@ -34,12 +33,10 @@
                                 
                             </div>
                         </div>
-                    </div>
                 </div>
                 {% elif user.doctor %}
                 <div class="navbar__element">
-                    <div class="menu">
-                        <button class="toggle_btn">{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</button>
+                        <a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</a>
                         <div class="relative">
                             <div class="menu__options">
                                 
@@ -58,12 +55,10 @@
                                 
                             </div>
                         </div>
-                    </div>
                 </div>
                 {% elif user.is_superuser %}
                 <div class="navbar__element">
-                    <div class="menu">
-                        <button class="toggle_btn">Админнистратор</button>
+                        <a class="toggle_btn" onselectstart="return false" onmousedown="return false">Админнистратор</a>
                         <div class="relative">
                             <div class="menu__options">
                                 
@@ -79,7 +74,6 @@
                                 
                             </div>
                         </div>
-                    </div>
                 </div>
                 {% endif %}
 

@@ -52,17 +52,17 @@
         <div class="block__lines">
             
             
-            <div class="lines__element">
+            <div class="lines__element btn">
                 <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
             </div>
             {% if not user.patient %}
-            <div class="lines__element">
+            <div class="lines__element btn">
                 <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
             </div>
             {% endif %}
 
             {% if user.doctor %}
-            <div class="lines__element">
+            <div class="lines__element btn">
                 <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
             </div>
             {% endif %}
@@ -77,12 +77,12 @@
                             <input type="hidden" name="profile_pk" value="{{profile.pk}}">
                         </div>
                         {% if follow %}
-                        <div class="fields__input__field">
-                            <button id="unfollow-btn" type="submit">Убрать</button>
+                        <div class="">
+                            <button id="unfollow-btn" class="btn" type="submit">Убрать</button>
                         </div>
                         {% else %}
-                        <div class="fields__input__field">
-                            <button id="follow-btn" type="submit">Добавить</button>
+                        <div class="">
+                            <button id="follow-btn" class="btn" type="submit">Добавить</button>
                         </div>
                         {% endif %}
                     </div>

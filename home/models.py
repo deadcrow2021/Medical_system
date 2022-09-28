@@ -70,6 +70,7 @@ class Doctor(models.Model):
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    role         = models.CharField('Должность врача', max_length=30, choices=ROLES, default='----')
     
     class Meta:
         verbose_name = 'Доктор'
