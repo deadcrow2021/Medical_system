@@ -278,7 +278,7 @@ a:hover {
 
 .block__profile {
     display: grid;
-    grid-template-columns: 340px 1fr;
+    grid-template-columns: 400px 1fr;
 }
 
 .block__profile__info {
@@ -350,3 +350,26 @@ a:hover {
     margin-bottom: 5px;
 }
 
+.banner {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #999999cc;
+}
+
+.banner__content {
+    width: max(40vw, 300px);
+    height: max(40vh, 200px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #BFBEB0;
+    border: 2px solid black;
+}

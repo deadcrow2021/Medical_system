@@ -87,6 +87,17 @@ def profile(request: HttpRequest, profile_id):
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     
+    # delete patient
+    if request.POST:
+        user_profile: User = User.objects.get(pk=profile_id)
+        add_log(request.user,
+                f'{user_type} {user_profile.get_full_name()}',
+                CHANGETYPE.Пользователь_был_удален,
+                '-',
+                '-')
+        user_profile.delete()
+        return redirect('patients')
+    
     if user_type == "doctor":
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
@@ -138,23 +149,6 @@ def update_profile(request, profile_id):
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     context = {'profile': user_profile, 'form': form}
     return render(request, 'users/update_profile.html', context)
-
-
-@login_required
-@user_passes_test(user_is_not_patient)
-def delete_profile(request, profile_id):
-    user_profile: User = User.objects.get(pk=profile_id)
-    if request.POST:
-        user_type = 'doctor' if hasattr(user_profile, 'doctor') else 'patient'
-        user_profile.delete()
-        add_log(request.user,
-                f'{user_type} {user_profile.get_full_name()}',
-                CHANGETYPE.Пользователь_был_удален,
-                '-',
-                '-')
-        return redirect('patients')
-    context = {'profile': user_profile}
-    return render(request, 'users/delete_profile.html', context)
 
 
 class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):

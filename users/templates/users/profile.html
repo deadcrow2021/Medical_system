@@ -50,14 +50,12 @@
         </form>
     
         <div class="block__lines">
-            
-            
             <div class="lines__element btn">
                 <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
             </div>
             {% if not user.patient %}
-            <div class="lines__element btn">
-                <p><a href="{% url 'delete-profile' profile.user.id %}">Удалить</a></p>
+            <div class="lines__element">
+                <p><button class="btn delete_btn">Удалить</button></p>
             </div>
             {% endif %}
 
@@ -116,4 +114,28 @@
         </div>
     </div>
 </div>
+
+<div class="banner" style="display: none;">
+    <div class="lines__element banner__content">
+        <p>Вы действительно хотите удалить пациента?</p>
+        <button type="button" class="btn cancel_btn">Отменить</button>
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn">Удалить</button>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var delete_btn = document.getElementsByClassName('delete_btn')[0];
+    var cancel_btn = document.getElementsByClassName('cancel_btn')[0];
+    var banner = document.getElementsByClassName('banner')[0];
+    
+    delete_btn.onclick = e => {
+        banner.style.display = 'flex';
+    }
+    cancel_btn.onclick = e => {
+        banner.style.display = 'none';
+    }
+</script>
 {% endblock %}
