@@ -22,6 +22,18 @@
                 <div class="navbar__element">
                     <div class="menu">
                         <button class="toggle_btn">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</button>
+                        <div class="relative">
+                            <div class="menu__options">
+                                
+                                <div class="menu__element">
+                                    <a href="{% url 'data-sampling' %}">Выборка данных</a>
+                                </div>
+                                <div class="menu__element">
+                                    <a href="{% url 'files-page' %}">Файлы</a>
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% elif user.doctor %}
