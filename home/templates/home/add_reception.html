@@ -10,16 +10,18 @@
     <form action="" method="POST">
         {% csrf_token %}
 
+        {% for f in form %}
         <div class="fields">
             <div class="fields__input">
                 <div class="fields__input__label">
-                    {{ form.date_meeting.label }}:
+                    {{ f.label }}:
                 </div>
                 <div class="fields__input__field">
-                    {{ form.date_meeting }}
+                    {{ f }}
                 </div>
             </div>
         </div>
+        {% endfor %}
 
         <div class="submit-btn">
             <input type="submit" value="Добавить">

@@ -85,8 +85,10 @@ class Doctor(models.Model):
 
 
 class ReceptionNotes(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, default=1)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, default=1)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
+    cabinet = models.CharField('Кабинет', max_length=10, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     date_meeting = models.DateTimeField('Время приема')
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)

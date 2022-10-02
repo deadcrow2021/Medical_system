@@ -111,7 +111,7 @@ class ReceptionAddForm(forms.ModelForm):
     class Meta:
         model = ReceptionNotes
         fields = (
-            'date_meeting',
+            'med_organization', 'cabinet', 'date_meeting',
         )
         widgets = {
             'date_meeting': DateTimeInput()
