@@ -19,6 +19,7 @@ import django.contrib.messages as messages
 from home.views import add_log
 from .mkb10 import mkb10_deseases
 from home.choices import CHANGETYPE
+from django.utils import timezone
 import time
 
 
@@ -186,9 +187,9 @@ def recent_patients(request: HttpRequest):
         if form.is_valid():
             time_interval = form.cleaned_data['time_interval']
             offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
-            today = datetime.now()
-            today = today.strftime('%d/%b/%Y')
-            dt = datetime.strptime(today, '%d/%b/%Y') - timedelta(hours=offset)
+            today = timezone.now()
+            dt = today - timedelta(seconds=offset)
+            dt = dt.replace(hour=0, minute=0, second=0, microsecond=0).date()
             
             match time_interval:
                 case 'd':

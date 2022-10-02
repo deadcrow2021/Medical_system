@@ -104,7 +104,7 @@ def data_sampling_page(request):
 
             if all(not x for x in [i for i in form_data.values()]):
                 # add message: fill any field
-                render(request, 'home/data_sampling.html', {'form':form})
+                return render(request, 'home/data_sampling.html', {'form':form})
 
             age = form_data['age']
 
