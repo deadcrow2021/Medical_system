@@ -278,7 +278,7 @@ a:hover {
 
 .block__profile {
     display: grid;
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 400px 1fr 300px;
 }
 
 .block__profile__info {

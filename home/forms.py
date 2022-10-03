@@ -1,4 +1,4 @@
-from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes
+from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes, MedicalCard
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 from .choices import *
@@ -127,3 +127,17 @@ class DataSamplingForm(forms.Form):
     date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
     date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
     city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
+
+
+class MedicalCardForm(forms.ModelForm):
+    class Meta:
+        model = MedicalCard
+        fields = '__all__'
+        widgets = {
+            'date_of_birth': DateInput(),
+            'maternity_leave_start': DateInput(),
+            'maternity_leave_finish': DateInput(),
+            'generic_certificate_date': DateInput(),
+            'first_visit_date': DateInput(),
+            'childbirth_date': DateInput(),
+        }

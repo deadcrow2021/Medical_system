@@ -6,7 +6,7 @@ from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm, PatientFilterForm
+from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm, PatientFilterForm, MedicalCardForm
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient
 from django.utils.crypto import get_random_string
@@ -118,6 +118,11 @@ def profile(request: HttpRequest, profile_id):
             'form': form,
             'follow': follow,
         })
+
+@login_required
+def add_medical_card(request):
+    form = MedicalCardForm()
+    return render(request, 'users/add_medical_card.html', {'form': form})
 
 
 @login_required

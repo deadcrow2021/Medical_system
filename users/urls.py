@@ -13,4 +13,5 @@ urlpatterns = [
     # path('profile/delete/<profile_id>', views.delete_profile, name='delete-profile'),
     path('profile/<profile_id>/add_disease', views.add_disease, name='add-disease'),
     path('switch_follow', views.follow_unfollow_patient, name='follow-unfollow'),
+    path('add_medical_card', views.add_medical_card, name='add-medical-card'),
 ]
