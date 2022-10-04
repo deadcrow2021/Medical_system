@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
 from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm, PatientFilterForm, MedicalCardForm
 from django.urls import reverse_lazy
-from home.models import Doctor, Patient
+from home.models import Doctor, Patient, MedicalCard
 from django.utils.crypto import get_random_string
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -119,10 +119,19 @@ def profile(request: HttpRequest, profile_id):
             'follow': follow,
         })
 
+
 @login_required
-def add_medical_card(request):
-    form = MedicalCardForm()
-    return render(request, 'users/add_medical_card.html', {'form': form})
+def medical_card(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
+    return render(request, 'users/medical_card.html', {'form': form, 'current_user': current_user})
+
+
+@login_required
+def update_medical_card(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
+    return render(request, 'users/update_medical_card.html', {'form': form})
 
 
 @login_required
@@ -229,6 +238,11 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             personal.user = user
             personal.save()
             user_type = 'doctor' if hasattr(personal, 'doctor') else 'patient'
+            if user_type == 'patient':
+                med_card = MedicalCard()
+                med_card.patient = personal
+                med_card.save()
+                print(med_card, med_card.__dict__)
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
                     CHANGETYPE.Пользователь_был_создан,
