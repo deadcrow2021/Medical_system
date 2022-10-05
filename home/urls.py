@@ -3,9 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.home_page, name='home'),
-    path('login/', views.login_page, name='login'),
-    path('logout', views.logout_user, name='logout'),
-    path('add_doctor', views.RegisterDoctorView.as_view(), name='add-doctor'),
-    path('add_patient', views.RegisterPatientView.as_view(), name='add-patient'),
-    path('patients', views.patients, name='patients')
+    path('account/', views.account, name='account'),
+    path('account/add_record', views.add_selfmonitor_record, name='add-record'),
+    path('account/reception', views.ReceptionView.as_view(), name='reception'),
+    path('account/reception/add/<profile_id>', views.ReceptionAddView.as_view(), name='add-reception'),
+    path('data_sampling', views.data_sampling_page, name='data-sampling'),
 ]

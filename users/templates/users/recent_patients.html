@@ -1,0 +1,66 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+
+<div class="block__lines">
+    <div class="lines__element">
+        <p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
+    </div>
+    <div class="lines__element">
+        <p><a href="{% url 'recent-patients' %}">Недавние</a></p>
+    </div>
+</div>
+
+
+<div class="title__block">
+    <h2>Пациенты</h2>
+</div>
+
+<div class="form__block">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="fields">
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    {{ form.time_interval.label }}:
+                </div>
+                <div class="fields__input__field">
+                    {{ form.time_interval }}
+                </div>
+            </div>
+            {% if user.doctor %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    {{ form.territory.label }}:
+                </div>
+                <div class="fields__input__field">
+                    {{ form.territory }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="submit-btn">
+            <input type="submit" value="Найти">
+        </div>
+    </form>
+</div>
+
+
+<div class="user__block">
+    {% for patient in patients %}
+        <div class="user__block__row">
+            <div class="user__block__element">
+                <p>ФИО: {{ patient.get_full_name }}</p>
+            </div>
+            <div class="user__block__element">
+                <p>Дата рождения: {{ patient.date_of_birth }}</p>
+            </div>
+            <div class="user__block__element">
+                <p><a href="{% url 'profile' patient.user.id %}">Профиль</a></p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

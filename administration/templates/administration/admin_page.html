@@ -1,0 +1,84 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="admin__page__block">
+    <div class="form__block">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="fields fileds-in-row">
+                <div class="fields__input">
+                    <div class="fields__input__field">
+                        <input type="text" name="search">
+                    </div>
+                </div>
+                {% if btn %}
+                <div class="submit-btn">
+                    <button type="submit">{{ btn }}</button>
+                </div>
+                {% else %}
+                <div class="submit-btn">
+                    <button type="submit">Искать</button>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    
+    <div class="user__block">
+        {% for user_i in page_obj.object_list %}
+            <div class="user__block__row">
+                <div class="user__block__element">
+                    <p>ФИО: {{ user_i.get_full_name }}</p>
+                </div>
+                {% if user_i.user.doctor %}
+                    <div class="user__block__element">
+                        <p>Доктор</p>
+                    </div>
+                    <div class="user__block__element">
+                        <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
+                    </div>
+                {% else %}
+                    <div class="user__block__element">
+                        <p>Пациент</p>
+                    </div>
+                    <div class="user__block__element">
+                        <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    
+        <div class="paginate">
+            {% if page_obj.has_previous %}
+            <div class="paginate__element">
+                <a href="?page=1">First</a>
+            </div>
+            <div class="paginate__element">
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </div>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <div class="paginate__element">
+                    <span>{{ num }}</span>
+                </div>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <div class="paginate__element">
+                    <a href="?page={{ num }}">{{ num }}</a>
+                </div>
+                {% endif %}
+            {% endfor %}
+        
+            {% if page_obj.has_next %}
+            <div class="paginate__element">
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            </div>
+            <div class="paginate__element">
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </div>
+            {% endif %}
+        </div>
+</div>
+{% endblock %}

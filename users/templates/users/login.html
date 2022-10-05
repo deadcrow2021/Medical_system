@@ -1,0 +1,36 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+    <div class="title__block">
+        <h2>Login</h2>
+    </div>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        <div class="fields">
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        Имя пользователя:
+                    </div>
+                    <div class="fields__input__field">
+                        <input type="text" name="username">
+                    </div>
+                </div>
+
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        Пароль:
+                    </div>
+                    <div class="fields__input__field">
+                        <input type="password" name="password">
+                    </div>
+                </div>
+        </div>
+
+        <div class="submit-btn">
+            <input type="submit" value="Войти">
+        </div>
+
+    </form>
+{% endblock %}

@@ -1,37 +1,10 @@
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
-from .models import CustomUser
+from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes, MedicalCard
 
-@admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser
-    
-    add_fieldsets = (
-        *UserAdmin.add_fieldsets,
-        (
-            'Custom fields',
-            {
-                'fields': (
-                    'fio',
-                    'gender',
-                    'date_of_birth',
-                    'groups',
-                )
-            }
-        )
-    )
-    
-    fieldsets = (
-        *UserAdmin.fieldsets,
-        (
-            'Custom fields',
-            {
-                'fields': (
-                    'fio',
-                    'gender',
-                    'date_of_birth',
-                )
-            }
-        )
-    )
-    
+admin.site.register(Patient)
+admin.site.register(Doctor)
+admin.site.register(MedicalHistory)
+admin.site.register(SelfMonitoringRecords)
+admin.site.register(ReceptionNotes)
+admin.site.register(MedicalCard)

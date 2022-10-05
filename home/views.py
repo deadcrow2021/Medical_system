@@ -1,69 +1,195 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import Group
-from .models import CustomUser
+from typing import Any
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView
-from .forms import CustomUserCreationForm
+from django.contrib.auth.models import User
 from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView
+from .forms import ReceptionAddForm, RecordCreationForm, DataSamplingForm
+from .models import Patient, ChangeControlLog, ReceptionNotes
+from dateutil.relativedelta import relativedelta
+import datetime
+from .choices import CHANGETYPE
+
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+import io
+
+def user_is_admin(user):
+    return not (hasattr(user, 'doctor') or hasattr(user, 'patient'))
+
+def user_is_patient(user):
+    return hasattr(user, 'patient')
+
+def user_is_not_patient(user):
+    return not hasattr(user, 'patient')
+
+class UserIsDoctor(UserPassesTestMixin):
+    def test_func(self):
+        return hasattr(self.request.user, 'doctor')
+
+def add_log(who: User,
+            whom: str,
+            change_type: str,
+            before: str,
+            after: str) -> ChangeControlLog:
+    user_type = 'доктор' if hasattr(who, 'doctor') else 'пациент' if hasattr(who, 'patient') else 'администратор'
+    
+    if user_type == 'доктор':
+        fio = who.doctor.get_full_name()
+    elif user_type == 'пациент':
+        fio = who.patient.get_full_name()
+    else:
+        fio = f'{who.first_name} {who.last_name}'
+    who_changed = f'{user_type} {fio}'
+    return ChangeControlLog.objects.create(
+        who_changed=who_changed,
+        modified_model = whom,
+        change_type=change_type,
+        before=before,
+        after=after,
+    )
+
+def generate_pdf(lines: list):
+    buf = io.BytesIO()
+    canv = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    textobj = canv.beginText()
+    textobj.setTextOrigin(inch, inch)
+    textobj.setFont('Times-Roman', 14)
+
+    for i in lines:
+        textobj.textLine(i)
+        
+    canv.drawText(textobj)
+    canv.showPage()
+    canv.save()
+    buf.seek(0)
+    
+    return FileResponse(buf, as_attachment=True, filename='sampled_patients.pdf')
+
 
 @login_required
 def home_page(request):
-    role = request.user.groups.all()[0].name
-    return render(request, 'home/home.html', {"role": role })
-
-def patients(request):
-    patients = CustomUser.objects.filter(groups__name="Patient")
-    return render(request, 'home/patients.html', {"patients": patients})
-
-class RegisterDoctorView(CreateView):
-    form_class = CustomUserCreationForm
-    success_url = reverse_lazy('home')
-    template_name = 'home/add_doctor.html'
-    
-    def post(self, request, *args, **kwargs):
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.save()
-            user_group = Group.objects.get(name=form.cleaned_data['groups'])
-            user.groups.add(user_group)
-            return redirect('home')
-        else:
-            return render(request, self.template_name, {'form':form})
+    return render(request, 'home/home.html')
 
 
-class RegisterPatientView(CreateView):
-    form_class = CustomUserCreationForm
-    success_url = reverse_lazy('home')
-    template_name = 'home/add_patient.html'
-    
-    def post(self, request, *args, **kwargs):
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            request.user.set_unusable_password()
-            user = form.save(commit=False)
-            user.save()
-            user_group = Group.objects.get(name='Patient')
-            user.groups.add(user_group)
-            return redirect('home')
-        else:
-            return render(request, self.template_name, {'form':form})
-            
+@login_required
+def account(request):
+    user: User = User.objects.get(id=request.user.id)
+    user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
 
-def login_page(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            return redirect('login')
+    if user_type == 'doctor':
+        user_account = user.doctor
+        related_patients = user_account.patients.all()
+        return render(request, 'home/account.html', { 'account': user_account, 'related_patients': related_patients })
     else:
-        return render(request, 'home/login.html')
+        user_account = user.patient
+        records = user_account.records.all()
+        return render(request, 'home/account.html', { 'account': user_account, 'records': records })
+
+
+@login_required
+@user_passes_test(user_is_not_patient)
+def data_sampling_page(request):
+    lines = []
+    form = DataSamplingForm()
+    if request.method == 'POST':
+        patients = Patient.objects.all()
+        form = DataSamplingForm(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+
+            if all(not x for x in [i for i in form_data.values()]):
+                # add message: fill any field
+                return render(request, 'home/data_sampling.html', {'form':form})
+
+            age = form_data['age']
+
+            if form_data['mkb_10']:
+                patients = Patient.objects.select_related().filter(history__disease = form_data['mkb_10'])
+            if form_data['medical_organization']:
+                patients = patients.filter(med_org=form_data['medical_organization'])
+            if form_data['territory']:
+                patients = patients.filter(territory=form_data['territory'])
+            if form_data['gender']:
+                patients = patients.filter(gender=form_data['gender'])
+            if age:
+                today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).date()
+                patients = patients.filter(
+                    date_of_birth__gte = today - relativedelta(years=age+1, days=-1),
+                    date_of_birth__lte = today - relativedelta(years=age),
+                )
+            if form_data['date_of_birth']:
+                patients = patients.filter(date_of_birth=form_data['date_of_birth'])
+            if form_data['date_of_death']:
+                patients = patients.filter(date_death=form_data['date_of_death'])
+            if form_data['city_village']:
+                patients = patients.filter(city_village=form_data['city_village'])
+
+            for patient in patients:
+                # may be change fields
+                lines.append(f'First name: {patient.first_name}')
+                lines.append(f'Last name: {patient.last_name}')
+                lines.append(f'Father name: {patient.father_name}')
+                lines.append(f'Gender: {patient.gender}')
+                lines.append('===============')
+            return generate_pdf(lines)  
+
+    return render(request, 'home/data_sampling.html', {'form':form})
+
+
+@login_required
+@user_passes_test(user_is_patient)
+def add_selfmonitor_record(request):
+    user: User = User.objects.get(id=request.user.id)
+    form = RecordCreationForm()
+    if request.method == 'POST':
+        form = RecordCreationForm(request.POST)
+        if form.is_valid():
+            record = form.save(commit=False)
+            record.patient = Patient.objects.get(user=user)
+            add_log(user,
+                    user,
+                    CHANGETYPE.Добавлена_запись_в_журнал_самонаблюдения,
+                    '-',
+                    f'Название: {form.cleaned_data["title"]}, Описание: {form.cleaned_data["description"]}')
+            record.save()
+            return redirect('account')
+    context = {'form': form}
+    return render(request, 'home/add_record.html', context)
+
+
+class ReceptionView(LoginRequiredMixin, ListView):
+    template_name: str = 'home/reception.html'
+    model: ReceptionNotes = ReceptionNotes
+    context_object_name: str = 'notes'
     
-def logout_user(request):
-    logout(request)
-    return redirect('login')
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        user_type = 'doctor' if hasattr(self.request.user, 'doctor') else 'patient'
+        if user_type == 'doctor':
+            context |= { 'notes': self.model.objects.filter(doctor=self.request.user.doctor) }
+        else:
+            context |= { 'notes': self.model.objects.filter(patient=self.request.user.patient) }
+        return context
+
+
+class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
+    template_name = 'home/add_reception.html'
+    success_url: str = reverse_lazy('reception')
+    form_class = ReceptionAddForm
+    context_object_name: str = 'form'
+    
+    def post(self, request: HttpRequest, profile_id: int, *args: Any, **kwargs: Any) -> HttpResponse:
+        form: ReceptionAddForm = self.form_class(request.POST)
+        if form.is_valid():
+            commit: ReceptionNotes = form.save(commit=False)
+            commit.doctor = request.user.doctor
+            commit.patient = User.objects.get(pk=profile_id).patient
+            commit.save()
+            return redirect(self.success_url)
+        else:
+            return render(request, self.template_name, { 'form': form })

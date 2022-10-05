@@ -1,0 +1,84 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+
+<div class="logs">
+    {% for log in logs %}
+        <div class="logs__row">
+            <div class="logs__element">
+                <p><strong>Кто изменил:</strong> {{ log.who_changed }}</p>
+            </div>
+            <div class="logs__element">
+                <p><strong>Кого изменил:</strong> {{ log.modified_model }}</p>
+            </div>
+            <div class="logs__element">
+                <p><strong>Тип изменения:</strong> {{ log.change_type }}</p>
+            </div>
+    
+            {% if log.before != '-' %}
+            <div class="logs__element">
+                <p><strong>Было:</strong> <ul class="log">{{ log.before }}</ul></p>
+            </div>
+            {% endif %}
+    
+            {% if log.after != '-' %}
+            <div class="logs__element">
+                <p><strong>Стало:</strong> <ul class="log">{{ log.after }}</ul></p>
+            </div>    
+            {% endif %}
+
+            <div class="logs__element">
+                <p><strong>Дата изменения:</strong> {{ log.date_created }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="paginate">
+    {% if page_obj.has_previous %}
+        <div class="paginate__element">
+            <a href="?page=1">First</a>
+        </div>
+        <div class="paginate__element">
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </div>
+    {% endif %}
+    
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <div class="paginate__element">
+                <span>{{ num }}</span>
+            </div>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <div class="paginate__element">
+                <a href="?page={{ num }}">{{ num }}</a>
+            </div>    
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <div class="paginate__element">
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        </div>
+        <div class="paginate__element">
+            <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        </div>
+    {% endif %}
+</div>
+
+
+<script type="text/javascript">
+    (function () {
+        ul = document.getElementsByClassName('log')
+        for (let li of ul) {
+            li_list = li.innerHTML.split(';').slice(0, -1)
+            HTML_string = ''
+            for (let li_data of li_list) {
+                HTML_string += '<li>' + li_data + '</li>'
+            }
+            li.innerHTML = HTML_string
+        }
+    }())
+</script>
+
+{% endblock %}

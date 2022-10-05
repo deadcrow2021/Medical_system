@@ -1,0 +1,17 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+    <div class="back__button">
+        <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+    </div>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="lines__element">
+            <p>Вы уверены, что хотете удалить?</p>
+        </div>
+        <div class="submit-btn">
+            <input class="btn" type="submit" value="Удалить">
+        </div>
+    </form>
+{% endblock %}
