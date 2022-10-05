@@ -16,6 +16,7 @@ class Patient(models.Model):
     disability   = models.CharField('Инвалидность', max_length=1, choices=DISABILITY, blank=True)
     blood        = models.CharField('Группа крови', max_length=2, choices=BLOOD, blank=True)
     telephone    = PhoneNumberField('Телефонный номер', null=False, blank=True)
+    email        = models.EmailField(max_length=60, blank=True, null=True)
     work_address = models.CharField('Адресс работы', max_length=150, blank=True)
     oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True)
     insurance    = models.CharField('Сраховая компания', max_length=1, choices=INSURANCE, blank=True)

@@ -16,25 +16,14 @@ class PatientCreationForm(forms.ModelForm):
             'first_name',
             'last_name',
             'father_name',
-            'date_of_birth',
             'gender',
-            'social_status',
-            'disability',
-            'blood',
             'telephone',
-            'work_address',
-            'oms_policy',
-            'insurance',
-            'snils',
-            'city_village',
-            'address',
-            'territory',
-            'date_death'
+            'email',
         )
-        widgets = {
-            'date_of_birth': DateInput(),
-            'date_death': DateInput(),
-        }
+        # widgets = {
+        #     'date_of_birth': DateInput(),
+        #     'date_death': DateInput(),
+        # }
 
 
 class DoctorCreationForm(forms.ModelForm):
