@@ -34,7 +34,7 @@ class DoctorCreationForm(forms.ModelForm):
             'last_name',
             'father_name',
             'cabinet',
-            )
+        )
 
 
 class PatientChangeForm(forms.ModelForm):
@@ -44,24 +44,10 @@ class PatientChangeForm(forms.ModelForm):
             'first_name',
             'last_name',
             'father_name',
-            'date_of_birth',
             'gender',
-            'social_status',
-            'disability',
-            'blood',
             'telephone',
-            'work_address',
-            'oms_policy',
-            'insurance',
-            'snils',
-            'city_village',
-            'address',
-            'territory',
-            'date_death'
+            'email',
         )
-        widgets = {
-            'date_death': DateInput(),
-        }
 
 
 class DiseaseCreationForm(forms.ModelForm):
@@ -70,7 +56,7 @@ class DiseaseCreationForm(forms.ModelForm):
         fields = (
             'disease',
             'date_cured',
-            )
+        )
         widgets = {
             'date_cured': DateInput(),
         }
@@ -82,15 +68,15 @@ class RecordCreationForm(forms.ModelForm):
         fields = (
             'title',
             'description',
-            )
+        )
 
 
 class PatientFilterForm(forms.Form):
     CHOICES = (
-        ('d', 'Текущий день'),
-        ('w', 'Текущая неделя'),
-        ('m', 'Текущий месяц'),
-        ('30', '30 дней'),
+            ('d', 'Текущий день'),
+            ('w', 'Текущая неделя'),
+            ('m', 'Текущий месяц'),
+            ('30', '30 дней'),
         )
     time_interval = forms.ChoiceField(label='Временной промежуток', choices=CHOICES)
     territory = forms.BooleanField(label='Мои территории', required=False)
@@ -121,18 +107,18 @@ class DataSamplingForm(forms.Form):
 class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
-        fields = 'date_of_birth', 'age', 'residence_address', 'registration_address', \
+        fields = 'date_of_birth', 'residence_address', 'registration_address', \
         'mobile_phone', 'home_phone', 'work_phone', 'email', 'marital_status', \
         'trusted_person_fio', 'trusted_person_phone', 'oms_policy', 'snils', 'maternity_leave_start', \
         'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', \
         'generic_certificate_date', 'allergy', 'allergy_description', 'pregnancy_count', \
         'gestation_period_weeks', 'first_visit_date', 'childbirth_date', 'childbirth_gestation_period', \
         'med_org', 'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases', 'doctor_confirmation'
-    widgets = {
+        widgets = {
             'date_of_birth': DateInput(),
             'maternity_leave_start': DateInput(),
             'maternity_leave_finish': DateInput(),
             'generic_certificate_date': DateInput(),
             'first_visit_date': DateInput(),
-            'childbirth_date': DateInput(),
+            'childbirth_date': DateInput()
         }

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    var phone = document.getElementById("id_telephone");
+    var phones = document.querySelectorAll("input[type=tel]");
     
     let get_numbers_from_input = (input) => {
         return input.value.replace(/\D/g, "");
@@ -33,5 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         input.value = beautifulNumber;
     }
 
-    phone.addEventListener("input", correct_phone_number);
+    for (let phone of phones) {
+        phone.addEventListener("input", correct_phone_number);
+    }
 });

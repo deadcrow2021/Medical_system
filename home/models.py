@@ -10,23 +10,10 @@ class Patient(models.Model):
     first_name   = models.CharField("Имя", max_length=50)
     last_name    = models.CharField("Фамилия", max_length=50)
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
-    date_of_birth= models.DateField('Дата рождения', default='2000-01-12')
     gender       = models.CharField('Пол', max_length=1, choices=GENDERS, default='f')
-    social_status= models.CharField('Соц. Статус', max_length=1, choices=SOCIAL_STATUS, blank=True)
-    disability   = models.CharField('Инвалидность', max_length=1, choices=DISABILITY, blank=True)
-    blood        = models.CharField('Группа крови', max_length=2, choices=BLOOD, blank=True)
     telephone    = PhoneNumberField('Телефонный номер', null=False, blank=True)
     email        = models.EmailField(max_length=60, blank=True, null=True)
-    work_address = models.CharField('Адресс работы', max_length=150, blank=True)
-    oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True)
-    insurance    = models.CharField('Сраховая компания', max_length=1, choices=INSURANCE, blank=True)
-    snils        = models.CharField('СНИЛС', max_length=11, blank=True)
-    city_village = models.CharField('Житель города/села', max_length=1, choices=CITYVILLAGE)
-    address      = models.CharField('Адресс', max_length=150, blank=True)
-    territory    = models.CharField('Территория', max_length=25, choices=TERRITORY)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-    date_death   = models.DateTimeField('Дата смерти', blank=True, null=True)
-    med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
     
     class Meta:
         verbose_name = 'Пациент'
@@ -46,16 +33,16 @@ class MedicalCard(models.Model):
     # last_name    = models.CharField("Фамилия", max_length=100)
     # father_name  = models.CharField("Отчество", max_length=100, blank=True)
     date_of_birth= models.DateField('Дата рождения', default='2000-01-12', blank=True, null=True)
-    age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
+    # age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
     residence_address = models.CharField('Адрес проживания', max_length=100, blank=True, null=True)
     registration_address = models.CharField('Адрес регистрции', max_length=100, blank=True, null=True)
-    mobile_phone    = PhoneNumberField('Мобильный телефон', max_length=10, blank=True, null=True)
-    home_phone    = PhoneNumberField('Домашний телефон', max_length=10, blank=True, null=True)
-    work_phone    = PhoneNumberField('Рабочий телефон', max_length=10, blank=True, null=True)
+    mobile_phone    = PhoneNumberField('Мобильный телефон', max_length=20, blank=True, null=True)
+    home_phone    = PhoneNumberField('Домашний телефон', max_length=20, blank=True, null=True)
+    work_phone    = PhoneNumberField('Рабочий телефон', max_length=20, blank=True, null=True)
     email = models.EmailField('Адрес электронной почты', max_length=100, blank=True, null=True)
     marital_status = models.CharField('Брачное состояние', default='', choices=MARITAL_STATUS, max_length=1, blank=True, null=True)
     trusted_person_fio = models.CharField("ФИО доверенного лица", max_length=300, blank=True, null=True)
-    trusted_person_phone = PhoneNumberField('Мобильный телефон', max_length=10, blank=True, null=True)
+    trusted_person_phone = PhoneNumberField('Мобильный телефон', max_length=20, blank=True, null=True)
     oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True, null=True)
     snils        = models.CharField('СНИЛС', max_length=11, blank=True, null=True)
     maternity_leave_start = models.DateField('Начало декретного отпуска', blank=True, null=True)
@@ -79,6 +66,13 @@ class MedicalCard(models.Model):
     somatic_diseases = models.CharField('Осложнения данной беременности', max_length=200, blank=True, null=True)
     gynecological_diseases = models.CharField('Осложнения данной беременности', max_length=200, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+    
+    class Meta:
+        verbose_name = 'Медицинская карта'
+        verbose_name_plural = 'Медицинские карты'
+    
+    def __str__(self) -> str:
+        return self.patient.get_full_name()
 
 
 class SelfMonitoringRecords(models.Model):
