@@ -108,10 +108,12 @@ class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
         fields = 'date_of_birth', 'residence_address', 'registration_address', \
-        'mobile_phone', 'home_phone', 'work_phone', 'email', 'marital_status', \
+        'home_phone', 'work_phone', 'marital_status', \
+        'mother_blood_group', 'mother_blood_rh', 'mother_date_of_determination', \
+        'father_blood_group', 'father_blood_rh', 'father_date_of_determination', \
         'trusted_person_fio', 'trusted_person_phone', 'oms_policy', 'snils', 'maternity_leave_start', \
         'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', \
-        'generic_certificate_date', 'allergy', 'allergy_description', 'pregnancy_count', \
+        'generic_certificate_date', 'allergy', 'allergy_description', 'pregnancy_count', 'births_by_term', \
         'gestation_period_weeks', 'first_visit_date', 'childbirth_date', 'childbirth_gestation_period', \
         'med_org', 'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases', 'doctor_confirmation'
         widgets = {
