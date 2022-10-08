@@ -68,10 +68,11 @@ class MedicalCard(models.Model):
     childbirth_date = models.DateField('Дата родов', blank=True, null=True)
     childbirth_gestation_period = models.PositiveSmallIntegerField('Срок беременности родов (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
     med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True, null=True)
+    
     diagnosis = models.CharField('Основной диагноз', max_length=200, blank=True, null=True)
     complications = models.CharField('Осложнения данной беременности', max_length=200, blank=True, null=True)
-    somatic_diseases = models.CharField('Осложнения данной беременности', max_length=200, blank=True, null=True)
-    gynecological_diseases = models.CharField('Осложнения данной беременности', max_length=200, blank=True, null=True)
+    somatic_diseases = models.CharField('Соматические заболевания', max_length=200, blank=True, null=True)
+    gynecological_diseases = models.CharField('Гинекологические  заболевания', max_length=200, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
     class Meta:
