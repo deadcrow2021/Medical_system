@@ -1,4 +1,4 @@
-from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes, MedicalCard
+from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes, MedicalCard, PregnancyOutcome
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 from .choices import *
@@ -124,4 +124,16 @@ class MedicalCardForm(forms.ModelForm):
             'generic_certificate_date': DateInput(),
             'first_visit_date': DateInput(),
             'childbirth_date': DateInput()
+        }
+
+
+class PregnancyOutcomeForm(forms.ModelForm):
+    class Meta:
+        model = PregnancyOutcome
+        fields = 'pregnancy_count', 'childbirth_date', \
+                'pregnancy_outcome', 'if_childbirth', 'if_abortion', 'death_time', \
+                'disease', 'gestation_period_weeks', 'number_of_fetuses'
+        widgets = {
+            'childbirth_date': DateTimeInput(),
+            'death_time': DateTimeInput()
         }

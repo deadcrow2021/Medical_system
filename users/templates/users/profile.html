@@ -121,6 +121,11 @@
                 <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта</a></p>
             </div>
         </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности</a></p>
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>

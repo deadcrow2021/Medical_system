@@ -1,14 +1,17 @@
 from copy import deepcopy
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import DoctorCreationForm, PatientChangeForm, PatientCreationForm, DiseaseCreationForm, PatientFilterForm, MedicalCardForm
+from home.forms import (DoctorCreationForm, PatientChangeForm,
+                        PatientCreationForm, DiseaseCreationForm,
+                        PatientFilterForm, MedicalCardForm,
+                        PregnancyOutcomeForm)
 from django.urls import reverse_lazy
-from home.models import Doctor, Patient, MedicalCard
+from home.models import Doctor, Patient, MedicalCard, PregnancyOutcome
 from django.utils.crypto import get_random_string
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -121,6 +124,7 @@ def profile(request: HttpRequest, profile_id):
 
 
 @login_required
+@user_passes_test(user_is_doctor)
 def medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
@@ -128,10 +132,38 @@ def medical_card(request, profile_id):
 
 
 @login_required
+@user_passes_test(user_is_doctor)
 def update_medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
     return render(request, 'users/update_medical_card.html', {'form': form})
+
+
+
+
+@login_required
+@user_passes_test(user_is_doctor)
+def pregnancy_outcome(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    # form = PregnancyOutcomeForm(request.POST or None, instance=current_user.patient.pregnancy_outcome)
+    outcomes = current_user.patient.pregnancy_outcome.all()
+    return render(request, 'users/pregnancy_outcome.html', {'outcomes': outcomes, 'current_user': current_user})
+
+
+@login_required
+@user_passes_test(user_is_doctor)
+def add_pregnancy_outcome(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    form = PregnancyOutcomeForm()
+    if request.method == 'POST':
+        form = PregnancyOutcomeForm(request.POST)
+        outcome = form.save(commit=False)
+        patient = Patient.objects.get(user=current_user)
+        outcome.patient = patient
+        outcome.save()
+        
+        return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
+    return render(request, 'users/add_pregnancy_outcome.html', {'form': form})
 
 
 @login_required
@@ -242,7 +274,6 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 med_card = MedicalCard()
                 med_card.patient = personal
                 med_card.save()
-                print(med_card, med_card.__dict__)
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
                     CHANGETYPE.Пользователь_был_создан,

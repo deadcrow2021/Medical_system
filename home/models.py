@@ -102,6 +102,28 @@ class ComplicationRisk(models.Model):
         verbose_name_plural = 'Риски осложнений'
 
 
+class PregnancyOutcome(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_outcome')
+    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', blank=True, validators=[MaxValueValidator(99)], null=True)
+    childbirth_date = models.DateTimeField('Дата исхода беременности', blank=True, null=True)
+    pregnancy_outcome = models.CharField('Исход беременности', max_length=10, choices=PREGNANCY_OUTCOME, blank=True, null=True)
+    
+    if_childbirth = models.CharField('Роды', max_length=10, choices=CHILDBIRTH, blank=True, null=True)
+    
+    if_abortion = models.CharField('Аборт', max_length=10, choices=ABORTION, blank=True, null=True)
+    
+    # if death
+    death_time = models.DateTimeField('Смерть', blank=True, null=True)
+    disease = models.CharField('Причина смерти (шифр по МКБ-10)', max_length=10, blank=True, null=True)
+    
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    number_of_fetuses = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(10)], blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Исход беременности'
+        verbose_name_plural = 'Исходы беременностей'
+
+
 class SelfMonitoringRecords(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')
     title = models.CharField('Краткое описание', max_length=150)

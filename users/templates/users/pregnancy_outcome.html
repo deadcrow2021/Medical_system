@@ -1,0 +1,17 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+<div class="block__lines">
+    <div class="lines__element btn">
+        <p><a href="{% url 'add-pregnancy-outcome' current_user.id %}">Добавить</a></p>
+    </div>
+</div>
+
+{% for outcome in outcomes%}
+    {{outcome}}
+{% endfor %}
+
+{% endblock %}
