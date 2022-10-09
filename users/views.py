@@ -139,8 +139,6 @@ def update_medical_card(request, profile_id):
     return render(request, 'users/update_medical_card.html', {'form': form})
 
 
-
-
 @login_required
 @user_passes_test(user_is_doctor)
 def pregnancy_outcome(request, profile_id):
@@ -164,6 +162,13 @@ def add_pregnancy_outcome(request, profile_id):
         
         return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
     return render(request, 'users/add_pregnancy_outcome.html', {'form': form})
+
+
+@login_required
+@user_passes_test(user_is_doctor)
+def pregnancy_observation_page(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    return render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user})
 
 
 @login_required

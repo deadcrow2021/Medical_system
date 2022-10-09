@@ -16,4 +16,5 @@ urlpatterns = [
     path('update_medical_card/<profile_id>', views.update_medical_card, name='update-medical-card'),
     path('pregnancy_outcome/<profile_id>', views.pregnancy_outcome, name='pregnancy-outcome'),
     path('add_pregnancy_outcome/<profile_id>', views.add_pregnancy_outcome, name='add-pregnancy-outcome'),
+    path('pregnancy_observation/<profile_id>', views.pregnancy_observation_page, name='pregnancy-observation'),
 ]

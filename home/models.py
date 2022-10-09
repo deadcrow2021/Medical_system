@@ -27,6 +27,10 @@ class Patient(models.Model):
         return f"{self.first_name} {self.last_name} {self.father_name}"
 
 
+
+
+##### Medical Forms #####
+
 class MedicalCard(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='card')
     # first_name   = models.CharField("Имя", max_length=100)
@@ -122,6 +126,84 @@ class PregnancyOutcome(models.Model):
     class Meta:
         verbose_name = 'Исход беременности'
         verbose_name_plural = 'Исходы беременностей'
+
+
+class Pelviometry(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pelviometry')
+    date = models.DateField('Дата', blank=True, null=True)
+    dsp = models.PositiveSmallIntegerField('D.sp. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    dcr = models.PositiveSmallIntegerField('D.cr. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    dtroch = models.PositiveSmallIntegerField('D.troch. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    dext = models.PositiveSmallIntegerField('D.ext. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    cvera = models.PositiveSmallIntegerField('C.vera. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    cdiag = models.PositiveSmallIntegerField('C.diag. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    solovyov_index = models.PositiveSmallIntegerField('Индекс соловьева (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    michaelis_rhombus_x = models.PositiveSmallIntegerField('Ромб Михаэлиса X (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    michaelis_rhombus_y = models.PositiveSmallIntegerField('Ромб Михаэлиса Y (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    pelvis_dimensions = models.PositiveSmallIntegerField('Дополнительные размеры таза (по показаниям)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+    
+    class Meta:
+        verbose_name = 'Пельвиометрия'
+
+
+class PregnantWomanMonitoring(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnant_woman_monitoring')
+    date = models.DateField('Дата', blank=True, null=True)
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    complaints = models.CharField('Жалобы', max_length=1000, blank=True, null=True)
+    weight_gain = models.PositiveIntegerField('Прибака к массе тела (+г)', validators=[MaxValueValidator(100000)], blank=True, null=True)
+    systolic_blood_pressure = models.CharField('Артериальное даавление систолическое (мм.рт.ст.)', max_length=50, blank=True, null=True)
+    blood_pressure_diastolic = models.CharField('Артериальное даавление диастолическое (мм.рт.ст.)', max_length=50, blank=True, null=True)
+    pulse = models.CharField('Пульс (уд/мин)', max_length=50, blank=True, null=True)
+    fetus_heartbeat = models.CharField('Сердцебиение плода (уд/мин) (>12 недель)', max_length=50, blank=True, null=True)
+    fetus_stirring = models.CharField('Шевеление плода: (>16 недель)', max_length=10, choices=FETUS_STIRRING, blank=True, null=True)
+    fundal_height = models.PositiveSmallIntegerField('Высота дна матки (см) (>20 недель)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    abdominal_circumference = models.PositiveSmallIntegerField('Окружность живота (см) (>20 недель)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    fetal_position = models.CharField('Положение плода', max_length=10, choices=FETAL_POSITION, blank=True, null=True)
+    to_pelvis_entrance = models.CharField('Над входом в малый таз', max_length=10, choices=PELVIS_ENTRANCE, blank=True, null=True)
+    adjacent_part = models.CharField('Предлежащая часть', max_length=10, choices=ADJACENT_PART, blank=True, null=True)
+    protein_in_urine = models.CharField('Белок в моче (-,1+,2+,3+)', max_length=50, blank=True, null=True)
+    hemoglobin = models.CharField('Гемоглобин (г/л)', max_length=50, blank=True, null=True)
+    glucose = models.CharField('Глюкоза, ммоль/л', max_length=50, blank=True, null=True)
+    ttg = models.CharField('ТТГ , мкМЕ/л', max_length=50, blank=True, null=True)
+    s_agalactiae = models.CharField('S. agalactiae в мазке', max_length=1000, blank=True, null=True)
+    bacterioscopic_smears_examination = models.CharField('Бактериоскопическое исследование мазков', max_length=1000, blank=True, null=True)
+    cervix_сytological_examination = models.CharField('Цитологическое исследование микропрепарата шейки матки', max_length=1000, blank=True, null=True)
+    urine_culture = models.CharField('Посев мочи на бессимптомную бактериурию', max_length=1000, blank=True, null=True)
+    fetal_development_assessment_11_14 = models.CharField('Комплексная оценка антенатального развития плода в 11-14 недель (скрининг 1-ого триместра)', max_length=1000, blank=True, null=True)
+    fetal_development_assessment_19_21 = models.CharField('Оценка антенатального развития плода в 19-21 неделю (скрининг 2-ого триместра)', max_length=1000, blank=True, null=True)
+    ultrasound_cervicometry = models.CharField('УЗИ-цервикометрия', max_length=1000, blank=True, null=True)
+    fetal_ultrasound = models.CharField('УЗИ плода/плодов по показаниям', max_length=1000, blank=True, null=True)
+    invasive_diagnostics = models.CharField('Инвазивная диагностика при высоком риске хромосомных аномалий (ХА)', max_length=200, blank=True, null=True)
+    fetal_cardiotocography = models.CharField('Кардиотокография плода/плодов (КТГ)', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class AppointmentList(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments')
+    visit_number = models.PositiveSmallIntegerField('Номер посещения', validators=[MaxValueValidator(100)], blank=True, null=True)
+    date = models.DateField('Дата', blank=True, null=True)
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    analysis = models.CharField('Анализ', max_length=1000, blank=True, null=True)
+    appointment = models.CharField('Назначения', max_length=1000, blank=True, null=True)
+    disability_certificate = models.CharField('Листок нетрудоспособности', max_length=1000, blank=True, null=True)
+    next_visit_date = models.DateField('Дата', blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class TakingMedications(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medications')
+    date_start = models.DateField('Дата начала приема препарата', blank=True, null=True)
+    date_finish = models.DateField('Дата окончания приема препарата', blank=True, null=True)
+    indications = models.CharField('Показания', max_length=1000, blank=True, null=True)
+    dose_duration = models.CharField('Доза/Длительность', max_length=1000, blank=True, null=True)
+    side_effects = models.CharField('Побочные эффекты', max_length=1000, blank=True, null=True)
+
+
+#############
+
+
 
 
 class SelfMonitoringRecords(models.Model):

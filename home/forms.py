@@ -1,4 +1,4 @@
-from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes, MedicalCard, PregnancyOutcome
+from .models import *
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 from .choices import *
@@ -136,4 +136,56 @@ class PregnancyOutcomeForm(forms.ModelForm):
         widgets = {
             'childbirth_date': DateTimeInput(),
             'death_time': DateTimeInput()
+        }
+
+
+class PelviometryForm(forms.ModelForm):
+    class Meta:
+        model = Pelviometry
+        fields = 'date', 'dsp', 'dcr', 'dtroch', \
+                'dext', 'cvera', 'cdiag', 'solovyov_index', \
+                'michaelis_rhombus_x', 'michaelis_rhombus_y', \
+                'pelvis_dimensions', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class PregnantWomanMonitoringForm(forms.ModelForm):
+    class Meta:
+        model = PregnantWomanMonitoring
+        fields = 'date', 'gestation_period_weeks', 'complaints', 'weight_gain', \
+                'systolic_blood_pressure', 'blood_pressure_diastolic', 'pulse', \
+                'fetus_heartbeat', 'fetus_stirring', 'fundal_height', \
+                'abdominal_circumference', 'fetal_position', 'to_pelvis_entrance', \
+                'adjacent_part', 'protein_in_urine', 'hemoglobin', 'glucose', \
+                'ttg', 's_agalactiae', 'bacterioscopic_smears_examination', \
+                'cervix_сytological_examination', 'urine_culture', 'fetal_development_assessment_11_14', \
+                'fetal_development_assessment_19_21', 'ultrasound_cervicometry', 'fetal_ultrasound', \
+                'invasive_diagnostics', 'fetal_cardiotocography', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+        }
+
+
+class AppointmentListForm(forms.ModelForm):
+    class Meta:
+        model = AppointmentList
+        fields = 'visit_number', 'date', 'gestation_period_weeks', \
+                'analysis', 'appointment', 'disability_certificate', \
+                'next_visit_date', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+            'next_visit_date': DateInput()
+        }
+
+
+class TakingMedicationsForm(forms.ModelForm):
+    class Meta:
+        model = TakingMedications
+        fields = 'date_start', 'date_finish', 'indications', \
+                'dose_duration', 'side_effects'
+        widgets = {
+            'date_start': DateInput(),
+            'date_finish': DateInput()
         }

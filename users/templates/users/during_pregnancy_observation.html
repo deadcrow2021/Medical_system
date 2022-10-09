@@ -1,0 +1,18 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+
+{% if user.doctor %}
+<div class="block__profile__docs">
+    <div class="block__lines">
+        <div class="lines__element btn">
+            {% comment %} <p><a href="{% url 'medical-card' profile.user.id %}">Пельвиометрия</a></p> {% endcomment %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
