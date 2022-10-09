@@ -1,4 +1,4 @@
-from .models import Patient, Doctor, MedicalHistory, SelfMonitoringRecords, ReceptionNotes, MedicalCard
+from .models import *
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 from .choices import *
@@ -125,3 +125,15 @@ class MedicalCardForm(forms.ModelForm):
             'first_visit_date': DateInput(),
             'childbirth_date': DateInput()
         }
+
+
+class ObstetricRiskCreationForm(forms.ModelForm):
+    class Meta:
+        model = ObstetricRisk
+        fields = ('visit', )
+
+
+class ComplicationRiskCreationForm(forms.ModelForm):
+    class Meta:
+        model = ComplicationRisk
+        fields = ('complication_risk', 'risk_value')

@@ -14,4 +14,8 @@ urlpatterns = [
     path('switch_follow', views.follow_unfollow_patient, name='follow-unfollow'),
     path('medical_card/<profile_id>', views.medical_card, name='medical-card'),
     path('update_medical_card/<profile_id>', views.update_medical_card, name='update-medical-card'),
+    path('appearance/<profile_id>', views.appearance, name='appearance'),
+    path('add_appearance/<profile_id>', views.add_appearance_page, name='add-appearance'),
+    path('add_complication/<profile_id>/<obsteric_id>', views.add_complication_page, name='add-complication'),
+    path('update_complication/<profile_id>/<complication_id>', views.update_complication_page, name='update-complication'),
 ]

@@ -28,18 +28,14 @@ class Patient(models.Model):
 
 
 class MedicalCard(models.Model):
+    # personal data
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='card')
-    # first_name   = models.CharField("Имя", max_length=100)
-    # last_name    = models.CharField("Фамилия", max_length=100)
-    # father_name  = models.CharField("Отчество", max_length=100, blank=True)
     date_of_birth= models.DateField('Дата рождения', default='2000-01-12', blank=True, null=True)
     age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
     residence_address = models.CharField('Адрес проживания', max_length=100, blank=True, null=True)
     registration_address = models.CharField('Адрес регистрции', max_length=100, blank=True, null=True)
-    # mobile_phone    = PhoneNumberField('Мобильный телефон', max_length=20, blank=True, null=True)
     home_phone    = PhoneNumberField('Домашний телефон', max_length=20, blank=True, null=True)
     work_phone    = PhoneNumberField('Рабочий телефон', max_length=20, blank=True, null=True)
-    # email = models.EmailField('Адрес электронной почты', max_length=100, blank=True, null=True)
     marital_status = models.CharField('Брачное состояние', default='', choices=MARITAL_STATUS, max_length=1, blank=True, null=True)
     trusted_person_fio = models.CharField("ФИО доверенного лица", max_length=300, blank=True, null=True)
     trusted_person_phone = PhoneNumberField('Мобильный телефон', max_length=20, blank=True, null=True)
@@ -50,9 +46,11 @@ class MedicalCard(models.Model):
     disability_certificate = models.CharField('Номер отпуска по беременности и родам', max_length=16, blank=True, null=True)
     generic_certificate_number = models.CharField('Номер родового сертификата', max_length=20, blank=True, null=True)
     generic_certificate_date = models.DateField('Дата выдачи родового сертификата', blank=True, null=True)
+    
+    # allergy
     allergy = models.BooleanField('Аллергическая реакция', default=False, null=True)
     allergy_description = models.CharField('Описание аллергической реакции', default='', max_length=100, blank=True, null=True)
-
+    
     # blood fields
     mother_blood_group = models.CharField('Группа крови', max_length=1, choices=BLOOD, blank=True, null=True)
     mother_blood_rh = models.CharField('Rh-фактор', max_length=1, choices=RH, blank=True, null=True)
@@ -60,25 +58,31 @@ class MedicalCard(models.Model):
     father_blood_group = models.CharField('Группа крови', max_length=1, choices=BLOOD, blank=True, null=True)
     father_blood_rh = models.CharField('Rh-фактор', max_length=1, choices=RH, blank=True, null=True)
     father_date_of_determination = models.DateField('Дата определения', default='2022-01-01', blank=True, null=True)
-
+    
+    # pregnancy data
     pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', blank=True, validators=[MaxValueValidator(99)], null=True)
     births_by_term = models.CharField('Данные роды по сроку', max_length=200, blank=True, null=True)
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
     first_visit_date = models.DateField('Дата первой явки (взятие на учет)', blank=True, null=True)
+    
+    # birth data
     childbirth_date = models.DateField('Дата родов', blank=True, null=True)
     childbirth_gestation_period = models.PositiveSmallIntegerField('Срок беременности родов (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
     med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True, null=True)
     
+    # diagnosis
     diagnosis = models.CharField('Основной диагноз', max_length=200, blank=True, null=True)
     complications = models.CharField('Осложнения данной беременности', max_length=200, blank=True, null=True)
+    
+    # other diseases
     somatic_diseases = models.CharField('Соматические заболевания', max_length=200, blank=True, null=True)
     gynecological_diseases = models.CharField('Гинекологические  заболевания', max_length=200, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-
+    
     class Meta:
         verbose_name = 'Медицинская карта'
         verbose_name_plural = 'Медицинские карты'
-
+    
     def __str__(self) -> str:
         return self.patient.get_full_name()
 
@@ -90,16 +94,22 @@ class ObstetricRisk(models.Model):
     class Meta:
         verbose_name = 'Акушерский риск'
         verbose_name_plural = 'Акушерские риски'
+    
+    def __str__(self) -> str:
+        return self.card.__str__() + ' ' + self.visit
 
 
 class ComplicationRisk(models.Model):
-    risk = models.ForeignKey(ObstetricRisk, on_delete=models.CASCADE, related_name='comlications')
+    risk = models.ForeignKey(ObstetricRisk, on_delete=models.CASCADE, related_name='complications')
     complication_risk = models.CharField('Риск осложнениний', max_length=150, blank=True, null=True)
     risk_value = models.PositiveSmallIntegerField('Значение индивидуального риска', blank=True, null=True)
-
+    
     class Meta:
         verbose_name = 'Риск осложнения'
         verbose_name_plural = 'Риски осложнений'
+    
+    def __str__(self) -> str:
+        return self.complication_risk
 
 
 class SelfMonitoringRecords(models.Model):
