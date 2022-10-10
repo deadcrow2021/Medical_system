@@ -1,0 +1,25 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'add-appearance' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="fields">
+        {% for p in form %}
+        <div class="fields__input">
+            <div class="fields__input__label">
+                {{ p.label_tag }}
+            </div>
+            <div class="fields__input__field noborder">
+                {{ p }}
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn">Добавить осложнение</button>
+    </div>
+</form>
+
+{% endblock %}
