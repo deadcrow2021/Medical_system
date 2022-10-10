@@ -133,53 +133,59 @@ def medical_card(request, profile_id):
         complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
     
-    return render(request, 'users/medical_card.html', {
-                                                        'form': form,
-                                                        'current_user': current_user,
-                                                        'risks': risks })
+    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks })
 
 
-@login_required
-@user_passes_test(user_is_doctor)
 def update_medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
     return render(request, 'users/update_medical_card.html', {'form': form})
 
 
-@login_required
-@user_passes_test(user_is_doctor)
-def pregnancy_outcome(request, profile_id):
+def pregnancy_outcome(request: HttpRequest, profile_id: int):
     current_user = User.objects.get(pk=profile_id)
     # form = PregnancyOutcomeForm(request.POST or None, instance=current_user.patient.pregnancy_outcome)
-    outcomes = current_user.patient.pregnancy_outcome.all()
-    return render(request, 'users/pregnancy_outcome.html', {'outcomes': outcomes, 'current_user': current_user})
-
-
-@login_required
-@user_passes_test(user_is_doctor)
-def add_pregnancy_outcome(request, profile_id):
-    current_user = User.objects.get(pk=profile_id)
-    form = PregnancyOutcomeForm()
+    
     if request.method == 'POST':
-        form = PregnancyOutcomeForm(request.POST)
-        outcome = form.save(commit=False)
-        patient = Patient.objects.get(user=current_user)
-        outcome.patient = patient
-        outcome.save()
+        id = request.POST['delete_outcome']
+        PregnancyOutcome.objects.get(pk=id).delete()
+    
+    outcomes = current_user.patient.pregnancy_outcome.all()
+    forms = [PregnancyOutcomeForm(instance=outcome) for outcome in outcomes]
+    return render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user})
+
+
+def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int):
+    current_user = User.objects.get(pk=profile_id)
+    
+    if request.method == 'POST':
+        if int(outcome_id) > 0:
+            form = PregnancyOutcomeForm(request.POST, instance=PregnancyOutcome.objects.get(pk=outcome_id))
+        else:
+            form = PregnancyOutcomeForm(request.POST)
         
-        return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
-    return render(request, 'users/add_pregnancy_outcome.html', {'form': form})
+        if form.is_valid():
+            if int(outcome_id) > 0:
+                form.save(commit=True)
+            else:
+                outcome = form.save(commit=False)
+                patient = Patient.objects.get(user=current_user)
+                outcome.patient = patient
+                outcome.save()
+            return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
+    else:
+        if int(outcome_id) > 0:
+            form = PregnancyOutcomeForm(instance=PregnancyOutcome.objects.get(pk=outcome_id))
+        else:
+            form = PregnancyOutcomeForm()
+    return render(request, 'users/add_pregnancy_outcome.html', { 'form': form, 'current_user': current_user })
 
 
-@login_required
-@user_passes_test(user_is_doctor)
 def pregnancy_observation_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     return render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user})
 
 
-@login_required
 def update_profile(request, profile_id):
     user: User = User.objects.get(pk=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'

@@ -118,7 +118,7 @@ class ComplicationRisk(models.Model):
 
 class PregnancyOutcome(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_outcome')
-    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', blank=True, validators=[MaxValueValidator(99)], null=True)
+    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', validators=[MaxValueValidator(99)], unique=True)
     childbirth_date = models.DateTimeField('Дата исхода беременности', blank=True, null=True)
     pregnancy_outcome = models.CharField('Исход беременности', max_length=10, choices=PREGNANCY_OUTCOME, blank=True, null=True)
     
@@ -136,6 +136,10 @@ class PregnancyOutcome(models.Model):
     class Meta:
         verbose_name = 'Исход беременности'
         verbose_name_plural = 'Исходы беременностей'
+        ordering = ['pregnancy_count']
+    
+    def __str__(self) -> str:
+        return self.patient.get_full_name() + " count: " + str(self.pregnancy_count)
 
 # Наблюдения во время настоящей беременности
 
