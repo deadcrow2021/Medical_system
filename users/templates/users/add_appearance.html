@@ -1,0 +1,26 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'appearance' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="fields">
+        {% for p in form %}
+        <div class="fields__input">
+            <div class="fields__input__label">
+                {{ p.label_tag }}
+            </div>
+            <div class="fields__input__field noborder">
+                {{ p }}
+            </div>
+            <div>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn">Добавить</button>
+</form>
+
+{% endblock %}

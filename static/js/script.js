@@ -36,4 +36,5 @@ document.addEventListener("DOMContentLoaded", function() {
     for (let phone of phones) {
         phone.addEventListener("input", correct_phone_number);
     }
+    
 });

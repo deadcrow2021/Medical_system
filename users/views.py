@@ -6,10 +6,7 @@ from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
-from home.forms import (DoctorCreationForm, PatientChangeForm,
-                        PatientCreationForm, DiseaseCreationForm,
-                        PatientFilterForm, MedicalCardForm,
-                        PregnancyOutcomeForm)
+from home.forms import *
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, MedicalCard, PregnancyOutcome
 from django.utils.crypto import get_random_string
@@ -128,7 +125,18 @@ def profile(request: HttpRequest, profile_id):
 def medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
-    return render(request, 'users/medical_card.html', {'form': form, 'current_user': current_user})
+    
+    risks = current_user.patient.card.risks.all()
+    obstetric_risk_forms = [ObstetricRiskCreationForm(request.POST or None, instance=i) for i in risks]
+    complication_risk_forms: list = []
+    for risk in risks:
+        complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
+    risks = list(zip(obstetric_risk_forms, complication_risk_forms))
+    
+    return render(request, 'users/medical_card.html', {
+                                                        'form': form,
+                                                        'current_user': current_user,
+                                                        'risks': risks })
 
 
 @login_required
@@ -338,3 +346,74 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+def appearance(request: HttpResponse, profile_id: int):
+    current_user = User.objects.get(pk=profile_id)
+    template_name: str = 'users/appearance.html'
+    
+    def get_risks() -> list:
+        risks = current_user.patient.card.risks.all()
+        obstetric_risk_forms = [ObstetricRiskCreationForm(instance=i) for i in risks]
+        complication_risk_forms: list = []
+        for risk in risks:
+            complication_risk_forms.append([ComplicationRiskCreationForm(instance=i) for i in risk.complications.all()])
+        return list(zip(obstetric_risk_forms, complication_risk_forms))
+    
+    if request.method == 'POST':
+        print(f'{request.POST=}')
+        print(f'{request.POST["delete_pk"][0]=}')
+        obstetric_risk = ObstetricRisk.objects.get(pk=request.POST["delete_pk"])
+        obstetric_risk.delete()
+    
+    forms = get_risks()
+    return render(request, template_name, context={ 'forms' : forms, 'current_user': current_user })
+
+
+def add_appearance_page(request: HttpRequest, profile_id: int):
+    form_class = ObstetricRiskCreationForm
+    template_name: str = "users/add_appearance.html"
+    success_url: str = "add-complication"
+    current_user = User.objects.get(pk=profile_id)
+    
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            app: ObstetricRisk = form.save(commit=False)
+            app.card = current_user.patient.card
+            app.save()
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'obsteric_id': app.pk }))
+    
+    return render(request, template_name, context={ 'current_user': current_user, 'form': form_class })
+
+
+def add_complication_page(request: HttpRequest, profile_id: int, obsteric_id: int):
+    form_class = ComplicationRiskCreationForm
+    template_name: str = "users/add_complication.html"
+    success_url: str = "appearance"
+    current_user = User.objects.get(pk=profile_id)
+    
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            app: ComplicationRisk = form.save(commit=False)
+            app.risk = ObstetricRisk.objects.get(pk=obsteric_id)
+            app.save()
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
+    
+    return render(request, template_name, context={ 'current_user': current_user, 'form': form_class })
+
+
+def update_complication_page(request: HttpRequest, profile_id: int, complication_id: int):
+    risk = ComplicationRisk.objects.get(pk=complication_id)
+    form = ComplicationRiskCreationForm(request.POST or None, instance=risk)
+    template_name: str = "users/update_complication.html"
+    success_url: str = "appearance"
+    current_user = User.objects.get(pk=profile_id)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
+    
+    return render(request, template_name, context={ 'current_user': current_user, 'form': form })

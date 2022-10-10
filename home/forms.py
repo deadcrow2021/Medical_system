@@ -127,6 +127,18 @@ class MedicalCardForm(forms.ModelForm):
         }
 
 
+class ObstetricRiskCreationForm(forms.ModelForm):
+    class Meta:
+        model = ObstetricRisk
+        fields = ('visit', )
+
+
+class ComplicationRiskCreationForm(forms.ModelForm):
+    class Meta:
+        model = ComplicationRisk
+        fields = ('complication_risk', 'risk_value')
+
+
 class PregnancyOutcomeForm(forms.ModelForm):
     class Meta:
         model = PregnancyOutcome

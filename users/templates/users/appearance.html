@@ -1,0 +1,74 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'medical-card' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+<div class="btn">
+    <a href="{% url 'add-appearance' current_user.id %}">Добавить явку</a>
+</div>
+
+<div class="fields outer_div">
+    {% for risk, complication in forms %}
+    <div class="border_div">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for p in risk %}
+            <div class="fields__input">
+                <div class="fields__input__field noborder">
+                    {% for i in p.field.choices %}
+                        {% if p.value == i.0 %}
+                            {{i.1}}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div>
+                    <button type="submit" class="btn delete_btn">Удалить</button>
+                    <input type="hidden" name="delete_pk" value="{{ risk.instance.pk }}">
+                    <a href="{% url 'add-complication' current_user.id risk.instance.pk %}" class="btn">Добавить риск</a>
+                </div>
+            </div>
+            {% endfor %}
+        </form>
+        <div class="complication">
+            <h4>Риск<br>осложнениний</h4>
+            <h4 class='cell_grid_2'>Значение<br>индивидуального риска</h4>
+            {% for form in complication %}
+                {% for p in form %}
+                    <div class="fields__input">
+                        <div class="fields__input__field noborder">
+                            {{ p.value }}
+                        </div>
+                    </div>
+                {% endfor %}
+            <a href="{% url 'update-complication' current_user.id form.instance.pk %}" class="btn">Изменить</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="banner" style="display: none;">
+    <div class="lines__element banner__content">
+        <p>Вы действительно хотите удалить пациента?</p>
+        <button type="button" class="btn cancel_btn">Отменить</button>
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn">Удалить</button>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var delete_btn = document.getElementsByClassName('delete_btn')[0];
+    var cancel_btn = document.getElementsByClassName('cancel_btn')[0];
+    var banner = document.getElementsByClassName('banner')[0];
+    
+    delete_btn.onclick = e => {
+        banner.style.display = 'flex';
+    }
+    cancel_btn.onclick = e => {
+        banner.style.display = 'none';
+    }
+</script>
+{% endblock %}
