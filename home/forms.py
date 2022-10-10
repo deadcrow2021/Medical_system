@@ -201,3 +201,133 @@ class TakingMedicationsForm(forms.ModelForm):
             'date_start': DateInput(),
             'date_finish': DateInput()
         }
+        
+
+class AntibodiesDeterminationForm(forms.ModelForm):
+    class Meta:
+        model = AntibodiesDetermination
+        fields = 'date', 'treponema_antibodies', 'hiv_antibodies', \
+            'hbsag_antibodies', 'anti_hcv', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class RubellaVirusForm(forms.ModelForm):
+    class Meta:
+        model = RubellaVirus
+        fields = 'date', 'lgm', 'lgg', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class AntiresusBodiesForm(forms.ModelForm):
+    class Meta:
+        model = AntiresusBodies
+        fields = 'date', 'antiresus_bodies', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class BloodAnalysisForm(forms.ModelForm):
+    class Meta:
+        model = BloodAnalysis
+        fields = 'date', 'hemoglobin', 'red_blood_cells', 'color_indicator', \
+            'reticulocytes', 'platelets', 'white_blood_cells', 'myelocytes', \
+            'metamyelocytes', 'stick_core', 'segmentonuclear', 'eosinophils', \
+            'basophils', 'lymphocytes', 'monocytes', 'soe', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class BiochemicalBloodAnalysisForm(forms.ModelForm):
+    class Meta:
+        model = BiochemicalBloodAnalysis
+        fields = 'date', 'total_bilirubin', 'direct_bilirubin', \
+            'total_protein', 'alt', 'ast', 'glucose', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class CoagulogramForm(forms.ModelForm):
+    class Meta:
+        model = Coagulogram
+        fields = 'date', 'platelet_count', 'astv', \
+            'fibrinogen', 'prothrombin_time', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class GlucoseToleranceTestForm(forms.ModelForm):
+    class Meta:
+        model = GlucoseToleranceTest
+        fields = 'date', 'period', 'result', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class ThyroidStimulatingHormoneForm(forms.ModelForm):
+    class Meta:
+        model = ThyroidStimulatingHormone
+        fields =  'date', 'period', 'result', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class SmearsForm(forms.ModelForm):
+    class Meta:
+        model = Smears
+        fields = 'date', 'result', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class BacterioscopicSmearsExaminationForm(forms.ModelForm):
+    class Meta:
+        model = BacterioscopicSmearsExamination
+        fields = 'date', 'c_white_blood_cells', 'c_epithelium', \
+            'c_key_cels', 'c_candida', 'c_trichomonads', 'c_gonococci', \
+            'c_ph', 'v_white_blood_cells', 'v_epithelium', 'v_key_cels', \
+            'v_candida', 'v_trichomonads', 'v_gonococci', 'v_ph', \
+            'u_white_blood_cells', 'u_epithelium', 'u_key_cels', \
+            'u_candida', 'u_trichomonads', 'u_gonococci', 'u_ph'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class CervixCytologicalExaminationForm(forms.ModelForm):
+    class Meta:
+        model = CervixCytologicalExamination
+        fields = 'date', 'result', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class UrineAnalysisForm(forms.ModelForm):
+    class Meta:
+        model = UrineAnalysis
+        fields = 'date', 'amount', 'ph', 'density', \
+            'u_white_blood_cells', 'red_blood_cells', \
+            'protein', 'cylinders', 'salt'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class UrineSowingForm(forms.ModelForm):
+    class Meta:
+        model = UrineSowing
+        fields = 'date', 'result', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }

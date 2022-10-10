@@ -118,7 +118,7 @@ class ComplicationRisk(models.Model):
 
 class PregnancyOutcome(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_outcome')
-    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', blank=True, validators=[MaxValueValidator(99)], null=True)
+    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', validators=[MaxValueValidator(99)], unique=True)
     childbirth_date = models.DateTimeField('Дата исхода беременности', blank=True, null=True)
     pregnancy_outcome = models.CharField('Исход беременности', max_length=10, choices=PREGNANCY_OUTCOME, blank=True, null=True)
     
@@ -136,7 +136,12 @@ class PregnancyOutcome(models.Model):
     class Meta:
         verbose_name = 'Исход беременности'
         verbose_name_plural = 'Исходы беременностей'
+        ordering = ['pregnancy_count']
+    
+    def __str__(self) -> str:
+        return self.patient.get_full_name() + " count: " + str(self.pregnancy_count)
 
+# Наблюдения во время настоящей беременности
 
 class Pelviometry(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pelviometry')
@@ -211,9 +216,158 @@ class TakingMedications(models.Model):
     side_effects = models.CharField('Побочные эффекты', max_length=1000, blank=True, null=True)
 
 
+class AntibodiesDetermination(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='antibodies')
+    date = models.DateField('Дата', blank=True, null=True)
+    treponema_antibodies = models.CharField('Антитела к бледной трепонеме', max_length=1000, blank=True, null=True)
+    hiv_antibodies = models.CharField('Антитела классов M, G к ВИЧ ½ и антиген р24', max_length=1000, blank=True, null=True)
+    hbsag_antibodies = models.CharField('HBsAg или антитела к HBsAg', max_length=1000, blank=True, null=True)
+    anti_hcv = models.CharField('anti-HCV IgG и anti-HCV IgM', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+    # examination_refise = models.BooleanField('От обследования отсказалась', default=False, null=True)
+
+
+class RubellaVirus(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='rubella')
+    date = models.DateField('Дата', blank=True, null=True)
+    lgm = models.CharField('lgM', max_length=1000, blank=True, null=True)
+    lgg = models.CharField('lgG', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+    # examination_refise = models.BooleanField('От обследования отсказалась', default=False, null=True)
+
+
+class AntiresusBodies(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='antiresus_bodies')
+    date = models.DateField('Дата', blank=True, null=True)
+    antiresus_bodies = models.CharField('Антирезусные тела', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+    # examination_refise = models.BooleanField('От обследования отсказалась', default=False, null=True)
+
+
+class BloodAnalysis(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='blood_analysis')
+    date = models.DateField('Дата', blank=True, null=True)
+    hemoglobin = models.CharField('Гемоглобин, г/л', max_length=1000, blank=True, null=True)
+    red_blood_cells = models.CharField('Эритроциты, 10^12/л', max_length=1000, blank=True, null=True)
+    color_indicator = models.CharField('Цветовой показатель, %', max_length=1000, blank=True, null=True)
+    reticulocytes = models.CharField('Ретикулоциты, %', max_length=1000, blank=True, null=True)
+    platelets = models.CharField('Тромбоциты, 10^9/л', max_length=1000, blank=True, null=True)
+    white_blood_cells = models.CharField('Лейкоциты, 10^9/л', max_length=1000, blank=True, null=True)
+    myelocytes = models.CharField('Миелоциты, %', max_length=1000, blank=True, null=True)
+    metamyelocytes = models.CharField('Метамиелоциты, %', max_length=1000, blank=True, null=True)
+    stick_core = models.CharField('Палочкоядерные, %', max_length=1000, blank=True, null=True)
+    segmentonuclear = models.CharField('Сегметоядерные, %', max_length=1000, blank=True, null=True)
+    eosinophils = models.CharField('Эозинофилы, %', max_length=1000, blank=True, null=True)
+    basophils = models.CharField('Базофилы, %', max_length=1000, blank=True, null=True)
+    lymphocytes = models.CharField('Лимфоциты , %', max_length=1000, blank=True, null=True)
+    monocytes = models.CharField('Моноциты, %', max_length=1000, blank=True, null=True)
+    soe = models.CharField('СОЭ, мм/ч', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class BiochemicalBloodAnalysis(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='biochemical_blood')
+    date = models.DateField('Дата', blank=True, null=True)
+    total_bilirubin = models.CharField('Общий билирубин, мкмоль/л', max_length=1000, blank=True, null=True)
+    direct_bilirubin = models.CharField('Прямой билирубин, мкмоль/л', max_length=1000, blank=True, null=True)
+    total_protein = models.CharField('Общий белок, г/л', max_length=1000, blank=True, null=True)
+    alt = models.CharField('АЛТ, ЕД/л', max_length=1000, blank=True, null=True)
+    ast = models.CharField('АСТ, ЕД/л', max_length=1000, blank=True, null=True)
+    glucose = models.CharField('Глюкоза, ммоль/л', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class Coagulogram(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='сoagulogram')
+    date = models.DateField('Дата', blank=True, null=True)
+    platelet_count = models.CharField('Количество тромбоцитов, 10^9/л', max_length=1000, blank=True, null=True)
+    astv = models.CharField('АЧТВ, сек.', max_length=1000, blank=True, null=True)
+    fibrinogen = models.CharField('Фибриноген, г/л', max_length=1000, blank=True, null=True)
+    prothrombin_time = models.CharField('Протромбиновое время, %', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class GlucoseToleranceTest(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='glucose_test')
+    date = models.DateField('Дата', blank=True, null=True)
+    period = models.CharField('Срок (недель)', max_length=1000, blank=True, null=True)
+    result = models.CharField('Результат', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class ThyroidStimulatingHormone(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='ts_hormonr')
+    date = models.DateField('Дата', blank=True, null=True)
+    period = models.CharField('Срок (недель)', max_length=1000, blank=True, null=True)
+    result = models.CharField('Результат', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class Smears(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='smears')
+    date = models.DateField('Дата', blank=True, null=True)
+    result = models.CharField('Результат', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+    # examination_refise = models.BooleanField('От результатов отсказалась', default=False, null=True)
+
+
+class BacterioscopicSmearsExamination(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='bacterio_smears')
+    date = models.DateField('Дата', blank=True, null=True)
+    # locus C
+    c_white_blood_cells = models.CharField('Лейкоциты', max_length=1000, blank=True, null=True)
+    c_epithelium = models.CharField('Эпителий', max_length=1000, blank=True, null=True)
+    c_key_cels = models.CharField('Ключевые клетки', max_length=1000, blank=True, null=True)
+    c_candida = models.CharField('Кандиды', max_length=1000, blank=True, null=True)
+    c_trichomonads = models.CharField('Трихомонады', max_length=1000, blank=True, null=True)
+    c_gonococci = models.CharField('Гонококки', max_length=1000, blank=True, null=True)
+    c_ph = models.CharField('pH', max_length=1000, blank=True, null=True)
+    # locus V
+    v_white_blood_cells = models.CharField('Лейкоциты', max_length=1000, blank=True, null=True)
+    v_epithelium = models.CharField('Эпителий', max_length=1000, blank=True, null=True)
+    v_key_cels = models.CharField('Ключевые клетки', max_length=1000, blank=True, null=True)
+    v_candida = models.CharField('Кандиды', max_length=1000, blank=True, null=True)
+    v_trichomonads = models.CharField('Трихомонады', max_length=1000, blank=True, null=True)
+    v_gonococci = models.CharField('Гонококки', max_length=1000, blank=True, null=True)
+    v_ph = models.CharField('pH', max_length=1000, blank=True, null=True)
+    # locus U
+    u_white_blood_cells = models.CharField('Лейкоциты', max_length=1000, blank=True, null=True)
+    u_epithelium = models.CharField('Эпителий', max_length=1000, blank=True, null=True)
+    u_key_cels = models.CharField('Ключевые клетки', max_length=1000, blank=True, null=True)
+    u_candida = models.CharField('Кандиды', max_length=1000, blank=True, null=True)
+    u_trichomonads = models.CharField('Трихомонады', max_length=1000, blank=True, null=True)
+    u_gonococci = models.CharField('Гонококки', max_length=1000, blank=True, null=True)
+    u_ph = models.CharField('pH', max_length=1000, blank=True, null=True)
+
+
+class CervixCytologicalExamination(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='cervix_exam')
+    date = models.DateField('Дата', blank=True, null=True)
+    result = models.CharField('Результат', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class UrineAnalysis(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='urine')
+    date = models.DateField('Дата', blank=True, null=True)
+    amount = models.CharField('Количество, мл', max_length=1000, blank=True, null=True)
+    ph = models.CharField('pH', max_length=1000, blank=True, null=True)
+    density = models.CharField('Плотность', max_length=1000, blank=True, null=True)
+    u_white_blood_cells = models.CharField('Лейкоциты', max_length=1000, blank=True, null=True)
+    red_blood_cells = models.CharField('Эритроциты', max_length=1000, blank=True, null=True)
+    protein = models.CharField('Белок, г/л', max_length=1000, blank=True, null=True)
+    cylinders = models.CharField('Цилиндры', max_length=1000, blank=True, null=True)
+    salt = models.CharField('Соли', max_length=1000, blank=True, null=True)
+
+
+class UrineSowing(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='urine_sowing')
+    date = models.DateField('Дата', blank=True, null=True)
+    result = models.CharField('Результат', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
 #############
-
-
 
 
 class SelfMonitoringRecords(models.Model):
