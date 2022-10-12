@@ -331,3 +331,51 @@ class UrineSowingForm(forms.ModelForm):
         widgets = {
             'date': DateInput()
         }
+
+class PatientInformationForm(forms.ModelForm):
+    class Meta:
+        model = PatientInformation
+        fields = 'congenital_malformations', 'congenital_malformations_str', 'height', 'mass', \
+                'imt', 'preeclampsia_risk', 'preeclampsia_risk_str', 'premature_birth_risk', \
+                'premature_birth_risk_str', 'growth_retardation_risk', 'growth_retardation_risk_str', \
+                'thromboembolic_complications', 'thromboembolic_complications_str', 'another_risks', \
+                'another_risks_str', 'child_infections', 'child_infections_str', 'dispensary_accounting', \
+                'dispensary_accounting_str', 'injures_operations', 'injures_operations_str', 'somatic_diseases', \
+                'somatic_diseases_str', 'socially_significant_infections', 'socially_significant_infections_str', \
+                'hiv_status', 'date', 'epidnomer', 'antiretroviral_therapy', 'hereditary_diseases', \
+                'hereditary_diseases_str', 'blood_transfusions', 'year', 'last_fluorography_date', \
+                'last_fluorography_date_result', 'bad_habits', 'smoking', 'alcohol', 'alcohol_type', \
+                'drugs', 'occupational_hazards', 'occupational_hazards_str', 'tetanus', 'measles', 'rubella', \
+                'chickenpox', 'flu', 'HPV', 'hepatitis_B', 'other_vaccnation', 'year_start', 'profusion', \
+                'painfulness', 'regularity', 'sexual_life', 'contraception_method', 'contraception_period', \
+                'diseases_operations', 'disease_date', 'sti', 'treatment', 'treatment_date', 'year_mammary', \
+                'mammary_method', 'mammary_result', 'year_cervix', 'cervix_method', 'cervix_result', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+            'last_fluorography_date': DateInput(),
+            'disease_date': DateInput(),
+            'treatment_date': DateInput()
+        }
+
+
+class CarvixScarForm(forms.ModelForm):
+    class Meta:
+        model = CarvixScar
+        fields = 'date', 'operation_name', 'if_caesarean', 'scar_localization', 'operation_features'
+        widgets = {
+            'date': DateInput()
+        }
+
+class FatherInfoForm(forms.ModelForm):
+    class Meta:
+        model = FatherInfo
+        fields = 'age', 'height', 'mass', 'imt', 'bad_habits', 'sti', \
+        'sti_str', 'treatment', 'treatment_date', 'hiv', 'tuberculosis', \
+        'hepatitis_b', 'hepatitis_c', 'syphilis', 'others', \
+        'last_fluorography_date', 'last_fluorography_date_result', \
+        'tetanus', 'measles', 'rubella', 'flu', 'diphtheria', \
+        'other_vaccnation', 'doctor_confirmation'
+        widgets = {
+            'treatment_date': DateInput(),
+            'last_fluorography_date': DateInput()
+        }

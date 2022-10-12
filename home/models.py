@@ -367,6 +367,135 @@ class UrineSowing(models.Model):
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
+# Сведения о пациентке
+
+class PatientInformation(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='patient_information')
+    congenital_malformations = models.BooleanField('Врожденные пороки развития', default=False, null=True)
+    congenital_malformations_str = models.CharField('Перечисление врожденных пороков', max_length=200, blank=True, null=True)
+    height = models.PositiveSmallIntegerField('Рост (см)', validators=[MaxValueValidator(999)], blank=True, null=True)
+    mass = models.PositiveSmallIntegerField('Масса тела при поставке на учет (кг)', validators=[MaxValueValidator(999)], blank=True, null=True)
+    imt = models.PositiveSmallIntegerField('ИМТ (кг/м2)', blank=True, null=True) # auto
+    preeclampsia_risk = models.CharField('Риск преэклампсии', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
+    preeclampsia_risk_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    premature_birth_risk = models.CharField('Риск преждевременных родов', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
+    premature_birth_risk_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    growth_retardation_risk = models.CharField('Риск задержки роста плода', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
+    growth_retardation_risk_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    thromboembolic_complications = models.CharField('Риск тромбоэболических осложнений', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
+    thromboembolic_complications_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    another_risks = models.CharField('Другие риски', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
+    another_risks_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    child_infections = models.BooleanField('Детские инфекции', default=False, null=True)
+    child_infections_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    dispensary_accounting = models.CharField('Диспансерский учет', max_length=1, choices=REGISTERED, blank=True, null=True)
+    dispensary_accounting_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    injures_operations = models.BooleanField('Травмы/операции', default=False, null=True)
+    injures_operations_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    somatic_diseases = models.BooleanField('Соматические заболевания', default=False, null=True)
+    somatic_diseases_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    socially_significant_infections = models.CharField('Социально значимые инфекции', max_length=200, blank=True, null=True) ###
+    socially_significant_infections_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    hiv_status = models.CharField('ВИЧ-статус', max_length=1, choices=IS_POSITIVE, blank=True, null=True)
+    date = models.DateField('Дата (при наличии)', blank=True, null=True)
+    epidnomer = models.CharField('Эпидномер (при наличии)', max_length=10, blank=True, null=True)
+    
+    antiretroviral_therapy = models.CharField('Антиретровирусная терапия во время беременности', max_length=200, blank=True, null=True)
+    hereditary_diseases = models.BooleanField('Наследственные заболевания', default=False, null=True)
+    hereditary_diseases_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    blood_transfusions = models.BooleanField('Гемотрансфузии', default=False, null=True)
+    year = models.CharField('Год', max_length=4, blank=True, null=True)
+    last_fluorography_date = models.DateField('Последняя флюорография (дата)', blank=True, null=True)
+    last_fluorography_date_result = models.CharField('Последняя флюорография (результат)', max_length=200, blank=True, null=True)
+    bad_habits = models.BooleanField('Вредные привычки', default=False, null=True)
+    smoking = models.CharField('Курение (в день)', max_length=10, blank=True, null=True, choices=SMOKING)
+    alcohol = models.CharField('Алкоголь', max_length=10, blank=True, null=True, choices=ALCOHOL)
+    alcohol_type = models.CharField('Вид алкоголя', max_length=200, blank=True, null=True)
+    drugs = models.CharField('Наркотики (название)', max_length=200, blank=True, null=True)
+    occupational_hazards = models.BooleanField('Профессиональные вредности', default=False, null=True)
+    occupational_hazards_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Сведения о прививках
+    tetanus = models.BooleanField('Столбняк', default=False, null=True)
+    measles = models.BooleanField('Корь', default=False, null=True)
+    rubella = models.BooleanField('Краснуха', default=False, null=True)
+    chickenpox = models.BooleanField('Ветряная оспа', default=False, null=True)
+    flu = models.BooleanField('Грипп', default=False, null=True)
+    HPV = models.BooleanField('ВПЧ', default=False, null=True)
+    hepatitis_B = models.BooleanField('гепатит В', default=False, null=True)
+    other_vaccnation = models.CharField('Другие прививки', max_length=200, blank=True, null=True)
+    
+    # менструация
+    year_start = models.CharField('Год начала', max_length=4, blank=True, null=True)
+    profusion = models.CharField('Обильность', max_length=10, blank=True, null=True, choices=PROFUSION)
+    painfulness = models.CharField('Болезненность', max_length=10, blank=True, null=True, choices=PAINFULNESS)
+    regularity = models.CharField('Регулярность', max_length=10, blank=True, null=True, choices=REGULARITY)
+    
+    sexual_life = models.CharField('Половая жизнь (год)', max_length=4, blank=True, null=True)
+    contraception_method = models.CharField('Контрацепция (метод)', max_length=200, blank=True, null=True)
+    contraception_period = models.CharField('Контрацепция (период)', max_length=200, blank=True, null=True)
+
+    diseases_operations = models.CharField('Гинекологические заболевания, операции', max_length=200, blank=True, null=True)
+    disease_date = models.DateField('Дата', blank=True, null=True)
+    sti = models.BooleanField('Инфекции, передаваемые половым путем', default=False, null=True)
+    treatment = models.CharField('Лечение', max_length=200, blank=True, null=True)
+    treatment_date = models.DateField('Дата', blank=True, null=True)
+
+    # Последнее обследование молочных желез
+    year_mammary = models.CharField('Год обследования', max_length=4, blank=True, null=True)
+    mammary_method = models.CharField('Метод', max_length=200, blank=True, null=True)
+    mammary_result = models.CharField('Результат', max_length=200, blank=True, null=True)
+    
+    # Последнее цитологическое исследование микропрепарата шейки матки
+    year_cervix = models.CharField('Год обследования', max_length=4, blank=True, null=True)
+    cervix_method = models.CharField('Метод', max_length=200, blank=True, null=True)
+    cervix_result = models.CharField('Результат', max_length=200, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class CarvixScar(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='carvix')
+    date = models.DateField('Дата', blank=True, null=True)
+    operation_name = models.CharField('Название операции', max_length=200, blank=True, null=True)
+    if_caesarean = models.CharField('При кесаревом сечении', max_length=200, blank=True, null=True)
+    scar_localization = models.CharField('Локализация рубца на матке', max_length=200, blank=True, null=True)
+    operation_features = models.CharField('Особенности операции, п/о периода', max_length=200, blank=True, null=True)
+
+
+class FatherInfo(models.Model):
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='father')
+    age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
+    height = models.PositiveSmallIntegerField('Рост (см)', validators=[MaxValueValidator(999)], blank=True, null=True)
+    mass = models.PositiveSmallIntegerField('Масса тела при поставке на учет (кг)', validators=[MaxValueValidator(999)], blank=True, null=True)
+    imt = models.PositiveSmallIntegerField('ИМТ (кг/м2)', blank=True, null=True) # auto
+    bad_habits = models.CharField('Вредные привычки', max_length=10, blank=True, null=True, choices=BAD_HABITS)
+    sti = models.BooleanField('Инфекции, передаваемые половым путем', default=False, null=True)
+    sti_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    treatment = models.CharField('Лечение', max_length=200, blank=True, null=True)
+    treatment_date = models.DateField('Дата', blank=True, null=True)
+
+    # Социально значимые инфекции
+    hiv = models.BooleanField('ВИЧ', default=False, null=True)
+    tuberculosis = models.BooleanField('Туберкулез', default=False, null=True)
+    hepatitis_b = models.BooleanField('Гепатит В', default=False, null=True)
+    hepatitis_c = models.BooleanField('Гепатит С', default=False, null=True)
+    syphilis = models.BooleanField('Сифилис', default=False, null=True)
+    others = models.BooleanField('Другие', default=False, null=True)
+
+    last_fluorography_date = models.DateField('Последняя флюорография (дата)', blank=True, null=True)
+    last_fluorography_date_result = models.CharField('Последняя флюорография (результат)', max_length=200, blank=True, null=True)
+
+    # Сведегия о прививках
+    tetanus = models.BooleanField('Столбняк', default=False, null=True)
+    measles = models.BooleanField('Корь', default=False, null=True)
+    rubella = models.BooleanField('Краснуха', default=False, null=True)
+    flu = models.BooleanField('Грипп', default=False, null=True)
+    diphtheria = models.BooleanField('Дифтерия', default=False, null=True)
+    other_vaccnation = models.CharField('Другие прививки', max_length=200, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
 #############
 
 
