@@ -21,4 +21,5 @@ urlpatterns = [
     path('add_appearance/<profile_id>', views.add_appearance_page, name='add-appearance'),
     path('add_complication/<profile_id>/<obsteric_id>', views.add_complication_page, name='add-complication'),
     path('update_complication/<profile_id>/<complication_id>', views.update_complication_page, name='update-complication'),
+    path('patient_info/<profile_id>', views.patient_info_page, name='patient-info'),
 ]

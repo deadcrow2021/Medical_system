@@ -423,3 +423,8 @@ def update_complication_page(request: HttpRequest, profile_id: int, complication
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     
     return render(request, template_name, context={ 'current_user': current_user, 'form': form })
+
+
+def patient_info_page(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    return render(request, 'users/patient_info.html', {'current_user': current_user})

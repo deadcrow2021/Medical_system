@@ -131,6 +131,11 @@
                 <p><a href="{% url 'pregnancy-observation' profile.user.id %}">Наблюдение за настоящей беременностью</a></p>
             </div>
         </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'patient-info' profile.user.id %}">Сведения о пациентке</a></p>
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
