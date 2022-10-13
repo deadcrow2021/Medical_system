@@ -143,8 +143,11 @@ class PregnancyOutcome(models.Model):
 
 # Наблюдения во время настоящей беременности
 
+class CurrentPregnancy(models.Model):
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='current_pregnancy')
+
 class Pelviometry(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pelviometry')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='pelviometry')
     date = models.DateField('Дата', blank=True, null=True)
     dsp = models.PositiveSmallIntegerField('D.sp. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     dcr = models.PositiveSmallIntegerField('D.cr. (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
@@ -163,7 +166,7 @@ class Pelviometry(models.Model):
 
 
 class PregnantWomanMonitoring(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnant_woman_monitoring')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='pregnant_woman_monitoring')
     date = models.DateField('Дата', blank=True, null=True)
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
     complaints = models.CharField('Жалобы', max_length=1000, blank=True, null=True)
@@ -196,7 +199,7 @@ class PregnantWomanMonitoring(models.Model):
 
 
 class AppointmentList(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='appointments')
     visit_number = models.PositiveSmallIntegerField('Номер посещения', validators=[MaxValueValidator(100)], blank=True, null=True)
     date = models.DateField('Дата', blank=True, null=True)
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
@@ -208,7 +211,7 @@ class AppointmentList(models.Model):
 
 
 class TakingMedications(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medications')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='medications')
     date_start = models.DateField('Дата начала приема препарата', blank=True, null=True)
     date_finish = models.DateField('Дата окончания приема препарата', blank=True, null=True)
     indications = models.CharField('Показания', max_length=1000, blank=True, null=True)
@@ -217,7 +220,7 @@ class TakingMedications(models.Model):
 
 
 class AntibodiesDetermination(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='antibodies')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='antibodies')
     date = models.DateField('Дата', blank=True, null=True)
     treponema_antibodies = models.CharField('Антитела к бледной трепонеме', max_length=1000, blank=True, null=True)
     hiv_antibodies = models.CharField('Антитела классов M, G к ВИЧ ½ и антиген р24', max_length=1000, blank=True, null=True)
@@ -228,7 +231,7 @@ class AntibodiesDetermination(models.Model):
 
 
 class RubellaVirus(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='rubella')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='rubella')
     date = models.DateField('Дата', blank=True, null=True)
     lgm = models.CharField('lgM', max_length=1000, blank=True, null=True)
     lgg = models.CharField('lgG', max_length=1000, blank=True, null=True)
@@ -237,7 +240,7 @@ class RubellaVirus(models.Model):
 
 
 class AntiresusBodies(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='antiresus_bodies')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='antiresus_bodies')
     date = models.DateField('Дата', blank=True, null=True)
     antiresus_bodies = models.CharField('Антирезусные тела', max_length=1000, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
@@ -245,7 +248,7 @@ class AntiresusBodies(models.Model):
 
 
 class BloodAnalysis(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='blood_analysis')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='blood_analysis')
     date = models.DateField('Дата', blank=True, null=True)
     hemoglobin = models.CharField('Гемоглобин, г/л', max_length=1000, blank=True, null=True)
     red_blood_cells = models.CharField('Эритроциты, 10^12/л', max_length=1000, blank=True, null=True)
@@ -266,7 +269,7 @@ class BloodAnalysis(models.Model):
 
 
 class BiochemicalBloodAnalysis(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='biochemical_blood')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='biochemical_blood')
     date = models.DateField('Дата', blank=True, null=True)
     total_bilirubin = models.CharField('Общий билирубин, мкмоль/л', max_length=1000, blank=True, null=True)
     direct_bilirubin = models.CharField('Прямой билирубин, мкмоль/л', max_length=1000, blank=True, null=True)
@@ -278,7 +281,7 @@ class BiochemicalBloodAnalysis(models.Model):
 
 
 class Coagulogram(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='сoagulogram')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='сoagulogram')
     date = models.DateField('Дата', blank=True, null=True)
     platelet_count = models.CharField('Количество тромбоцитов, 10^9/л', max_length=1000, blank=True, null=True)
     astv = models.CharField('АЧТВ, сек.', max_length=1000, blank=True, null=True)
@@ -288,7 +291,7 @@ class Coagulogram(models.Model):
 
 
 class GlucoseToleranceTest(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='glucose_test')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='glucose_test')
     date = models.DateField('Дата', blank=True, null=True)
     period = models.CharField('Срок (недель)', max_length=1000, blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
@@ -296,7 +299,7 @@ class GlucoseToleranceTest(models.Model):
 
 
 class ThyroidStimulatingHormone(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='ts_hormonr')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='ts_hormonr')
     date = models.DateField('Дата', blank=True, null=True)
     period = models.CharField('Срок (недель)', max_length=1000, blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
@@ -304,7 +307,7 @@ class ThyroidStimulatingHormone(models.Model):
 
 
 class Smears(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='smears')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='smears')
     date = models.DateField('Дата', blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
@@ -312,7 +315,7 @@ class Smears(models.Model):
 
 
 class BacterioscopicSmearsExamination(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='bacterio_smears')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='bacterio_smears')
     date = models.DateField('Дата', blank=True, null=True)
     # locus C
     c_white_blood_cells = models.CharField('Лейкоциты', max_length=1000, blank=True, null=True)
@@ -341,14 +344,14 @@ class BacterioscopicSmearsExamination(models.Model):
 
 
 class CervixCytologicalExamination(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='cervix_exam')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='cervix_exam')
     date = models.DateField('Дата', blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class UrineAnalysis(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='urine')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='urine')
     date = models.DateField('Дата', blank=True, null=True)
     amount = models.CharField('Количество, мл', max_length=1000, blank=True, null=True)
     ph = models.CharField('pH', max_length=1000, blank=True, null=True)
@@ -361,7 +364,7 @@ class UrineAnalysis(models.Model):
 
 
 class UrineSowing(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='urine_sowing')
+    current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='urine_sowing')
     date = models.DateField('Дата', blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
