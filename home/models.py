@@ -141,10 +141,12 @@ class PregnancyOutcome(models.Model):
     def __str__(self) -> str:
         return self.patient.get_full_name() + " count: " + str(self.pregnancy_count)
 
+
 # Наблюдения во время настоящей беременности
 
 class CurrentPregnancy(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='current_pregnancy')
+
 
 class Pelviometry(models.Model):
     current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='pelviometry')
@@ -467,7 +469,7 @@ class CarvixScar(models.Model):
 
 
 class FatherInfo(models.Model):
-    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='father')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='father')
     age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
     height = models.PositiveSmallIntegerField('Рост (см)', validators=[MaxValueValidator(999)], blank=True, null=True)
     mass = models.PositiveSmallIntegerField('Масса тела при поставке на учет (кг)', validators=[MaxValueValidator(999)], blank=True, null=True)
