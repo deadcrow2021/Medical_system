@@ -501,6 +501,114 @@ class FatherInfo(models.Model):
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
+# Осмотры врачей специалистов
+
+class DoctorExaminations(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
+    
+    ecg_date = models.DateField('Дата ЭКГ', blank=True, null=True)
+    ecgresult = models.CharField('Результаты ЭКГ', max_length=1000, blank=True, null=True)
+    
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+# Сведения о настоящей беременности
+
+class CurrentPregnancyinfo(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_info')
+    pregnancy = models.CharField('Беременность', max_length=1, choices=PREGNANCY, blank=True)
+    # if ВРТ
+    try_number = models.PositiveSmallIntegerField('Номер попытки', validators=[MaxValueValidator(999)], blank=True, null=True)
+    embryo_transfer = models.CharField('Перенос эмбрионов', max_length=1, choices=EMBRYO, blank=True)
+    embryo_date = models.DateField('Дата переноса эмбриона', blank=True, null=True)
+    embryo_number = models.PositiveSmallIntegerField('Число перенесенных эмбрионов', validators=[MaxValueValidator(999)], blank=True, null=True)
+    mother_age = models.PositiveSmallIntegerField('Число перенесенных эмбрионов', validators=[MaxValueValidator(999)], blank=True, null=True)
+    
+    upcoming_births = models.CharField('Предстоящие роды', max_length=1, choices=UPCOMING_BIRTH, blank=True)
+    pregnancy_1 = models.CharField('Беременность', max_length=1, choices=PREGNANCY_1, blank=True)
+    fetus_number = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(9)], blank=True, null=True)
+    last_menstruation = models.DateField('Последняя менструация', blank=True, null=True)
+    
+    first_uzi = models.DateField('Дата 1-го УЗИ', blank=True, null=True)
+    gestation_period = models.PositiveSmallIntegerField('Срок беременности (недель)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    
+    pregnancy_accounting_date = models.DateField('Учет по беременности', blank=True, null=True)
+    pregnancy_accounting_period = models.PositiveSmallIntegerField('Срок (недель)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    
+    fetus_first_stirring = models.DateField('Первое шевеление плода', blank=True, null=True)
+    suppose_birth_date = models.DateField('Предполагаемая дата родов', blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+class FirstExamination(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='first_examination')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    complaints = models.BooleanField('Жалобы', default=False, null=True)
+    complaints_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    subcutaneous_fat_severity = models.CharField('Распределение и выраженность подкожной жировой клетчатки', max_length=1, choices=FAT_SEVERITY, blank=True)
+    edema = models.BooleanField('Отеки', default=False, null=True)
+    edema_str = models.CharField('Дополнительная информация (локация, выраженнось)', max_length=200, blank=True, null=True)
+    lower_extremities_varicose = models.BooleanField('Варикозное расширение вен нижних конечностей', default=False, null=True)
+    enlarged_lymph_nodes = models.BooleanField('Увеличение лимфатических узлов', default=False, null=True)
+    lymph_nodes_str = models.CharField('Дополнительная информация (локализация, болезненность)', max_length=200, blank=True, null=True)
+    # Осмотр и пальпация
+    mammary = models.CharField('Осмотр и пальпация молочных желез', max_length=1, choices=MAMMARY, blank=True)
+    mammary_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    # Соски
+    nipples = models.CharField('Осмотр и пальпация молочных желез', max_length=1, choices=NIPPLES, blank=True)
+    nipples_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+
+    heart_tones = models.CharField('Тоны сердца', max_length=200, blank=True, null=True)
+    pulse = models.CharField('Пульс (уд/мин)', max_length=50, blank=True, null=True)
+    rh_blood_pressure = models.CharField('Артериальное даавлениена правой руке (мм.рт.ст.)', max_length=50, blank=True, null=True)
+    lh_blood_pressure = models.CharField('Артериальное даавление на левой руке (мм.рт.ст.)', max_length=50, blank=True, null=True)
+    fetus_stirring = models.CharField('Шевеление плода: (>16 недель)', max_length=10, choices=FETUS_STIRRING, blank=True, null=True)
+    fetus_heartbeat = models.CharField('Сердцебиение плода (уд/мин) (>12 недель)', max_length=50, blank=True, null=True)
+    abdominal_circumference = models.PositiveSmallIntegerField('Окружность живота (см) (>20 недель)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    fetal_position = models.CharField('Положение плода', max_length=10, choices=FETAL_POSITION, blank=True, null=True)
+    to_pelvis_entrance = models.CharField('Над входом в малый таз (после 34 недель)', max_length=10, choices=PELVIS_ENTRANCE, blank=True, null=True)
+    adjacent_part = models.CharField('Предлежащая часть (после 34 недель)', max_length=10, choices=ADJACENT_PART, blank=True, null=True)
+    # Геникологический осмотр
+    cervix_examination = models.CharField('Осмотр шейки матки в зеркалах', max_length=200, blank=True, null=True)
+    cervix_visual_changes = models.CharField('Визуальные изменения', max_length=200, blank=True, null=True)
+    # Влагалищное исследование
+    external_genitalia = models.CharField('Наружные половые органы (указать отклонения, если есть)', max_length=200, blank=True, null=True)
+    external_genitalia_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    # Влагалище
+    vagina = models.CharField('Указать патологии (если есть)', max_length=200, blank=True, null=True)
+    vagina_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    # Шейка матки
+    cervix = models.CharField('Шейка матки', max_length=10, choices=CERVIX, blank=True, null=True)
+    cervix_length = models.PositiveSmallIntegerField('Длина шейки матки (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    cervix_deviations = models.CharField('Отклонения шейки матки', max_length=10, choices=CERVIX_DEVIATIONS, blank=True, null=True)
+    mucosa = models.CharField('Слизистая', max_length=200, blank=True, null=True)
+    external_pharynx = models.CharField('Наружний зев', max_length=1, choices=PHARYNX, blank=True, null=True)
+    # Тело матки
+    uterus_body = models.CharField('Тело матки. Увеличено до (недель беременности)', max_length=200, blank=True, null=True)
+    uterus_body = models.CharField('Тело матки. Характеристика', max_length=1, choices=UTERUS, blank=True, null=True)
+    uterus_body_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+
+    left_appendages = models.CharField('Придатки слева', max_length=1, choices=APPENDAGES, blank=True, null=True)
+    left_appendages_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    right_appendages = models.CharField('Придатки справа', max_length=1, choices=APPENDAGES, blank=True, null=True)
+    right_appendages_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    exostoses = models.BooleanField('Экзостозы', default=False, null=True)
+    exostoses_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    cervical_canal_separated = models.CharField('Отделяемое из цервикального канала', max_length=200, blank=True, null=True)
+    vagina_separated = models.CharField('Отделяемое из влагалища', max_length=200, blank=True, null=True)
+    # Диагноз
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    analisys = models.CharField('Анализы', max_length=200, blank=True, null=True)
+    appointments = models.CharField('Назначения', max_length=200, blank=True, null=True)
+    date_diagnosis = models.DateField('Дата', blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
 #############
 
 

@@ -379,3 +379,52 @@ class FatherInfoForm(forms.ModelForm):
             'treatment_date': DateInput(),
             'last_fluorography_date': DateInput()
         }
+
+
+class DoctorExaminationsForm(forms.ModelForm):
+    class Meta:
+        model = DoctorExaminations
+        fields = 'patient', 'date', 'result', 'ecg_date', 'ecgresult', \
+                'med_org', 'doctor_fio', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+            'ecg_date': DateInput()
+        }
+
+
+class CurrentPregnancyinfoForm(forms.ModelForm):
+    class Meta:
+        model = CurrentPregnancyinfo
+        fields = 'pregnancy', 'try_number', 'embryo_transfer', 'embryo_date', \
+                'embryo_number', 'mother_age', 'upcoming_births', 'pregnancy_1', \
+                'fetus_number', 'last_menstruation', 'first_uzi', 'gestation_period', \
+                'pregnancy_accounting_date', 'pregnancy_accounting_period', \
+                'fetus_first_stirring', 'suppose_birth_date', 'doctor_confirmation'
+        widgets = {
+            'embryo_date': DateInput(),
+            'last_menstruation': DateInput(),
+            'first_uzi': DateInput(),
+            'pregnancy_accounting_date': DateInput(),
+            'fetus_first_stirring': DateInput(),
+            'suppose_birth_date': DateInput()
+        }
+
+
+class FirstExaminationForm(forms.ModelForm):
+    class Meta:
+        model = FirstExamination
+        fields = 'date', 'complaints', 'complaints_str', 'subcutaneous_fat_severity', \
+                'edema', 'edema_str', 'lower_extremities_varicose', 'enlarged_lymph_nodes', \
+                'lymph_nodes_str', 'mammary', 'mammary_str', 'nipples', 'nipples_str', 'heart_tones', \
+                'pulse', 'rh_blood_pressure', 'lh_blood_pressure', 'fetus_stirring', \
+                'fetus_heartbeat', 'abdominal_circumference', 'fetal_position', 'to_pelvis_entrance', \
+                'adjacent_part', 'cervix_examination', 'cervix_visual_changes', 'external_genitalia', \
+                'external_genitalia_str', 'vagina', 'vagina_str', 'cervix', 'cervix_length', 'cervix_deviations', \
+                'mucosa', 'external_pharynx', 'uterus_body', 'uterus_body', 'uterus_body_str', 'left_appendages', \
+                'left_appendages_str', 'right_appendages', 'right_appendages_str', 'exostoses', 'exostoses_str', \
+                'cervical_canal_separated', 'vagina_separated', 'gestation_period_weeks', 'analisys', \
+                'appointments', 'date_diagnosis', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+            'date_diagnosis': DateInput()
+        }
