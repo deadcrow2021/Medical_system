@@ -11,7 +11,7 @@ class Patient(models.Model):
     last_name    = models.CharField("Фамилия", max_length=50)
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     gender       = models.CharField('Пол', max_length=1, choices=GENDERS, default='f')
-    telephone    = PhoneNumberField('Телефонный номер', null=False, blank=True)
+    telephone    = PhoneNumberField('Телефонный номер')
     email        = models.EmailField(max_length=60, blank=True, null=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
@@ -606,6 +606,121 @@ class FirstExamination(models.Model):
     analisys = models.CharField('Анализы', max_length=200, blank=True, null=True)
     appointments = models.CharField('Назначения', max_length=200, blank=True, null=True)
     date_diagnosis = models.DateField('Дата', blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+##### Оценка антенатольного состояния плода #####
+
+# Узи 1 триместра 
+class UltrasoundFisrtTrimester(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='ultrasound_1')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    number_of_fetuses = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(10)], blank=True, null=True)
+    choriality_amniality = models.CharField('Хориальность/амниальность', max_length=200, blank=True, null=True)
+    egg_diameter = models.PositiveSmallIntegerField('Диаметр плодового яйца (мм)', validators=[MaxValueValidator(9999)], blank=True, null=True)
+    ktr = models.PositiveSmallIntegerField('КТР (мм)', validators=[MaxValueValidator(9999)], blank=True, null=True)
+    choriality_amniality = models.CharField('СБ эмбрионов (уд/мин / не определяется)', max_length=200, blank=True, null=True)
+    chorion_location = models.CharField('Хорион расположен', max_length=200, blank=True, null=True)
+    pathology = models.CharField('Патологии (если есть)', max_length=200, blank=True, null=True)
+    pathology_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+# Комплексная оценка рисков (11-14 недель)
+class ComprehensiveRiskAssessment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='risk_assessment')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    # УЗИ
+    number_of_fetuses = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(10)], blank=True, null=True)
+    ktr = models.PositiveSmallIntegerField('КТР (мм)', validators=[MaxValueValidator(9999)], blank=True, null=True)
+    tvp = models.PositiveSmallIntegerField('ТВП (мм)', validators=[MaxValueValidator(9999)], blank=True, null=True)
+    choriality_amniality = models.CharField('СБ эмбрионов (уд/мин)', max_length=200, blank=True, null=True)
+    cervicometry = models.CharField('Цервикометрия (мм)', max_length=1000, blank=True, null=True)
+    uterine_pulse_index = models.CharField('ПИ маточных артерий', max_length=1, choices=UTERINE_PULSE, blank=True, null=True)
+    # ВПР
+    vpr = models.BooleanField('ВПР', default=False, null=True)
+    vpr_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    # Другая патология
+    # БХМ
+    papp_a = models.CharField('РАРР-А (мЕД/мл)', max_length=1000, blank=True, null=True)
+    mom_papp_a = models.CharField('МОМ', max_length=1000, blank=True, null=True)
+    b_hgch = models.CharField('бета-ХГЧ (мЕД/мл)', max_length=1000, blank=True, null=True)
+    mom_b_hgch = models.CharField('МОМ', max_length=1000, blank=True, null=True)
+    # Комплексный индивидуальный риск
+    trisomy_21 = models.CharField('21 трисомии', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    trisomy_18 = models.CharField('18 трисомии', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    trisomy_13 = models.CharField('13 трисомии', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    zrp = models.CharField('ЗРП', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    trisomy_13 = models.CharField('ПР', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    trisomy_13 = models.CharField('ПЭ ранней (до 34 недель)', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    trisomy_13 = models.CharField('ПЭ поздний (до 37 недель)', max_length=1, choices=HIGH_LOW, blank=True, null=True)
+    # Заключение
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+# Ультразвуковое исследование (19-21 неделя)
+class UltrasoundExamination_19_21(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='uzi_exam_1')
+    date = models.DateField('Дата', blank=True, null=True)
+    # УЗИ
+    number_of_fetuses = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(10)], blank=True, null=True)
+    pmp = models.PositiveSmallIntegerField('ПМП (г)', validators=[MaxValueValidator(9999)], blank=True, null=True)
+    choriality_amniality = models.CharField('СБ плода (уд/мин / не определяется)', max_length=200, blank=True, null=True)
+    prp = models.BooleanField('ПРП', default=False, null=True)
+    pathology_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    echo_marker_ha = models.CharField('Эхо маркеры ХА', max_length=200, blank=True, null=True)
+    risk_ha = models.CharField('Риск ХА (перерасчет при эхо-маркерах ХА)', max_length=200, blank=True, null=True)
+    amniotic_fluid = models.CharField('Околоплодные воды', max_length=1, choices=AMNIOTIC_FLUID, blank=True, null=True)
+    placenta_location = models.CharField('Плацента расположена', max_length=200, blank=True, null=True)
+    features = models.CharField('Особенности', max_length=200, blank=True, null=True)
+    # УЗИ-цервикометрия
+    cervical_canal_length = models.CharField('длина сомкнутой части цервикального канала (мм)', max_length=200, blank=True, null=True)
+    pharynx = models.BooleanField('Зев закрыт', blank=True, null=True)
+    pharynx_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    # Заключение
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    invasive_prenatal_diagnosis = models.CharField('Инвазивная пренатальная диагностика (при высоком риске ХА)', max_length=200, blank=True, null=True)
+    ipd_date = models.DateField('Дата', blank=True, null=True)
+    
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    procedure_type = models.PositiveSmallIntegerField('Вид процедуры', validators=[MaxValueValidator(99)], blank=True, null=True)
+    cardtype = models.PositiveSmallIntegerField('Кариотип/другое', validators=[MaxValueValidator(99)], blank=True, null=True)
+    consilium_result = models.PositiveSmallIntegerField('Заключение консилиума (при ПРП и ХА) ', validators=[MaxValueValidator(99)], blank=True, null=True)
+    result_date = models.DateField('Дата', blank=True, null=True)
+    result_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
+# Ультразвуковое исследование (30-34 неделя) 
+class UltrasoundExamination_30_34(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='uzi_exam_2')
+    date = models.DateField('Дата', blank=True, null=True)
+    presentation = models.CharField('Предлежание', max_length=1, choices=PRESENTATION, blank=True, null=True)
+    amniotic_fluid = models.CharField('Околоплодные воды', max_length=1, choices=AMNIOTIC_FLUID, blank=True, null=True)
+    placenta_location = models.CharField('Плацента расположена', max_length=200, blank=True, null=True)
+    choriality_amniality = models.CharField('СБ плода (уд/мин)', max_length=200, blank=True, null=True)
+    # Заключение
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    # УЗИ-цервикометрия 1
+    uzi_date = models.DateField('УЗИ-цервикометрия. Дата', blank=True, null=True)
+    uzi_result = models.CharField('Заключение', max_length=200, blank=True, null=True)
+    features = models.CharField('Особенности', max_length=200, blank=True, null=True)
+    # УЗИ-цервикометрия 2
+    cervical_canal_length = models.CharField('длина сомкнутой части цервикального канала (мм)', max_length=200, blank=True, null=True)
+    pharynx = models.BooleanField('Зев закрыт', blank=True, null=True)
+    pharynx_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    # Заключение
+    gestation_period_result = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    invasive_prenatal_diagnosis = models.CharField('Инвазивная пренатальная диагностика (при высоком риске ХА)', max_length=200, blank=True, null=True)
+    ipd_date = models.DateField('Дата', blank=True, null=True)
+    gestation_period_result_main = models.PositiveSmallIntegerField('Срок беременности', validators=[MaxValueValidator(99)], blank=True, null=True)
+    procedure_type = models.PositiveSmallIntegerField('Вид процедуры', validators=[MaxValueValidator(99)], blank=True, null=True)
+    cariotype = models.CharField('Кариотип/другое', max_length=200, blank=True, null=True)
+    consilium_result = models.PositiveSmallIntegerField('Заключение консилиума (при ПРП и ХА) ', validators=[MaxValueValidator(99)], blank=True, null=True)
+    result_date = models.DateField('Дата', blank=True, null=True)
+    result_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 

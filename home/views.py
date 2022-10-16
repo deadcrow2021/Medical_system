@@ -106,28 +106,28 @@ def data_sampling_page(request):
                 # add message: fill any field
                 return render(request, 'home/data_sampling.html', {'form':form})
 
-            age = form_data['age']
+            # age = form_data['age']
 
             if form_data['mkb_10']:
                 patients = Patient.objects.select_related().filter(history__disease = form_data['mkb_10'])
-            if form_data['medical_organization']:
-                patients = patients.filter(med_org=form_data['medical_organization'])
-            if form_data['territory']:
-                patients = patients.filter(territory=form_data['territory'])
+            # if form_data['medical_organization']:
+            #     patients = patients.filter(med_org=form_data['medical_organization'])
+            # if form_data['territory']:
+            #     patients = patients.filter(territory=form_data['territory'])
             if form_data['gender']:
                 patients = patients.filter(gender=form_data['gender'])
-            if age:
-                today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).date()
-                patients = patients.filter(
-                    date_of_birth__gte = today - relativedelta(years=age+1, days=-1),
-                    date_of_birth__lte = today - relativedelta(years=age),
-                )
-            if form_data['date_of_birth']:
-                patients = patients.filter(date_of_birth=form_data['date_of_birth'])
-            if form_data['date_of_death']:
-                patients = patients.filter(date_death=form_data['date_of_death'])
-            if form_data['city_village']:
-                patients = patients.filter(city_village=form_data['city_village'])
+            # if age:
+            #     today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).date()
+            #     patients = patients.filter(
+            #         date_of_birth__gte = today - relativedelta(years=age+1, days=-1),
+            #         date_of_birth__lte = today - relativedelta(years=age),
+            #     )
+            # if form_data['date_of_birth']:
+            #     patients = patients.filter(date_of_birth=form_data['date_of_birth'])
+            # if form_data['date_of_death']:
+            #     patients = patients.filter(date_death=form_data['date_of_death'])
+            # if form_data['city_village']:
+            #     patients = patients.filter(city_village=form_data['city_village'])
 
             for patient in patients:
                 # may be change fields

@@ -95,13 +95,13 @@ class ReceptionAddForm(forms.ModelForm):
 
 class DataSamplingForm(forms.Form):    
     mkb_10 = forms.CharField(label='Заболевание по МКБ-10', max_length=270, required=False)
-    medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
-    territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
+    # medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
+    # territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
     gender = forms.ChoiceField(label='Пол', choices=GENDERS, required=False)
-    age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
-    date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
-    date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
-    city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
+    # age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
+    # date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
+    # date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
+    # city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
 
 
 class MedicalCardForm(forms.ModelForm):
@@ -428,3 +428,61 @@ class FirstExaminationForm(forms.ModelForm):
             'date': DateInput(),
             'date_diagnosis': DateInput()
         }
+
+class UltrasoundFisrtTrimesterForm(forms.ModelForm):
+    class Meta:
+        model = UltrasoundFisrtTrimester
+        fields = 'date', 'number_of_fetuses', 'choriality_amniality', \
+                'egg_diameter', 'ktr', 'choriality_amniality', 'chorion_location', \
+                'pathology', 'pathology_str', 'gestation_period_weeks', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class ComprehensiveRiskAssessmentForm(forms.ModelForm):
+    class Meta:
+        model = ComprehensiveRiskAssessment
+        fields = 'date', 'number_of_fetuses', 'ktr', 'tvp', \
+                'choriality_amniality', 'cervicometry', \
+                'uterine_pulse_index', 'vpr', 'vpr_str', \
+                'papp_a', 'mom_papp_a', 'b_hgch', 'mom_b_hgch', \
+                'trisomy_21', 'trisomy_18', 'trisomy_13', 'zrp', \
+                'trisomy_13', 'trisomy_13', 'trisomy_13', \
+                'gestation_period_weeks', 'doctor_confirmation' 
+        widgets = {
+            'date': DateInput()
+        }
+
+
+class UltrasoundExamination_19_21Form(forms.ModelForm):
+    class Meta:
+        model = UltrasoundExamination_19_21
+        fields = 'date', 'number_of_fetuses', 'pmp', 'choriality_amniality', \
+                'prp', 'pathology_str', 'echo_marker_ha', 'risk_ha', 'amniotic_fluid', \
+                'placenta_location', 'features', 'cervical_canal_length', 'pharynx', \
+                'pharynx_str', 'gestation_period_weeks', 'invasive_prenatal_diagnosis', \
+                'ipd_date', 'gestation_period_weeks', 'procedure_type', 'cardtype', \
+                'consilium_result', 'result_date', 'result_str', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+            'ipd_date': DateInput(),
+            'result_date': DateInput()
+        }
+
+
+class UltrasoundExamination_30_34Form(forms.ModelForm):
+    class Meta:
+        model = UltrasoundExamination_30_34
+        fields = 'date', 'presentation', 'amniotic_fluid', 'placenta_location', \
+                'choriality_amniality', 'gestation_period_weeks', 'uzi_date', 'uzi_result', \
+                'features', 'cervical_canal_length', 'pharynx', 'pharynx_str', 'gestation_period_result', \
+                'invasive_prenatal_diagnosis', 'ipd_date', 'gestation_period_result_main', 'procedure_type', \
+                'cariotype', 'consilium_result', 'result_date', 'result_str', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput(),
+            'uzi_date': DateInput(),
+            'ipd_date': DateInput(),
+            'result_date': DateInput()
+        }
+

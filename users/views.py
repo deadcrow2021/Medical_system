@@ -269,8 +269,8 @@ def recent_patients(request: HttpRequest):
                     mounth_ago = dt - timedelta(days=30)
                     patients = patients.filter(date_updated__gte=mounth_ago,)
             
-            if form.cleaned_data['territory']:
-                patients = patients.filter(territory=request.user.doctor.territory)
+            # if form.cleaned_data['territory']:
+            #     patients = request.user.doctor.patients.all()
     
     context = {'patients': patients, 'form': form}
     return render(request, 'users/recent_patients.html', context)
