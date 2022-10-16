@@ -21,12 +21,10 @@ class Patient(models.Model):
         ordering = ['-date_updated']
     
     def __str__(self) -> str:
-        return self.user.username
+        return self.get_full_name()
     
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
-
-
 
 
 ##### Medical Forms #####
@@ -162,9 +160,6 @@ class Pelviometry(models.Model):
     michaelis_rhombus_y = models.PositiveSmallIntegerField('Ромб Михаэлиса Y (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     pelvis_dimensions = models.PositiveSmallIntegerField('Дополнительные размеры таза (по показаниям)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-    
-    class Meta:
-        verbose_name = 'Пельвиометрия'
 
 
 class PregnantWomanMonitoring(models.Model):
@@ -376,48 +371,88 @@ class UrineSowing(models.Model):
 
 class PatientInformation(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='patient_information')
+    
+    # Врожденные пороки развития
     congenital_malformations = models.BooleanField('Врожденные пороки развития', default=False, null=True)
     congenital_malformations_str = models.CharField('Перечисление врожденных пороков', max_length=200, blank=True, null=True)
+    
+    # Рост
     height = models.PositiveSmallIntegerField('Рост (см)', validators=[MaxValueValidator(999)], blank=True, null=True)
+    
+    # Масса тела
     mass = models.PositiveSmallIntegerField('Масса тела при поставке на учет (кг)', validators=[MaxValueValidator(999)], blank=True, null=True)
+    
+    # ИМТ
     imt = models.PositiveSmallIntegerField('ИМТ (кг/м2)', blank=True, null=True) # auto
+    
+    # Риск преэклампсии
     preeclampsia_risk = models.CharField('Риск преэклампсии', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
     preeclampsia_risk_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    
+    # Риск преждевременных родов
     premature_birth_risk = models.CharField('Риск преждевременных родов', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
     premature_birth_risk_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    
+    # Риск задержки роста плода
     growth_retardation_risk = models.CharField('Риск задержки роста плода', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
     growth_retardation_risk_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    
+    # Риск тромбоэболических осложнений
     thromboembolic_complications = models.CharField('Риск тромбоэболических осложнений', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
     thromboembolic_complications_str = models.CharField('Значение риска', max_length=200, blank=True, null=True)
+    
+    # Другие риски
     another_risks = models.CharField('Другие риски', max_length=1, choices=RISK_LEVEL, blank=True, null=True)
     another_risks_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Детские инфекции
     child_infections = models.BooleanField('Детские инфекции', default=False, null=True)
     child_infections_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Диспансерский учет
     dispensary_accounting = models.CharField('Диспансерский учет', max_length=1, choices=REGISTERED, blank=True, null=True)
     dispensary_accounting_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Травмы/операции
     injures_operations = models.BooleanField('Травмы/операции', default=False, null=True)
     injures_operations_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Соматические заболевания
     somatic_diseases = models.BooleanField('Соматические заболевания', default=False, null=True)
     somatic_diseases_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Социально значимые инфекции
     socially_significant_infections = models.CharField('Социально значимые инфекции', max_length=200, blank=True, null=True) ###
     socially_significant_infections_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
     
+    # ВИЧ-статус
     hiv_status = models.CharField('ВИЧ-статус', max_length=1, choices=IS_POSITIVE, blank=True, null=True)
     date = models.DateField('Дата (при наличии)', blank=True, null=True)
     epidnomer = models.CharField('Эпидномер (при наличии)', max_length=10, blank=True, null=True)
     
+    # Антиретровирусная терапия
     antiretroviral_therapy = models.CharField('Антиретровирусная терапия во время беременности', max_length=200, blank=True, null=True)
+    
+    # Наследственные заболевания
     hereditary_diseases = models.BooleanField('Наследственные заболевания', default=False, null=True)
     hereditary_diseases_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
+    
+    # Гемотрансфузии
     blood_transfusions = models.BooleanField('Гемотрансфузии', default=False, null=True)
     year = models.CharField('Год', max_length=4, blank=True, null=True)
+    
+    # Последняя флюорография
     last_fluorography_date = models.DateField('Последняя флюорография (дата)', blank=True, null=True)
     last_fluorography_date_result = models.CharField('Последняя флюорография (результат)', max_length=200, blank=True, null=True)
+    
+    # Вредные привычки
     bad_habits = models.BooleanField('Вредные привычки', default=False, null=True)
     smoking = models.CharField('Курение (в день)', max_length=10, blank=True, null=True, choices=SMOKING)
     alcohol = models.CharField('Алкоголь', max_length=10, blank=True, null=True, choices=ALCOHOL)
     alcohol_type = models.CharField('Вид алкоголя', max_length=200, blank=True, null=True)
     drugs = models.CharField('Наркотики (название)', max_length=200, blank=True, null=True)
+    
+    # Профессиональные вредности
     occupational_hazards = models.BooleanField('Профессиональные вредности', default=False, null=True)
     occupational_hazards_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
     
@@ -437,16 +472,22 @@ class PatientInformation(models.Model):
     painfulness = models.CharField('Болезненность', max_length=10, blank=True, null=True, choices=PAINFULNESS)
     regularity = models.CharField('Регулярность', max_length=10, blank=True, null=True, choices=REGULARITY)
     
+    # Половая жизнь
     sexual_life = models.CharField('Половая жизнь (год)', max_length=4, blank=True, null=True)
+    
+    # Контрацепция
     contraception_method = models.CharField('Контрацепция (метод)', max_length=200, blank=True, null=True)
     contraception_period = models.CharField('Контрацепция (период)', max_length=200, blank=True, null=True)
-
+    
+    # Гинекологические заболевания
     diseases_operations = models.CharField('Гинекологические заболевания, операции', max_length=200, blank=True, null=True)
     disease_date = models.DateField('Дата', blank=True, null=True)
+    
+    # Инфекции, передаваемые половым путем
     sti = models.BooleanField('Инфекции, передаваемые половым путем', default=False, null=True)
     treatment = models.CharField('Лечение', max_length=200, blank=True, null=True)
     treatment_date = models.DateField('Дата', blank=True, null=True)
-
+    
     # Последнее обследование молочных желез
     year_mammary = models.CharField('Год обследования', max_length=4, blank=True, null=True)
     mammary_method = models.CharField('Метод', max_length=200, blank=True, null=True)
@@ -456,6 +497,8 @@ class PatientInformation(models.Model):
     year_cervix = models.CharField('Год обследования', max_length=4, blank=True, null=True)
     cervix_method = models.CharField('Метод', max_length=200, blank=True, null=True)
     cervix_result = models.CharField('Результат', max_length=200, blank=True, null=True)
+    
+    # Подтверждение врача
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
@@ -561,7 +604,7 @@ class FirstExamination(models.Model):
     # Соски
     nipples = models.CharField('Осмотр и пальпация молочных желез', max_length=1, choices=NIPPLES, blank=True)
     nipples_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
-
+    
     heart_tones = models.CharField('Тоны сердца', max_length=200, blank=True, null=True)
     pulse = models.CharField('Пульс (уд/мин)', max_length=50, blank=True, null=True)
     rh_blood_pressure = models.CharField('Артериальное даавлениена правой руке (мм.рт.ст.)', max_length=50, blank=True, null=True)
