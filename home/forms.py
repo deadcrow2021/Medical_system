@@ -486,3 +486,18 @@ class UltrasoundExamination_30_34Form(forms.ModelForm):
             'result_date': DateInput()
         }
 
+
+class HospitalizationInformationForm(forms.ModelForm):
+    class Meta:
+        model = HospitalizationInformation
+        fields = 'date_start', 'date_finish', 'hosp_type', 'med_org', \
+                'diagnosis', 'date', 'doctor_confirmation_1', \
+                'prenatal_hospitalization', 'where', 'foundation', \
+                'date_filling', 'doctor_confirmation_2'
+        widgets = {
+            'date_start': DateInput(),
+            'date_finish': DateInput(),
+            'date': DateInput(),
+            'date_filling': DateInput()
+        }
+

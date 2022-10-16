@@ -767,6 +767,26 @@ class UltrasoundExamination_30_34(models.Model):
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
+# Сведения о госпитализации во время беременности
+
+class HospitalizationInformation(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hospitalization')
+    date_start = models.DateField('Дата начала', blank=True, null=True)
+    date_finish = models.DateField('Дата окончания', blank=True, null=True)
+    hosp_type = models.CharField('Вид', max_length=1, choices=HOSP_TYPE, blank=True, null=True)
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    diagnosis = models.CharField('Основной диагноз', max_length=200, blank=True, null=True)
+
+    date = models.DateField('Дата', blank=True, null=True)
+    doctor_confirmation_1 = models.BooleanField('Подтверждение врача', default=False, null=True)
+    
+    prenatal_hospitalization = models.BooleanField('Дородовая госпитализация', default=False, null=True)
+    where = models.CharField('Медицинская организация', max_length=1, choices=WHERE, blank=True)
+    foundation = models.CharField('Основание', max_length=200, blank=True, null=True)
+    date_filling = models.DateField('Дата заполнения', blank=True, null=True)
+    doctor_confirmation_2 = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
 #############
 
 
