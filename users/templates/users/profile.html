@@ -120,6 +120,13 @@
                 <p><a href="{% url 'patient-info' profile.user.id %}">Сведения о пациентке</a></p>
             </div>
         </div>
+        {% for key, val in buttons %}
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ key }}</a></p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
 </div>
