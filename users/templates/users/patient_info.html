@@ -4,15 +4,89 @@
 <div class="back__button">
     <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
 </div>
+<div class="back__button">
+    <a href="{% url 'update-patient-info' current_user.id %}" class="back_btn">Изменить</a>
+</div>
 
 {% if user.doctor %}
-<div class="block__profile__docs">
-    <div class="block__lines">
-        <div class="lines__element btn">
-            {% comment %} <p><a href="{% url 'medical-card' profile.user.id %}">Пельвиометрия</a></p> {% endcomment %}
+<div class="fields">
+    {% for p in form %}
+    <div class="fields__input">
+        <div class="fields__input__label">
+            {{ p.label_tag }}
+        </div>
+        <div class="fields__input__field noborder">
+        {% if p.field.choices %}
+            {% for i in p.field.choices %}
+                {% if p.value == i.0 %}
+                    {{i.1}}
+                {% endif %}
+            {% endfor %}
+        {% elif not p.value %}
+            ---------
+        {% elif p.value %}
+            {{ p.value }}
+        {% endif %}
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endif %}
-
+<script type="text/javascript">
+    {% comment %} var count = [, , 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1,
+    2, 2, 2, 5, 2, 8, 4, 1, 2, 2, 3, 3, 3, 1]; {% endcomment %}
+    var count = {
+        'Врожденные пороки развития': 2,
+        'Рост': 1,
+        'Масса тела': 1,
+        'ИМТ': 1,
+        'Риск преэклампсии': 2,
+        'Риск преждевременных родов': 2,
+        'Риск задержки роста плода': 2,
+        'Риск тромбоэболических осложнений': 2,
+        'Другие риски': 2,
+        'Детские инфекции': 2,
+        'Диспансерский учет': 2,
+        'Травмы/операции': 2,
+        'Соматические заболевания': 2,
+        'Социально значимые инфекции': 2,
+        'ВИЧ-статус': 3,
+        'Антиретровирусная терапия': 1,
+        'Наследственные заболевания': 2,
+        'Гемотрансфузии': 2,
+        'Последняя флюорография': 2,
+        'Вредные привычки': 5,
+        'Профессиональные вредности': 2,
+        'Сведения о прививках': 8,
+        'менструация': 4,
+        'Половая жизнь': 1,
+        'Контрацепция': 2,
+        'Гинекологические заболевания': 2,
+        'Инфекции, передаваемые половым путем': 3,
+        'Последнее обследование молочных желез': 3,
+        'Последнее цитологическое исследование микропрепарата шейки матки': 3,
+        'Подтверждение врача': 1,
+    }
+    var elem = document.getElementsByClassName('fields')[0].children[0];
+    
+    for (let [name, idx] of Object.entries(count)) {
+        let label = document.createElement('h3');
+        label.innerText = name + ':';
+        
+        let inner_div = document.createElement('div');
+        inner_div.setAttribute('class', 'border_div');
+        
+        for(let i = 0; i < idx; i++) {
+            let next = elem.nextElementSibling;
+            inner_div.appendChild(elem);
+            elem = next;
+        }
+        
+        let div = document.createElement('div');
+        div.setAttribute('class', 'outer_div');
+        div.appendChild(label);
+        div.appendChild(inner_div);
+        document.body.appendChild(div);
+    }
+</script>
 {% endblock %}

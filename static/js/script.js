@@ -9,13 +9,12 @@ document.addEventListener("DOMContentLoaded", function() {
         let input = event.target
         let number = get_numbers_from_input(input)
         
-        let index = ["7","8","9"].indexOf(number[0]);
+        let index = ["4","7","8","9"].indexOf(number[0]);
         let beautifulNumber = "";
         
-        console.log(`${number[0]}`);
         if (index > -1) {
             // Russian
-            if (number[0] == "9") number = "7" + number;
+            if (["4", "9"].indexOf(number[0]) > -1) number = "7" + number;
             beautifulNumber = (number[0] == "8") ? "8" : "+7";
             if (number.length > 1)
                 beautifulNumber += " (" + number.substr(1, 3);

@@ -1,0 +1,72 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'medical-card' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+
+<div class="fields">
+    {% for form in forms %}
+        {% for p in form %}
+        <div class="fields__input">
+            <div class="fields__input__label">
+                {{ p.label_tag }}
+            </div>
+            <div class="fields__input__field noborder">
+            {% if p.field.choices %}
+                {% for i in p.field.choices %}
+                    {% if p.value == i.0 %}
+                        {{i.1}}
+                    {% endif %}
+                {% endfor %}
+            {% elif not p.value %}
+                ---------
+            {% elif p.value %}
+                {{ p.value }}
+            {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script type='text/javascript'>
+    function set_name_with_border(name, id, count) {
+        let elem = document.querySelector(`label[for=id_${id}]`);
+        elem = elem.parentNode.parentNode;
+        
+        let label = document.createElement('h3');
+        label.innerText = name + ':';
+        
+        let inner_div = document.createElement('div');
+        inner_div.setAttribute('class', 'border_div');
+        
+        for(let i = 0; i < count; i++) {
+            let next = elem.nextElementSibling;
+            inner_div.appendChild(elem);
+            elem = next;
+        }
+        
+        let div = document.createElement('div');
+        div.setAttribute('class', 'outer_div');
+        div.appendChild(label);
+        div.appendChild(inner_div);
+        document.body.appendChild(div);
+    }
+    
+    let nodes_id = [
+        ['Личные данные','date_of_birth', 15],
+        ['Сведения об аллергии','allergy',2],
+        ['Сведения о группе крови и Rh-факторе','mother_blood_group',6],
+        ['Данные по беременности','pregnancy_count',4],
+        ['Роды','childbirth_date',3],
+        ['Диагноз','diagnosis',2],
+        ['Сопутствующие заболевания','somatic_diseases',2],
+        ['Подтверждение','doctor_confirmation',1],
+        ['Риски осложнений','visit', 6]
+    ]
+    
+    for (let [name, id, count] of nodes_id) {
+        set_name_with_border(name, id, count);
+    }
+</script>
+{% endblock %}
