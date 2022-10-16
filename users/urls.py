@@ -22,6 +22,7 @@ urlpatterns = [
     path('add_complication/<profile_id>/<obsteric_id>', views.add_complication_page, name='add-complication'),
     path('update_complication/<profile_id>/<complication_id>', views.update_complication_page, name='update-complication'),
     path('patient_info/<profile_id>', views.patient_info_page, name='patient-info'),
+    path('update_patient_info/<profile_id>', views.update_patient_info_page, name='update-patient-info'),
     path('observation/<profile_id>/<model_name>', views.observation_template_page, name='observation'),
     path('observation/<profile_id>/<model_name>/<model_id>', views.update_observation_template_page, name='update-observation'),
 ]

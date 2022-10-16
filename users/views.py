@@ -426,7 +426,24 @@ def update_complication_page(request: HttpRequest, profile_id: int, complication
 
 def patient_info_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
-    return render(request, 'users/patient_info.html', {'current_user': current_user})
+    instance = PatientInformation.objects.get(patient=current_user.patient)
+    form = PatientInformationForm(instance=instance)
+    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form })
+
+def update_patient_info_page(request, profile_id):
+    current_user = User.objects.get(pk=profile_id)
+    success_url = 'patient-info'
+    instance = PatientInformation.objects.get(patient=current_user.patient)
+    
+    if request.method == "POST":
+        form = PatientInformationForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
+    else:
+        form = PatientInformationForm(instance=instance)
+    
+    return render(request, 'users/update_patient_info.html', { 'current_user': current_user, 'form': form })
 
 
 observation_forms_models = {

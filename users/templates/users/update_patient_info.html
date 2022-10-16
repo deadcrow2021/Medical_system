@@ -1,0 +1,28 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
+</div>
+
+{% if user.doctor %}
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="fields">
+        {% for p in form %}
+        <div class="fields__input">
+            <div class="fields__input__label">
+                {{ p.label_tag }}
+            </div>
+            <div class="fields__input__field">
+                {{ p }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="submit-btn">
+        <button class="btn" type="submit">Изменить</button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

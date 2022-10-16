@@ -30,3 +30,5 @@ admin.site.register(BacterioscopicSmearsExamination),
 admin.site.register(CervixCytologicalExamination),
 admin.site.register(UrineAnalysis),
 admin.site.register(UrineSowing),
+
+admin.site.register(PatientInformation),

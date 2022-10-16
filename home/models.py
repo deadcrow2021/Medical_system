@@ -604,7 +604,7 @@ class FirstExamination(models.Model):
     # Соски
     nipples = models.CharField('Осмотр и пальпация молочных желез', max_length=1, choices=NIPPLES, blank=True)
     nipples_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
-
+    
     heart_tones = models.CharField('Тоны сердца', max_length=200, blank=True, null=True)
     pulse = models.CharField('Пульс (уд/мин)', max_length=50, blank=True, null=True)
     rh_blood_pressure = models.CharField('Артериальное даавлениена правой руке (мм.рт.ст.)', max_length=50, blank=True, null=True)
