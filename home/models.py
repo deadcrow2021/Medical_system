@@ -11,8 +11,8 @@ class Patient(models.Model):
     last_name    = models.CharField("Фамилия", max_length=50)
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     gender       = models.CharField('Пол', max_length=1, choices=GENDERS, default='f')
-    telephone    = PhoneNumberField('Телефонный номер')
-    email        = models.EmailField(max_length=60, blank=True, null=True)
+    telephone    = PhoneNumberField('Телефонный номер', blank=True, null=True)
+    email        = models.EmailField('Email', max_length=60, blank=True, null=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
     class Meta:

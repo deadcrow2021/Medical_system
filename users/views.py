@@ -20,6 +20,7 @@ from home.views import add_log
 from .mkb10 import mkb10_deseases
 from home.choices import CHANGETYPE
 from django.utils import timezone
+from django.core.mail import send_mail
 import time
 
 
@@ -278,12 +279,17 @@ def recent_patients(request: HttpRequest):
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form2 = self.form_class(request.POST)
+        print(form2.__dict__)
         if form2.is_valid():
             user: User = User()
             personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
             user.username = generate_username(personal.first_name, user.date_joined)
+            send_mail('Данные для входа в систему',
+                      f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
+                      's@aistteam.ru',
+                      [form2.cleaned_data['email']])
             user.save()
             personal.user = user
             personal.save()
