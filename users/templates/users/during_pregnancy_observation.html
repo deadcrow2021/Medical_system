@@ -6,13 +6,15 @@
 </div>
 
 {% if user.doctor %}
-<div class="block__profile__docs">
-    <div class="block__lines">
-        <div class="lines__element btn">
-            {% comment %} <p><a href="{% url 'medical-card' profile.user.id %}">Пельвиометрия</a></p> {% endcomment %}
+    {% for key, name in keys_names %}
+    <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
+            </div>
         </div>
     </div>
-</div>
+    {% endfor %}
 {% endif %}
 
 {% endblock %}

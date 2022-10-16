@@ -42,7 +42,6 @@ def generate_username(first_name, date):
     return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
-@login_required
 @user_passes_test(user_is_doctor)
 def add_disease(request, profile_id):
     user: User = User.objects.get(id=profile_id)
@@ -82,7 +81,6 @@ def follow_unfollow_patient(request):
     return redirect('patients')
 
 
-@login_required
 def profile(request: HttpRequest, profile_id):
     follow = False
     user: User = User.objects.get(id=profile_id)
@@ -120,7 +118,6 @@ def profile(request: HttpRequest, profile_id):
         })
 
 
-@login_required
 @user_passes_test(user_is_doctor)
 def medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
@@ -133,7 +130,7 @@ def medical_card(request, profile_id):
         complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
     
-    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks })
+    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, })
 
 
 def update_medical_card(request, profile_id):
@@ -183,7 +180,10 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
 
 def pregnancy_observation_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
-    return render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user})
+    keys_names = []
+    for key, val in observation_forms_models.items():
+        keys_names.append((key, val[2]))
+    return render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user, 'keys_names': keys_names})
 
 
 def update_profile(request, profile_id):
@@ -242,7 +242,6 @@ class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
         return render(request, 'users/patients.html', context)
 
 
-@login_required
 def recent_patients(request: HttpRequest):
     patients = Patient.objects.all()
     form = PatientFilterForm()
@@ -428,3 +427,78 @@ def update_complication_page(request: HttpRequest, profile_id: int, complication
 def patient_info_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     return render(request, 'users/patient_info.html', {'current_user': current_user})
+
+
+observation_forms_models = {
+    'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ),
+    'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Таблица наблюдения за беременной (скрининги)' ),
+    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений(с 618)' ),
+    'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ),
+    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
+    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
+    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ),
+    'blood_analysis':            ( BloodAnalysisForm, BloodAnalysis, 'Анализ крови' ),
+    'biochemical_blood':         ( BiochemicalBloodAnalysisForm, BiochemicalBloodAnalysis, 'Биохимический анализ крови' ),
+    'сoagulogram':               ( CoagulogramForm, Coagulogram, 'Коагулограмма' ),
+    'glucose_test':              ( GlucoseToleranceTestForm, GlucoseToleranceTest, 'Пероральный глюкозотолерантный тест, ммоль/л' ),
+    'ts_hormonr':                ( ThyroidStimulatingHormoneForm, ThyroidStimulatingHormone, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ),
+    'smears':                    ( SmearsForm, Smears, 'Мазки' ),
+    'bacterio_smears':           ( BacterioscopicSmearsExaminationForm, BacterioscopicSmearsExamination, 'Бактериоскопическое исследование мазков' ),
+    'cervix_exam':               ( CervixCytologicalExaminationForm, CervixCytologicalExamination, 'Цитологическое исследование микропрепарата шейки матки' ),
+    'urine':                     ( UrineAnalysisForm, UrineAnalysis, 'Общий анализ мочи' ),
+    'urine_sowing':              ( UrineSowingForm, UrineSowing, 'Посев мочи на бессимптомную бактериурию' ),
+}
+
+
+def observation_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
+    template_name: str = 'users/show_template_model.html'
+    success_url: str = 'medical-card'
+    exists = True
+    current_user = User.objects.get(pk=profile_id)
+    current_pregnancy = current_user.patient.current_pregnancy
+    form = observation_forms_models[model_name][0]
+    model = observation_forms_models[model_name][1]
+    
+    if request.method == "POST":
+        to_delete = model.objects.get(pk=request.POST['delete'])
+        to_delete.delete()
+    
+    instance = tuple(observation_forms_models[model_name][1].objects.filter(current_pregnancy=current_pregnancy))
+    if (len(instance) > 0):
+        forms = [form(instance=i) for i in instance]
+    else:
+        forms = [form]
+        exists = False
+    
+    context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
+    return render(request, template_name, context)
+
+
+def update_observation_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
+    template_name: str = 'users/update_template_model.html'
+    success_url: str = 'observation'
+    current_user = User.objects.get(pk=profile_id)
+    model = observation_forms_models[model_name][0]
+    
+    if request.method == "POST":
+        if int(model_id) > -1:
+            instance = observation_forms_models[model_name][1].objects.get(pk=model_id)
+            form = model(request.POST, instance=instance)
+        else:
+            form = model(request.POST)
+        
+        if form.is_valid():
+            current_pregnancy = current_user.patient.current_pregnancy
+            data = form.save(commit=False)
+            data.current_pregnancy = current_pregnancy
+            data.save()
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
+    
+    if int(model_id) > -1:
+        instance = observation_forms_models[model_name][1].objects.get(pk=model_id)
+        form = model(instance=instance)
+    else:
+        form = model
+    
+    context = { 'current_user': current_user, 'form': form, 'key': model_name }
+    return render(request, template_name, context)

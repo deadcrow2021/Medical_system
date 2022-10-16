@@ -21,12 +21,10 @@ class Patient(models.Model):
         ordering = ['-date_updated']
     
     def __str__(self) -> str:
-        return self.user.username
+        return self.get_full_name()
     
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name} {self.father_name}"
-
-
 
 
 ##### Medical Forms #####
@@ -162,9 +160,6 @@ class Pelviometry(models.Model):
     michaelis_rhombus_y = models.PositiveSmallIntegerField('Ромб Михаэлиса Y (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     pelvis_dimensions = models.PositiveSmallIntegerField('Дополнительные размеры таза (по показаниям)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-    
-    class Meta:
-        verbose_name = 'Пельвиометрия'
 
 
 class PregnantWomanMonitoring(models.Model):
