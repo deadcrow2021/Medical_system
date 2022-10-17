@@ -5,8 +5,7 @@
         <form action="" method="POST">
             {% csrf_token %}
             <div class="fields">
-                {% for p in form2 %}
-                
+                {% for p in form2 %} 
                     <div class="fields__input">
                         <div class="fields__input__label">
                             {{ p.label }}:
@@ -15,7 +14,6 @@
                             {{ p }}
                         </div>
                     </div>
-
                 {% endfor %}
             </div>
             <div class="submit-btn">
