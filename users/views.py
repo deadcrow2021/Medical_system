@@ -43,7 +43,6 @@ def generate_username(first_name, date):
     return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
-@user_passes_test(user_is_doctor)
 def add_disease(request, profile_id):
     user: User = User.objects.get(id=profile_id)
     form = DiseaseCreationForm()
@@ -104,7 +103,7 @@ def profile(request: HttpRequest, profile_id):
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
         return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'form':form })
     else:
-        buttons = ((key, val[0]) for key, val in name_model.items())
+        buttons = ((key, val[2]) for key, val in name_model.items())
         user_profile = user.patient
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
@@ -122,7 +121,6 @@ def profile(request: HttpRequest, profile_id):
         })
 
 
-@user_passes_test(user_is_doctor)
 def medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
@@ -532,15 +530,15 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
 
 
 name_model = {
-    'carvix':             ( CarvixScar, CarvixScarForm ),
-    'father':             ( FatherInfo, FatherInfoForm ),
-    'doctor_examination': ( DoctorExaminations, DoctorExaminationsForm ),
-    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm ),
-    'first_examination':  ( FirstExamination, FirstExaminationForm ),
-    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm ),
-    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm ),
-    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form ),
-    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form ),
+    'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ),
+    'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
+    'doctor_examination': ( DoctorExaminations, DoctorExaminationsForm, 'Осмотры врачей специалистов' ),
+    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первый осмотр' ),
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
 }
 
 
@@ -548,15 +546,15 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
     current_user = User.objects.get(pk=profile_id)
     model = name_model[model_name][0]
     form = name_model[model_name][1]
-    exists = False
+    exists = True
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
         to_delete.delete()
     
-    instance = tuple(model.objects.filter(patient=current_user.patient))
-    if (len(instance) > 0):
-        forms = [form(instance=i) for i in instance]
+    instances = tuple(model.objects.filter(patient=current_user.patient))
+    if (len(instances) > 0):
+        forms = [form(instance=i) for i in instances]
     else:
         forms = [form]
         exists = False
@@ -578,7 +576,6 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
             form = model(request.POST)
         
         if form.is_valid():
-            print(f'Valid')
             patient = current_user.patient
             data = form.save(commit=False)
             data.patient = patient

@@ -100,9 +100,10 @@
     
     {% if user.doctor %}
     <div class="block__profile__docs">
+        <h3>Медицинская карта</h3>
         <div class="block__lines">
             <div class="lines__element btn">
-                <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта</a></p>
+                <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта беременности</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -123,7 +124,7 @@
         {% for key, val in buttons %}
         <div class="block__lines">
             <div class="lines__element btn">
-                <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ key }}</a></p>
+                <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ val }}</a></p>
             </div>
         </div>
         {% endfor %}
