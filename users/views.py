@@ -103,7 +103,8 @@ def profile(request: HttpRequest, profile_id):
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
         return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'form':form })
     else:
-        buttons = ((key, val[2]) for key, val in name_model.items())
+        buttons = {(key, val[2]) for key, val in name_model.items()}
+        examinations = {(key, val[2]) for key, val in doctor_examination.items()}
         user_profile = user.patient
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
@@ -117,7 +118,8 @@ def profile(request: HttpRequest, profile_id):
             'diseases': diseases,
             'form': form,
             'follow': follow,
-            'buttons': buttons
+            'buttons': buttons,
+            'examinations': examinations,
         })
 
 
@@ -138,7 +140,7 @@ def medical_card(request, profile_id):
 def update_medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
-    return render(request, 'users/update_medical_card.html', {'form': form})
+    return render(request, 'users/update_medical_card.html', { 'form': form })
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
@@ -295,10 +297,16 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             personal.user = user
             personal.save()
             user_type = 'doctor' if hasattr(personal, 'doctor') else 'patient'
+            
             if user_type == 'patient':
                 med_card = MedicalCard()
                 med_card.patient = personal
                 med_card.save()
+                
+                pat_info = PatientInformation()
+                pat_info.patient = personal
+                pat_info.save()
+            
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
                     CHANGETYPE.Пользователь_был_создан,
@@ -532,7 +540,6 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
 name_model = {
     'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ),
     'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
-    'doctor_examination': ( DoctorExaminations, DoctorExaminationsForm, 'Осмотры врачей специалистов' ),
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первый осмотр' ),
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
@@ -559,6 +566,7 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
         forms = [form]
         exists = False
     
+    # doctors_examnation = (doctor_examination[key][1] for key in doctor_examination.keys())
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
     return render(request, 'users/profile_models_template.html', context)
 
@@ -590,3 +598,60 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
     
     context = { 'current_user': current_user, 'form': form, 'model_name': model_name }
     return render(request, 'users/add_profile_models_template.html', context)
+
+
+doctor_examination = {
+    'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ),
+    'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ),
+}
+
+
+def examination_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
+    current_user = User.objects.get(pk=profile_id)
+    model = doctor_examination[model_name][0]
+    form = doctor_examination[model_name][1]
+    exists = True
+    
+    if request.method == "POST":
+        to_delete = model.objects.get(pk=request.POST['delete'])
+        to_delete.delete()
+    
+    instances = tuple(model.objects.filter(patient=current_user.patient))
+    if (len(instances) > 0):
+        forms = [form(instance=i) for i in instances]
+    else:
+        forms = [form]
+        exists = False
+    
+    # doctors_examnation = (doctor_examination[key][1] for key in doctor_examination.keys())
+    context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
+    return render(request, 'users/examination_template.html', context)
+
+
+def add_examination_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
+    current_user = User.objects.get(pk=profile_id)
+    success_url = "examination-template-page"
+    model = doctor_examination[model_name][1]
+    
+    if request.method == "POST":
+        if int(model_id) > -1:
+            instance = doctor_examination[model_name][0].objects.get(pk=model_id)
+            form = model(request.POST, instance=instance)
+        else:
+            form = model(request.POST)
+        
+        if form.is_valid():
+            patient = current_user.patient
+            data = form.save(commit=False)
+            data.patient = patient
+            data.save()
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
+    
+    if int(model_id) > -1:
+        instance = doctor_examination[model_name][0].objects.get(pk=model_id)
+        form = model(instance=instance)
+    else:
+        form = model
+    
+    context = { 'current_user': current_user, 'form': form, 'model_name': model_name }
+    return render(request, 'users/add_examination_template.html', context)

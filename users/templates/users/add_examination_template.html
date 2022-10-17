@@ -1,0 +1,31 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <a href="{% url 'examination-template-page' current_user.id model_name %}" class="back_btn">Вернуться</a>
+</div>
+
+<form action="" method="POST">
+    <div class="outer_div">
+        <div class="border_div">
+            {% csrf_token %}
+            {% for p in form %}
+            <div class="fields">
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        {{ p.label_tag }}
+                    </div>
+                    <div class="fields__input__field">
+                        {{ p }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {{ form.errors }}
+            <div>
+                <button type="submit" class="btn">Изменить</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

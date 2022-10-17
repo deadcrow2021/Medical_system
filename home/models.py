@@ -546,8 +546,8 @@ class FatherInfo(models.Model):
 
 # Осмотры врачей специалистов
 
-class DoctorExaminations(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination')
+class DoctorExaminationsTherapist(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination_therapist')
     date = models.DateField('Дата осмотра', blank=True, null=True)
     result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
     
@@ -558,6 +558,15 @@ class DoctorExaminations(models.Model):
     doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
+
+class DoctorExaminationsDentist(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination_dentist')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
+    
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 # Сведения о настоящей беременности
 
