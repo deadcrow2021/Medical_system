@@ -542,6 +542,7 @@ name_model = {
     'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первый осмотр' ),
+    'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
     'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),

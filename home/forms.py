@@ -511,3 +511,11 @@ class HospitalizationInformationForm(forms.ModelForm):
             'date_filling': DateInput()
         }
 
+
+class TurnoutScheduleForm(forms.ModelForm):
+    class Meta:
+        model = TurnoutSchedule
+        fields = 'number', 'date', 'gestation_period_weeks', 'doctor_confirmation'
+        widgets = {
+            'date': DateInput()
+        }

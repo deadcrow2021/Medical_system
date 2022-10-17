@@ -796,6 +796,16 @@ class HospitalizationInformation(models.Model):
     doctor_confirmation_2 = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
+# График явок
+
+class TurnoutSchedule(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='shedule')
+    number = models.PositiveSmallIntegerField('Номер', validators=[MaxValueValidator(999)], unique=True)
+    date = models.DateField('Дата', blank=True, null=True)
+    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
+
 #############
 
 
