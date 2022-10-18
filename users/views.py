@@ -97,7 +97,6 @@ def profile(request: HttpRequest, profile_id):
         user_profile.delete()
         return redirect('patients')
     
-    print(f'{user_type=}')
     if user_type == "doctor":
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
@@ -137,10 +136,16 @@ def medical_card(request, profile_id):
     return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, })
 
 
-def update_medical_card(request, profile_id):
+def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
-    return render(request, 'users/update_medical_card.html', { 'form': form })
+    
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
+    
+    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
