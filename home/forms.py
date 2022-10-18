@@ -34,6 +34,8 @@ class DoctorCreationForm(forms.ModelForm):
             'last_name',
             'father_name',
             'cabinet',
+            'telephone',
+            'email',
         )
 
 

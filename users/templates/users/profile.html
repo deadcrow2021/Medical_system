@@ -42,10 +42,10 @@
                 <p><button class="btn delete_btn">Удалить</button></p>
             </div>
             {% endif %}
+            {% if user.doctor %}
             <div class="lines__element btn">
                 <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
             </div>
-            {% if user.doctor %}
             <div class="lines__element btn">
                 <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
             </div>

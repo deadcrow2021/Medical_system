@@ -297,8 +297,8 @@ def recent_patients(request: HttpRequest):
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form2 = self.form_class(request.POST)
-        print(form2.__dict__)
         if form2.is_valid():
+            print(f'{form2.cleaned_data=}')
             user: User = User()
             personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
@@ -311,7 +311,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             user.save()
             personal.user = user
             personal.save()
-            user_type = 'doctor' if hasattr(personal, 'doctor') else 'patient'
+            user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             
             if user_type == 'patient':
                 med_card = MedicalCard()
