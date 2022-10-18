@@ -576,7 +576,6 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
         forms = [form]
         exists = False
     
-    # doctors_examnation = (doctor_examination[key][1] for key in doctor_examination.keys())
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
     return render(request, 'users/profile_models_template.html', context)
 
@@ -633,7 +632,6 @@ def examination_template_page(request: HttpRequest, profile_id: int, model_name:
         forms = [form]
         exists = False
     
-    # doctors_examnation = (doctor_examination[key][1] for key in doctor_examination.keys())
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
     return render(request, 'users/examination_template.html', context)
 
