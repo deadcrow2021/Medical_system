@@ -11,7 +11,8 @@ from .models import Patient, ChangeControlLog, ReceptionNotes
 from dateutil.relativedelta import relativedelta
 import datetime
 from .choices import CHANGETYPE
-
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
@@ -179,7 +180,7 @@ class ReceptionView(LoginRequiredMixin, ListView):
 
 class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
     template_name = 'home/add_reception.html'
-    success_url: str = reverse_lazy('reception')
+    success_url: str = 'profile'
     form_class = ReceptionAddForm
     context_object_name: str = 'form'
     
@@ -190,6 +191,6 @@ class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
             commit.doctor = request.user.doctor
             commit.patient = User.objects.get(pk=profile_id).patient
             commit.save()
-            return redirect(self.success_url)
+            return HttpResponseRedirect(reverse(self.success_url, kwargs={ 'profile_id': profile_id }))
         else:
             return render(request, self.template_name, { 'form': form })

@@ -241,21 +241,24 @@ class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
     
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         pattern: list[str] =  str(request.POST['search']).lower().split()
-        match pattern:
-            case longStr, :
-                if len(longStr) % 2 == 1:
-                    context = one_word_odd(longStr)
-                else:
-                    context = one_word_even(longStr)
-            case name, surname, fathername:
-                context = three_words(name, surname, fathername)
-            case name, surname, fathername, params:
-                context = four_words(name, surname, fathername, params)
-            case _:
-                return self.get(request)
+        try:
+            match pattern:
+                case longStr, :
+                    if len(longStr) % 2 == 1:
+                        context = one_word_odd(longStr)
+                    else:
+                        context = one_word_even(longStr)
+                case name, surname, fathername:
+                    context = three_words(name, surname, fathername)
+                case name, surname, fathername, params:
+                    context = four_words(name, surname, fathername, params)
+                case _:
+                    return self.get(request)
+        except Exception as ex:
+            return render(request, self.template_name, { 'error': ' '.join(pattern), 'btn': 'Вернуться' })
         
         context |= { 'btn': 'Вернуться' }
-        return render(request, 'users/patients.html', context)
+        return render(request, self.template_name, context)
 
 
 def recent_patients(request: HttpRequest):
