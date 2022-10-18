@@ -34,6 +34,8 @@ class DoctorCreationForm(forms.ModelForm):
             'last_name',
             'father_name',
             'cabinet',
+            'telephone',
+            'email',
         )
 
 
@@ -384,7 +386,7 @@ class FatherInfoForm(forms.ModelForm):
 class DoctorExaminationsTherapistForm(forms.ModelForm):
     class Meta:
         model = DoctorExaminationsTherapist
-        fields = 'patient', 'date', 'result', 'ecg_date', 'ecgresult', \
+        fields = 'date', 'result', 'ecg_date', 'ecgresult', \
                 'med_org', 'doctor_fio', 'doctor_confirmation'
         widgets = {
             'date': DateInput(),
@@ -395,8 +397,7 @@ class DoctorExaminationsTherapistForm(forms.ModelForm):
 class DoctorExaminationsDentistForm(forms.ModelForm):
     class Meta:
         model = DoctorExaminationsDentist
-        fields = 'patient', 'date', 'result', \
-                'med_org', 'doctor_fio', 'doctor_confirmation'
+        fields = 'date', 'result', 'med_org', 'doctor_fio', 'doctor_confirmation'
         widgets = {
             'date': DateInput()
         }

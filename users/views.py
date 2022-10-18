@@ -97,7 +97,6 @@ def profile(request: HttpRequest, profile_id):
         user_profile.delete()
         return redirect('patients')
     
-    print(f'{user_type=}')
     if user_type == "doctor":
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
@@ -123,6 +122,13 @@ def profile(request: HttpRequest, profile_id):
         })
 
 
+def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
+    user: User = User.objects.get(id=profile_id)
+    records = user.patient.records.all()
+    exists: bool = True if len(records) > 0 else False
+    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'forms': records, 'exists': exists })
+
+
 def medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
@@ -137,10 +143,16 @@ def medical_card(request, profile_id):
     return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, })
 
 
-def update_medical_card(request, profile_id):
+def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
-    return render(request, 'users/update_medical_card.html', { 'form': form })
+    
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
+    
+    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
@@ -229,21 +241,24 @@ class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
     
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         pattern: list[str] =  str(request.POST['search']).lower().split()
-        match pattern:
-            case longStr, :
-                if len(longStr) % 2 == 1:
-                    context = one_word_odd(longStr)
-                else:
-                    context = one_word_even(longStr)
-            case name, surname, fathername:
-                context = three_words(name, surname, fathername)
-            case name, surname, fathername, params:
-                context = four_words(name, surname, fathername, params)
-            case _:
-                return self.get(request)
+        try:
+            match pattern:
+                case longStr, :
+                    if len(longStr) % 2 == 1:
+                        context = one_word_odd(longStr)
+                    else:
+                        context = one_word_even(longStr)
+                case name, surname, fathername:
+                    context = three_words(name, surname, fathername)
+                case name, surname, fathername, params:
+                    context = four_words(name, surname, fathername, params)
+                case _:
+                    return self.get(request)
+        except Exception as ex:
+            return render(request, self.template_name, { 'error': ' '.join(pattern), 'btn': 'Вернуться' })
         
         context |= { 'btn': 'Вернуться' }
-        return render(request, 'users/patients.html', context)
+        return render(request, self.template_name, context)
 
 
 def recent_patients(request: HttpRequest):
@@ -282,8 +297,8 @@ def recent_patients(request: HttpRequest):
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form2 = self.form_class(request.POST)
-        print(form2.__dict__)
         if form2.is_valid():
+            print(f'{form2.cleaned_data=}')
             user: User = User()
             personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
@@ -296,7 +311,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             user.save()
             personal.user = user
             personal.save()
-            user_type = 'doctor' if hasattr(personal, 'doctor') else 'patient'
+            user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             
             if user_type == 'patient':
                 med_card = MedicalCard()
@@ -306,6 +321,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 pat_info = PatientInformation()
                 pat_info.patient = personal
                 pat_info.save()
+                
+                current_preg = CurrentPregnancy()
+                current_preg.patient = personal
+                current_preg.save()
             
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
@@ -465,7 +484,7 @@ def update_patient_info_page(request, profile_id):
 observation_forms_models = {
     'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ),
     'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Таблица наблюдения за беременной (скрининги)' ),
-    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений(с 618)' ),
+    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений' ),
     'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ),
     'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
     'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
@@ -543,6 +562,7 @@ name_model = {
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первый осмотр' ),
     'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
+    'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ),
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
     'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
@@ -567,7 +587,6 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
         forms = [form]
         exists = False
     
-    # doctors_examnation = (doctor_examination[key][1] for key in doctor_examination.keys())
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
     return render(request, 'users/profile_models_template.html', context)
 
@@ -624,7 +643,6 @@ def examination_template_page(request: HttpRequest, profile_id: int, model_name:
         forms = [form]
         exists = False
     
-    # doctors_examnation = (doctor_examination[key][1] for key in doctor_examination.keys())
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
     return render(request, 'users/examination_template.html', context)
 

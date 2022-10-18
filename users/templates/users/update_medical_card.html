@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+    <a href="{% url 'medical-card' profile_id %}" class="back_btn">Вернуться</a>
 </div>
 
 <div class="form__block">
@@ -10,7 +10,6 @@
         {% csrf_token %}
         <div class="fields">
             {% for f in form %}
-            
                 <div class="fields__input">
                     <div class="fields__input__label">
                         {{ f.label }}:
@@ -19,7 +18,6 @@
                         {{ f }}
                     </div>
                 </div>
-
             {% endfor %}
         </div>
         <div class="submit-btn">

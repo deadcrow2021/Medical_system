@@ -29,4 +29,5 @@ urlpatterns = [
     path('update_patient_info/<profile_id>', views.update_patient_info_page, name='update-patient-info'),
     path('observation/<profile_id>/<model_name>', views.observation_template_page, name='observation'),
     path('observation/<profile_id>/<model_name>/<model_id>', views.update_observation_template_page, name='update-observation'),
+    path('self_monitoring/<profile_id>', views.self_monitoring, name='self-monitoring'),
 ]
