@@ -311,6 +311,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 pat_info = PatientInformation()
                 pat_info.patient = personal
                 pat_info.save()
+                
+                current_preg = CurrentPregnancy()
+                current_preg.patient = personal
+                current_preg.save()
             
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',

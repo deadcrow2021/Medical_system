@@ -36,7 +36,7 @@
         {% endfor %}
         {{ form.errors }}
         <div class="btn">
-            <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
+            <a href="{% url 'add-profile-models-template' current_user.id model_name form.instance.pk %}">Изменить</a>
         </div>
         <div>
             <button class="btn delete_btn">Удалить</button>
