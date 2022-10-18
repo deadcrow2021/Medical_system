@@ -31,14 +31,18 @@
             </div>
 
             <div class="user__block__row">
-                {% for record in records %}
-                    <div class="user__block__element">
-                        <p>{{ record.title }}</p>
+                <div class="outer_div">
+                    <div class="border_div">
+                        {% for record in records %}
+                            <div class="user__block__element">
+                                <p><strong>Название:</strong> {{ record.title }}</p>
+                            </div>
+                            <div class="user__block__element">
+                                <p><strong>Описание:</strong> {{ record.description }}</p>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="user__block__element">
-                        <p>{{ record.description }}</p>
-                    </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
     {% endif %}

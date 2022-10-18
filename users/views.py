@@ -122,6 +122,13 @@ def profile(request: HttpRequest, profile_id):
         })
 
 
+def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
+    user: User = User.objects.get(id=profile_id)
+    records = user.patient.records.all()
+    exists: bool = True if len(records) > 0 else False
+    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'forms': records, 'exists': exists })
+
+
 def medical_card(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
@@ -552,6 +559,7 @@ name_model = {
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первый осмотр' ),
     'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
+    'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ),
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
     'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
