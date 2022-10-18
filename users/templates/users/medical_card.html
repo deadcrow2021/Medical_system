@@ -19,10 +19,6 @@
     Пациент: <strong>{{ current_user.patient.get_full_name }}</strong>
 </div>
 
-{% for model in current_user.patient.current_pregnancy %}
-    {{ model }}
-{% endfor %}
-
 <div class="fields">
     {% for p in form %}
     <div class="fields__input">

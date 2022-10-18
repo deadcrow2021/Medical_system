@@ -474,7 +474,7 @@ def update_patient_info_page(request, profile_id):
 observation_forms_models = {
     'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ),
     'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Таблица наблюдения за беременной (скрининги)' ),
-    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений(с 618)' ),
+    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений' ),
     'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ),
     'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
     'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
