@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         input.value = beautifulNumber;
     }
-
+    
     for (let phone of phones) {
         phone.addEventListener("input", correct_phone_number);
     }
@@ -40,20 +40,22 @@ document.addEventListener("DOMContentLoaded", function() {
     var date_inputs = document.querySelectorAll('input[type=date]');
     for (let inp of date_inputs) {
         inp.style.width = '140px';
-        inp.addEventListener('focus', e => {
-            let i = e.target;
-            let date = i.defaultValue;// !== '' ? i.defaultValue : i.value;
-            console.log(`focus ${date}`);
+        inp.onfocus = (e) => {
+            let i = inp;
+            let date = i.defaultValue;
+            // console.log(`focus ${date}`);
             i.type = 'date';
             i.defaultValue = date;
-        });
-        inp.addEventListener('blur', e => {
-            let i = e.target;
+        };
+        inp.onblur = (e) => {
+            let i = inp;
             let date = i.defaultValue !== '' ? i.defaultValue : "дд.мм.гггг";
-            console.log(`blur ${date}`);
+            // console.log(`blur ${date}`);
             i.type = 'text';
             i.defaultValue = date;
-        });
+        };
+        inp.onfocus();
+        inp.onblur();
     }
 });
 
