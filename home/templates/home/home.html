@@ -3,6 +3,7 @@
 {% block content %}
 
 <div class="account">
+    {% if not user.is_superuser %}
     <div class="fio">
         <div class="fio__element">
             <p>Фамилия: {{ account.last_name }}</p>
@@ -20,7 +21,7 @@
     <div class="lines__element">
         <a href="{% url 'reception' %}">Записи приемов</a>
     </div>
-    
+    {% endif %}
     
     {% if user.patient %}
         <div class="user__block">
