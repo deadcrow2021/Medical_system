@@ -126,7 +126,7 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
     user: User = User.objects.get(id=profile_id)
     records = user.patient.records.all()
     exists: bool = True if len(records) > 0 else False
-    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'forms': records, 'exists': exists })
+    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists })
 
 
 def medical_card(request, profile_id):
