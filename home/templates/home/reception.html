@@ -7,24 +7,28 @@
 
 <div class="notes__block">
     {% for note in notes %}
-        <div class="notes__row">
-            {% if user.patient %}
-                <div class="notes__element">
-                    <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
+        <div class="outer_div">
+            <div class="border_div">
+                <div class="notes__row">
+                    {% if user.patient %}
+                        <div class="notes__element">
+                            <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
+                        </div>
+                    {% else %}
+                        <div class="notes__element">
+                            <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+                        </div>
+                    {% endif %}
+                    <div class="notes__element">
+                        <p><strong>Медицинская организация:</strong> {{ note.med_organization }}</p>
+                    </div>
+                    <div class="notes__element">
+                        <p><strong>Кабинет:</strong> {{ note.cabinet }}</p>
+                    </div>
+                    <div class="notes__element">
+                        <p class="date"><strong>Дата:</strong> {{ note.date_meeting }}</p>
+                    </div>
                 </div>
-            {% else %}
-                <div class="notes__element">
-                    <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
-                </div>
-            {% endif %}
-            <div class="notes__element">
-                <p><strong>Медицинская организация:</strong> {{ note.med_organization }}</p>
-            </div>
-            <div class="notes__element">
-                <p><strong>Кабинет:</strong> {{ note.cabinet }}</p>
-            </div>
-            <div class="notes__element">
-                <p class="date"><strong>Дата:</strong> {{ note.date_meeting }}</p>
             </div>
         </div>
     {% endfor %}

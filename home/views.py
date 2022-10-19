@@ -210,3 +210,11 @@ class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
             return HttpResponseRedirect(reverse(self.success_url, kwargs={ 'profile_id': profile_id }))
         else:
             return render(request, self.template_name, { 'form': form })
+
+
+def records_page(request: HttpRequest) -> HttpResponse:
+    user: User = User.objects.get(id=request.user.id)
+    records = user.patient.records.all()
+    template_name = 'home/records.html'
+    
+    return render(request, template_name, { 'records': records })

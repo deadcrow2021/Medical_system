@@ -24,13 +24,10 @@
     {% endif %}
     
     {% if user.patient %}
+        <div class="lines__element">
+            <p><a href="{% url 'records' %}">Записи самонаблюдения</a></p>
+        {% comment %} </div>
         <div class="user__block">
-            <div class="user__block__row">
-                <div class="user__block__element">
-                    <p><a href="{% url 'add-record' %}">Добавить запись самонаблюдения</a></p>
-                </div>
-            </div>
-
             <div class="user__block__row">
                 <div class="outer_div">
                     <div class="border_div">
@@ -45,7 +42,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
     {% endif %}
     
     
