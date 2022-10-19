@@ -74,7 +74,18 @@ def generate_pdf(lines: list):
 
 @login_required
 def home_page(request):
-    return render(request, 'home/home.html')
+    template_name: str = 'home/home.html'
+    user: User = User.objects.get(id=request.user.id)
+    user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+
+    if user_type == 'doctor':
+        user_account = user.doctor
+        related_patients = user_account.patients.all()
+        return render(request, template_name, { 'account': user_account, 'related_patients': related_patients })
+    else:
+        user_account = user.patient
+        records = user_account.records.all()
+        return render(request, template_name, { 'account': user_account, 'records': records })
 
 
 @login_required

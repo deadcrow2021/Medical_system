@@ -8,6 +8,8 @@
     <a href="{% url 'update-observation' current_user.id model_name -1 %}">Добавить</a>
 </div>
 
+<h3>{{ page_name }}</h3>
+
 {% if exists %}
 {% for form in forms %}
 <div class="outer_div">
@@ -76,7 +78,7 @@
 </script>
 {% else %}
 <div>
-    <h3>Нет данных</h3>
+    <h4>Нет данных</h4>
 </div>
 {% endif %}
 

@@ -47,7 +47,7 @@
                 <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
             </div>
             <div class="lines__element btn">
-                <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
+                <p><a href="{% url 'add-reception' profile.user.id %}">План посещений</a></p>
             </div>
             {% endif %}
         </div>
@@ -102,7 +102,7 @@
     
     {% if user.doctor %}
     <div class="block__profile__docs">
-        <h3>Медицинская карта</h3>
+        <h3>Индивидуальная карта</h3>
         <div class="block__lines">
             <div class="lines__element btn">
                 <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта беременности</a></p>

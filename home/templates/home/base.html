@@ -79,11 +79,11 @@
                     </div>
             </div>
             {% endif %}
-            <div class="navbar__element">
+            {% comment %} <div class="navbar__element">
                 {% if not user.is_superuser %}
                     <a href="{% url 'account' %}">Личный кабинет</a>
                 {% endif %}
-            </div>
+            </div> {% endcomment %}
             <div class="navbar__element">
                 <a href="{% url 'logout' %}">Выход</a>
             </div>

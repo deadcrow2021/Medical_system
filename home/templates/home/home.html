@@ -2,40 +2,70 @@
 
 {% block content %}
 
-<div class="block__lines">
-    <!-- {% if user.doctor %}
-        <div class="lines__element">
-            <a href="{% url 'add-patient' %}"><div id="add_patient">Добавить пациента</div></a>
+<div class="account">
+    <div class="fio">
+        <div class="fio__element">
+            <p>Фамилия: {{ account.last_name }}</p>
         </div>
-    {% elif user.is_superuser %}
-        <div class="lines__element">
-            <a href="{% url 'add-doctor' %}"><div id="add_doctor">Добавить врача</div></a>
+        <div class="fio__element">
+            <p>Имя: {{ account.first_name }}</p>
         </div>
-    {% endif %}
-            
-    {% if user.is_superuser %}
-        <div class="lines__element">
-            <a href="{% url 'admin-page' %}">Администрирование</a>
-        </div>
-        <div class="lines__element">
-            <a href="{% url 'logs-page' %}">Журнал изменений</a>
+        {% if account.father_name %}
+            <div class="fio__element">
+                <p>Отчество: {{ account.father_name }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="lines__element">
+        <a href="{% url 'reception' %}">Записи приемов</a>
+    </div>
+    
+    
+    {% if user.patient %}
+        <div class="user__block">
+            <div class="user__block__row">
+                <div class="user__block__element">
+                    <p><a href="{% url 'add-record' %}">Добавить запись самонаблюдения</a></p>
+                </div>
+            </div>
+
+            <div class="user__block__row">
+                <div class="outer_div">
+                    <div class="border_div">
+                        {% for record in records %}
+                            <div class="user__block__element">
+                                <p><strong>Название:</strong> {{ record.title }}</p>
+                            </div>
+                            <div class="user__block__element">
+                                <p><strong>Описание:</strong> {{ record.description }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
     {% endif %}
     
-    {% if not user.patient %}
-    <div class="lines__element">
-        <a href="{% url 'data-sampling' %}">Выборка данных</a>
-    </div>
-    {% endif %}
     
     {% if user.doctor %}
-    <div class="lines__element">
-        <a href="{% url 'patients' %}">Пациенты</a>
-    </div>
+        <div class="user__block">
+            <div class="title__block">
+                <h2>Мои пациенты:</h2>
+            </div>
+
+            <div class="user__block__row">
+                {% for patient in related_patients %}
+                    <div class="user__block__element">
+                        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
+                    </div>
+                    <div class="user__block__element">
+                        <a href="{% url 'profile' patient.user.id %}">Профиль</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
-    <div class="lines__element">
-        <a href="{% url 'files-page' %}">Файлы</a>
-    </div> -->
 </div>
 
 {% endblock %}

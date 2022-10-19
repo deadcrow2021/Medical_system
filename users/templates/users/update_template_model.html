@@ -4,14 +4,13 @@
 <div class="back__button">
     <a href="{% url 'observation' current_user.id key %}" class="back_btn">Вернуться</a>
 </div>
-
+<h3>{{ page_name }}</h3>
 <form action="" method="post">
     <div class="outer_div">
         <div class="border_div">
             {% csrf_token %}
             {% for p in form %}
             <div class="fields">
-                {{ p.label_tag }}
                 <div class="fields__input">
                     <div class="fields__input__label">
                         {{ p.label_tag }}
@@ -25,7 +24,7 @@
             {% endfor %}
             {{ form.errors }}
             <div>
-                <button type="submit" class="btn">Изменить</button>
+                <button type="submit" class="btn">Сохранить</button>
             </div>
         </div>
     </div>

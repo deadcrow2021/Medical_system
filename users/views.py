@@ -504,7 +504,7 @@ observation_forms_models = {
 
 def observation_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
     template_name: str = 'users/show_template_model.html'
-    success_url: str = 'medical-card'
+    # success_url: str = 'medical-card'
     exists = True
     current_user = User.objects.get(pk=profile_id)
     current_pregnancy = current_user.patient.current_pregnancy
@@ -522,7 +522,7 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
         forms = [form]
         exists = False
     
-    context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
+    context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name, 'page_name': observation_forms_models[model_name][2] }
     return render(request, template_name, context)
 
 
@@ -552,7 +552,7 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
     else:
         form = model
     
-    context = { 'current_user': current_user, 'form': form, 'key': model_name }
+    context = { 'current_user': current_user, 'form': form, 'key': model_name, 'page_name': observation_forms_models[model_name][2] }
     return render(request, template_name, context)
 
 
