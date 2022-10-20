@@ -2,11 +2,15 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'profile' curent_user.id %}" class="back_btn">Вернуться</a>
+    <a href="{% url 'home' %}" class="back_btn">Вернуться</a>
+</div>
+<div class="user__block__element">
+    <p><a href="{% url 'add-record' %}">Добавить запись самонаблюдения</a></p>
 </div>
 
-{% if user.doctor %}
-    {% if exists %}
+
+<div class="user__block">
+    <div class="user__block__row">
         {% for record in records %}
         <div class="outer_div">
             <div class="border_div">
@@ -19,10 +23,8 @@
             </div>
         </div>
         {% endfor %}
-    {% else %}
-    <h3>Нет наблюдений</h3>
-    {% endif %}
-{% endif %}
+    </div>
+</div>
 <script type="text/javascript">
 </script>
 {% endblock %}

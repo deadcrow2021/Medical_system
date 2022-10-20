@@ -74,7 +74,23 @@ def generate_pdf(lines: list):
 
 @login_required
 def home_page(request):
-    return render(request, 'home/home.html')
+    template_name: str = 'home/home.html'
+    user: User = User.objects.get(id=request.user.id)
+    # user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+    if hasattr(user, 'doctor'): user_type = 'doctor'
+    elif user.is_superuser: user_type = 'admin'
+    else: user_type = 'patient'
+
+    if user_type == 'doctor':
+        user_account = user.doctor
+        related_patients = user_account.patients.all()
+        return render(request, template_name, { 'account': user_account, 'related_patients': related_patients })
+    elif user_type == 'patient':
+        user_account = user.patient
+        records = user_account.records.all()
+        return render(request, template_name, { 'account': user_account, 'records': records })
+    else:
+        return render(request, template_name)
 
 
 @login_required
@@ -194,3 +210,11 @@ class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
             return HttpResponseRedirect(reverse(self.success_url, kwargs={ 'profile_id': profile_id }))
         else:
             return render(request, self.template_name, { 'form': form })
+
+
+def records_page(request: HttpRequest) -> HttpResponse:
+    user: User = User.objects.get(id=request.user.id)
+    records = user.patient.records.all()
+    template_name = 'home/records.html'
+    
+    return render(request, template_name, { 'records': records })

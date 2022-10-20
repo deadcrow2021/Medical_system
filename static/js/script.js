@@ -31,10 +31,31 @@ document.addEventListener("DOMContentLoaded", function() {
         
         input.value = beautifulNumber;
     }
-
+    
     for (let phone of phones) {
         phone.addEventListener("input", correct_phone_number);
     }
     
+    
+    var date_inputs = document.querySelectorAll('input[type=date]');
+    for (let inp of date_inputs) {
+        inp.style.width = '140px';
+        inp.onfocus = (e) => {
+            let i = inp;
+            let date = i.defaultValue;
+            // console.log(`focus ${date}`);
+            i.type = 'date';
+            i.defaultValue = date;
+        };
+        inp.onblur = (e) => {
+            let i = inp;
+            let date = i.defaultValue !== '' ? i.defaultValue : "дд.мм.гггг";
+            // console.log(`blur ${date}`);
+            i.type = 'text';
+            i.defaultValue = date;
+        };
+        inp.onfocus();
+        inp.onblur();
+    }
 });
 
