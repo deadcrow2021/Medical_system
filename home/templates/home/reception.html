@@ -18,13 +18,22 @@
                 </div>
             {% endif %}
             <div class="notes__element">
+                <p class="date"><strong>Дата:</strong> {{ note.date_meeting }}</p>
+            </div>
+            <div class="notes__element">
                 <p><strong>Медицинская организация:</strong> {{ note.med_organization }}</p>
+            </div>
+            <div class="notes__element">
+                <p><strong>Специальность:</strong> {{ note.specialization }}</p>
+            </div>
+            <div class="notes__element">
+                <p><strong>Номер посещения специалиста:</strong> {{ note.visit_number }}</p>
             </div>
             <div class="notes__element">
                 <p><strong>Кабинет:</strong> {{ note.cabinet }}</p>
             </div>
             <div class="notes__element">
-                <p class="date"><strong>Дата:</strong> {{ note.date_meeting }}</p>
+                <p><strong>Посещено:</strong> {{ note.status }}</p>
             </div>
         </div>
     {% endfor %}

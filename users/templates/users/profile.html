@@ -46,9 +46,6 @@
             <div class="lines__element btn">
                 <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
             </div>
-            <div class="lines__element btn">
-                <p><a href="{% url 'add-reception' profile.user.id %}">Назначить прием</a></p>
-            </div>
             {% endif %}
         </div>
 
@@ -62,11 +59,11 @@
                         </div>
                         {% if follow %}
                         <div class="">
-                            <button id="unfollow-btn" class="btn" type="submit">Убрать</button>
+                            <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
                         </div>
                         {% else %}
                         <div class="">
-                            <button id="follow-btn" class="btn" type="submit">Добавить</button>
+                            <button id="follow-btn" class="btn" type="submit">Привязать</button>
                         </div>
                         {% endif %}
                     </div>
@@ -79,38 +76,22 @@
     <div class="block__profile__disease">
         <div class="block__lines">
             <div class="lines__element">
+                
             </div>
-            
-            {% if user.doctor %}
-                <div class="lines__element">
-                    <p><a href="{% url 'add-disease' profile.user.id %}">Добавить историю болезни</a></p>
-                </div>
-            {% endif %}
-            
-            {% if user_type != 'doctor' %}
-                <div class="lines__element">
-                    <p><strong>История заболеваний:</strong></p>
-                </div>
-                {% for disease in diseases %}
-                    <div class="lines__element disease">
-                        <p>{{ disease.disease }}</p>
-                    </div>
-                {% endfor %}
-            {% endif %}
         </div>
     </div>
     
     {% if user.doctor %}
     <div class="block__profile__docs">
-        <h3>Медицинская карта</h3>
+        <h3>Индивидуальная карта</h3>
         <div class="block__lines">
             <div class="lines__element btn">
-                <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта беременности</a></p>
+                <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта</a></p>
             </div>
         </div>
         <div class="block__lines">
             <div class="lines__element btn">
-                <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности</a></p>
+                <p><a href="{% url 'patient-info' profile.user.id %}">Сведения о пациентке</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -120,7 +101,7 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn">
-                <p><a href="{% url 'patient-info' profile.user.id %}">Сведения о пациентке</a></p>
+                <p><a href="{% url 'add-reception' profile.user.id %}">Планы посещений</a></p>
             </div>
         </div>
         {% for key, val in examinations %}
@@ -134,6 +115,11 @@
         <div class="block__lines">
             <div class="lines__element btn">
                 <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ val }}</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности</a></p>
             </div>
         </div>
         {% endfor %}

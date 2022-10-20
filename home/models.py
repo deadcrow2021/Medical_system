@@ -501,6 +501,7 @@ class PatientInformation(models.Model):
     # Подтверждение врача
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
+## 2
 
 class CarvixScar(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='carvix')
@@ -859,10 +860,15 @@ class Doctor(models.Model):
 
 class ReceptionNotes(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
-    cabinet = models.CharField('Кабинет', max_length=10, blank=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    date_meeting = models.DateTimeField('Время приема')
+
+    date_meeting = models.DateTimeField('Дата и время приема')
+    med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
+    specialization = models.CharField('Специальность врача', max_length=30, choices=ROLES, default='----')
+    visit_number = models.PositiveSmallIntegerField('Номер посещения специалиста', validators=[MaxValueValidator(999)], blank=True, null=True)
+    cabinet = models.CharField('Номер кабинета', max_length=10, blank=True)
+    status = models.BooleanField('Статус', default=False, null=True)
+
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
