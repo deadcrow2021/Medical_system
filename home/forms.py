@@ -20,7 +20,14 @@ class PatientCreationForm(forms.ModelForm):
             'telephone',
             'email',
         )
-        # widgets = {
+        widgets = {
+            'telephone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 })
+        }
+        error_messages = {
+            'telephone' : {
+                'invalid': "Неправильный формат ввода, номер должен состоять из 11 цифр"
+            }
+        }
         #     'date_of_birth': DateInput(),
         #     'date_death': DateInput(),
         # }

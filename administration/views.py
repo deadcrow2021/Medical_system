@@ -35,18 +35,21 @@ def admin_page(request: HttpRequest):
     
     if request.method == 'POST':
         pattern: list[str] =  str(request.POST['search']).lower().split()
-        match pattern:
-            case longStr, :
-                if len(longStr) % 2 == 1:
-                    context = one_word_odd(longStr)
-                else:
-                    context = one_word_even(longStr)
-            case name, surname, fathername:
-                context = three_words(name, surname, fathername)
-            # case name, surname, fathername, params:
-            #     context = four_words(name, surname, fathername, params)
-            case _:
-                return render(request, template_name, context)
+        try:
+            match pattern:
+                case longStr, :
+                    if len(longStr) % 2 == 1:
+                        context = one_word_odd(longStr)
+                    else:
+                        context = one_word_even(longStr)
+                case name, surname, fathername:
+                    context = three_words(name, surname, fathername)
+                # case name, surname, fathername, params:
+                #     context = four_words(name, surname, fathername, params)
+                case _:
+                    return render(request, template_name, context)
+        except Exception as ex:
+            return render(request, template_name, { 'error': ' '.join(pattern), 'btn': 'Вернуться' })
         paginator = Paginator(list(context['users']), 6)
         page_obj = paginator.get_page(page_number)
         context.update({ 'page_obj': page_obj, 'paginator': paginator })
