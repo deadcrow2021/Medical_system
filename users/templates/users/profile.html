@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+    <a href="{% url 'home' %}" class="back_btn">Вернуться</a>
 </div>
 
 <div class="block__profile">
@@ -72,13 +72,49 @@
         {% endif %}
     </div>
 
-
     <div class="block__profile__disease">
+        {% if notes %}
         <div class="block__lines">
             <div class="lines__element">
-                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <!-- <th>{% if user.patient %}
+                                <p>Доктор</strong>
+                            {% else %}
+                                <p>Пациент</strong>
+                            {% endif %}</th> -->
+                            <th>Дата</strong></th>
+                            <th>Медицинская организация</strong></th>
+                            <th>Специальность</th>
+                            <th>Номер посещения специалиста</th>
+                            <th>Кабинет</th>
+                            <th>Посещено</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in notes %}
+                        <tr>
+                            <!-- <td>
+                                {% if user.patient %}
+                                    <p>{{ note.doctor.get_full_name }}</p>
+                                {% else %}
+                                    <p>{{ note.patient.get_full_name }}</p>
+                                {% endif %}
+                            </td> -->
+                            <th><p class="date">{{ note.date_meeting }}</p></th>
+                            <th><p>{{ note.med_organization }}</p></th>
+                            <td><p>{{ note.specialization }}</p></td>
+                            <td><p>{{ note.visit_number }}</p></td>
+                            <td><p>{{ note.cabinet }}</p></td>
+                            <td><p>{{ note.status }}</p></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
+        {% endif %}
     </div>
     
     {% if user.doctor %}
@@ -117,12 +153,12 @@
                 <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ val }}</a></p>
             </div>
         </div>
+        {% endfor %}
         <div class="block__lines">
             <div class="lines__element btn">
                 <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности</a></p>
             </div>
         </div>
-        {% endfor %}
     </div>
     {% endif %}
 </div>

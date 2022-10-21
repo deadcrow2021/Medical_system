@@ -100,7 +100,8 @@ def profile(request: HttpRequest, profile_id):
     if user_type == "doctor":
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
-        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'form':form })
+        notes = ReceptionNotes.objects.filter(doctor=user.doctor)
+        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'notes':notes, 'form':form })
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
         examinations = {(key, val[2]) for key, val in doctor_examination.items()}
@@ -111,6 +112,7 @@ def profile(request: HttpRequest, profile_id):
                 follow = True
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
+        notes = ReceptionNotes.objects.filter(patient=user.patient)
         return render(request, 'users/profile.html', {
             'profile': user_profile,
             'user_type': user_type,
@@ -119,6 +121,7 @@ def profile(request: HttpRequest, profile_id):
             'follow': follow,
             'buttons': buttons,
             'examinations': examinations,
+            'notes':notes,
         })
 
 
