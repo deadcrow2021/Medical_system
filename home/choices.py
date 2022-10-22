@@ -296,18 +296,18 @@ class CHANGETYPE:
 
 MEDICAL_ORGANIZATION = (
     ('', '----'),
-    ('1', 'Бильница 1'),
-    ('2', 'Бильница 2'),
-    ('3', 'Бильница 3'),
+    ('1', 'Больница 1'),
+    ('2', 'Больница 2'),
+    ('3', 'Больница 3'),
 )
 
 ROLES = {
-    ('obstetrician-gynecologist', 'акушер-гинеколог'),
-    ('therapist', 'терапевт'),
-    ('dentist', 'стоматолог'),
-    ('ophthalmologist', 'офтальмолог'),
-    ('specialist', 'специалист'),
-    ('pediator', 'педиатор')
+    ('obstetrician-gynecologist', 'Акушер-гинеколог'),
+    ('therapist', 'Терапевт'),
+    ('dentist', 'Стоматолог'),
+    ('ophthalmologist', 'Офтальмолог'),
+    ('specialist', 'Специалист'),
+    ('pediator', 'Педиатор')
 }
 
 MARITAL_STATUS = {

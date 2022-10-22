@@ -16,6 +16,11 @@
                 <p>Отчество: {{ account.father_name }}</p>
             </div>
         {% endif %}
+        {% if user.doctor %}
+            <div class="fio__element">
+                <p>Специальность: {{ account.get_role_display }}</p>
+            </div>
+        {% endif %}
     </div>
 
     <div class="lines__element">

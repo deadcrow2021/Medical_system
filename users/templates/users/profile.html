@@ -79,11 +79,11 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <!-- <th>{% if user.patient %}
-                                <p>Доктор</strong>
-                            {% else %}
+                            <th>{% if user.patient %}
                                 <p>Пациент</strong>
-                            {% endif %}</th> -->
+                                {% else %}
+                                <p>Доктор</strong>
+                                {% endif %}</th>
                             <th>Дата</strong></th>
                             <th>Медицинская организация</strong></th>
                             <th>Специальность</th>
@@ -95,16 +95,16 @@
                     <tbody>
                         {% for note in notes %}
                         <tr>
-                            <!-- <td>
+                            <td>
                                 {% if user.patient %}
-                                    <p>{{ note.doctor.get_full_name }}</p>
-                                {% else %}
                                     <p>{{ note.patient.get_full_name }}</p>
+                                {% else %}
+                                    <p>{{ note.doctor.get_full_name }}</p>
                                 {% endif %}
-                            </td> -->
+                            </td>
                             <th><p class="date">{{ note.date_meeting }}</p></th>
-                            <th><p>{{ note.med_organization }}</p></th>
-                            <td><p>{{ note.specialization }}</p></td>
+                            <th><p>{{ note.get_med_organization_display }}</p></th>
+                            <td><p>{{ note.get_specialization_display }}</p></td>
                             <td><p>{{ note.visit_number }}</p></td>
                             <td><p>{{ note.cabinet }}</p></td>
                             <td><p>{{ note.status }}</p></td>

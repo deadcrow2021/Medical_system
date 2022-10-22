@@ -422,7 +422,6 @@ a:hover {
 	margin-bottom: 20px;
 }
 .table thead th {
-	font-weight: bold;
 	text-align: left;
 	border: none;
 	padding: 10px 15px;
@@ -451,4 +450,9 @@ a:hover {
 
 .block__profile__disease {
     margin: 0 20px;
+}
+
+th {
+    font-size: 18px;
+    font-weight: 300;
 }

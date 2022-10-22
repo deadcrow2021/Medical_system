@@ -205,6 +205,9 @@ class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
         if form.is_valid():
             commit: ReceptionNotes = form.save(commit=False)
             commit.doctor = request.user.doctor
+            commit.specialization = request.user.doctor.role
+            commit.cabinet = request.user.doctor.cabinet
+            commit.med_organization = request.user.doctor.med_org
             commit.patient = User.objects.get(pk=profile_id).patient
             commit.save()
             return HttpResponseRedirect(reverse(self.success_url, kwargs={ 'profile_id': profile_id }))
