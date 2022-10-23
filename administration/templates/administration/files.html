@@ -16,6 +16,9 @@
             <div class="files__block__element">
                 <p>{{ f.description }}</p>
             </div>
+            <div class="files__block__element">
+                <a href="{{ f.document.url }}" download>Скачать файл</a>
+            </div>
         {% endfor %}
     </div>
 </div>

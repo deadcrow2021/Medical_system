@@ -204,7 +204,7 @@ class AppointmentListForm(forms.ModelForm):
 class TakingMedicationsForm(forms.ModelForm):
     class Meta:
         model = TakingMedications
-        fields = 'date_start', 'date_finish', 'indications', \
+        fields = 'name', 'date_start', 'date_finish', 'indications', \
                 'dose_duration', 'side_effects'
         widgets = {
             'date_start': DateInput(),
@@ -341,6 +341,7 @@ class UrineSowingForm(forms.ModelForm):
             'date': DateInput()
         }
 
+
 class PatientInformationForm(forms.ModelForm):
     class Meta:
         model = PatientInformation
@@ -367,6 +368,13 @@ class PatientInformationForm(forms.ModelForm):
         }
 
 
+class PreviousPregnancyForm(forms.ModelForm):
+    class Meta:
+        model = PreviousPregnancy
+        fields = 'year', 'pragnancy_has_come', 'outcome', 'outcome_str', \
+                'birth_number', 'birth_str', 'complications', 'doctor_confirmation'
+
+
 class CarvixScarForm(forms.ModelForm):
     class Meta:
         model = CarvixScar
@@ -374,6 +382,7 @@ class CarvixScarForm(forms.ModelForm):
         widgets = {
             'date': DateInput()
         }
+
 
 class FatherInfoForm(forms.ModelForm):
     class Meta:

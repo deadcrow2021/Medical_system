@@ -209,6 +209,7 @@ class AppointmentList(models.Model):
 
 class TakingMedications(models.Model):
     current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='medications')
+    name = models.CharField('Наименование лекарственного препарата', max_length=1000, blank=True, null=True)
     date_start = models.DateField('Дата начала приема препарата', blank=True, null=True)
     date_finish = models.DateField('Дата окончания приема препарата', blank=True, null=True)
     indications = models.CharField('Показания', max_length=1000, blank=True, null=True)
@@ -501,7 +502,18 @@ class PatientInformation(models.Model):
     # Подтверждение врача
     doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
-## 2
+
+class PreviousPregnancy(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='previous_pregnancy')
+    year = models.CharField('Год', max_length=4, blank=True, null=True)
+    pragnancy_has_come = models.CharField('Насупила', max_length=10, blank=True, null=True, choices=PREVIOUS_PREGNANCY)
+    outcome = models.CharField('Исход беременности', max_length=10, choices=PREGNANCY_OUTCOME1, blank=True, null=True)
+    outcome_str = models.CharField('Дополнительная информация', max_length=1000, blank=True, null=True)
+    birth_number = models.PositiveSmallIntegerField('Число родившихся', validators=[MaxValueValidator(10)], blank=True, null=True)
+    birth_str = models.CharField('Дополнительная информация', max_length=1000, blank=True, null=True)
+    complications = models.CharField('Осложнения предыдущих беременносей и родов', max_length=1000, blank=True, null=True)
+    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
+
 
 class CarvixScar(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='carvix')

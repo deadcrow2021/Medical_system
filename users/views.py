@@ -43,6 +43,17 @@ def generate_username(first_name, date):
     return f'{first_name}_{date.strftime("%d%m%Y")}'
 
 
+def translate_name(name):
+    from .letter_vocabulary import VOCABULARY
+    new = ''
+    for letter in name:
+        if letter in VOCABULARY:
+            new += VOCABULARY[letter]
+        else:
+            new += letter
+    return new
+    
+
 def add_disease(request, profile_id):
     user: User = User.objects.get(id=profile_id)
     form = DiseaseCreationForm()
@@ -306,7 +317,8 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
-            user.username = generate_username(personal.first_name, user.date_joined)
+            last_name = translate_name(personal.last_name)
+            user.username = generate_username(last_name, user.date_joined)
             send_mail('Данные для входа в систему',
                       f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
                       's@aistteam.ru',
@@ -486,7 +498,7 @@ def update_patient_info_page(request, profile_id):
 
 observation_forms_models = {
     'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ),
-    'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Таблица наблюдения за беременной (скрининги)' ),
+    'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Наблюдение за беременной' ),
     'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений' ),
     'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ),
     'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
@@ -497,7 +509,7 @@ observation_forms_models = {
     'сoagulogram':               ( CoagulogramForm, Coagulogram, 'Коагулограмма' ),
     'glucose_test':              ( GlucoseToleranceTestForm, GlucoseToleranceTest, 'Пероральный глюкозотолерантный тест, ммоль/л' ),
     'ts_hormonr':                ( ThyroidStimulatingHormoneForm, ThyroidStimulatingHormone, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ),
-    'smears':                    ( SmearsForm, Smears, 'Мазки' ),
+    'smears':                    ( SmearsForm, Smears, 'Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом' ),
     'bacterio_smears':           ( BacterioscopicSmearsExaminationForm, BacterioscopicSmearsExamination, 'Бактериоскопическое исследование мазков' ),
     'cervix_exam':               ( CervixCytologicalExaminationForm, CervixCytologicalExamination, 'Цитологическое исследование микропрепарата шейки матки' ),
     'urine':                     ( UrineAnalysisForm, UrineAnalysis, 'Общий анализ мочи' ),
@@ -560,11 +572,12 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
 
 
 name_model = {
+    'previous_pregnancy': ( PreviousPregnancy, PreviousPregnancyForm, 'История предыдущих беременностей'),
     'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ),
     'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первый осмотр' ),
-    'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+    # 'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
     'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ),
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),

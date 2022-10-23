@@ -73,8 +73,7 @@ class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(commit=True)
-            add_log(request.user, f'Добавлен файл.',
-                    '-', f'Файл {form.cleaned_data["title"]} был создан.')
+            add_log(request.user, f'Добавлен файл.', '-', '-', f'Файл {form.cleaned_data["title"]} был создан.')
             messages.success(request, message='Файл успешно добавлен')
             return redirect(self.success_url)
         else:
