@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 <div class="back__button">
     <a href="{% url 'update-patient-info' current_user.id %}" class="back_btn">Изменить</a>

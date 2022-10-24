@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'profile' curent_user.id %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
 {% if user.doctor %}
