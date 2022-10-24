@@ -9,6 +9,14 @@
 </div>
 
 {% if user.doctor %}
+{% for key, val in key_val %}
+<div class="block__lines">
+    <div class="lines__element btn">
+        <p><a href="{% url 'profile-models-template' current_user.id key %}">{{ val }}</a></p>
+    </div>
+</div>
+{% endfor %}
+
 <div class="fields">
     {% for p in form %}
     <div class="fields__input">

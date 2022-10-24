@@ -2,12 +2,11 @@
 
 {% block content %}
     <div class="title__block">
-        <h2>Login</h2>
+        <h2>Вход</h2>
     </div>
-
+    
     <form method="POST" action="">
         {% csrf_token %}
-
         <div class="fields">
                 <div class="fields__input">
                     <div class="fields__input__label">
@@ -17,7 +16,6 @@
                         <input type="text" name="username">
                     </div>
                 </div>
-
                 <div class="fields__input">
                     <div class="fields__input__label">
                         Пароль:
@@ -27,10 +25,8 @@
                     </div>
                 </div>
         </div>
-
         <div class="submit-btn">
             <input type="submit" value="Войти">
         </div>
-
     </form>
 {% endblock %}

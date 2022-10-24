@@ -94,6 +94,7 @@ def follow_unfollow_patient(request):
 
 def profile(request: HttpRequest, profile_id):
     follow = False
+    template_name: str = 'users/profile.html'
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     
@@ -112,10 +113,10 @@ def profile(request: HttpRequest, profile_id):
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
         notes = ReceptionNotes.objects.filter(doctor=user.doctor)
-        return render(request, 'users/profile.html', { 'profile': user_profile, 'user_type': user_type, 'notes':notes, 'form':form })
+        return render(request, template_name, { 'profile': user_profile, 'user_type': user_type, 'notes':notes, 'form':form })
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
-        examinations = {(key, val[2]) for key, val in doctor_examination.items()}
+        examinations = {(key, val[2]) for key, val in doctors_examinations.items()}
         user_profile = user.patient
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
@@ -124,7 +125,7 @@ def profile(request: HttpRequest, profile_id):
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
-        return render(request, 'users/profile.html', {
+        return render(request, template_name, {
             'profile': user_profile,
             'user_type': user_type,
             'diseases': diseases,
@@ -211,7 +212,7 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
 def pregnancy_observation_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     keys_names = []
-    for key, val in observation_forms_models.items():
+    for key, val in observation_template_models.items():
         keys_names.append((key, val[2]))
     return render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user, 'keys_names': keys_names})
 
@@ -473,11 +474,19 @@ def update_complication_page(request: HttpRequest, profile_id: int, complication
     return render(request, template_name, context={ 'current_user': current_user, 'form': form })
 
 
+patinet_info_models = {
+    'previous_pregnancy': ( PreviousPregnancy, PreviousPregnancyForm, 'История предыдущих беременностей'),
+    'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ),
+    'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
+}
+
+
 def patient_info_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
-    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form })
+    key_value = ((key, val[2]) for key, val in patinet_info_models.items())
+    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value })
 
 
 def update_patient_info_page(request, profile_id):
@@ -496,14 +505,17 @@ def update_patient_info_page(request, profile_id):
     return render(request, 'users/update_patient_info.html', { 'current_user': current_user, 'form': form })
 
 
-observation_forms_models = {
-    'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ),
-    'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Наблюдение за беременной' ),
+observation_template_models = {
     'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений' ),
     'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ),
-    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
-    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
-    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ),
+}
+
+pregnant_woman_monitoring_models = {
+    'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ),
+    'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Наблюдение за беременной' ),
+}
+
+examination_list_models = {
     'blood_analysis':            ( BloodAnalysisForm, BloodAnalysis, 'Анализ крови' ),
     'biochemical_blood':         ( BiochemicalBloodAnalysisForm, BiochemicalBloodAnalysis, 'Биохимический анализ крови' ),
     'сoagulogram':               ( CoagulogramForm, Coagulogram, 'Коагулограмма' ),
@@ -514,6 +526,65 @@ observation_forms_models = {
     'cervix_exam':               ( CervixCytologicalExaminationForm, CervixCytologicalExamination, 'Цитологическое исследование микропрепарата шейки матки' ),
     'urine':                     ( UrineAnalysisForm, UrineAnalysis, 'Общий анализ мочи' ),
     'urine_sowing':              ( UrineSowingForm, UrineSowing, 'Посев мочи на бессимптомную бактериурию' ),
+}
+
+determine_antibodies = {
+    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
+    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
+    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ),
+}
+
+ultrasound_models = {
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
+}
+
+doctors_examinations_models = {
+    'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
+    'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ), ######
+}
+
+current_pregnancy_models = {
+    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+}
+
+portion_models = {
+    'pregnant_woman_monitoring': pregnant_woman_monitoring_models,
+    'examination_list':          examination_list_models,
+    'determine_antibodies':      determine_antibodies,
+    'ultrasound':                ultrasound_models,
+    'doctors_examinations':      doctors_examinations_models,
+    'current_pregnancy':         current_pregnancy_models
+}
+
+def portion_models_template_page(request: HttpRequest, profile_id: int, template_name: str, portion_name: str):
+    current_user: User = User.objects.get(pk=profile_id)
+    template_name = 'users/' + template_name + '.html'
+    keys_names = ((key, name[2]) for key, name in portion_models[portion_name].items())
+    return render(request, template_name, { 'current_user': current_user, 'keys_names': keys_names })
+
+
+observation_forms_models = {
+    'pelviometry':               ( PelviometryForm, Pelviometry, 'Пельвиометрия' ), #####
+    'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Наблюдение за беременной' ), #####
+    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений' ), #####
+    'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ), #####
+    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ), #####
+    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ), #####
+    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ), #####
+    'blood_analysis':            ( BloodAnalysisForm, BloodAnalysis, 'Анализ крови' ), #####
+    'biochemical_blood':         ( BiochemicalBloodAnalysisForm, BiochemicalBloodAnalysis, 'Биохимический анализ крови' ), #####
+    'сoagulogram':               ( CoagulogramForm, Coagulogram, 'Коагулограмма' ), #####
+    'glucose_test':              ( GlucoseToleranceTestForm, GlucoseToleranceTest, 'Пероральный глюкозотолерантный тест, ммоль/л' ), #####
+    'ts_hormonr':                ( ThyroidStimulatingHormoneForm, ThyroidStimulatingHormone, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ), #####
+    'smears':                    ( SmearsForm, Smears, 'Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом' ), #####
+    'bacterio_smears':           ( BacterioscopicSmearsExaminationForm, BacterioscopicSmearsExamination, 'Бактериоскопическое исследование мазков' ), #####
+    'cervix_exam':               ( CervixCytologicalExaminationForm, CervixCytologicalExamination, 'Цитологическое исследование микропрепарата шейки матки' ), #####
+    'urine':                     ( UrineAnalysisForm, UrineAnalysis, 'Общий анализ мочи' ), #####
+    'urine_sowing':              ( UrineSowingForm, UrineSowing, 'Посев мочи на бессимптомную бактериурию' ), #####
 }
 
 
@@ -572,17 +643,17 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
 
 
 name_model = {
-    'previous_pregnancy': ( PreviousPregnancy, PreviousPregnancyForm, 'История предыдущих беременностей'),
-    'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ),
-    'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
-    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+    'previous_pregnancy': ( PreviousPregnancy, PreviousPregnancyForm, 'История предыдущих беременностей'), #####
+    'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ), #####
+    'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ), #####
+    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ), ######
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ), ######
     # 'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
-    'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ),
-    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
-    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
-    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
-    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
+    'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ), #####
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ), #####
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ), #####
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ), #####
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ), #####
 }
 
 
@@ -636,16 +707,15 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
     return render(request, 'users/add_profile_models_template.html', context)
 
 
-doctor_examination = {
-    'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ),
-    'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ),
+doctors_examinations = {
+    'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
+    'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ), ######
 }
-
 
 def examination_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
-    model = doctor_examination[model_name][0]
-    form = doctor_examination[model_name][1]
+    model = doctors_examinations[model_name][0]
+    form = doctors_examinations[model_name][1]
     exists = True
     
     if request.method == "POST":
@@ -666,11 +736,11 @@ def examination_template_page(request: HttpRequest, profile_id: int, model_name:
 def add_examination_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     success_url = "examination-template-page"
-    model = doctor_examination[model_name][1]
+    model = doctors_examinations[model_name][1]
     
     if request.method == "POST":
         if int(model_id) > -1:
-            instance = doctor_examination[model_name][0].objects.get(pk=model_id)
+            instance = doctors_examinations[model_name][0].objects.get(pk=model_id)
             form = model(request.POST, instance=instance)
         else:
             form = model(request.POST)
@@ -683,7 +753,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
     
     if int(model_id) > -1:
-        instance = doctor_examination[model_name][0].objects.get(pk=model_id)
+        instance = doctors_examinations[model_name][0].objects.get(pk=model_id)
         form = model(instance=instance)
     else:
         form = model

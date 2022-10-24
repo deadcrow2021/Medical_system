@@ -1,0 +1,19 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
+</div>
+
+{% if user.doctor %}
+    {% for key, name in keys_names %}
+    <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <a href="{% url 'examination-template-page' current_user.id key %}">{{ name }}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}
