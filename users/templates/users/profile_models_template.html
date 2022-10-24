@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 <div class="back__button">
     <a href="{% url 'add-profile-models-template' current_user.id model_name -1 %}">Добавить</a>

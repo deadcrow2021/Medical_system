@@ -140,7 +140,27 @@
                 <p><a href="{% url 'add-reception' profile.user.id %}">Планы посещений</a></p>
             </div>
         </div>
-        {% for key, val in examinations %}
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'portion-page' profile.user.id 'doctors_examinations' 'doctors_examinations' %}">Осмотры врачей специалистов</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'portion-page' profile.user.id 'current_pregnancy' 'current_pregnancy' %}">Текущая беременность</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'profile-models-template' profile.user.id 'hospitalization' %}">Сведения о госпитализации во время беременности</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности и родов</a></p>
+            </div>
+        </div>
+        {% comment %} {% for key, val in examinations %}
         <div class="block__lines">
             <div class="lines__element btn">
                 <p><a href="{% url 'examination-template-page' profile.user.id key %}">{{ val }}</a></p>
@@ -153,12 +173,7 @@
                 <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ val }}</a></p>
             </div>
         </div>
-        {% endfor %}
-        <div class="block__lines">
-            <div class="lines__element btn">
-                <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности и родов</a></p>
-            </div>
-        </div>
+        {% endfor %} {% endcomment %}
     </div>
     {% endif %}
 </div>

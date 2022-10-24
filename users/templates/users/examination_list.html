@@ -2,21 +2,14 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'profile' current_user.id %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
 {% if user.doctor %}
     <div class="block__profile__docs">
         <div class="block__lines">
             <div class="lines__element btn">
-                <a href="{% url 'portion-page' current_user.id 'pregnant_woman_monitoring' 'pregnant_woman_monitoring' %}">Наблюдения за беременной</a>
-            </div>
-        </div>
-    </div>
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn">
-                <a href="{% url 'portion-page' current_user.id 'examination_list' 'examination_list' %}">Лист обследования</a>
+                <a href="{% url 'portion-page' current_user.id 'determine_antibodies' 'determine_antibodies' %}">Определение антител</a>
             </div>
         </div>
     </div>
@@ -29,6 +22,12 @@
         </div>
     </div>
     {% endfor %}
+    <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <a href="{% url 'portion-page' current_user.id 'ultrasound' 'ultrasound' %}">Узи</a>
+            </div>
+        </div>
+    </div>
 {% endif %}
-
 {% endblock %}
