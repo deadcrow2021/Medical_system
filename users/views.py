@@ -126,14 +126,14 @@ def profile(request: HttpRequest, profile_id):
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         return render(request, template_name, {
-            'profile': user_profile,
-            'user_type': user_type,
-            'diseases': diseases,
-            'form': form,
-            'follow': follow,
-            'buttons': buttons,
+            'profile':      user_profile,
+            'user_type':    user_type,
+            'diseases':     diseases,
+            'form':         form,
+            'follow':       follow,
+            'buttons':      buttons,
             'examinations': examinations,
-            'notes':notes,
+            'notes':        notes,
         })
 
 
@@ -326,12 +326,15 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                       [form2.cleaned_data['email']])
             user.save()
             personal.user = user
-            personal.save()
-            user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             
+            user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             if user_type == 'patient':
+                personal.gender = 'f'
+                personal.save()
+                
                 med_card = MedicalCard()
                 med_card.patient = personal
+                med_card.home_phone = personal.telephone
                 med_card.save()
                 
                 pat_info = PatientInformation()
@@ -341,6 +344,8 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 current_preg = CurrentPregnancy()
                 current_preg.patient = personal
                 current_preg.save()
+            else:
+                personal.save()
             
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',

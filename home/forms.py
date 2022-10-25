@@ -16,7 +16,7 @@ class PatientCreationForm(forms.ModelForm):
             'first_name',
             'last_name',
             'father_name',
-            'gender',
+            # 'gender',
             'telephone',
             'email',
         )
