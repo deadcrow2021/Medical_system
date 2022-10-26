@@ -119,9 +119,9 @@ class DataSamplingForm(forms.Form):
 class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
-        fields = 'date_of_birth', 'residence_address', 'registration_address', \
-        'home_phone', 'work_phone', 'marital_status', \
-        'trusted_person_fio', 'trusted_person_phone', 'oms_policy', 'snils', 'maternity_leave_start', \
+        fields = 'date_of_birth', 'residence_address', 'registration_address', 'mobile_phone', \
+        'home_phone', 'work_phone', 'marital_status', 'trusted_person_fio', 'trusted_person_phone', \
+        'education', 'profession', 'work_place', 'disability', 'oms_policy', 'snils', 'maternity_leave_start', \
         'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', \
         'generic_certificate_date', 'allergy', 'allergy_description', \
         'mother_blood_group', 'mother_blood_rh', 'mother_date_of_determination', \
@@ -195,7 +195,7 @@ class PregnantWomanMonitoringForm(forms.ModelForm):
 class AppointmentListForm(forms.ModelForm):
     class Meta:
         model = AppointmentList
-        fields = 'visit_number', 'date', 'gestation_period_weeks', \
+        fields = 'visit_number', 'date', 'gestation_period_weeks', 'service', \
                 'analysis', 'appointment', 'disability_certificate', \
                 'next_visit_date', 'doctor_confirmation'
         widgets = {
@@ -390,7 +390,8 @@ class CarvixScarForm(forms.ModelForm):
 class FatherInfoForm(forms.ModelForm):
     class Meta:
         model = FatherInfo
-        fields = 'age', 'height', 'mass', 'imt', 'bad_habits', 'sti', \
+        fields = 'age', 'height', 'mass', 'imt', 'bad_habits', \
+        'chronic_operations', 'chronic_str', 'sti', \
         'sti_str', 'treatment', 'treatment_date', 'hiv', 'tuberculosis', \
         'hepatitis_b', 'hepatitis_c', 'syphilis', 'others', \
         'last_fluorography_date', 'last_fluorography_date_result', \
@@ -443,10 +444,10 @@ class CurrentPregnancyinfoForm(forms.ModelForm):
 class FirstExaminationForm(forms.ModelForm):
     class Meta:
         model = FirstExamination
-        fields = 'date', 'complaints', 'complaints_str', 'subcutaneous_fat_severity', \
+        fields = 'date', 'complaints', 'complaints_str', 'skin_condition', 'subcutaneous_fat_severity', \
                 'edema', 'edema_str', 'lower_extremities_varicose', 'enlarged_lymph_nodes', \
                 'lymph_nodes_str', 'mammary', 'mammary_str', 'nipples', 'nipples_str', 'heart_tones', \
-                'pulse', 'rh_blood_pressure', 'lh_blood_pressure', 'fetus_stirring', \
+                'pulse', 'rh_blood_pressure', 'lh_blood_pressure', 'lungs_auscultation', 'fetus_stirring', \
                 'fetus_heartbeat', 'abdominal_circumference', 'fetal_position', 'to_pelvis_entrance', \
                 'adjacent_part', 'cervix_examination', 'cervix_visual_changes', 'external_genitalia', \
                 'external_genitalia_str', 'vagina', 'vagina_str', 'cervix', 'cervix_length', 'cervix_deviations', \
@@ -478,8 +479,8 @@ class ComprehensiveRiskAssessmentForm(forms.ModelForm):
                 'uterine_pulse_index', 'vpr', 'vpr_str', \
                 'papp_a', 'mom_papp_a', 'b_hgch', 'mom_b_hgch', \
                 'trisomy_21', 'trisomy_18', 'trisomy_13', 'zrp', \
-                'trisomy_13', 'trisomy_13', 'trisomy_13', \
-                'gestation_period_weeks', 'doctor_confirmation' 
+                'premature_birth', 'preeclampcy_34', 'preeclampcy_37', \
+                'gestation_period_weeks', 'doctor_confirmation'
         widgets = {
             'date': DateInput()
         }
