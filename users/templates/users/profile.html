@@ -2,126 +2,12 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'home' %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
 <div class="block__profile">
-    <div class="block__profile__info">
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="fields">
-                {% for p in form %}
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        {{ p.label_tag }}
-                    </div>
-                    <div class="fields__input__field noborder">
-                    {% if p.field.choices %}
-                        {% for i in p.field.choices %}
-                            {% if p.value == i.0 %}
-                                {{i.1}}
-                            {% endif %}
-                        {% endfor %}
-                    {% elif p.value %}
-                        {{ p.value }}
-                    {% elif not p.value %}
-                        ---------
-                    {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </form>
-    
-        <div class="block__lines">
-            <div class="lines__element btn">
-                <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
-            </div>
-            {% if not user.patient %}
-            <div class="lines__element">
-                <p><button class="btn delete_btn">Удалить</button></p>
-            </div>
-            {% endif %}
-            {% if user.doctor %}
-            <div class="lines__element btn">
-                <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
-            </div>
-            {% endif %}
-        </div>
-
-        {% if user.doctor %}
-            <form action="{% url 'follow-unfollow' %}" method="post">
-                {% csrf_token %}
-                <div class="fields">
-                    <div class="fields__input">
-                        <div class="fields__input__field hide">
-                            <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-                        </div>
-                        {% if follow %}
-                        <div class="">
-                            <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
-                        </div>
-                        {% else %}
-                        <div class="">
-                            <button id="follow-btn" class="btn" type="submit">Привязать</button>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </form>
-        {% endif %}
-    </div>
-
-    <div class="block__profile__disease">
-        {% if notes %}
-        <div class="block__lines">
-            Преэклампсия: {{preeclampsia}}
-        </div>
-        <div class="block__lines">
-            <div class="lines__element">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{% if user.patient %}
-                                <p>Пациент</strong>
-                                {% else %}
-                                <p>Доктор</strong>
-                                {% endif %}</th>
-                            <th>Дата</strong></th>
-                            <th>Медицинская организация</strong></th>
-                            <th>Специальность</th>
-                            <th>Номер посещения специалиста</th>
-                            <th>Кабинет</th>
-                            <th>Посещено</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for note in notes %}
-                        <tr>
-                            <td>
-                                {% if user.patient %}
-                                    <p>{{ note.patient.get_full_name }}</p>
-                                {% else %}
-                                    <p>{{ note.doctor.get_full_name }}</p>
-                                {% endif %}
-                            </td>
-                            <th><p class="date">{{ note.date_meeting }}</p></th>
-                            <th><p>{{ note.get_med_organization_display }}</p></th>
-                            <td><p>{{ note.get_specialization_display }}</p></td>
-                            <td><p>{{ note.visit_number }}</p></td>
-                            <td><p>{{ note.cabinet }}</p></td>
-                            <td><p>{{ note.status }}</p></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    
     {% if user.doctor %}
-    <div class="block__profile__docs">
+    <div class="block__profile__info">
         <h3>Индивидуальная карта</h3>
         <div class="block__lines">
             <div class="lines__element btn">
@@ -140,7 +26,7 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn">
-                <p><a href="{% url 'add-reception' profile.user.id %}">Планы посещений</a></p>
+                <p><a href="{% url 'add-reception' profile.user.id %}">Добавить прием</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -163,22 +49,137 @@
                 <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности и родов</a></p>
             </div>
         </div>
-        {% comment %} {% for key, val in examinations %}
-        <div class="block__lines">
-            <div class="lines__element btn">
-                <p><a href="{% url 'examination-template-page' profile.user.id key %}">{{ val }}</a></p>
-            </div>
-        </div>
-        {% endfor %}
-        {% for key, val in buttons %}
-        <div class="block__lines">
-            <div class="lines__element btn">
-                <p><a href="{% url 'profile-models-template' profile.user.id key %}">{{ val }}</a></p>
-            </div>
-        </div>
-        {% endfor %} {% endcomment %}
     </div>
     {% endif %}
+    
+    <div class="">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="fields">
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <p>ФИО:</p>
+                    </div>
+                    <div class="fields__input__field noborder">
+                        {{ form.instance.get_full_name }}
+                    </div>
+                </div>
+                {% for p in form %}
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        {{ p.label_tag }}
+                    </div>
+                    <div class="fields__input__field noborder">
+                    {% if p.field.choices %}
+                        {% for i in p.field.choices %}
+                            {% if p.value == i.0 %}
+                                {{i.1}}
+                            {% endif %}
+                        {% endfor %}
+                    {% elif p.value %}
+                        {{ p.value }}
+                    {% elif not p.value %}
+                        ---------
+                    {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+        
+        {% if user.is_superuser %}
+            <div class="block__lines">
+                {% comment %} <div class="lines__element btn">
+                    <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
+                </div> {% endcomment %}
+                {% if not user.patient %}
+                <div class="lines__element">
+                    <p><button class="btn delete_btn">Удалить</button></p>
+                </div>
+                {% endif %}
+                {% comment %} {% if user.doctor %}
+                <div class="lines__element btn">
+                    <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
+                </div>
+                {% endif %} {% endcomment %}
+            </div>
+        {% endif %}
+       
+        {% if user.doctor %}
+            <form action="{% url 'follow-unfollow' %}" method="post">
+                {% csrf_token %}
+                <div class="fields">
+                    <div class="fields__input">
+                        <div class="fields__input__field hide">
+                            <input type="hidden" name="profile_pk" value="{{profile.pk}}">
+                        </div>
+                        {% if follow %}
+                        <div class="">
+                            <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
+                        </div>
+                        {% else %}
+                        <div class="">
+                            <button id="follow-btn" class="btn" type="submit">Привязать</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    
+        <div>
+            <h4>Планы посещений пациента</h4>
+        </div>
+        {% if notes %}
+            <div class="block__profile__disease">
+                <div class="block__lines">
+                    <div class="block__lines">
+                        Преэклампсия: {{preeclampsia}}
+                    </div>
+                    <div class="lines__element">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{% if user.patient %}
+                                        <p>Пациент</strong>
+                                        {% else %}
+                                        <p>Доктор</strong>
+                                        {% endif %}</th>
+                                    <th>Дата</strong></th>
+                                    <th>Медицинская организация</strong></th>
+                                    <th>Специальность</th>
+                                    <th>Номер посещения специалиста</th>
+                                    <th>Кабинет</th>
+                                    <th>Посещено</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for note in notes %}
+                                <tr>
+                                    <td>
+                                        {% if user.patient %}
+                                            <p>{{ note.patient.get_full_name }}</p>
+                                        {% else %}
+                                            <p>{{ note.doctor.get_full_name }}</p>
+                                        {% endif %}
+                                    </td>
+                                    <th><p class="date">{{ note.date_meeting }}</p></th>
+                                    <th><p>{{ note.get_med_organization_display }}</p></th>
+                                    <td><p>{{ note.get_specialization_display }}</p></td>
+                                    <td><p>{{ note.visit_number }}</p></td>
+                                    <td><p>{{ note.cabinet }}</p></td>
+                                    <td><p>{{ note.status }}</p></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Посещения не назначены</p>
+        {% endif %}
+    </div>
 </div>
 
 <div class="banner" style="display: none;">
@@ -202,6 +203,13 @@
     }
     cancel_btn.onclick = e => {
         banner.style.display = 'none';
+    }
+</script>
+<script type='text/javascript'>
+    for (let name of ["first", "last", "father"]) {
+        var elem = document.querySelector('label[for=id_'+name+'_name]')
+        console.log(elem);
+        elem.parentNode.parentNode.remove()
     }
 </script>
 {% endblock %}

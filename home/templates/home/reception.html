@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
 <div class="notes__block">
@@ -43,9 +43,6 @@
     {% endfor %}
 </div>
 <script type="text/javascript">
-    {% comment %} var records = document.getElementsByClassName('notes__row');
-    for (let rec of records) {
-        if (rec.)
-    } {% endcomment %}
+    
 </script>
 {% endblock %}

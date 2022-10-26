@@ -1,24 +1,27 @@
 {% extends 'home/base.html' %}
 
-{% block content %}
+{% block navigation %}
+<a href="{% url 'home' %}">Главная</a>
+{% endblock navigation %}
 
+{% block content %}
 <div class="account">
     {% if not user.is_superuser %}
     <div class="fio">
         <div class="fio__element">
-            <p>Фамилия: {{ account.last_name }}</p>
+            <p><strong>Фамилия:</strong> {{ account.last_name }}</p>
         </div>
         <div class="fio__element">
-            <p>Имя: {{ account.first_name }}</p>
+            <p><strong>Имя:</strong> {{ account.first_name }}</p>
         </div>
         {% if account.father_name %}
             <div class="fio__element">
-                <p>Отчество: {{ account.father_name }}</p>
+                <p><strong>Отчество:</strong> {{ account.father_name }}</p>
             </div>
         {% endif %}
         {% if user.doctor %}
             <div class="fio__element">
-                <p>Специальность: {{ account.get_role_display }}</p>
+                <p><strong>Специальность:</strong> {{ account.get_role_display }}</p>
             </div>
         {% endif %}
     </div>
@@ -56,15 +59,17 @@
             <div class="title__block">
                 <h2>Мои пациенты:</h2>
             </div>
-
+            
             <div class="user__block__row">
                 {% for patient in related_patients %}
+                <div class="user__block__border">
                     <div class="user__block__element">
                         <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
                     </div>
                     <div class="user__block__element">
                         <a href="{% url 'profile' patient.user.id %}">Профиль</a>
                     </div>
+                </div>
                 {% endfor %}
             </div>
         </div>

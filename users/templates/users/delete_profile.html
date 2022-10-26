@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="back__button">
-        <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+        <button type="button" onclick="history.back()" class="btn">Вернуться</button>
     </div>
 
     <form method="POST" action="">

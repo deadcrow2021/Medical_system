@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'observation' current_user.id key %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 <h3>{{ page_name }}</h3>
 <form action="" method="post">
