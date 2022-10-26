@@ -31,4 +31,5 @@ urlpatterns = [
     path('update_observation/<profile_id>/<model_name>/<model_id>', views.update_observation_template_page, name='update-observation'),
     path('self_monitoring/<profile_id>', views.self_monitoring, name='self-monitoring'),
     path('portion_page/<profile_id>/<template_name>/<portion_name>', views.portion_models_template_page, name='portion-page'),
+    path('statistics', views.statistics_pade, name='statistics'),
 ]

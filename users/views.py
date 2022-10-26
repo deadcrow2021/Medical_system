@@ -776,3 +776,9 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
     
     context = { 'current_user': current_user, 'form': form, 'model_name': model_name }
     return render(request, 'users/add_examination_template.html', context)
+
+
+def statistics_pade(request: HttpRequest) -> HttpResponse:
+    template_name: str = 'users/statistics.html'
+    
+    return render(request, template_name)

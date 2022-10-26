@@ -1,9 +1,5 @@
 {% extends 'home/base.html' %}
 
-{% block navigation %}
-<a href="{% url 'home' %}">Главная</a>
-{% endblock navigation %}
-
 {% block content %}
 <div class="account">
     {% if not user.is_superuser %}
