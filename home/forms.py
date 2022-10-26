@@ -16,7 +16,6 @@ class PatientCreationForm(forms.ModelForm):
             'first_name',
             'last_name',
             'father_name',
-            # 'gender',
             'telephone',
             'email',
         )
@@ -56,7 +55,6 @@ class PatientChangeForm(forms.ModelForm):
             'first_name',
             'last_name',
             'father_name',
-            'gender',
             'telephone',
             'email',
         )

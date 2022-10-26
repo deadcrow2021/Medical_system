@@ -125,16 +125,18 @@ def profile(request: HttpRequest, profile_id):
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
-
-        last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
+        
         try:
-            if int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90 or int(last_monitoring.systolic_blood_pressure) >= 140 or int(last_monitoring.protein_in_urine) >= 300):
+            last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
+            if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
+                    int(last_monitoring.systolic_blood_pressure) >= 140,
+                    int(last_monitoring.protein_in_urine) >= 300):
                 preeclampsia = 'Высокий'
             else:
                 preeclampsia = 'Низкий'
         except:
             preeclampsia = 'Неправильно введены данные'
-
+        
         return render(request, template_name, {
             'profile':      user_profile,
             'user_type':    user_type,
@@ -320,11 +322,19 @@ def recent_patients(request: HttpRequest):
     return render(request, 'users/recent_patients.html', context)
 
 
+def clear_phone(phone: str) -> str:
+    ans = ''.join(c for c in phone if c.isdigit())
+    return "+" + ans
+
+
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
-        form2 = self.form_class(request.POST)
+        # print(f'{request.POST=}')
+        post = request.POST.copy()
+        post |= { 'telephone': [clear_phone(post['telephone'])] }
+        print(f'{post=}')
+        form2 = self.form_class(post)
         if form2.is_valid():
-            print(f'{form2.cleaned_data=}')
             user: User = User()
             personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
@@ -337,12 +347,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                       [form2.cleaned_data['email']])
             user.save()
             personal.user = user
+            personal.save()
             
             user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             if user_type == 'patient':
-                personal.gender = 'f'
-                personal.save()
-                
                 med_card = MedicalCard()
                 med_card.patient = personal
                 med_card.home_phone = personal.telephone
@@ -355,8 +363,6 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 current_preg = CurrentPregnancy()
                 current_preg.patient = personal
                 current_preg.save()
-            else:
-                personal.save()
             
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
@@ -776,3 +782,9 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
     
     context = { 'current_user': current_user, 'form': form, 'model_name': model_name }
     return render(request, 'users/add_examination_template.html', context)
+
+
+def statistics_pade(request: HttpRequest) -> HttpResponse:
+    template_name: str = 'users/statistics.html'
+    
+    return render(request, template_name)
