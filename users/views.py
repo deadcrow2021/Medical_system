@@ -125,6 +125,16 @@ def profile(request: HttpRequest, profile_id):
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
+
+        last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
+        try:
+            if int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90 or int(last_monitoring.systolic_blood_pressure) >= 140 or int(last_monitoring.protein_in_urine) >= 300):
+                preeclampsia = 'Высокий'
+            else:
+                preeclampsia = 'Низкий'
+        except:
+            preeclampsia = 'Неправильно введены данные'
+
         return render(request, template_name, {
             'profile': user_profile,
             'user_type': user_type,
@@ -134,6 +144,7 @@ def profile(request: HttpRequest, profile_id):
             'buttons': buttons,
             'examinations': examinations,
             'notes':notes,
+            'preeclampsia':preeclampsia,
         })
 
 
@@ -476,7 +487,7 @@ def update_complication_page(request: HttpRequest, profile_id: int, complication
 
 patinet_info_models = {
     'previous_pregnancy': ( PreviousPregnancy, PreviousPregnancyForm, 'История предыдущих беременностей'),
-    'carvix':             ( CarvixScar, CarvixScarForm, 'Седения о рубце на матке' ),
+    'carvix':             ( CarvixScar, CarvixScarForm, 'Сведения о рубце на матке' ),
     'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ),
 }
 
