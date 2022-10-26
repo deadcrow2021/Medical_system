@@ -3,73 +3,110 @@
 {% block content %}
 <div class="account">
     {% if not user.is_superuser %}
-    <div class="fio">
-        <div class="fio__element">
-            <p><strong>Фамилия:</strong> {{ account.last_name }}</p>
-        </div>
-        <div class="fio__element">
-            <p><strong>Имя:</strong> {{ account.first_name }}</p>
-        </div>
-        {% if account.father_name %}
+    <div>
+        <div class="fio">
             <div class="fio__element">
-                <p><strong>Отчество:</strong> {{ account.father_name }}</p>
+                <p><strong>Фамилия:</strong> {{ account.last_name }}</p>
             </div>
-        {% endif %}
-        {% if user.doctor %}
             <div class="fio__element">
-                <p><strong>Специальность:</strong> {{ account.get_role_display }}</p>
+                <p><strong>Имя:</strong> {{ account.first_name }}</p>
             </div>
-        {% endif %}
-    </div>
-
-    <div class="lines__element">
-        <a href="{% url 'reception' %}">План посещений</a>
-    </div>
-    {% endif %}
-    
-    {% if user.patient %}
+            {% if account.father_name %}
+                <div class="fio__element">
+                    <p><strong>Отчество:</strong> {{ account.father_name }}</p>
+                </div>
+            {% endif %}
+            {% if user.doctor %}
+                <div class="fio__element">
+                    <p><strong>Специальность:</strong> {{ account.get_role_display }}</p>
+                </div>
+            {% endif %}
+        </div>
+        
         <div class="lines__element">
-            <p><a href="{% url 'records' %}">Записи самонаблюдения</a></p>
-        {% comment %} </div>
-        <div class="user__block">
-            <div class="user__block__row">
-                <div class="outer_div">
-                    <div class="border_div">
-                        {% for record in records %}
-                            <div class="user__block__element">
-                                <p><strong>Название:</strong> {{ record.title }}</p>
-                            </div>
-                            <div class="user__block__element">
-                                <p><strong>Описание:</strong> {{ record.description }}</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div> {% endcomment %}
+            <a href="{% url 'reception' %}">План посещений</a>
+        </div>
+    </div>
     {% endif %}
     
-    
-    {% if user.doctor %}
-        <div class="user__block">
-            <div class="title__block">
-                <h2>Мои пациенты:</h2>
+    <fieldset>
+        {% if user.patient %}
+            <div class="lines__element">
+                <p><a href="{% url 'records' %}">Записи самонаблюдения</a></p>
             </div>
-            
-            <div class="user__block__row">
-                {% for patient in related_patients %}
-                <div class="user__block__border">
-                    <div class="user__block__element">
-                        <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
-                    </div>
-                    <div class="user__block__element">
-                        <a href="{% url 'profile' patient.user.id %}">Профиль</a>
+    {% comment %} <div class="user__block">
+                <div class="user__block__row">
+                    <div class="outer_div">
+                        <div class="border_div">
+                            {% for record in records %}
+                                <div class="user__block__element">
+                                    <p><strong>Название:</strong> {{ record.title }}</p>
+                                </div>
+                                <div class="user__block__element">
+                                    <p><strong>Описание:</strong> {{ record.description }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-                {% endfor %}
+            </div> {% endcomment %}
+        {% endif %}
+        
+        
+        {% if user.doctor %}
+            <legend>
+                <div class="title__block">
+                    <h3>Мои пациенты:</h3>
+                </div>
+            </legend>
+            <div class="user__block">
+                <div class="user__block__row">
+                    {% for patient in related_patients %}
+                    <div class="user__block__border">
+                        <div class="user__block__element">
+                            <p>{{ patient.last_name }} {{ patient.first_name }} {{ patient.father_name }}</p>
+                        </div>
+                        <div class="user__block__element">
+                            <a href="{% url 'profile' patient.user.id %}">Профиль</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </fieldset>
+    <fieldset>
+        <legend>
+            <h3>Клинические и методические рекомендации</h3>
+        </legend>
+        <div>
+            <div class="user__block__border">
+                <div class="user__block__element">
+                    <p>Рекомендация 1</p>
+                </div>
+            </div>
+            <div class="user__block__border">
+                <div class="user__block__element">
+                    <p>Рекомендация 2</p>
+                </div>
+            </div>
+            <div class="user__block__border">
+                <div class="user__block__element">
+                    <p>Рекомендация 3</p>
+                </div>
+            </div>
+            <div class="user__block__border">
+                <div class="user__block__element">
+                    <p>Рекомендация 4</p>
+                </div>
+            </div>
+            <div class="user__block__border">
+                <div class="user__block__element">
+                    <p>Рекомендация 5</p>
+                </div>
             </div>
         </div>
-    {% endif %}
+    </fieldset>
 </div>
 
 {% endblock %}

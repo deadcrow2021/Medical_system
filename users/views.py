@@ -322,11 +322,19 @@ def recent_patients(request: HttpRequest):
     return render(request, 'users/recent_patients.html', context)
 
 
+def clear_phone(phone: str) -> str:
+    ans = ''.join(c for c in phone if c.isdigit())
+    return "+" + ans
+
+
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
-        form2 = self.form_class(request.POST)
+        # print(f'{request.POST=}')
+        post = request.POST.copy()
+        post |= { 'telephone': [clear_phone(post['telephone'])] }
+        print(f'{post=}')
+        form2 = self.form_class(post)
         if form2.is_valid():
-            print(f'{form2.cleaned_data=}')
             user: User = User()
             personal: Patient | Doctor = form2.save(commit=False)
             password = get_random_string(length=8)
@@ -339,12 +347,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                       [form2.cleaned_data['email']])
             user.save()
             personal.user = user
+            personal.save()
             
             user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             if user_type == 'patient':
-                personal.gender = 'f'
-                personal.save()
-                
                 med_card = MedicalCard()
                 med_card.patient = personal
                 med_card.home_phone = personal.telephone
@@ -357,8 +363,6 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 current_preg = CurrentPregnancy()
                 current_preg.patient = personal
                 current_preg.save()
-            else:
-                personal.save()
             
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
