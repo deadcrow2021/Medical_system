@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{{request.META.HTTP_REFERER}}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
 <div class="form__block">
@@ -22,7 +22,7 @@
             {% endfor %}
         </div>
         <div class="submit-btn">
-            <input type="submit" value="Обновить">
+            <input type="submit" value="Сохранить">
         </div>
     </form>
 </div>

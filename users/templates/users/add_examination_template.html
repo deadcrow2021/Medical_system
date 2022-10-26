@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="back__button">
-    <a href="{% url 'examination-template-page' current_user.id model_name %}" class="back_btn">Вернуться</a>
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
 <form action="" method="POST">
@@ -24,7 +24,7 @@
             {% endfor %}
             {{ form.errors }}
             <div>
-                <button type="submit" class="btn">Изменить</button>
+                <button type="submit" class="btn">Сохранить</button>
             </div>
         </div>
     </div>

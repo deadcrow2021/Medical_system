@@ -16,7 +16,7 @@ class PatientCreationForm(forms.ModelForm):
             'first_name',
             'last_name',
             'father_name',
-            'gender',
+            # 'gender',
             'telephone',
             'email',
         )
@@ -41,8 +41,11 @@ class DoctorCreationForm(forms.ModelForm):
             'last_name',
             'father_name',
             'cabinet',
+            'territory',
+            'med_org',
+            'role',
             'telephone',
-            'email',
+            'email'
         )
 
 
