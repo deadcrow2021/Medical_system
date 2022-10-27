@@ -262,7 +262,7 @@ def update_profile(request, profile_id):
 
 
 class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
-    paginate_by: int = 6
+    paginate_by: int = 4
     model = Patient
     template_name: str = 'users/patients.html'
     context_object_name = 'users'

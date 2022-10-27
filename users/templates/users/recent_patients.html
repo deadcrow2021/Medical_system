@@ -16,7 +16,7 @@
     <h2>Пациенты</h2>
 </div>
 
-<div class="form__block">
+<div class="">
     <form action="" method="POST">
         {% csrf_token %}
         <div class="fields">
@@ -28,16 +28,6 @@
                     {{ form.time_interval }}
                 </div>
             </div>
-            {% comment %} {% if user.doctor %}
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    {{ form.territory.label }}:
-                </div>
-                <div class="fields__input__field">
-                    {{ form.territory }}
-                </div>
-            </div>
-            {% endif %} {% endcomment %}
         </div>
 
         <div class="submit-btn">

@@ -33,9 +33,7 @@
     <fieldset>
         {% if user.patient %}
             <legend>
-                <div class="title__block">
-                    <h3>План посещений:</h3>
-                </div>
+                <h3>План посещений:</h3>
             </legend>
             <div class="notes__block user__block">
                 {% for note in notes %}
@@ -78,9 +76,7 @@
         
         {% if user.doctor %}
             <legend>
-                <div class="title__block">
-                    <h3>Мои пациенты:</h3>
-                </div>
+                <h3>Мои пациенты:</h3>
             </legend>
             <div class="user__block">
                 <div class="user__block__row">
