@@ -63,39 +63,36 @@
     {% endif %}
     
     <div class="">
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="fields">
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <p>ФИО:</p>
-                    </div>
-                    <div class="fields__input__field noborder">
-                        {{ form.instance.get_full_name }}
-                    </div>
+        <div class="">
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong><p>ФИО:</p></strong>
                 </div>
-                {% for p in form %}
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        {{ p.label_tag }}
-                    </div>
-                    <div class="fields__input__field noborder">
-                    {% if p.field.choices %}
-                        {% for i in p.field.choices %}
-                            {% if p.value == i.0 %}
-                                {{i.1}}
-                            {% endif %}
-                        {% endfor %}
-                    {% elif p.value %}
-                        {{ p.value }}
-                    {% elif not p.value %}
-                        ---------
-                    {% endif %}
-                    </div>
+                <div class="fields__input__field noborder">
+                    {{ form.instance.get_full_name }}
                 </div>
-                {% endfor %}
             </div>
-        </form>
+            {% for p in form %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ p.label_tag }}</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                {% if p.field.choices %}
+                    {% for i in p.field.choices %}
+                        {% if p.value == i.0 %}
+                            {{i.1}}
+                        {% endif %}
+                    {% endfor %}
+                {% elif p.value %}
+                    {{ p.value }}
+                {% elif not p.value %}
+                    ---------
+                {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         
         {% if user.is_superuser %}
             <div class="block__lines">
@@ -116,25 +113,22 @@
         {% endif %}
        
         {% if user.doctor %}
-            <form action="{% url 'follow-unfollow' %}" method="post">
-                {% csrf_token %}
-                <div class="fields">
-                    <div class="fields__input">
-                        <div class="fields__input__field hide">
-                            <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-                        </div>
-                        {% if follow %}
-                        <div class="">
-                            <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
-                        </div>
-                        {% else %}
-                        <div class="">
-                            <button id="follow-btn" class="btn" type="submit">Привязать</button>
-                        </div>
-                        {% endif %}
+            <div class="">
+                <div class="fields__input">
+                    <div class="fields__input__field hide">
+                        <input type="hidden" name="profile_pk" value="{{profile.pk}}">
                     </div>
+                    {% if follow %}
+                    <div class="">
+                        <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
+                    </div>
+                    {% else %}
+                    <div class="">
+                        <button id="follow-btn" class="btn" type="submit">Привязать</button>
+                    </div>
+                    {% endif %}
                 </div>
-            </form>
+            </div>
             <div class="block__lines">
                 Преэклампсия: {{preeclampsia}}
             </div>
@@ -218,8 +212,8 @@
 <script type='text/javascript'>
     for (let name of ["first", "last", "father"]) {
         var elem = document.querySelector('label[for=id_'+name+'_name]')
-        console.log(elem);
-        elem.parentNode.parentNode.remove()
+        // console.log(elem);
+        elem.parentNode.parentNode.parentNode.remove()
     }
 </script>
 {% endblock %}

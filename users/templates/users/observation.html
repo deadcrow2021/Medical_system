@@ -30,6 +30,8 @@
 </div>
 
 <script type='text/javascript'>
+    var fields = document.getElementsByClassName('fields')[0];
+    
     function set_name_with_border(name, id, count) {
         let elem = document.querySelector(`label[for=id_${id}]`);
         elem = elem.parentNode.parentNode;
@@ -50,7 +52,8 @@
         div.setAttribute('class', 'outer_div');
         div.appendChild(label);
         div.appendChild(inner_div);
-        document.body.appendChild(div);
+        fields.appendChild(div);
+        // document.body.appendChild(div);
     }
     
     let nodes_id = [

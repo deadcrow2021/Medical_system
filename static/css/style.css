@@ -124,11 +124,14 @@ a:hover {
 .fields {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .fields__input {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    width: min(60vw, 600px);
     margin: 0 0 15px 0;
 }
 
