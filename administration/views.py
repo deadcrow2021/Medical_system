@@ -28,7 +28,7 @@ class UserIsAdmin(UserPassesTestMixin):
 def admin_page(request: HttpRequest):
     template_name: str = 'administration/admin_page.html'
     context = { 'users': chain(Patient.objects.all(), Doctor.objects.all()) }
-    paginator = Paginator(list(context['users']), 6)
+    paginator = Paginator(list(context['users']), 4)
     page_number: int = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context |= { 'page_obj': page_obj, 'paginator': paginator }

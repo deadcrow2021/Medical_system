@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="admin__page__block">
-    <div class="form__block">
+    <div class="">
         <form action="" method="post">
             {% csrf_token %}
             <div class="fields fileds-in-row">
@@ -34,21 +34,19 @@
                     <div class="user__block__element">
                         <p>Доктор</p>
                     </div>
-                    <div class="user__block__element">
-                        <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
-                    </div>
                 {% else %}
                     <div class="user__block__element">
                         <p>Пациент</p>
                     </div>
-                    <div class="user__block__element">
-                        <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
-                    </div>
                 {% endif %}
+                <div class="user__block__element">
+                    <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
+                </div>
             </div>
         {% endfor %}
     </div>
     
+    {% if page_obj.has_other_pages %}
         <div class="paginate">
             {% if page_obj.has_previous %}
             <div class="paginate__element">
@@ -80,5 +78,6 @@
             </div>
             {% endif %}
         </div>
+    {% endif %}
 </div>
 {% endblock %}

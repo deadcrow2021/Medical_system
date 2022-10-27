@@ -23,41 +23,62 @@
             {% endif %}
         </div>
         
+        {% if user.patient %}
         <div class="lines__element">
-            <a href="{% url 'reception' %}">План посещений</a>
+            <p><a href="{% url 'records' %}">Записи самонаблюдения</a></p>
         </div>
+        {% endif %}
     </div>
     {% endif %}
     
+    {% if not user.is_superuser %}
     <fieldset>
         {% if user.patient %}
-            <div class="lines__element">
-                <p><a href="{% url 'records' %}">Записи самонаблюдения</a></p>
-            </div>
-    {% comment %} <div class="user__block">
-                <div class="user__block__row">
-                    <div class="outer_div">
-                        <div class="border_div">
-                            {% for record in records %}
-                                <div class="user__block__element">
-                                    <p><strong>Название:</strong> {{ record.title }}</p>
+            <legend>
+                <h3>План посещений:</h3>
+            </legend>
+            <div class="notes__block user__block">
+                {% for note in notes %}
+                    <div class="logs__row">
+                        <div class="notes__row">
+                            {% if user.patient %}
+                                <div class="notes__element">
+                                    <p><strong>Доктор:</strong> {{ note.instance.doctor.get_full_name }}</p>
                                 </div>
-                                <div class="user__block__element">
-                                    <p><strong>Описание:</strong> {{ record.description }}</p>
+                            {% else %}
+                                <div class="notes__element">
+                                    <p><strong>Пациент:</strong> {{ note.instance.patient.get_full_name }}</p>
+                                </div>
+                            {% endif %}
+                            {% for p in note %}
+                                <div class="notes__element">
+                                    <p><strong>{{ p.label_tag }}</strong>
+                                        {% if p.field.choices %}
+                                            {% for i in p.field.choices %}
+                                                {% if p.value == i.0 %}
+                                                    {% if not i.0 %}
+                                                        ---------
+                                                    {% else %}
+                                                        {{i.1}}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% elif not p.value %}
+                                            ---------
+                                        {% elif p.value %}
+                                            {{ p.value }}
+                                        {% endif %}</p>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
-                </div>
-            </div> {% endcomment %}
+                {% endfor %}
+            </div>
         {% endif %}
-        
         
         {% if user.doctor %}
             <legend>
-                <div class="title__block">
-                    <h3>Мои пациенты:</h3>
-                </div>
+                <h3>Мои пациенты:</h3>
             </legend>
             <div class="user__block">
                 <div class="user__block__row">
@@ -75,6 +96,7 @@
             </div>
         {% endif %}
     </fieldset>
+    {% endif %}
     <fieldset>
         <legend>
             <h3>Клинические и методические рекомендации</h3>

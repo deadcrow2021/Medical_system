@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     var date_inputs = document.querySelectorAll('input[type=date]');
     for (let inp of date_inputs) {
-        inp.style.width = '140px';
+        // inp.style.width = '140px';
         inp.onfocus = (e) => {
             let i = inp;
             let date = i.defaultValue;
@@ -49,9 +49,10 @@ document.addEventListener("DOMContentLoaded", function() {
         };
         inp.onblur = (e) => {
             let i = inp;
-            let date = i.defaultValue !== '' ? i.defaultValue : "дд.мм.гггг";
+            let date = i.defaultValue;// !== '' ? i.defaultValue : "дд.мм.гггг";
             // console.log(`blur ${date}`);
             i.type = 'text';
+            i.placeholder = 'дд.мм.гггг';
             i.defaultValue = date;
         };
         inp.onfocus();

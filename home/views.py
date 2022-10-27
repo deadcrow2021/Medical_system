@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .forms import ReceptionAddForm, RecordCreationForm, DataSamplingForm
+from .forms import ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
 from .models import Patient, ChangeControlLog, ReceptionNotes
 from administration.models import ClinicRecomendations
 from dateutil.relativedelta import relativedelta
@@ -82,17 +82,22 @@ def home_page(request):
     if hasattr(user, 'doctor'): user_type = 'doctor'
     elif user.is_superuser: user_type = 'admin'
     else: user_type = 'patient'
-
+    context = {'docs':docs }
+    
     if user_type == 'doctor':
         user_account = user.doctor
         related_patients = user_account.patients.all()
-        return render(request, template_name, { 'account': user_account, 'related_patients': related_patients, 'docs':docs })
+        context |= { 'account': user_account, 'related_patients': related_patients }
+        return render(request, template_name, context)
     elif user_type == 'patient':
         user_account = user.patient
-        records = user_account.records.all()
-        return render(request, template_name, { 'account': user_account, 'records': records, 'docs':docs })
+        # records = user_account.records.all()
+        notes = [ReceptionViewForm(instance=x) for x in ReceptionNotes.objects.filter(patient=user_account)]
+        context |= { 'notes': notes }
+        context |= { 'account': user_account }#'records': records }
+        return render(request, template_name, context)
     else:
-        return render(request, template_name)
+        return render(request, template_name, context)
 
 
 @login_required

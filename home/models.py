@@ -41,12 +41,9 @@ class MedicalCard(models.Model):
     marital_status = models.CharField('Брачное состояние', default='', choices=MARITAL_STATUS, max_length=1, blank=True, null=True)
     trusted_person_fio = models.CharField("ФИО доверенного лица", max_length=300, blank=True, null=True)
     trusted_person_phone = PhoneNumberField('Контактный телефон', max_length=20, blank=True, null=True)
-
     education = models.CharField('Образование', max_length=5, choices=EDUCATION, blank=True, null=True)
     profession = models.CharField('Профессия', max_length=200, blank=True, null=True)
     work_place = models.CharField('Место работы', max_length=200, blank=True, null=True)
-
-
     disability = models.CharField('Инвалидность', max_length=200, choices=DISABILITY, blank=True, null=True)
     oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True, null=True)
     snils        = models.CharField('СНИЛС', max_length=11, blank=True, null=True)
