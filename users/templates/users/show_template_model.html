@@ -18,13 +18,17 @@
         <div class="fields">
             <div class="fields__input">
                 <div class="fields__input__label">
-                    {{ p.label_tag }}
+                    <strong>{{ p.label_tag }}</strong>
                 </div>
                 <div class="fields__input__field noborder">
                 {% if p.field.choices %}
                     {% for i in p.field.choices %}
                         {% if p.value == i.0 %}
-                            {{i.1}}
+                            {% if not i.0 %}
+                                ---------
+                            {% else %}
+                                {{i.1}}
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 {% elif p.value %}

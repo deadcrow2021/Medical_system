@@ -1,0 +1,55 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
+</div>
+
+<div class="block__profile__docs">
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Направление на оказание медицинских услуг</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Протокол инструментального исследования</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Протокол лабораторного исследования</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Осмотр (консультация) пациента</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Лечение в условиях стационара (дневного стационара)</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Выписной эпикриз родильного дома</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Протокол цитологического исследования</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Медицинское свидетельство о смерти (CDA)</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <a href="{% url 'generate-samd' profile_id %}">Медицинское свидетельство о перинатальной смерти (CDA)</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

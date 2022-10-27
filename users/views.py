@@ -788,3 +788,13 @@ def statistics_pade(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
     
     return render(request, template_name)
+
+
+def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+    template_name: str = 'users/samd.html'
+    return render(request, template_name, { 'profile_id': profile_id })
+
+
+def generate_samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+    template_name: str = 'users/generate_samd.html'
+    return render(request, template_name)

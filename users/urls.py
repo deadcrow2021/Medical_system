@@ -32,4 +32,6 @@ urlpatterns = [
     path('self_monitoring/<profile_id>', views.self_monitoring, name='self-monitoring'),
     path('portion_page/<profile_id>/<template_name>/<portion_name>', views.portion_models_template_page, name='portion-page'),
     path('statistics', views.statistics_pade, name='statistics'),
+    path('samd/<profile_id>', views.samd_page, name='samd'),
+    path('generate_samd/<profile_id>', views.generate_samd_page, name='generate-samd'),
 ]

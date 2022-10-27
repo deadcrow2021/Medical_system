@@ -54,6 +54,11 @@
                 <p><a href="{% url 'self-monitoring' profile.user.id %}">Записи самонаблюдений</a></p>
             </div>
         </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'samd' profile.user.id %}">СЭМД документы</a></p>
+            </div>
+        </div>
     </div>
     {% endif %}
     
