@@ -49,6 +49,11 @@
                 <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности и родов</a></p>
             </div>
         </div>
+        <div class="block__lines">
+            <div class="lines__element btn">
+                <p><a href="{% url 'self-monitoring' profile.user.id %}">Записи самонаблюдений</a></p>
+            </div>
+        </div>
     </div>
     {% endif %}
     
