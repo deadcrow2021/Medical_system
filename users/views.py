@@ -21,6 +21,7 @@ from .mkb10 import mkb10_deseases
 from home.choices import CHANGETYPE
 from django.utils import timezone
 from django.core.mail import send_mail
+from .generate_samd import *
 import time
 
 
@@ -794,7 +795,11 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name: str = 'users/samd.html'
     return render(request, template_name, { 'profile_id': profile_id })
 
+samd_temlates = {
+    'make_1': make_1,
+}
 
-def generate_samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> HttpResponse:
     template_name: str = 'users/generate_samd.html'
+    print(f'{samd_temlates[samd]()}')
     return render(request, template_name)

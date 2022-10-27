@@ -148,7 +148,11 @@
                                         Пациент
                                         {% else %}
                                         Доктор
-                                        {% endif %}</th>
+                                        {% endif %}
+                                    </th>
+                                    {% if user.is_superuser %}
+                                    <th>Пациент</th>
+                                    {% endif %}
                                     <th>Дата</th>
                                     <th>Медицинская организация</th>
                                     <th>Специальность</th>
@@ -167,6 +171,9 @@
                                             <p>{{ note.doctor.get_full_name }}</p>
                                         {% endif %}
                                     </td>
+                                    {% if user.is_superuser %}
+                                    <td><p>{{ note.patient.get_full_name }}</p></td>
+                                    {% endif %}
                                     <td><p class="">{{ note.date_meeting }}</p></td>
                                     <td><p>{{ note.get_med_organization_display }}</p></td>
                                     <td><p>{{ note.get_specialization_display }}</p></td>
