@@ -416,6 +416,14 @@ a:hover {
     color: #15539e;
 }
 
+.btn:hover {
+    background-color: rgb(179, 179, 179);
+}
+
+.same_btn {
+    width: 100%;
+}
+
 .data_btns {
     height: max(calc(24px * 6), 100%);
 }
@@ -464,11 +472,18 @@ a:hover {
 }
 
 .complication {
-    width: fit-content;
-    display: grid;
+    /* width: fit-content; */
+    /* display: grid;
     grid-template-columns: repeat(3, 1fr);
     row-gap: 10px;
-    column-gap: 20px;
+    column-gap: 20px; */
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-between; */
+}
+
+.complication > * {
+    flex: 0 0 33.333%;
 }
 
 .cell_grid_2 {
@@ -551,4 +566,18 @@ th {
 
 .recomendations {
     padding-bottom: 20px;
+}
+
+.cut_width {
+    width: fit-content;
+    max-width: 30vw;
+}
+
+.center_div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    /* margin: 0; */
 }

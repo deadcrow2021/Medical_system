@@ -6,9 +6,10 @@
 </div>
 
 {% if user.doctor %}
+<div class="cut_width">
     <div class="block__profile__docs">
         <div class="block__lines">
-            <div class="lines__element btn">
+            <div class="lines__element btn same_btn">
                 <a href="{% url 'portion-page' current_user.id 'determine_antibodies' 'determine_antibodies' %}">Определение антител</a>
             </div>
         </div>
@@ -16,7 +17,7 @@
     {% for key, name in keys_names %}
     <div class="block__profile__docs">
         <div class="block__lines">
-            <div class="lines__element btn">
+            <div class="lines__element btn same_btn">
                 <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
             </div>
         </div>
@@ -24,10 +25,11 @@
     {% endfor %}
     <div class="block__profile__docs">
         <div class="block__lines">
-            <div class="lines__element btn">
+            <div class="lines__element btn same_btn">
                 <a href="{% url 'portion-page' current_user.id 'ultrasound' 'ultrasound' %}">Узи</a>
             </div>
         </div>
     </div>
+</div>
 {% endif %}
 {% endblock %}

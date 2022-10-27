@@ -2,13 +2,17 @@
 
 {% block content %}
 
-<div class="block__lines">
-    <div class="lines__element">
-        <p><a href="{% url 'patients' %}">Поиск пациентов</a></p>
-    </div>
-    <div class="lines__element">
-        <p><a href="{% url 'recent-patients' %}">Недавние</a></p>
-    </div>
+<div class="block__lines cut_width">
+    <a href="{% url 'patients' %}">
+        <div class="lines__element btn same_btn">
+            Поиск пациентов
+        </div>
+    </a>
+    <a href="{% url 'recent-patients' %}">
+        <div class="lines__element btn same_btn">
+            Недавние
+        </div>
+    </a>
 </div>
 
 <div class="title__block">
