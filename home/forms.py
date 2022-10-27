@@ -126,7 +126,7 @@ class MedicalCardForm(forms.ModelForm):
         'father_blood_group', 'father_blood_rh', 'father_date_of_determination', \
         'pregnancy_count', 'births_by_term', \
         'gestation_period_weeks', 'first_visit_date', 'childbirth_date', 'childbirth_gestation_period', \
-        'med_org', 'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases', 'doctor_confirmation'
+        'med_org', 'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases',
         widgets = {
             'date_of_birth': DateInput(),
             'maternity_leave_start': DateInput(),
@@ -167,7 +167,7 @@ class PelviometryForm(forms.ModelForm):
         fields = 'date', 'dsp', 'dcr', 'dtroch', \
                 'dext', 'cvera', 'cdiag', 'solovyov_index', \
                 'michaelis_rhombus_x', 'michaelis_rhombus_y', \
-                'pelvis_dimensions', 'doctor_confirmation'
+                'pelvis_dimensions',
         widgets = {
             'date': DateInput()
         }
@@ -184,7 +184,7 @@ class PregnantWomanMonitoringForm(forms.ModelForm):
                 'ttg', 's_agalactiae', 'bacterioscopic_smears_examination', \
                 'cervix_сytological_examination', 'urine_culture', 'fetal_development_assessment_11_14', \
                 'fetal_development_assessment_19_21', 'ultrasound_cervicometry', 'fetal_ultrasound', \
-                'invasive_diagnostics', 'fetal_cardiotocography', 'doctor_confirmation'
+                'invasive_diagnostics', 'fetal_cardiotocography',
         widgets = {
             'date': DateInput(),
         }
@@ -195,7 +195,7 @@ class AppointmentListForm(forms.ModelForm):
         model = AppointmentList
         fields = 'visit_number', 'date', 'gestation_period_weeks', 'service', \
                 'analysis', 'appointment', 'disability_certificate', \
-                'next_visit_date', 'doctor_confirmation'
+                'next_visit_date',
         widgets = {
             'date': DateInput(),
             'next_visit_date': DateInput()
@@ -217,7 +217,7 @@ class AntibodiesDeterminationForm(forms.ModelForm):
     class Meta:
         model = AntibodiesDetermination
         fields = 'date', 'treponema_antibodies', 'hiv_antibodies', \
-            'hbsag_antibodies', 'anti_hcv', 'doctor_confirmation'
+            'hbsag_antibodies', 'anti_hcv',
         widgets = {
             'date': DateInput()
         }
@@ -226,7 +226,7 @@ class AntibodiesDeterminationForm(forms.ModelForm):
 class RubellaVirusForm(forms.ModelForm):
     class Meta:
         model = RubellaVirus
-        fields = 'date', 'lgm', 'lgg', 'doctor_confirmation'
+        fields = 'date', 'lgm', 'lgg',
         widgets = {
             'date': DateInput()
         }
@@ -235,7 +235,7 @@ class RubellaVirusForm(forms.ModelForm):
 class AntiresusBodiesForm(forms.ModelForm):
     class Meta:
         model = AntiresusBodies
-        fields = 'date', 'antiresus_bodies', 'doctor_confirmation'
+        fields = 'date', 'antiresus_bodies',
         widgets = {
             'date': DateInput()
         }
@@ -247,7 +247,7 @@ class BloodAnalysisForm(forms.ModelForm):
         fields = 'date', 'hemoglobin', 'red_blood_cells', 'color_indicator', \
             'reticulocytes', 'platelets', 'white_blood_cells', 'myelocytes', \
             'metamyelocytes', 'stick_core', 'segmentonuclear', 'eosinophils', \
-            'basophils', 'lymphocytes', 'monocytes', 'soe', 'doctor_confirmation'
+            'basophils', 'lymphocytes', 'monocytes', 'soe',
         widgets = {
             'date': DateInput()
         }
@@ -257,7 +257,7 @@ class BiochemicalBloodAnalysisForm(forms.ModelForm):
     class Meta:
         model = BiochemicalBloodAnalysis
         fields = 'date', 'total_bilirubin', 'direct_bilirubin', \
-            'total_protein', 'alt', 'ast', 'glucose', 'doctor_confirmation'
+            'total_protein', 'alt', 'ast', 'glucose',
         widgets = {
             'date': DateInput()
         }
@@ -267,7 +267,7 @@ class CoagulogramForm(forms.ModelForm):
     class Meta:
         model = Coagulogram
         fields = 'date', 'platelet_count', 'astv', \
-            'fibrinogen', 'prothrombin_time', 'doctor_confirmation'
+            'fibrinogen', 'prothrombin_time',
         widgets = {
             'date': DateInput()
         }
@@ -276,7 +276,7 @@ class CoagulogramForm(forms.ModelForm):
 class GlucoseToleranceTestForm(forms.ModelForm):
     class Meta:
         model = GlucoseToleranceTest
-        fields = 'date', 'period', 'result', 'doctor_confirmation'
+        fields = 'date', 'period', 'result',
         widgets = {
             'date': DateInput()
         }
@@ -285,7 +285,7 @@ class GlucoseToleranceTestForm(forms.ModelForm):
 class ThyroidStimulatingHormoneForm(forms.ModelForm):
     class Meta:
         model = ThyroidStimulatingHormone
-        fields =  'date', 'period', 'result', 'doctor_confirmation'
+        fields =  'date', 'period', 'result',
         widgets = {
             'date': DateInput()
         }
@@ -294,7 +294,7 @@ class ThyroidStimulatingHormoneForm(forms.ModelForm):
 class SmearsForm(forms.ModelForm):
     class Meta:
         model = Smears
-        fields = 'date', 'result', 'doctor_confirmation'
+        fields = 'date', 'result',
         widgets = {
             'date': DateInput()
         }
@@ -317,7 +317,7 @@ class BacterioscopicSmearsExaminationForm(forms.ModelForm):
 class CervixCytologicalExaminationForm(forms.ModelForm):
     class Meta:
         model = CervixCytologicalExamination
-        fields = 'date', 'result', 'doctor_confirmation'
+        fields = 'date', 'result',
         widgets = {
             'date': DateInput()
         }
@@ -337,7 +337,7 @@ class UrineAnalysisForm(forms.ModelForm):
 class UrineSowingForm(forms.ModelForm):
     class Meta:
         model = UrineSowing
-        fields = 'date', 'result', 'doctor_confirmation'
+        fields = 'date', 'result',
         widgets = {
             'date': DateInput()
         }
@@ -360,7 +360,7 @@ class PatientInformationForm(forms.ModelForm):
                 'chickenpox', 'flu', 'HPV', 'hepatitis_B', 'other_vaccnation', 'year_start', 'profusion', \
                 'painfulness', 'regularity', 'sexual_life', 'contraception_method', 'contraception_period', \
                 'diseases_operations', 'disease_date', 'sti', 'treatment', 'treatment_date', 'year_mammary', \
-                'mammary_method', 'mammary_result', 'year_cervix', 'cervix_method', 'cervix_result', 'doctor_confirmation'
+                'mammary_method', 'mammary_result', 'year_cervix', 'cervix_method', 'cervix_result',
         widgets = {
             'date': DateInput(),
             'last_fluorography_date': DateInput(),
@@ -373,7 +373,7 @@ class PreviousPregnancyForm(forms.ModelForm):
     class Meta:
         model = PreviousPregnancy
         fields = 'year', 'pragnancy_has_come', 'outcome', 'outcome_str', \
-                'birth_number', 'birth_str', 'complications', 'doctor_confirmation'
+                'birth_number', 'birth_str', 'complications',
 
 
 class CarvixScarForm(forms.ModelForm):
@@ -394,7 +394,7 @@ class FatherInfoForm(forms.ModelForm):
         'hepatitis_b', 'hepatitis_c', 'syphilis', 'others', \
         'last_fluorography_date', 'last_fluorography_date_result', \
         'tetanus', 'measles', 'rubella', 'flu', 'diphtheria', \
-        'other_vaccnation', 'doctor_confirmation'
+        'other_vaccnation',
         widgets = {
             'treatment_date': DateInput(),
             'last_fluorography_date': DateInput()
@@ -405,7 +405,7 @@ class DoctorExaminationsTherapistForm(forms.ModelForm):
     class Meta:
         model = DoctorExaminationsTherapist
         fields = 'date', 'result', 'ecg_date', 'ecgresult', \
-                'med_org', 'doctor_fio', 'doctor_confirmation'
+                'med_org', 'doctor_fio',
         widgets = {
             'date': DateInput(),
             'ecg_date': DateInput()
@@ -415,7 +415,7 @@ class DoctorExaminationsTherapistForm(forms.ModelForm):
 class DoctorExaminationsDentistForm(forms.ModelForm):
     class Meta:
         model = DoctorExaminationsDentist
-        fields = 'date', 'result', 'med_org', 'doctor_fio', 'doctor_confirmation'
+        fields = 'date', 'result', 'med_org', 'doctor_fio',
         widgets = {
             'date': DateInput()
         }
@@ -428,7 +428,7 @@ class CurrentPregnancyinfoForm(forms.ModelForm):
                 'embryo_number', 'mother_age', 'upcoming_births', 'pregnancy_1', \
                 'fetus_number', 'last_menstruation', 'first_uzi', 'gestation_period', \
                 'pregnancy_accounting_date', 'pregnancy_accounting_period', \
-                'fetus_first_stirring', 'suppose_birth_date', 'doctor_confirmation'
+                'fetus_first_stirring', 'suppose_birth_date',
         widgets = {
             'embryo_date': DateInput(),
             'last_menstruation': DateInput(),
@@ -452,7 +452,7 @@ class FirstExaminationForm(forms.ModelForm):
                 'mucosa', 'external_pharynx', 'uterus_body', 'uterus_body', 'uterus_body_str', 'left_appendages', \
                 'left_appendages_str', 'right_appendages', 'right_appendages_str', 'exostoses', 'exostoses_str', \
                 'cervical_canal_separated', 'vagina_separated', 'gestation_period_weeks', 'analisys', \
-                'appointments', 'date_diagnosis', 'doctor_confirmation'
+                'appointments', 'date_diagnosis',
         widgets = {
             'date': DateInput(),
             'date_diagnosis': DateInput()
@@ -463,7 +463,7 @@ class UltrasoundFisrtTrimesterForm(forms.ModelForm):
         model = UltrasoundFisrtTrimester
         fields = 'date', 'number_of_fetuses', 'choriality_amniality', \
                 'egg_diameter', 'ktr', 'choriality_amniality', 'chorion_location', \
-                'pathology', 'pathology_str', 'gestation_period_weeks', 'doctor_confirmation'
+                'pathology', 'pathology_str', 'gestation_period_weeks',
         widgets = {
             'date': DateInput()
         }
@@ -478,7 +478,7 @@ class ComprehensiveRiskAssessmentForm(forms.ModelForm):
                 'papp_a', 'mom_papp_a', 'b_hgch', 'mom_b_hgch', \
                 'trisomy_21', 'trisomy_18', 'trisomy_13', 'zrp', \
                 'premature_birth', 'preeclampcy_34', 'preeclampcy_37', \
-                'gestation_period_weeks', 'doctor_confirmation'
+                'gestation_period_weeks',
         widgets = {
             'date': DateInput()
         }
@@ -492,7 +492,7 @@ class UltrasoundExamination_19_21Form(forms.ModelForm):
                 'placenta_location', 'features', 'cervical_canal_length', 'pharynx', \
                 'pharynx_str', 'gestation_period_weeks', 'invasive_prenatal_diagnosis', \
                 'ipd_date', 'gestation_period_weeks', 'procedure_type', 'cardtype', \
-                'consilium_result', 'result_date', 'result_str', 'doctor_confirmation'
+                'consilium_result', 'result_date', 'result_str',
         widgets = {
             'date': DateInput(),
             'ipd_date': DateInput(),
@@ -507,7 +507,7 @@ class UltrasoundExamination_30_34Form(forms.ModelForm):
                 'choriality_amniality', 'gestation_period_weeks', 'uzi_date', 'uzi_result', \
                 'features', 'cervical_canal_length', 'pharynx', 'pharynx_str', 'gestation_period_result', \
                 'invasive_prenatal_diagnosis', 'ipd_date', 'gestation_period_result_main', 'procedure_type', \
-                'cariotype', 'consilium_result', 'result_date', 'result_str', 'doctor_confirmation'
+                'cariotype', 'consilium_result', 'result_date', 'result_str',
         widgets = {
             'date': DateInput(),
             'uzi_date': DateInput(),
@@ -520,9 +520,9 @@ class HospitalizationInformationForm(forms.ModelForm):
     class Meta:
         model = HospitalizationInformation
         fields = 'date_start', 'date_finish', 'hosp_type', 'med_org', \
-                'diagnosis', 'date', 'doctor_confirmation_1', \
+                'diagnosis', 'date', \
                 'prenatal_hospitalization', 'where', 'foundation', \
-                'date_filling', 'doctor_confirmation_2'
+                'date_filling',
         widgets = {
             'date_start': DateInput(),
             'date_finish': DateInput(),
@@ -534,7 +534,7 @@ class HospitalizationInformationForm(forms.ModelForm):
 class TurnoutScheduleForm(forms.ModelForm):
     class Meta:
         model = TurnoutSchedule
-        fields = 'number', 'date', 'gestation_period_weeks', 'doctor_confirmation'
+        fields = 'number', 'date', 'gestation_period_weeks',
         widgets = {
             'date': DateInput()
         }

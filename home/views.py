@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from .forms import ReceptionAddForm, RecordCreationForm, DataSamplingForm
 from .models import Patient, ChangeControlLog, ReceptionNotes
+from administration.models import ClinicRecomendations
 from dateutil.relativedelta import relativedelta
 import datetime
 from .choices import CHANGETYPE
@@ -76,6 +77,7 @@ def generate_pdf(lines: list):
 def home_page(request):
     template_name: str = 'home/home.html'
     user: User = User.objects.get(id=request.user.id)
+    docs = ClinicRecomendations.objects.all()
     # user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     if hasattr(user, 'doctor'): user_type = 'doctor'
     elif user.is_superuser: user_type = 'admin'
@@ -84,11 +86,11 @@ def home_page(request):
     if user_type == 'doctor':
         user_account = user.doctor
         related_patients = user_account.patients.all()
-        return render(request, template_name, { 'account': user_account, 'related_patients': related_patients })
+        return render(request, template_name, { 'account': user_account, 'related_patients': related_patients, 'docs':docs })
     elif user_type == 'patient':
         user_account = user.patient
         records = user_account.records.all()
-        return render(request, template_name, { 'account': user_account, 'records': records })
+        return render(request, template_name, { 'account': user_account, 'records': records, 'docs':docs })
     else:
         return render(request, template_name)
 

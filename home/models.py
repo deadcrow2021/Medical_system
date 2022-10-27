@@ -88,7 +88,6 @@ class MedicalCard(models.Model):
     # other diseases
     somatic_diseases = models.CharField('Соматические заболевания', max_length=200, blank=True, null=True)
     gynecological_diseases = models.CharField('Гинекологические  заболевания', max_length=200, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
     
     class Meta:
         verbose_name = 'Медицинская карта'
@@ -168,7 +167,6 @@ class Pelviometry(models.Model):
     michaelis_rhombus_x = models.PositiveSmallIntegerField('Ромб Михаэлиса X (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     michaelis_rhombus_y = models.PositiveSmallIntegerField('Ромб Михаэлиса Y (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     pelvis_dimensions = models.PositiveSmallIntegerField('Дополнительные размеры таза (по показаниям)', validators=[MaxValueValidator(1000)], blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class PregnantWomanMonitoring(models.Model):
@@ -201,7 +199,6 @@ class PregnantWomanMonitoring(models.Model):
     fetal_ultrasound = models.CharField('УЗИ плода/плодов по показаниям', max_length=1000, blank=True, null=True)
     invasive_diagnostics = models.CharField('Инвазивная диагностика при высоком риске хромосомных аномалий (ХА)', max_length=200, blank=True, null=True)
     fetal_cardiotocography = models.CharField('Кардиотокография плода/плодов (КТГ)', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Лист назначений 
@@ -215,7 +212,6 @@ class AppointmentList(models.Model):
     appointment = models.CharField('Назначения', max_length=1000, blank=True, null=True)
     disability_certificate = models.CharField('Листок нетрудоспособности', max_length=1000, blank=True, null=True)
     next_visit_date = models.DateField('Дата', blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class TakingMedications(models.Model):
@@ -235,9 +231,6 @@ class AntibodiesDetermination(models.Model):
     hiv_antibodies = models.CharField('Антитела классов M, G к ВИЧ ½ и антиген р24', max_length=1000, blank=True, null=True)
     hbsag_antibodies = models.CharField('HBsAg или антитела к HBsAg', max_length=1000, blank=True, null=True)
     anti_hcv = models.CharField('anti-HCV IgG и anti-HCV IgM', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-    # examination_refise = models.BooleanField('От обследования отсказалась', default=False, null=True)
-
 
 # Вирус  краснухи
 class RubellaVirus(models.Model):
@@ -245,16 +238,12 @@ class RubellaVirus(models.Model):
     date = models.DateField('Дата', blank=True, null=True)
     lgm = models.CharField('lgM', max_length=1000, blank=True, null=True)
     lgg = models.CharField('lgG', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-    # examination_refise = models.BooleanField('От обследования отсказалась', default=False, null=True)
 
 # Антирезусные тела
 class AntiresusBodies(models.Model):
     current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='antiresus_bodies')
     date = models.DateField('Дата', blank=True, null=True)
     antiresus_bodies = models.CharField('Антирезусные тела', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-    # examination_refise = models.BooleanField('От обследования отсказалась', default=False, null=True)
 
 
 # Анализ крови
@@ -276,7 +265,6 @@ class BloodAnalysis(models.Model):
     lymphocytes = models.CharField('Лимфоциты , %', max_length=1000, blank=True, null=True)
     monocytes = models.CharField('Моноциты, %', max_length=1000, blank=True, null=True)
     soe = models.CharField('СОЭ, мм/ч', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Биохимический анализ крови
@@ -289,7 +277,6 @@ class BiochemicalBloodAnalysis(models.Model):
     alt = models.CharField('АЛТ, ЕД/л', max_length=1000, blank=True, null=True)
     ast = models.CharField('АСТ, ЕД/л', max_length=1000, blank=True, null=True)
     glucose = models.CharField('Глюкоза, ммоль/л', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Коагулограмма 
@@ -300,7 +287,6 @@ class Coagulogram(models.Model):
     astv = models.CharField('АЧТВ, сек.', max_length=1000, blank=True, null=True)
     fibrinogen = models.CharField('Фибриноген, г/л', max_length=1000, blank=True, null=True)
     prothrombin_time = models.CharField('Протромбиновое время, %', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Пероральный глюкозотолерантный тест, ммоль/л (при нарушении углеводного обмена)
@@ -309,7 +295,6 @@ class GlucoseToleranceTest(models.Model):
     date = models.DateField('Дата', blank=True, null=True)
     period = models.CharField('Срок (недель)', max_length=1000, blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Уровень тиретропного гормона (ТТГ), мкМЕ/л
@@ -318,15 +303,12 @@ class ThyroidStimulatingHormone(models.Model):
     date = models.DateField('Дата', blank=True, null=True)
     period = models.CharField('Срок (недель)', max_length=100, blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 # Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом (в 35-37 недель беременности) 
 class Smears(models.Model):
     current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='smears')
     date = models.DateField('Дата', blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
-    # examination_refise = models.BooleanField('От результатов отсказалась', default=False, null=True)
 
 
 # Бактериоскопическое исследование мазков (относится к листу обследования)
@@ -364,7 +346,6 @@ class CervixCytologicalExamination(models.Model):
     current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='cervix_exam')
     date = models.DateField('Дата', blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 # Общий анализ мочи 
 class UrineAnalysis(models.Model):
@@ -384,7 +365,6 @@ class UrineSowing(models.Model):
     current_pregnancy = models.ForeignKey(CurrentPregnancy, on_delete=models.CASCADE, related_name='urine_sowing')
     date = models.DateField('Дата', blank=True, null=True)
     result = models.CharField('Результат', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 
@@ -518,9 +498,6 @@ class PatientInformation(models.Model):
     year_cervix = models.CharField('Год обследования', max_length=4, blank=True, null=True)
     cervix_method = models.CharField('Метод', max_length=200, blank=True, null=True)
     cervix_result = models.CharField('Результат', max_length=200, blank=True, null=True)
-    
-    # Подтверждение врача
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class PreviousPregnancy(models.Model):
@@ -532,7 +509,6 @@ class PreviousPregnancy(models.Model):
     birth_number = models.PositiveSmallIntegerField('Число родившихся', validators=[MaxValueValidator(10)], blank=True, null=True)
     birth_str = models.CharField('Дополнительная информация', max_length=1000, blank=True, null=True)
     complications = models.CharField('Осложнения предыдущих беременносей и родов', max_length=1000, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class CarvixScar(models.Model):
@@ -578,7 +554,6 @@ class FatherInfo(models.Model):
     flu = models.BooleanField('Грипп', default=False, null=True)
     diphtheria = models.BooleanField('Дифтерия', default=False, null=True)
     other_vaccnation = models.CharField('Другие прививки', max_length=200, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Осмотры врачей специалистов
@@ -593,7 +568,6 @@ class DoctorExaminationsTherapist(models.Model):
     
     med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
     doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class DoctorExaminationsDentist(models.Model):
@@ -603,7 +577,6 @@ class DoctorExaminationsDentist(models.Model):
     
     med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
     doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Сведения о настоящей беременности
@@ -630,7 +603,6 @@ class CurrentPregnancyinfo(models.Model):
     
     fetus_first_stirring = models.DateField('Первое шевеление плода', blank=True, null=True)
     suppose_birth_date = models.DateField('Предполагаемая дата родов', blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 class FirstExamination(models.Model):
@@ -697,7 +669,6 @@ class FirstExamination(models.Model):
     analisys = models.CharField('Анализы', max_length=200, blank=True, null=True)
     appointments = models.CharField('Назначения', max_length=200, blank=True, null=True)
     date_diagnosis = models.DateField('Дата следующего посещения', blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 ##### Оценка антенатольного состояния плода #####
@@ -715,7 +686,6 @@ class UltrasoundFisrtTrimester(models.Model):
     pathology = models.CharField('Патологии (если есть)', max_length=200, blank=True, null=True)
     pathology_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Комплексная оценка рисков (11-14 недель)
@@ -748,7 +718,6 @@ class ComprehensiveRiskAssessment(models.Model):
     preeclampcy_37 = models.CharField('ПЭ поздний (до 37 недель)', max_length=1, choices=HIGH_LOW, blank=True, null=True)
     # Заключение
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Ультразвуковое исследование (19-21 неделя)
@@ -781,7 +750,6 @@ class UltrasoundExamination_19_21(models.Model):
     consilium_result = models.PositiveSmallIntegerField('Заключение консилиума (при ПРП и ХА) ', validators=[MaxValueValidator(99)], blank=True, null=True)
     result_date = models.DateField('Дата', blank=True, null=True)
     result_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Ультразвуковое исследование (30-34 неделя) 
@@ -812,7 +780,6 @@ class UltrasoundExamination_30_34(models.Model):
     consilium_result = models.PositiveSmallIntegerField('Заключение консилиума (при ПРП и ХА) ', validators=[MaxValueValidator(99)], blank=True, null=True)
     result_date = models.DateField('Дата', blank=True, null=True)
     result_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # Сведения о госпитализации во время беременности
@@ -825,13 +792,11 @@ class HospitalizationInformation(models.Model):
     diagnosis = models.CharField('Основной диагноз', max_length=200, blank=True, null=True)
 
     date = models.DateField('Дата', blank=True, null=True)
-    doctor_confirmation_1 = models.BooleanField('Подтверждение врача', default=False, null=True)
     
     prenatal_hospitalization = models.BooleanField('Дородовая госпитализация', default=False, null=True)
     where = models.CharField('Медицинская организация', max_length=1, choices=WHERE, blank=True)
     foundation = models.CharField('Основание', max_length=200, blank=True, null=True)
     date_filling = models.DateField('Дата заполнения', blank=True, null=True)
-    doctor_confirmation_2 = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 # График явок
@@ -840,7 +805,6 @@ class TurnoutSchedule(models.Model):
     number = models.PositiveSmallIntegerField('Номер', validators=[MaxValueValidator(999)], unique=True)
     date = models.DateField('Дата', blank=True, null=True)
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
-    doctor_confirmation = models.BooleanField('Подтверждение врача', default=False, null=True)
 
 
 #############

@@ -15,3 +15,14 @@ class Files(models.Model):
         verbose_name = 'Документ'
         verbose_name_plural = 'Документы'
         ordering = ['upload_date']
+
+class ClinicRecomendations(models.Model):
+    title = models.CharField('Название документа', max_length=200, unique=True)
+    document = models.FileField('Документ', upload_to='uploads/')
+    
+    def __str__(self) -> str:
+        return self.title
+    
+    class Meta:
+        verbose_name = 'Клиническая рекомендация'
+        verbose_name_plural = 'Клинические рекомендации'
