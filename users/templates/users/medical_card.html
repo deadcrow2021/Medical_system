@@ -28,10 +28,12 @@
         <div class="fields__input__field noborder">
         {% if p.field.choices %}
             {% for i in p.field.choices %}
-                {% if not i.0 %}
-                    ---------
-                {% else %}
-                    {{i.1}}
+                {% if p.value == i.0 %}
+                    {% if not i.0 %}
+                        ---------
+                    {% else %}
+                        {{i.1}}
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         {% elif not p.value %}
@@ -79,6 +81,8 @@
 <script type='text/javascript'>
     function set_name_with_border(name, id, count) {
         let elem = document.querySelector(`label[for=id_${id}]`);
+        if (elem === null)
+            return;
         elem = elem.parentNode.parentNode;
         
         let label = document.createElement('h3');
