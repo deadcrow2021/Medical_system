@@ -103,6 +103,15 @@ class ReceptionAddForm(forms.ModelForm):
         }
 
 
+class ReceptionViewForm(forms.ModelForm):
+    class Meta:
+        model = ReceptionNotes
+        fields = (
+            'date_meeting','med_organization', 'specialization',
+            'visit_number', 'cabinet', 'status'
+        )
+
+
 class DataSamplingForm(forms.Form):    
     mkb_10 = forms.CharField(label='Заболевание по МКБ-10', max_length=270, required=False)
     # medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
@@ -374,6 +383,9 @@ class PreviousPregnancyForm(forms.ModelForm):
         model = PreviousPregnancy
         fields = 'year', 'pragnancy_has_come', 'outcome', 'outcome_str', \
                 'birth_number', 'birth_str', 'complications',
+        widgets = {
+            'year': DateInput()
+        }
 
 
 class CarvixScarForm(forms.ModelForm):

@@ -132,6 +132,10 @@ a:hover {
     margin: 0 0 15px 0;
 }
 
+.add_form .fields__input {
+    width: 45%;
+}
+
 .fields__input__label {
     font-size: 18px;
     margin: 0 10px 0 0;
@@ -143,8 +147,8 @@ a:hover {
     padding: 2px;
     display: flex;
     margin-right: 10px;
+    font-size: 18px;
 }
-
 
 .fields__input__field input {
     font-size: 18px;
@@ -152,7 +156,11 @@ a:hover {
 
 .fields__input__field select {
     font-size: 18px;
-    width: 200px;
+    /* width: 200px; */
+}
+
+.fields__input__field * {
+    width: 100%;
 }
 
 .submit-btn button {
@@ -473,21 +481,24 @@ a:hover {
 .table {
 	width: 100%;
 	border: none;
+    border-spacing: 0;
 	margin-bottom: 20px;
 }
 .table thead th {
 	text-align: left;
 	border: none;
 	padding: 10px 15px;
-	background: #BFBEB0;
+	background: #001c2f;
 	font-size: 14px;
-	border-left: 1px solid #D9D8D0;
-	border-right: 1px solid #D9D8D0;
+    font-weight: bold;
+    color: #fff;
+	border-left: 1px solid #868686;
+	border-right: 1px solid #868686;
 }
 .table tbody td {
 	text-align: left;
-	border-left: 1px solid #D9D8D0;
-	border-right: 1px solid #D9D8D0;
+	border-left: 1px solid #868686;
+	border-right: 1px solid #868686;
 	padding: 10px 15px;
 	font-size: 14px;
 	vertical-align: top;
@@ -509,4 +520,31 @@ a:hover {
 th {
     font-size: 18px;
     font-weight: 300;
+}
+
+/* .add_patient { */
+.add_form {
+    max-width: 50vw;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* .add_patient .fields__input { */
+.add_form .fields__input {
+    display: block;
+}
+
+.form__block {
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form__block form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

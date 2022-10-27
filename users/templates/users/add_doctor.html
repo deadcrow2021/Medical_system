@@ -1,25 +1,30 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-    <div class="form__block">
-        <form action="" method="POST">
-            {% csrf_token %}
-            <div class="fields">
-                {% for p in form2 %}
+<div class="form__block">
+    <div class="outer_div">
+        <div class="border_div">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields add_form">
+                    {% for p in form %}
                     <div class="fields__input">
                         <div class="fields__input__label">
-                            {{ p.label }}:
+                            {{ p.label_tag }}
                         </div>
                         <div class="fields__input__field">
                             {{ p }}
                         </div>
                     </div>
-                    <p>{{ p.errors }}</p>
-                {% endfor %}
-            </div>
-            <div class="submit-btn">
-                <button class="btn" type="submit">Добавить доктора</button>
-            </div>
-        </form>
+                    {{ p.errors }}
+                    {% endfor %}
+                    {{ form.errors }}
+                </div>
+                <div class="submit-btn">
+                    <button type="submit" class="btn">Добавить</button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 {% endblock %}

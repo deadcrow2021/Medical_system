@@ -73,7 +73,7 @@
         'Инфекции, передаваемые половым путем': 3,
         'Последнее обследование молочных желез': 3,
         'Последнее цитологическое исследование микропрепарата шейки матки': 3,
-        'Подтверждение врача': 1,
+        //'Подтверждение врача': 1,
     }
     var elem = document.getElementsByClassName('fields')[0].children[0];
     
@@ -88,6 +88,8 @@
             let next = elem.nextElementSibling;
             inner_div.appendChild(elem);
             elem = next;
+            if (elem === null)
+                break;
         }
         
         let div = document.createElement('div');

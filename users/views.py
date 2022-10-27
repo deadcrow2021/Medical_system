@@ -333,10 +333,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
         post = request.POST.copy()
         post |= { 'telephone': [clear_phone(post['telephone'])] }
         print(f'{post=}')
-        form2 = self.form_class(post)
-        if form2.is_valid():
+        form = self.form_class(post)
+        if form.is_valid():
             user: User = User()
-            personal: Patient | Doctor = form2.save(commit=False)
+            personal: Patient | Doctor = form.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
             last_name = translate_name(personal.last_name)
@@ -344,7 +344,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             send_mail('Данные для входа в систему',
                       f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
                       's@aistteam.ru',
-                      [form2.cleaned_data['email']])
+                      [form.cleaned_data['email']])
             user.save()
             personal.user = user
             personal.save()
@@ -375,7 +375,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             messages.success(request, 'Запись успешно добавлена!')
             return redirect(self.success_url)
         else:
-            return render(request, self.template_name, { 'form2': form2 })
+            return render(request, self.template_name, { 'form': form })
 
 
 class RegisterDoctorView(UserIsAdmin, RegisterView):
@@ -388,7 +388,7 @@ class RegisterDoctorView(UserIsAdmin, RegisterView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context = { 'form1': UserCreationForm, 'form2': DoctorCreationForm }
+        context |= { 'form': DoctorCreationForm }
         return context
 
 
@@ -402,7 +402,7 @@ class RegisterPatientView(RegisterView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context |= { 'form1': UserCreationForm, 'form2': PatientCreationForm }
+        context |= { 'form': PatientCreationForm }
         return context
 
 
