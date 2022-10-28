@@ -9,25 +9,31 @@
 </div>
 
 {% if user.doctor %}
-{% for key, val in key_val %}
-<div class="block__lines">
-    <div class="lines__element btn">
-        <p><a href="{% url 'profile-models-template' current_user.id key %}">{{ val }}</a></p>
+<div class="cut_width">
+    {% for key, val in key_val %}
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <p><a href="{% url 'profile-models-template' current_user.id key %}">{{ val }}</a></p>
+        </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
 
 <div class="fields">
     {% for p in form %}
     <div class="fields__input">
         <div class="fields__input__label">
-            {{ p.label_tag }}
+            <strong>{{ p.label_tag }}</strong>
         </div>
         <div class="fields__input__field noborder">
         {% if p.field.choices %}
             {% for i in p.field.choices %}
                 {% if p.value == i.0 %}
-                    {{i.1}}
+                    {% if not i.0 %}
+                        ---------
+                    {% else %}
+                        {{i.1}}
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         {% elif not p.value %}
@@ -66,7 +72,7 @@
         'Вредные привычки': 5,
         'Профессиональные вредности': 2,
         'Сведения о прививках': 8,
-        'менструация': 4,
+        'Менструация': 4,
         'Половая жизнь': 1,
         'Контрацепция': 2,
         'Гинекологические заболевания': 2,
@@ -75,14 +81,20 @@
         'Последнее цитологическое исследование микропрепарата шейки матки': 3,
         //'Подтверждение врача': 1,
     }
-    var elem = document.getElementsByClassName('fields')[0].children[0];
+    
+    var fields = document.getElementsByClassName('fields')[0];
+    var elem = fields.children[0];
     
     for (let [name, idx] of Object.entries(count)) {
-        let label = document.createElement('h3');
-        label.innerText = name + ':';
+        let div = document.createElement('div');
+        div.setAttribute('class', 'outer_div');
         
         let inner_div = document.createElement('div');
         inner_div.setAttribute('class', 'border_div');
+        
+        if (elem.children[0].innerText.indexOf(name) < 0) {
+            inner_div.innerHTML = `<div class="fields__input"><div class="fields__input__label"><strong>${name}:</strong></div></div>`;
+        }
         
         for(let i = 0; i < idx; i++) {
             let next = elem.nextElementSibling;
@@ -92,11 +104,8 @@
                 break;
         }
         
-        let div = document.createElement('div');
-        div.setAttribute('class', 'outer_div');
-        div.appendChild(label);
         div.appendChild(inner_div);
-        document.body.appendChild(div);
+        fields.appendChild(div);
     }
 </script>
 {% endblock %}

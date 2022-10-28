@@ -124,11 +124,15 @@ a:hover {
 .fields {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    /* width: fit-content; */
 }
 
 .fields__input {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    /* width: min(60vw, 600px); */
     margin: 0 0 15px 0;
 }
 
@@ -411,9 +415,17 @@ a:hover {
     border-radius: 5px;
     width: fit-content;
     padding: 3px 5px;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     background-color: transparent;
     color: #15539e;
+}
+
+.btn:hover {
+    background-color: rgb(179, 179, 179);
+}
+
+.same_btn {
+    width: 100%;
 }
 
 .data_btns {
@@ -452,8 +464,10 @@ a:hover {
 }
 
 .outer_div {
-    width: fit-content;
-    margin: 0px 0px 40px 20px;
+    /* width: 100%; */
+    width: min(60vw, 600px);
+    /* margin: 0px 0px 40px 20px; */
+    margin: 20px 0;
 }
 
 .border_div {
@@ -464,11 +478,18 @@ a:hover {
 }
 
 .complication {
-    width: fit-content;
-    display: grid;
+    /* width: fit-content; */
+    /* display: grid;
     grid-template-columns: repeat(3, 1fr);
     row-gap: 10px;
-    column-gap: 20px;
+    column-gap: 20px; */
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-between; */
+}
+
+.complication > * {
+    flex: 0 0 33.333%;
 }
 
 .cell_grid_2 {
@@ -547,4 +568,22 @@ th {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.recomendations {
+    padding-bottom: 20px;
+}
+
+.cut_width {
+    width: fit-content;
+    max-width: 30vw;
+}
+
+.center_div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    /* margin: 0; */
 }
