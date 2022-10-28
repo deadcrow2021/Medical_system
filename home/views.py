@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .forms import ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
+from .forms import MODeliveryForm, ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
 from .models import Patient, ChangeControlLog, ReceptionNotes
 from administration.models import ClinicRecomendations
 from dateutil.relativedelta import relativedelta
@@ -226,3 +226,15 @@ def records_page(request: HttpRequest) -> HttpResponse:
     template_name = 'home/records.html'
     
     return render(request, template_name, { 'records': records })
+
+
+def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:
+    current_user = User.objects.get(pk=profile_id)
+    form = MODeliveryForm(request.POST or None, instance=current_user.patient.mo_delivery)
+    
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
+    
+    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })

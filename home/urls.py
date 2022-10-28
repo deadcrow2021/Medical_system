@@ -10,4 +10,5 @@ urlpatterns = [
     path('account/records', views.records_page, name='records'),
     path('account/records/add', views.add_selfmonitor_record, name='add-record'),
     path('data_sampling', views.data_sampling_page, name='data-sampling'),
+    path('update_mo_delivery/<profile_id>', views.update_mo_delivery, name='update-mo-delivery'),
 ]

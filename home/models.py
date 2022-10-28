@@ -893,3 +893,10 @@ class ChangeControlLog(models.Model):
     
     class Meta:
         ordering = ['-date_created']
+
+
+# МО родоразрешения
+class MODelivery(models.Model):
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='mo_delivery')
+    delivery = models.CharField('МО родоразрешения', max_length=10, blank=True, null=True, choices=MO_DELIVERY)
+    

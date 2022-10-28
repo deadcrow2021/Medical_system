@@ -53,7 +53,12 @@ def translate_name(name):
         else:
             new += letter
     return new
-    
+
+
+def sum_risk_values(risk_objs):
+    return sum([int(x.risk_value) for x in risk_objs])
+
+
 
 def add_disease(request, profile_id):
     user: User = User.objects.get(id=profile_id)
@@ -123,9 +128,22 @@ def profile(request: HttpRequest, profile_id):
             my_profile = Doctor.objects.get(user=request.user)
             if user_profile in my_profile.patients.all():
                 follow = True
+            else:
+                follow = False
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
+        mo_delivery = user_profile.mo_delivery
+
+        med_card = user_profile.card
+        gestation_period = med_card.gestation_period_weeks
+        date_of_birth = med_card.date_of_birth
+        residence_address = med_card.residence_address
+
+        try:
+            treating_doctor = user.patient.doctors.all()[0].get_full_name()
+        except:
+            treating_doctor = 'Нет врача'
 
         try:
             last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
@@ -138,8 +156,8 @@ def profile(request: HttpRequest, profile_id):
         except:
             preeclampsia = 'Недостаточно данных'
 
-        last_pregnancy = user_profile.pregnancy_info.latest('id')
         try:
+            last_pregnancy = user_profile.pregnancy_info.latest('id')
             if  any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()) or user_profile.card.age >= 35 \
                 or (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24) \
                 or last_pregnancy.pregnancy == '4' or last_pregnancy.pregnancy_1 == '2' or user_profile.patient_information.latest('id').sti:
@@ -149,17 +167,40 @@ def profile(request: HttpRequest, profile_id):
         except:
             premature_birth = 'Недостаточно данных'
 
+        try:
+            risk_values_sum = 0
+            for risk in user_profile.card.risks.all():
+                visit = risk.visit
+                if visit == '30-40':
+                    risk_values_sum = sum_risk_values(risk.complications.all())
+                elif visit == '18-20':
+                    risk_values_sum = sum_risk_values(risk.complications.all())
+                elif visit == '11-14':
+                    risk_values_sum = sum_risk_values(risk.complications.all())
+                elif visit == '1':
+                    risk_values_sum = sum_risk_values(risk.complications.all())
+                else:
+                    risk_values_sum = 0
+        except:
+            risk_values_sum = 'Введено не числовое значение'
+
         return render(request, template_name, {
-            'profile':        user_profile,
-            'user_type':      user_type,
-            'diseases':       diseases,
-            'form':           form,
-            'follow':         follow,
-            'buttons':        buttons,
-            'examinations':   examinations,
-            'notes':          notes,
-            'preeclampsia':   preeclampsia,
-            'premature_birth':premature_birth,
+            'profile':           user_profile,
+            'user_type':         user_type,
+            'diseases':          diseases,
+            'form':              form,
+            'follow':            follow,
+            'buttons':           buttons,
+            'examinations':      examinations,
+            'notes':             notes,
+            'preeclampsia':      preeclampsia,
+            'mo_delivery':       mo_delivery,
+            'premature_birth':   premature_birth,
+            'risk_values_sum':   risk_values_sum,
+            'treating_doctor':   treating_doctor,
+            'gestation_period':  gestation_period,
+            'date_of_birth':     date_of_birth,
+            'residence_address': residence_address,
         })
 
 
@@ -342,10 +383,8 @@ def clear_phone(phone: str) -> str:
 
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
-        # print(f'{request.POST=}')
         post = request.POST.copy()
         post |= { 'telephone': [clear_phone(post['telephone'])] }
-        print(f'{post=}')
         form = self.form_class(post)
         if form.is_valid():
             user: User = User()
@@ -377,6 +416,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 current_preg.patient = personal
                 current_preg.save()
             
+                mo_delivery = MODelivery()
+                mo_delivery.patient = personal
+                mo_delivery.save()
+
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
                     CHANGETYPE.Пользователь_был_создан,
@@ -451,8 +494,6 @@ def appearance(request: HttpResponse, profile_id: int):
         return list(zip(obstetric_risk_forms, complication_risk_forms))
     
     if request.method == 'POST':
-        print(f'{request.POST=}')
-        print(f'{request.POST["delete_pk"][0]=}')
         obstetric_risk = ObstetricRisk.objects.get(pk=request.POST["delete_pk"])
         obstetric_risk.delete()
     

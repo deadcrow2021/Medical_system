@@ -16,7 +16,7 @@
 </div>
 
 
-<div class="title__block">
+<div class="title__block center_div">
     <h2>Пациенты</h2>
 </div>
 
@@ -34,7 +34,7 @@
             </div>
         </div>
         
-        <div class="submit-btn">
+        <div class="submit-btn center_div">
             <input type="submit" value="Найти">
         </div>
     </form>
@@ -43,7 +43,7 @@
 
 <div class="user__block">
     {% for patient in patients %}
-        <div class="user__block__row">
+        <div class="user__block__row center_div">
             <div class="user__block__element">
                 <p>ФИО: {{ patient.get_full_name }}</p>
             </div>

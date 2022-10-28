@@ -546,3 +546,8 @@ class TurnoutScheduleForm(forms.ModelForm):
         widgets = {
             'date': DateInput()
         }
+
+class MODeliveryForm(forms.ModelForm):
+    class Meta:
+        model = MODelivery
+        fields = 'delivery',
