@@ -840,8 +840,22 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 
 def statistics_pade(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
+    patients = Patient.objects.all()
+    patients_number = len(patients)
+    gestation_period_undo_12 = 0
     
-    return render(request, template_name)
+    for p in patients:
+        first_exam_list = p.first_examination.all()
+        if len([x for x in first_exam_list]) >= 1:
+            if first_exam_list[0].gestation_period_weeks and int(first_exam_list[0].gestation_period_weeks) < 12:
+                gestation_period_undo_12 += 1
+                
+        
+    
+    
+    return render(request, template_name, {
+        'gestation_period_undo_12':gestation_period_undo_12*100/patients_number,
+    })
 
 
 def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:

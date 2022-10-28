@@ -97,6 +97,74 @@
                 </div>
             </div>
             {% endfor %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Дата рождения:</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {% if date_of_birth %}
+                        {{date_of_birth}}
+                    {% else %}
+                        не указана
+                    {% endif %}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Адрес проживания:</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {% if residence_address %}
+                        {{residence_address}}
+                    {% else %}
+                        не указан
+                    {% endif %}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Баллы перинатального риска:</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {{risk_values_sum}}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Преэклампсия:</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {{preeclampsia}}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Преждевременные роды: </strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {{premature_birth}}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Лечащий врач:</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {{treating_doctor}}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>Срок беременности:</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {% if gestation_period %}
+                        {{gestation_period}} недель
+                    {% else %}
+                        не указан
+                    {% endif %}
+                </div>
+            </div>
         </div>
         
         {% if user.is_superuser %}
@@ -136,39 +204,6 @@
                         {% endif %}
                     </form>
                 </div>
-            </div>
-            <div class="block__lines">
-                {% if date_of_birth %}
-                    Дата рождения: {{date_of_birth}}
-                {% else %}
-                    Дата рождения: не указана
-                {% endif %}
-            </div>
-            <div class="block__lines">
-                {% if residence_address %}
-                    Адрес проживания: {{residence_address}}
-                {% else %}
-                    Адрес проживания: не указан
-                {% endif %}
-            </div>
-            <div class="block__lines">
-                Баллы перинатального риска: {{risk_values_sum}}
-            </div>
-            <div class="block__lines">
-                Преэклампсия: {{preeclampsia}}
-            </div>
-            <div class="block__lines">
-                Преждевременные роды: {{premature_birth}}
-            </div>
-            <div class="block__lines">
-                Лечащий врач: {{treating_doctor}}
-            </div>
-            <div class="block__lines">
-                {% if gestation_period %}
-                    Срок беременности: {{gestation_period}} недель
-                {% else %}
-                    Срок беременности: не указан
-                {% endif %}
             </div>
         {% endif %}
     

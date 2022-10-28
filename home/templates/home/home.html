@@ -97,6 +97,7 @@
         {% endif %}
     </fieldset>
     {% endif %}
+    {% if not user.patient %}
     <fieldset>
         <legend>
             <h3>Клинические и методические рекомендации</h3>
@@ -111,6 +112,7 @@
             {% endfor %}
         </div>
     </fieldset>
+    {% endif %}
 </div>
 
 {% endblock %}
