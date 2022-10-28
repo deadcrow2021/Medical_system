@@ -126,7 +126,7 @@ class DataSamplingForm(forms.Form):
 class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
-        fields = 'date_of_birth', 'residence_address', 'registration_address', 'mobile_phone', \
+        fields = 'date_of_birth', 'age', 'residence_address', 'registration_address', 'mobile_phone', \
         'home_phone', 'work_phone', 'marital_status', 'trusted_person_fio', 'trusted_person_phone', \
         'education', 'profession', 'work_place', 'disability', 'oms_policy', 'snils', 'maternity_leave_start', \
         'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', \
@@ -382,10 +382,7 @@ class PreviousPregnancyForm(forms.ModelForm):
     class Meta:
         model = PreviousPregnancy
         fields = 'year', 'pragnancy_has_come', 'outcome', 'outcome_str', \
-                'birth_number', 'birth_str', 'complications',
-        widgets = {
-            'year': DateInput()
-        }
+                'birth_number', 'birth_str', 'complications'
 
 
 class CarvixScarForm(forms.ModelForm):

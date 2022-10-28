@@ -125,7 +125,7 @@ def profile(request: HttpRequest, profile_id):
         form = PatientChangeForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
-        
+
         try:
             last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
             if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
@@ -135,18 +135,30 @@ def profile(request: HttpRequest, profile_id):
             else:
                 preeclampsia = 'Низкий'
         except:
-            preeclampsia = 'Неправильно введены данные'
-        
+            preeclampsia = 'Недостаточно данных'
+
+        last_pregnancy = user_profile.pregnancy_info.latest('id')
+        try:
+            if  any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()) or user_profile.card.age >= 35 \
+                or (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24) \
+                or last_pregnancy.pregnancy == '4' or last_pregnancy.pregnancy_1 == '2' or user_profile.patient_information.latest('id').sti:
+                premature_birth = 'Высокий'
+            else:
+                premature_birth = 'Низкий'
+        except:
+            premature_birth = 'Недостаточно данных'
+
         return render(request, template_name, {
-            'profile':      user_profile,
-            'user_type':    user_type,
-            'diseases':     diseases,
-            'form':         form,
-            'follow':       follow,
-            'buttons':      buttons,
-            'examinations': examinations,
-            'notes':        notes,
-            'preeclampsia': preeclampsia,
+            'profile':        user_profile,
+            'user_type':      user_type,
+            'diseases':       diseases,
+            'form':           form,
+            'follow':         follow,
+            'buttons':        buttons,
+            'examinations':   examinations,
+            'notes':          notes,
+            'preeclampsia':   preeclampsia,
+            'premature_birth':premature_birth,
         })
 
 

@@ -497,10 +497,11 @@ class PatientInformation(models.Model):
     cervix_result = models.CharField('Результат', max_length=200, blank=True, null=True)
 
 
+# История о предыдущих беремонностях
 class PreviousPregnancy(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='previous_pregnancy')
     year = models.CharField('Год', max_length=4, blank=True, null=True)
-    pragnancy_has_come = models.CharField('Насупила', max_length=10, blank=True, null=True, choices=PREVIOUS_PREGNANCY)
+    pragnancy_has_come = models.CharField('Наступила', max_length=10, blank=True, null=True, choices=PREVIOUS_PREGNANCY)
     outcome = models.CharField('Исход беременности', max_length=10, choices=PREGNANCY_OUTCOME1, blank=True, null=True)
     outcome_str = models.CharField('Дополнительная информация', max_length=1000, blank=True, null=True)
     birth_number = models.PositiveSmallIntegerField('Число родившихся', validators=[MaxValueValidator(10)], blank=True, null=True)
@@ -643,7 +644,7 @@ class FirstExamination(models.Model):
     vagina_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
     # Шейка матки
     cervix = models.CharField('Шейка матки', max_length=10, choices=CERVIX, blank=True, null=True)
-    cervix_length = models.PositiveSmallIntegerField('Длина шейки матки (см)', validators=[MaxValueValidator(1000)], blank=True, null=True)
+    cervix_length = models.PositiveSmallIntegerField('Длина шейки матки (мм)', validators=[MaxValueValidator(1000)], blank=True, null=True)
     cervix_deviations = models.CharField('Отклонения шейки матки', max_length=10, choices=CERVIX_DEVIATIONS, blank=True, null=True)
     mucosa = models.CharField('Слизистая', max_length=200, blank=True, null=True)
     external_pharynx = models.CharField('Наружний зев', max_length=1, choices=PHARYNX, blank=True, null=True)
