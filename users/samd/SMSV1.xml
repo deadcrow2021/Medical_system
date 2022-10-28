@@ -1,0 +1,1025 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xsi:schemaLocation="urn:hl7-org:v3 Infrastructure/CDA.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<!-- Заголовок СЭМД beta-версии "Направление на оказание медицинских услуг" -->
+	<!-- Условные обозначения: -->
+	<!-- [1..1] Обязательный элемент. Элемент обязан присутствовать -->
+	<!-- [0..] Не обязательный элемент. Элемент может отсутствовать -->
+	<!-- R [1..1] Область применения документа (Страна) -->
+	<realmCode code="RU"/>
+	<!-- R [1..1]  Указатель на использование CDA R2 -->
+	<typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+	<!-- R [1..1]  Уникальный идентификатор документа -->
+	<id root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.51" extension="33094479501"/>
+	<!-- R [1..1] Тип документа -->
+	<code code="SMSV1" codeSystem="1.2.643.5.1.13.13.99.2.592"  codeSystemVersion="2.1"  codeSystemName="Типы структурированных медицинских сведений" displayName="Направление на оказание медицинских услуг"/>
+	<!-- R [1..1]  Заголовок документа -->
+	<title>Направление на оказание медицинских услуг</title>
+	<!-- R [1..1]  Дата создания документа -->
+	<effectiveTime value="202008101100+0300"/>
+	<!-- R [1..1]  Уровень конфиденциальности -->
+	<confidentialityCode code="N" codeSystem="1.2.643.5.1.13.13.99.2.285" codeSystemVersion="1.1" codeSystemName="Уровень конфиденциальности медицинского документа" displayName="обычный"/>
+	<!-- R [1..1]  Язык документа -->
+	<languageCode code="ru-RU"/>
+	<!-- R [1..1]  Уникальный идентификатор набора версий документа -->
+	<setId extension="330944795" root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.50"/>
+	<!-- R [1..1]  Номер версии данного документа -->
+	<versionNumber value="1"/>
+	<!-- R [1..1]  ДАННЫЕ О ПАЦИЕНТЕ -->
+	<recordTarget>
+		<!-- R [1..1] ПАЦИЕНТ (роль) -->
+		<patientRole>
+			<!-- R [1..1]  Уникальный идентификатор пациента в МИС -->
+			<id root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.10" extension="644344680"/>
+			<!-- R [1..1] СНИЛС пациента -->
+			<id root="1.2.643.100.3" extension="633-289-209 00"/>
+			<!-- [1..1] Документ, удостоверяющий личность пациента, серия, номер, кем выдан. -->
+			<id root="1.2.643.5.1.13.13.11.1011.1" extension="8010 876601" assigningAuthorityName='ОТДЕЛ УФМС РОССИИ ПО РЕСПУБЛИКЕ БАШКОРТОСТАН В ОКТЯБРЬСКОМ Р-НЕ Г. УФЫ Код подразделения: 020-006. Дата выдачи: 18.02.2010'/>
+			<!-- [1..1] Признак жителя города или села  -->
+			<id root="1.2.643.5.1.13.13.11.1042" extension="1" />
+			<!-- [1..1] Адрес постоянной регистрации пациента -->
+			<addr use="H">
+				<!-- R [1..1] Адрес текстом -->
+				<streetAddressLine>450096, Россия, г. Уфа, ул. Лесотехникума, д. 146, кв. 1</streetAddressLine>
+				<!-- R [1..1] Регион РФ (республика, край, область)-->
+				<state>25</state>
+				<!-- [1..1] ВИМИС: AOGUID населенного пункта -->
+				<city>62aa8ac8-37fc-473a-828a-b9f9b7877d3f</city>
+				<!-- [1..1] ВИМИС: AOGUID адресного объекта улицы -->
+				<streetNameBase>212d3123-9c4d-4579-b31a-b5c6e9632b04</streetNameBase>
+				<!-- [1..1] ВИМИС: AOGUID адресного объекта дома -->
+				<houseNumber>2a452fcf-d9f7-4e48-9ac4-0986eb057ad0</houseNumber>
+				<!-- [1..1] ВИМИС: Номер дома, если отсутствует GUID адресного объекта дома  -->
+				<houseNumberNumeric>146</houseNumberNumeric>
+				<!-- [0..1] ВИМИС: Номер квартиры -->
+				<unitID>1</unitID>
+			</addr>
+			<!-- R [1..1] Адрес фактического места жительства пациента -->
+			<addr use="HP">
+				<!-- R [1..1] адрес текстом -->
+				<streetAddressLine>690105, Россия, г. Владивосток, ул. Давыдова, д. 28В, кв. 10</streetAddressLine>
+				<!-- R [1..1] Регион РФ, для РФ код по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+				<state>25</state>
+				<!-- [1..1] ВИМИС: AOGUID населенного пункта -->
+				<city>62aa8ac8-37fc-473a-828a-b9f9b7877d3f</city>
+				<!-- [1..1] ВИМИС: AOGUID адресного объекта улицы -->
+				<streetNameBase>212d3123-9c4d-4579-b31a-b5c6e9632b04</streetNameBase>
+				<!-- [1..1] ВИМИС: AOGUID адресного объекта дома -->
+				<houseNumber>2a452fcf-d9f7-4e48-9ac4-0986eb057ad0</houseNumber>
+				<!-- [1..1] ВИМИС: Номер дома, если отсутствует GUID адресного объекта дома  -->
+				<houseNumberNumeric>28В</houseNumberNumeric>
+				<!-- [0..1] ВИМИС: Номер квартиры -->
+				<unitID>10</unitID>
+			</addr>
+			<!-- [1..1] Телефон пациента -->
+			<telecom value="tel:+79600600660"/>
+			<!-- [0..*] Прочие контакты пациента (мобильный телефон) -->
+			<telecom use="MC" value="tel:+79173332112"/>
+			<!-- [0..*] Прочие контакты пациента (электронная почта) -->
+			<telecom value="mailto:demidiov.petr@mail.ru"/>
+			<!-- R [1..1] ПАЦИЕНТ (человек) -->
+			<patient>
+				<!-- R [1..1] ФИО пациента -->
+				<name>
+					<!-- R [1..1] Фамилия -->
+					<family>Талапина</family>
+					<!-- R [1..1] Имя -->
+					<given>Алина</given>
+					<!-- [0..1] Отчество -->
+					<given>Николаевна</given>
+				</name>
+				<!-- R [1..1] Пол пациента -->
+				<administrativeGenderCode code="2" codeSystem="1.2.643.5.1.13.13.11.1040" codeSystemVersion="2.1"  codeSystemName="Пол пациента" displayName="Женский"/>
+				<!-- R [1..1] Дата рождения -->
+				<birthTime value="19900113"/>
+			</patient>
+			<!-- R [1..1] Организация (ЛПУ или его филиал), выдавшая направление -->
+			<providerOrganization>
+				<!-- R [1..1] Идентификатор организации -->
+				<!-- Идентификатор организации - по справочнику «Регистр медицинских организаций Российской Федерации» (OID: 1.2.643.5.1.13.13.11.1461) -->
+				<id root="1.2.643.5.1.13.13.12.2.68.7055"/>
+				<!-- R [1..1] Наименование организации -->
+				<name>Государственное бюджетное учреждение здравоохранения "Приморский краевой диспансер"</name>
+				<!-- [1..1] Телефон организации -->
+				<telecom value="tel:+74232325379" use="WP"/>
+				<!-- [0..*] Прочие контакты организации (факс) -->
+				<telecom value="fax:+74232325379" use="WP"/>
+				<!-- [0..*] Прочие контакты организации (веб-сайт) -->
+				<telecom value="http://oncoprim.ru/"/>
+				<!-- [1..1] Адрес организации -->
+				<addr>
+					<!-- R [1..1] адрес текстом -->
+					<streetAddressLine>690105, г. Владивосток, ул. Русская, д. 59</streetAddressLine>
+					<!-- R [1..1] Регион РФ, для РФ код по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+					<state>25</state>
+				</addr>
+			</providerOrganization>
+		</patientRole>
+	</recordTarget>
+	<!-- R [1..1] ДАННЫЕ ОБ АВТОРЕ ДОКУМЕНТА -->
+	<author>
+		<!-- [1..1] Дата подписи документа автором -->
+		<time value="202008101655+0400"/>
+		<!-- R [1..1] АВТОР (роль) -->
+		<assignedAuthor>
+			<!-- R [1..1] Уникальный идентификатор автора в МИС -->
+			<id root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.70" extension="231201"/>
+			<!-- R [1..1] СНИЛС автора -->
+			<id root="1.2.643.100.3" extension="954-916-457 59"/>
+			<!-- R [1..1] Код должности автора-->
+			<code code="13" codeSystem="1.2.643.5.1.13.13.99.2.181"  codeSystemVersion="4.2" codeSystemName="Должности работников организаций медицинского и фармацевтического профиля" displayName="Врач-акушер-гинеколог"/>
+			<!-- [0..1] Адрес автора документа -->
+			<addr>
+				<!-- R [1..1] адрес текстом -->
+				<streetAddressLine>690105,ул. Анны Щетининой 3,кв. 66</streetAddressLine>
+				<!-- R [1..1] Регион РФ, для РФ код по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+				<state>25</state>
+			</addr>
+			<!-- [0..1] Телефон автора  -->
+			<telecom value="tel:+74998971311"/>
+			<!-- [0..*] Прочие контакты автора (мобильный телефон) -->
+			<telecom use="MC" value="tel:+79981231234"/>
+			<!-- [0..*] Прочие контакты автора (электронная почта) -->
+			<telecom value="mailto:a.ivanov@gkb13.ru"/>
+			<!-- [0..*] Прочие контакты автора (факс) -->
+			<telecom value="fax:+78444681405"/>
+			<!-- R [1..1] АВТОР (человек) -->
+			<assignedPerson>
+				<!-- R [1..1] Фамилия, Имя, Отчество автора -->
+				<name>
+					<!-- R [1..1] Фамилия -->
+					<family>Иванова</family>
+					<!-- R [1..1] Имя -->
+					<given>Александра</given>
+					<!-- [0..1] Отчество -->
+					<given>Борисовна</given>
+				</name>
+			</assignedPerson>
+			<!-- R [1..1] Место работы автора  -->
+			<representedOrganization>
+				<!-- R [1..1] Идентификатор организации -->
+				<!-- Идентификатор организации - по справочнику «Регистр медицинских организаций Российской Федерации» (OID: 1.2.643.5.1.13.13.11.1461) -->
+				<id root="1.2.643.5.1.13.13.12.2.68.7055"/>
+				<!-- R [1..1] Наименование организации -->
+				<name>Государственное бюджетное учреждение здравоохранения "Приморский краевой диспансер"</name>
+				<!-- [1..1] Телефон организации -->
+				<telecom value="tel:+7(347)2428536" use="WP"/>
+				<!-- [0..*] Прочие контакты организации (факс) -->
+				<telecom value="fax:+7(347)2428536" use="WP"/>
+				<!-- [0..*] Прочие контакты организации (веб-сайт) -->
+				<telecom value="http://oncoprim.ru/"/>
+				<!-- [1..1] Адрес организации -->
+				<addr>
+					<!-- R [1..1] адрес текстом -->
+					<streetAddressLine>690105, г. Владивосток, ул. Русская, д. 59</streetAddressLine>
+					<!-- R [1..1] Регион РФ, для РФ rод по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+					<state>25</state>
+				</addr>
+			</representedOrganization>
+		</assignedAuthor>
+	</author>
+	<!-- R [1..1] ДАННЫЕ ОБ ОРГАНИЗАЦИИ-ВЛАДЕЛЬЦЕ ДОКУМЕНТА -->
+	<custodian>
+		<!-- R [1..1] Организация-владелец документа (роль) -->
+		<assignedCustodian>
+			<!-- R [1..1] Организация-владелец документа (организация) -->
+			<representedCustodianOrganization>
+				<!-- R [1..1] Уникальный идентификатор оргнанизации-владельца документа -->
+				<!-- Идентификатор организации - по справочнику «Регистр медицинских организаций Российской Федерации» (OID: 1.2.643.5.1.13.13.11.1461) -->
+				<id root="1.2.643.5.1.13.13.12.2.68.7055"/>
+				<!-- R [1..1] Наименование организации-владельца документа -->
+				<name>Государственное бюджетное учреждение здравоохранения "Приморский краевой диспансер"</name>
+				<!-- [1..1] Телефон организации -->
+				<telecom value="tel:+7(347)2428536" use="WP"/>
+				<!-- [1..1] Адрес организации -->
+				<addr>
+					<!-- R [1..1] адрес текстом -->
+					<streetAddressLine>690105, г. Владивосток, ул. Русская, д. 59</streetAddressLine>
+					<!-- R [1..1] Регион РФ, для РФ rод по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+					<state>25</state>
+				</addr>
+			</representedCustodianOrganization>
+		</assignedCustodian>
+	</custodian>
+	<!-- R [1..1] ДАННЫЕ О ПОЛУЧАТЕЛЕ ДОКУМЕНТА -->
+	<informationRecipient>
+		<!-- R [1..1] Получатель документа (роль) -->
+		<intendedRecipient>
+			<!-- R [1..1] Получатель документа (организация) -->
+			<receivedOrganization>
+				<!-- R [1..1] Идентификатор получающей организации -->
+				<id root="1.2.643.5.1.13.13.12.2.77.7799"/>
+				<!-- R [1..1] Наименование получающей организации-->
+				<name>ФГБУ "НМИЦ онкологии им. Н.Н.Блохина" Минздрава России</name>
+			</receivedOrganization>
+		</intendedRecipient>
+	</informationRecipient>
+	<!-- R [1..1] ДАННЫЕ О ЛИЦЕ, ПРИДАВШЕМ ЮРИДИЧЕСКУЮ СИЛУ ДОКУМЕНТУ -->
+	<legalAuthenticator>
+		<!-- R [1..1] Дата подписи документа лицом, придавшем юридическую силу документу -->
+		<time value="202008101714+0400"/>
+		<!-- R [1..1] Факт наличия подписи на документе -->
+		<signatureCode code="S"/>
+		<!-- R [1..1] Лицо, придавшее юридическую силу документу (роль) -->
+		<assignedEntity>
+			<!-- R [1..1] Уникальный идентификатор лица, придавшего юридическую силу документу -->
+			<id root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.70" extension="231202"/>
+			<!-- R [1..1] СНИЛС лица, придавшего юридическую силу документу -->
+			<id root="1.2.643.100.3" extension="954-916-457 59"/>
+			<!-- R [1..1] Код должности лица, придавшего юридическую силу документу -->
+			<code code="13" codeSystem="1.2.643.5.1.13.13.99.2.181"  codeSystemVersion="4.2" codeSystemName="Должности работников организаций медицинского и фармацевтического профиля" displayName="Заведующий структурного подразделения (отдела, отделения, лаборатории, кабинета, отряда и другое) медицинской организации - врач-специалист"/>
+			<!-- [0..1] Адрес лица, придавшего юридическую силу документу -->
+			<addr>
+				<!-- R [1..1] адрес текстом -->
+				<streetAddressLine>690105,г. Владивосток ул. Адмирала Горшкова 40, кв 89</streetAddressLine>
+				<!-- R [1..1] Регион РФ, для РФ rод по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+				<state>25</state>
+			</addr>
+			<!-- [0..1] Телефон лица, придавшего юридическую силу документу -->
+			<telecom value="tel:+74954247987"/>
+			<!-- [0..*] Прочие контакты лица, придавшего юридическую силу документу (мобильный телефон) -->
+			<telecom use="MC" value="tel:+79033216588"/>
+			<!-- [0..*] Прочие контакты лица, придавшего юридическую силу документу (электронная почта) -->
+			<telecom value="mailto:zahar@gmail.com"/>
+			<!-- [0..*] Прочие контакты лица, придавшего юридическую силу документу (факс) -->
+			<telecom value="fax:+74958463867"/>
+			<!-- R [1..1] Лицо, придавшен юридическую силу документу (человек) -->
+			<assignedPerson>
+				<!-- R [1..1] Фамилия, Имя, Отчество лица, придавшего юридическую силу документу -->
+				<name>
+					<!-- R [1..1] Фамилия -->
+					<family>Заводилова</family>
+					<!-- R [1..1] Имя -->
+					<given>Нина</given>
+					<!-- [0..1] Отчество -->
+					<given>Петровна</given>
+				</name>
+			</assignedPerson>
+			<!-- R [1..1] Место работы лица, придавшего юридическую силу документу -->
+			<representedOrganization>
+				<!-- R [1..1] Идентификатор организации -->
+				<!-- Идентификатор организации - по справочнику «Регистр медицинских организаций Российской Федерации» (OID: 1.2.643.5.1.13.13.11.1461) -->
+				<id root="1.2.643.5.1.13.13.12.2.68.7055"/>
+				<!-- R [1..1] Наименование организации -->
+				<name>Государственное бюджетное учреждение здравоохранения "Приморский краевой диспансер"</name>
+				<!-- [1..1] Телефон организации -->
+				<telecom value="tel:+7(347)2428536" use="WP"/>
+				<!-- [0..*] Прочие контакты организации (факс) -->
+				<telecom value="fax:+74998360123" use="WP"/>
+				<!-- [0..*] Прочие контакты организации (веб-сайт) -->
+				<telecom value="http://oncoprim.ru/"/>
+				<!-- [1..1] Адрес организации -->
+				<addr>
+					<!-- R [1..1] адрес текстом -->
+					<streetAddressLine>690105, г. Владивосток, ул. Русская, д. 59</streetAddressLine>
+					<!-- R [1..1] Регион РФ, для РФ rод по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+					<state>25</state>
+				</addr>
+			</representedOrganization>
+		</assignedEntity>
+	</legalAuthenticator>
+	<!-- [0..1] СВЕДЕНИЯ О СТРАХОВОМ ПОЛИСЕ ОМС -->
+	<participant typeCode="HLD">
+		<!-- R [1..1] Держатель полиса ОМС (роль) -->
+		<associatedEntity classCode="POLHOLD">
+			<!-- R [1..1] Полис ОМС (нового образца) пациента -->
+			<id root="1.2.643.5.1.13.2.7.100.2" extension="7841994072557376"/>
+			<!-- R [1..1] Указание, что держателем полиса ОМС является сам пациент -->
+			<code code="SELF" codeSystem="2.16.840.1.113883.5.111"/>
+			<!-- R [1..1] Страховая компания -->
+			<scopingOrganization>
+				<!-- R [1..1] Уникальный идентификатор страховой компании -->
+				<id root="1.2.643.5.1.13.13.99.2.183" extension="11"/>
+				<!-- R [1..1] Наименование страховой компании -->
+				<name>ООО "МСК-МЕД"</name>
+				<!-- [0..1] Телефон страховой компании -->
+				<telecom value="tel:+78612686644"/>
+				<!-- [0..*] Прочие контакты страховой компании (факс) -->
+				<telecom value="fax:+78612686644" use="WP"/>
+				<!-- [0..*] Прочие контакты страховой компании (веб-сайт) -->
+				<telecom value="http://http://www.msk-med.ru/"/>
+				<!-- [0..1] Адрес страховой компании -->
+				<addr>
+					<!-- R [1..1] адрес текстом -->
+					<streetAddressLine>103132, г. Москва, Старая пл., д. 2</streetAddressLine>
+					<!-- R [1..1] Регион РФ, для РФ rод по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+					<state>25</state>
+				</addr>
+			</scopingOrganization>
+		</associatedEntity>
+	</participant>
+	<!-- R [1..1] СВЕДЕНИЯ О СЛУЧАЕ ОКАЗАНИЯ МЕДИЦИНСКОЙ ПОМОЩИ -->
+	<componentOf>
+		<!-- R [1..1] Случай оказания медицинской помощи -->
+		<encompassingEncounter>
+			<!-- R [1..1] Уникальный идентификатор случая оказания медицинской помощи (незначащий уникальный идентификатор) -->
+			<id root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.15" extension="202010134209"/>
+			<!-- R [1..1] Идентификатор случая оказания медицинской помощи номер истории болезни или амбулаторной карты -->
+			<id root="1.2.643.5.1.13.13.12.2.68.7055.100.1.1.17" extension="330944795"/>
+			<!-- R [1..1] Даты случая -->
+			<effectiveTime>
+				<!-- R [1..1] Дата начала случая -->
+				<low value="202008101100+0300"/>
+				<!-- [0..1] Дата окончания случая (может быть не указана) -->
+				<high value="202008101130+0400"/>
+			</effectiveTime>
+		</encompassingEncounter>
+	</componentOf>
+	<!-- R [1..1] ТЕЛО ДОКУМЕНТА -->
+	<component>
+		<!-- R [1..1] Структурированное тело документа -->
+		<structuredBody>
+			<!-- R [1..1] СЕКЦИЯ: Цель направления и медицинская организация, куда направлен пациент (с кодированными элементами) -->
+			<component>
+				<section>
+					<!-- R [1..1] код секции -->
+					<code code="SCOPORG" codeSystem="1.2.643.5.1.13.13.99.2.197" codeSystemVersion="1.7"  codeSystemName="Секции CDA документов" displayName="Цель направления и медицинская организация, куда направлен"/>
+					<!-- R [1..1] заголовок секции -->
+					<title>Направлен</title>
+					<!-- R [1..1] наполнение секции -->
+					<text>
+						<paragraph><content ID="scoporg1" styleCode="Bold">На консультацию акушера-гинеколога</content></paragraph>
+						<paragraph>Куда: Государственное бюджетное учреждение здравоохранения "Приморский краевой диспансер"</paragraph>
+						<paragraph>Уточнение направления</paragraph>
+						<list>
+							<item>
+								<content>Тип консультации:</content> <content ID="VREFERENCE_501" styleCode="Bold"> Консультация акушера-гинеколога</content></item>
+							<item>
+								<content>Метод обследования пациента:</content><content ID="VREFERENCE_502" styleCode="Bold"> Лабораторные методы</content></item>
+							<item>
+								<content>Тип лабораторного исследования:</content><content ID="VREFERENCE_503" styleCode="Bold"> Общеклинический анализ крови</content></item>
+							<item>
+								<content>Тип инструментального диагностического исследования:</content><content ID="VREFERENCE_504" styleCode="Bold"> УЗИ брюшной полости</content></item>
+						</list>
+					</text>
+					<!-- R [1..1] Кодирование цели направления и медицинской организации, куда направлен пациент -->
+					<entry>
+						<act classCode="ACT" moodCode="RQO">
+							<!-- R [1..1] Вид направления -->
+							<code code="6" codeSystem="1.2.643.5.1.13.13.11.1009" codeSystemVersion="2.3" codeSystemName="Виды медицинских направлений" displayName="На консультацию к другому специалисту">
+								<originalText>
+									<reference value="#scoporg1"/>
+								</originalText>
+							</code>
+							<statusCode code="active"/>
+							<!-- R [1..1] Кодирование организации, куда направлен пациент -->
+							<performer>
+								<assignedEntity>
+									<!-- [1..1] Уникальный идентификатор человека-исполнителя, как правило он неизвестен - следует использовать nullFlavor -->
+									<id nullFlavor="NI"/>
+									<representedOrganization>
+										<!-- R [1..1] Идентификатор организации исполнителя -->
+										<id root="1.2.643.5.1.13.13.12.2.68.7055"/>
+										<!-- R [1..1] Наименование организации исполнителя -->
+										<name>Государственное бюджетное учреждение здравоохранения "Приморский краевой диспансер"</name>
+										<!-- [1..1] Телефон организации исполнителя -->
+										<telecom value="tel:+7(347)2428536" use="WP"/>
+										<!-- [0..*] Прочие контакты организации (факс) -->
+										<telecom value="fax:+7(347)2428536" use="WP"/>
+										<!-- [0..*] Прочие контакты организации (веб-сайт) -->
+										<telecom value="http://oncoprim.ru/"/>
+										<!-- [1..1] Адрес организации -->
+										<addr>
+											<!-- R [1..1] адрес текстом -->
+											<streetAddressLine>690105, г. Владивосток, ул. Русская, д. 59</streetAddressLine>
+											<!-- R [1..1] Регион РФ, для РФ rод по справочнику 1.2.643.5.1.13.13.99.2.206 -->
+											<state>25</state>
+										</addr>
+									</representedOrganization>
+								</assignedEntity>
+							</performer>
+							<entryRelationship typeCode="COMP">
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- R [1..1] ВИМИС: Уточнение направления -->
+									<code code="additionalData" codeSystem="vimis1" codeSystemVersion="1.0" codeSystemName="Секции СЭМД beta-версии" displayName="Уточнение направления"/>
+									<!-- [0..1] ВИМИС: Тип консультации -->
+									<value xsi:type="CD" code="1" codeSystem="1.2.643.5.1.13.13.11.1463" codeSystemVersion="1.11" displayName="Консультация акушера-гинеколога" codeSystemName="Справочник типов консультаций">
+										<originalText>
+											<reference value="#VREFERENCE_501"></reference>
+										</originalText>
+									</value>
+									<!-- [0..1] ВИМИС: Метод обследования пациента-->
+									<value xsi:type="CD" code="1" codeSystem="1.2.643.5.1.13.13.99.2.575" codeSystemVersion="1.1" codeSystemName="ВИМИС ОНКО. Дополнительные методы обследования пациента" displayName="Лабораторные методы" >
+										<originalText>
+											<reference value="#VREFERENCE_502"></reference>
+										</originalText>
+									</value>
+									<!-- [0..1] ВИМИС: Тип лабораторного исследования -->
+									<value xsi:type="CD" code="101" codeSystem="1.2.643.5.1.13.13.99.2.13" codeSystemVersion="1.1" codeSystemName="Типы лабораторных исследований" displayName="Общеклинический анализ крови">
+										<originalText>
+											<reference value="#VREFERENCE_503"></reference>
+										</originalText>
+									</value>
+									<!-- [0..1] ВИМИС: Тип инструментального диагностического исследования -->
+									<value xsi:type="CD" code="7011554" codeSystem="1.2.643.5.1.13.13.11.1471" codeSystemVersion="2.5" codeSystemName="Федеральный справочник инструментальных диагностических исследований" displayName="Ультразвуковое исследование матки, придатков матки и плода (эмбриона)/плодов (эмбрионов) в первом триместре беременности в нескрининговые сроки трансабдоминальное">
+										<originalText>
+											<reference value="#VREFERENCE_504"></reference>
+										</originalText>
+									</value>
+								</observation>	
+							</entryRelationship>
+						</act>
+					</entry>
+				</section>
+			</component>
+			<!-- R [1..1] ВИМИС: СЕКЦИЯ: МЕДИЦИНСКИЕ УСЛУГИ, НА КОТОРЫЕ НАПРАВЛЕН ПАЦИЕНТ -->
+			<component>
+				<section>
+					<!-- R [1..1] код секции -->
+					<code code="SERVICES" codeSystem="1.2.643.5.1.13.13.99.2.197" codeSystemVersion="1.7"  codeSystemName="Секции электронных медицинских документов" displayName="Оказанные услуги"/>
+					<!-- R [1..1] заголовок секции -->
+					<title>МЕДИЦИНСКИЕ УСЛУГИ, НА КОТОРЫЕ НАПРАВЛЕН ПАЦИЕНТ</title>
+					<!-- R [1..1] наполнение секции -->
+					<text>
+						<table width="100%">
+							<col width="20%"/>
+							<col width="80%"/>
+							<tbody>
+								<tr>
+									<th>Код</th>
+									<th>Услуга</th>
+								</tr>
+								<tr>
+									<td>B03.016.002</td>
+									<td>Общий (клинический) анализ крови</td>
+								</tr>
+								<tr>
+									<td>A04.20.001</td>
+									<td>Ультразвуковое исследование матки и придатков трансабдоминальное</td>
+								</tr>
+								<tr>
+									<td>B01.001.002</td>
+									<td>Прием (осмотр, консультация) врача-акушера-гинеколога повторный</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<!-- [0..*] Кодирование медицинской услуги -->
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<!-- R [1..1] Услуга, на которую направлен пациент -->
+							<code code="B03.016.002" displayName="Общий (клинический) анализ крови" codeSystem="1.2.643.5.1.13.13.11.1070" codeSystemVersion="2.6" codeSystemName="Номенклатура медицинских услуг"/>
+						</act>
+					</entry>
+					<!-- [0..*] Кодирование медицинской услуги -->
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<!-- R [1..1] Услуга, на которую направлен пациент  -->
+							<code code="A04.20.001" displayName="Ультразвуковое исследование матки и придатков трансабдоминальное" codeSystem="1.2.643.5.1.13.13.11.1070" codeSystemVersion="2.6" codeSystemName="Номенклатура медицинских услуг"/>
+						</act>
+					</entry>
+					<!-- [0..*] Кодирование медицинской услуги -->
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<!-- R [1..1] Услуга, на которую направлен пациент  -->
+							<code code="B01.001.002" displayName="Прием (осмотр, консультация) врача-акушера-гинеколога повторный" codeSystem="1.2.643.5.1.13.13.11.1070" codeSystemVersion="2.6" codeSystemName="Номенклатура медицинских услуг"/>
+						</act>
+					</entry>
+				</section>
+			</component>		
+			<!-- R [1..1] СЕКЦИЯ: Коды льгот (с кодированными элементами) -->
+			<component>
+				<section>
+					<!-- R [1..1] Код секции -->
+					<code code="BENEFITS" codeSystem="1.2.643.5.1.13.13.99.2.197" codeSystemVersion="1.7"  codeSystemName="Секции CDA документов" displayName="Льготы"/>
+					<!-- R [1..1] Заголовок секции -->
+					<title>Коды льгот</title>
+					<!-- R [1..1] Наполнение секции -->
+					<text>2552 (Диабет)</text>
+					<!-- [1..*] Кодирование льгот -->
+					<entry>
+						<!-- [1..1] Указание кода льготы -->
+						<observation classCode="OBS" moodCode="EVN">
+							<code code="2552" codeSystem="1.2.643.5.1.13.13.99.2.43" codeSystemVersion="1.2" codeSystemName="Льготные категории населения" displayName="Диабет"/>
+							<statusCode code="completed"/>
+						</observation>
+					</entry>
+				</section>
+			</component>
+			<!-- R [1..1] СЕКЦИЯ: Место работы и должность (без кодированных элементов) -->
+			<component>
+				<section>
+					<!-- R [1..1] Код секции -->
+					<code code="WORK" codeSystem="1.2.643.5.1.13.13.99.2.197" codeSystemVersion="1.7"  codeSystemName="Секции CDA документов" displayName="Место работы и должность, условия труда"/>
+					<!-- R [1..1] Заголовок секции -->
+					<title>Место работы, должность</title>
+					<!-- [1..1] Наполнение секции -->
+					<text>ПАО "СБЕР-банк России". Менеджер.</text>
+				</section>
+			</component>
+			<!-- [0..1] ВИМИС: Диагноз (с кодированными элементами) -->
+			<component>
+				<section>
+					<!-- R [1..1] Код секции -->
+					<code code="DGN" codeSystem="1.2.643.5.1.13.13.99.2.197" codeSystemVersion="1.7"  codeSystemName="Секции электронных медицинских документов" displayName="Диагнозы"/>
+					<!-- R [1..1] Заголовок секции -->
+					<title>ДИАГНОЗЫ</title>
+					<!-- R [1..1] Наполнение секции -->
+					<text>		
+						<paragraph><caption>Диагноз: O30.0 Беременность двойней</caption></paragraph>
+						<table width="100%">
+							<col width="50%"/>
+							<col width="50%"/>
+							<tbody>
+								<tr>
+									<th>Степень обоснованности диагноза</th>
+									<td ID="VREFERENCE_9200">Заключительный клинический диагноз</td>
+								</tr>
+								<tr>
+									<th>Вид нозологической единицы диагноза</th>
+									<td ID="VREFERENCE_9201">Основное заболевание</td>
+								</tr>
+								<tr>
+									<th>Дата установления диагноза</th>
+									<td>10.08.2020</td>
+								</tr>
+								<tr>
+									<th>Заболевание (состояние) по МКБ-10</th>
+									<td ID="VREFERENCE_9202">O30.0 Беременность двойней</td>
+								</tr>
+								<tr>
+									<th>Характер заболевания</th>
+									<td ID="VREFERENCE_9203">Ранее установленное хроническое</td>
+								</tr>
+								<tr>
+									<th>Характер течения заболевания</th>
+									<td ID="VREFERENCE_9216">Субкомпенсированный</td>
+								</tr>
+								<tr>
+									<th>Клинический диагноз</th>
+									<td>Беременность 22-23 недели. Бихориальная биамниотическая двойня. Головное предлежание I плода. Отягощенный акушерский анамнез. Рубец на матке после кесарева сечения. Низкая плацентация. Железодефицитная анемия 1 степени. Поперечно-суженный таз 1 степени сужения. Миопия слабой степени. Аутоиммунный тиреоидит. Эутиреоз.</td>
+								</tr>
+								<tr>
+									<th colspan="2">Уточнение диагноза состояния беременности</th>
+								</tr>
+								<tr>
+									<th>Текущий срок беременности (в днях)</th>
+									<td ID="VREFERENCE_9205">157 (22 недели 3 дня)</td>
+								</tr>
+								<tr>
+									<th>Количество плодов при данной беремености</th>
+									<td ID="VREFERENCE_9206">2</td>
+								</tr>
+								<tr>
+									<th>Текущая беременность по счёту</th>
+									<td ID="VREFERENCE_9207">2</td>
+								</tr>
+								<tr>
+									<th>Текущие (планируемые) роды по счёту</th>
+									<td ID="VREFERENCE_9208">2</td>
+								</tr>
+								<tr>
+									<th>Тип зачатия</th>
+									<td ID="VREFERENCE_9209">Естественное</td>
+								</tr>
+								<tr>
+									<th>Расположение плаценты</th>
+									<td ID="VREFERENCE_9210">Низкая плацентация</td>
+								</tr>
+								<tr>
+									<th>Степень миопии</th>
+									<td ID="VREFERENCE_9211">1 степень</td>
+								</tr>
+								<tr>
+									<th>Степень сужения таза беременной</th>
+									<td ID="VREFERENCE_9212">1 степень</td>
+								</tr>
+								<tr>
+									<th>Форма таза беременной</th>
+									<td ID="VREFERENCE_9213">Нормальная</td>
+								</tr>
+								<tr>
+									<th>Количество околоплодных вод</th>
+									<td ID="VREFERENCE_9215">нормальное</td>
+								</tr>
+								<tr>
+									<th>Степень анемии</th>
+									<td ID="VREFERENCE_9217">легкая</td>
+								</tr>
+								<tr>
+									<th>Суррогатное материнство</th>
+									<td ID="VREFERENCE_9218">-</td>
+								</tr>
+								<tr>
+									<th>Дополнительные сведения о плоде</th>
+									<td>
+										<content>Первый плод</content>
+										<list>
+											<item>
+												<content ID="VREFERENCE_9219">Положение плода: Продольное</content><br/>
+												<content ID="VREFERENCE_9220">Предлежание плода: Головное</content><br/>
+												<content ID="VREFERENCE_9221">Степени задержки внутриутробного роста плода (ЗВРП): 1 степень</content><br/>
+												<content ID= "VREFERENCE_9222">Резус-принадлежность плода: Ген резус-фактора обнаружен</content><br/>
+											</item>
+										</list>
+										<content>Второй плод</content>
+										<list>
+											<item>
+												<content ID="VREFERENCE_9224">Положение плода: Поперечное</content><br/>
+												<content ID="VREFERENCE_9225">Предлежание плода: Предлежание плечика</content><br/>
+												<content ID="VREFERENCE_9226">Степени задержки внутриутробного роста плода (ЗВРП): 1 степень</content><br/>
+												<content ID= "VREFERENCE_9227">Резус-принадлежность плода: Ген резус-фактора обнаружен</content><br/>
+											</item>
+										</list>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<!-- R [1..*] ВИМИС: Кодирование диагноза -->
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<!-- R [1..1] Степень обоснованности диагноза -->
+							<code code="3" codeSystem="1.2.643.5.1.13.13.11.1076" codeSystemVersion="1.2" codeSystemName="Степень обоснованности диагноза" displayName="Заключительный клинический диагноз " >
+								<originalText>
+									<reference value="#VREFERENCE_9200"></reference>
+								</originalText>
+							</code>
+							<!-- R [1..*] ВИМИС: Кодирование диагноза указанной степени обоснованности -->
+							<entryRelationship typeCode="COMP">
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- R [1..1] Кодирование вида нозологической единицы диагноза -->
+									<code code="1" codeSystem="1.2.643.5.1.13.13.11.1077" codeSystemVersion="1.3" displayName="Основное заболевание" codeSystemName="Виды нозологических единиц диагноза">
+										<originalText>
+											<reference value="#VREFERENCE_9201"></reference>
+										</originalText>
+									</code>
+									<!-- R [1..1] Клинический диагноз -->
+									<text>Беременность 22-23 недели. Бихориальная биамниотическая двойня. Головное предлежание I плода. Отягощенный акушерский анамнез. Рубец на матке после кесарева сечения. Низкая плацентация. Железодефицитная анемия 1 степени. Поперечно-суженный таз 1 степени сужения. Миопия слабой степени. Аутоиммунный тиреоидит. Эутиреоз.</text>
+									<!-- R [1..1] Дата установления диагноза  -->
+									<effectiveTime value="202008101600+0300"/>
+									<!-- R [1..1] Заболевание (состояние) по МКБ-10 -->
+									<value xsi:type="CD" code="O30.0" codeSystem="1.2.643.5.1.13.13.11.1005" codeSystemVersion="2.10" codeSystemName="Международная классификация болезней и состояний, связанных со здоровьем 10 пересмотра. Версия 4" displayName="Беременность двойней" >
+										<originalText>
+											<reference value="#VREFERENCE_9202"></reference>
+										</originalText>
+									</value>
+									<!-- [0..1] Характер заболевания -->
+									<value xsi:type="CD" code="2" codeSystem="1.2.643.5.1.13.13.11.1049" codeSystemVersion="2.1" codeSystemName="Характер заболевания" displayName="Ранее установленное хроническое">
+										<originalText>
+											<reference value="#VREFERENCE_9203"></reference>
+										</originalText>
+									</value>
+									<!-- [0..1] Характер течения заболевания -->
+									<value xsi:type="CD" code="62" codeSystem="1.2.643.5.1.13.13.11.1062" codeSystemVersion="1.0" displayName="Субкомпенсированный" codeSystemName="Характер течения заболевания">
+										<originalText>
+											<reference value="#VREFERENCE_9216"></reference>
+										</originalText>
+									</value>
+									<!-- [0..1] Уточнение диагноза состояния беременности -->
+									<entryRelationship typeCode="COMP">
+										<observation classCode="OBS" moodCode="EVN">
+											<!-- R [1..1] Кодирование секции дополнительных сведений о диагнозе -->
+											<code code="DiagnosisAKINEO" codeSystem="vimis1" codeSystemVersion="1.0" displayName="Уточнение диагноза состояния беременности" codeSystemName="Секции СЭМД beta-версии"/>
+											<!-- R [1..1] Текущий срок беременности (в днях) -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="128" codeSystem="vimis5" codeSystemVersion="1.0" codeSystemName="Поля СЭМД beta-версии" displayName="Текущий срок беременности (в днях)"/>
+													<text><reference value="#VREFERENCE_9205"/></text>
+													<value xsi:type="INT" value="157"/>
+												</observation>
+											</entryRelationship>
+											<!-- R [1..1] Количество плодов при данной беремености -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="132" codeSystem="vimis5" codeSystemVersion="1.0" codeSystemName="Поля СЭМД beta-версии" displayName="Количество плодов при данной беремености"/>
+													<text><reference value="#VREFERENCE_9206"/></text>
+													<value xsi:type="INT" value="2"/>
+												</observation>
+											</entryRelationship>
+											<!-- R [1..1] Текущая беременность по счёту -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="126" codeSystem="vimis5" codeSystemVersion="1.0" codeSystemName="Поля СЭМД beta-версии" displayName="Текущая беременность по счёту"/>
+													<text><reference value="#VREFERENCE_9207"/></text>
+													<value xsi:type="INT" value="2"/>
+												</observation>
+											</entryRelationship>
+											<!-- R [1..1] Текущие (планируемые) роды по счёту -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="127" codeSystem="vimis5" codeSystemVersion="1.0" codeSystemName="Поля СЭМД beta-версии" displayName="Текущие (планируемые) роды по счёту"/>
+													<text><reference value="#VREFERENCE_9208"/></text>
+													<value xsi:type="INT" value="2"/>
+												</observation>
+											</entryRelationship>
+											<!-- R [1..1] Тип зачатия -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.404" codeSystemVersion="1.1" displayName="Естественное" codeSystemName="Тип зачатия">
+														<originalText>
+															<reference value="#VREFERENCE_9209"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [1..1] Расположение плаценты -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="2" codeSystem="1.2.643.5.1.13.13.99.2.668" codeSystemVersion="1.1" displayName="Низкая плацентация" codeSystemName="ВИМИС. Расположение плаценты по отношению к шейке матки">
+														<originalText>
+															<reference value="#VREFERENCE_9210"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [1..1] Степени миопии -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.674" codeSystemVersion="1.1" displayName="1 степень" codeSystemName="ВИМИС. Степень миопии">
+														<originalText>
+															<reference value="#VREFERENCE_9211"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [1..1] Степень сужения таза беременной -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code  code="1" codeSystem="1.2.643.5.1.13.13.99.2.676" codeSystemVersion="1.1" displayName="1 степень" codeSystemName="ВИМИС. Степень сужения таза у беременной">
+														<originalText>
+															<reference value="#VREFERENCE_9212"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [0..1] Форма таза беременной -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="1" codeSystem="VIMISAKINEO7" codeSystemVersion="1.0" displayName="нормальная" codeSystemName="Форма таза беременной">
+														<originalText>
+															<reference value="#VREFERENCE_9213"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [1..1] Количество околоплодных вод  -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.662" codeSystemVersion="1.1" displayName="Нормальное" codeSystemName="ВИМИС. Количество околоплодных вод">
+														<originalText>
+															<reference value="#VREFERENCE_9215"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [1..1] Степень анемии -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.677" codeSystemVersion="1.1" displayName="Легкая" codeSystemName="ВИМИС. Степень тяжести анемии">
+														<originalText>
+															<reference value="#VREFERENCE_9217"></reference>
+														</originalText>
+													</code>
+												</observation>
+											</entryRelationship>
+											<!-- [0..1] Суррогатное материнство -->
+											<entryRelationship typeCode="COMP">
+												<observation classCode="OBS" moodCode="EVN">
+													<code code="125" codeSystem="vimis5" codeSystemVersion="1.0" codeSystemName="Поля СЭМД beta-версии" displayName="Суррогатное материнство">
+														<originalText>
+															<reference value="#VREFERENCE_9218"/>
+														</originalText>
+													</code>						
+													<value xsi:type="BL" value="false"/>
+												</observation>
+											</entryRelationship>
+											<!-- [1..*] Дополнительные сведения о плоде (заполяется по каждому плоду) -->
+											<entryRelationship typeCode="SPRT">
+												<observation classCode="OBS" moodCode="EVN">
+													<!-- [1..1] Положение плода -->
+													<code code="3" codeSystem="1.2.643.5.1.13.13.99.2.552" codeSystemVersion="1.0" displayName="Продольное" codeSystemName="Положение плода">
+														<originalText>
+															<reference value="#VREFERENCE_9219"></reference>
+														</originalText>
+													</code>
+													<!-- [1..1] Предлежание плода -->
+													<entryRelationship typeCode="COMP">
+														<observation classCode="OBS" moodCode="EVN">
+															<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.553" codeSystemVersion="2.1" codeSystemName="Предлежание плода" displayName="Головное">
+																<originalText>
+																	<reference value="#VREFERENCE_9220"></reference>
+																</originalText>
+															</code>
+														</observation>
+													</entryRelationship>
+													<!-- [0..1] Степень задержки внутриутробного роста плода (ЗВРП) -->
+													<entryRelationship typeCode="COMP">
+														<observation classCode="OBS" moodCode="EVN">
+															<code code="1" codeSystem="VIMISAKINEO10" codeSystemVersion="1.0" codeSystemName="Степень задержки внутриутробного роста плода (ЗВРП)" displayName="1 степень">
+																<originalText>
+																	<reference value="#VREFERENCE_9226"></reference>
+																</originalText>
+															</code>
+														</observation>
+													</entryRelationship>
+													<!-- [0..1] Резус-принадлежность плода -->
+													<entryRelationship typeCode="COMP">
+														<observation classCode="OBS" moodCode="EVN">
+															<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.670" codeSystemVersion="1.1" codeSystemName="ВИМИС. Резус-фактор плода" displayName="Ген резус-фактора обнаружен">
+																<originalText>
+																	<reference value="#VREFERENCE_9222"></reference>
+																</originalText>
+															</code>
+														</observation>
+													</entryRelationship>
+												</observation>
+											</entryRelationship>
+											<!-- [1..*] Дополнительные сведения о плоде (заполяется по каждому плоду) -->
+											<entryRelationship typeCode="SPRT">
+												<observation classCode="OBS" moodCode="EVN">
+													<!-- [1..1] Положение плода -->
+													<code code="1" codeSystem="1.2.643.5.1.13.13.99.2.552" codeSystemVersion="1.0" displayName="Поперечное" codeSystemName="Положение плода">
+														<originalText>
+															<reference value="#VREFERENCE_9224"></reference>
+														</originalText>
+													</code>
+													<!-- [1..1] Предлежание плода -->
+													<entryRelationship typeCode="COMP">
+														<observation classCode="OBS" moodCode="EVN">
+															<code code="6" codeSystem="1.2.643.5.1.13.13.99.2.553" codeSystemVersion="2.1" codeSystemName="Предлежание плода" displayName="Предлежание плечика">
+																<originalText>
+																	<reference value="#VREFERENCE_9225"></reference>
+																</originalText>
+															</code>
+														</observation>
+													</entryRelationship>
+													<!-- [0..1] Степень задержки внутриутробного роста плода (ЗВРП) -->
+													<entryRelationship typeCode="COMP">
+														<observation classCode="OBS" moodCode="EVN">
+															<code code="1" codeSystem="VIMISAKINEO10" codeSystemVersion="1.0" codeSystemName="Степень задержки внутриутробного роста плода (ЗВРП)" displayName="1 степень">
+																<originalText>
+																	<reference value="#VREFERENCE_9226"></reference>
+																</originalText>
+															</code>
+														</observation>
+													</entryRelationship>
+													<!-- [0..1] Резус-принадлежность плода -->
+													<entryRelationship typeCode="COMP">
+														<observation classCode="OBS" moodCode="EVN">
+															<code code="1" codeSystem="VIMISAKINEO13" codeSystemVersion="1.0" codeSystemName="Резус-принадлежность плода" displayName="Положительный">
+																<originalText>
+																	<reference value="#VREFERENCE_9227"></reference>
+																</originalText>
+															</code>
+														</observation>
+													</entryRelationship>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+				</section>
+			</component>
+			<!-- R [1..1] СЕКЦИЯ: Обоснование направления (без кодированных элементов) -->
+			<component>
+				<section>
+					<!-- R [1..1] код секции -->
+					<code code="ELU" codeSystem="1.2.643.5.1.13.13.99.2.197" codeSystemVersion="1.7"  codeSystemName="Секции CDA документов" displayName="Описание и обоснование направления"/>
+					<!-- R [1..1] заголовок секции -->
+					<title>Обоснование направления</title>
+					<!-- R [1..1] наполнение секции -->
+					<text styleCode="section_ELU">Для планового обследования</text>
+				</section>
+			</component>
+			<!-- [0..1] ВИМИС: Секция связанных документов (осмотр (консультация), на котором сформировано направление, а также ранее выполненные исследования)-->
+			<component>
+				<section>
+					<!-- [1..1] Код cекции связаных документов -->
+					<code code="vimisReferenceDocs" codeSystem="vimis1" codeSystemVersion="1.0" displayName="Связанные документы" codeSystemName="Секции СЭМД beta-версии" />
+					<title>Связаные документы</title>
+					<text styleCode="section_vimisReferenceDocs">
+						<list>
+							<item><content ID="VREFERENCE500">Осмотр (консультация) пациента</content>, 23.09.2020
+								<list>
+									<item><content ID="VREFERENCE501">B01.001.002</content> Прием (осмотр, консультация) врача-акушера-гинеколога повторный</item>
+								</list>
+							</item>
+							<item><content ID="VREFERENCE502">Протокол инструментального исследования</content>, 24.09.2020
+								<list>
+									<item><content ID="VREFERENCE503">A04.20.001</content> Ультразвуковое исследование матки и придатков трансабдоминальное</item>
+								</list>
+							</item>	
+							<item><content ID="VREFERENCE504">Протокол лабораторного исследования</content>, 24.09.2020
+								<list>
+									<item><content ID="VREFERENCE505">B03.016.004</content> Анализ крови биохимический общетерапевтический</item>
+								</list>
+							</item>
+						</list>
+					</text>
+					<!-- [0..*] ВИМИС: Связанный документ - Осмотр (консультация), на котором сформировано направление  -->
+					<entry>
+						<observation classCode="OBS" moodCode="EVN">
+							<!-- R [1..1] Уникальный идентификатор набора версий документа -->
+							<id root="1.2.643.5.1.13.3.25.77.50.100.1.1.59" extension="061145889401"/>
+							<!-- R [1..1] Код СЭМД beta-версии по справочнику 1.2.643.5.1.13.13.99.2.592 / Код СЭМД по справочнику 1.2.643.5.1.13.13.99.2.195 -->
+							<code code="SMSV5" codeSystem="1.2.643.5.1.13.13.99.2.592" codeSystemName="Типы структурированных медицинских сведений" displayName="Осмотр (консультация) пациента">
+								<originalText>
+									<reference value="#VREFERENCE500"></reference>
+								</originalText>
+							</code>
+							<!-- R [1..1] Дата создания документа -->
+							<effectiveTime value="202007231600+0300" />
+							<!-- [0..*] Массив услуг в рамках документа -->
+							<value xsi:type="CD" code="B01.001.001" displayName="Прием (осмотр, консультация) врача-акушера-гинеколога первичный" codeSystem="1.2.643.5.1.13.13.11.1070" codeSystemVersion="2.6" codeSystemName="Номенклатура медицинских услуг" >
+								<originalText>
+									<reference value="#VREFERENCE501"></reference>
+								</originalText>
+							</value>
+						</observation>
+					</entry>
+					<!-- [0..*] ВИМИС: Связанный документ - Протоколы ранее выполненнных инструментальных исследований -->
+					<entry>
+						<observation classCode="OBS" moodCode="EVN">
+							<!-- R [1..1] Уникальный идентификатор набора версий документа -->
+							<id root="1.2.643.5.1.13.3.25.77.50.100.1.1.59" extension="061145889301"/>
+							<!-- R [1..1] Код СЭМД beta-версии по справочнику 1.2.643.5.1.13.13.99.2.592 / Код СЭМД по справочнику 1.2.643.5.1.13.13.99.2.195 -->
+							<code code="SMSV2" codeSystem="1.2.643.5.1.13.13.99.2.592" codeSystemName="Типы структурированных медицинских сведений" displayName="Протокол инструментального исследования">
+								<originalText>
+									<reference value="#VREFERENCE502"></reference>
+								</originalText>
+							</code>
+							<!-- R [1..1] Дата создания документа -->
+							<effectiveTime value="202007241600+0300" />
+							<!-- [0..*] Массив услуг в рамках документа -->
+							<value xsi:type="CD" code="A06.30.005.002" displayName="Компьютерная томография органов брюшной полости и забрюшинного пространства с внутривенным болюсным контрастированием" codeSystem="1.2.643.5.1.13.13.11.1070" codeSystemVersion="2.6" codeSystemName="Номенклатура медицинских услуг" >
+								<originalText>
+									<reference value="#VREFERENCE503"></reference>
+								</originalText>
+							</value>
+						</observation>
+					</entry>
+					<!-- [0..*] Протоколы ранее выполненнных лабораторных исследований -->
+					<entry>
+						<observation classCode="OBS" moodCode="EVN">
+							<!-- R [1..1] Уникальный идентификатор набора версий документа -->
+							<id root="1.2.643.5.1.13.3.25.77.50.100.1.1.59" extension="659481548"/>
+							<!-- R [1..1] Код СЭМД beta-версии по справочнику 1.2.643.5.1.13.13.99.2.592 / Код СЭМД по справочнику 1.2.643.5.1.13.13.99.2.195 -->
+							<code code="SMSV3" codeSystem="1.2.643.5.1.13.13.99.2.592" codeSystemName="Типы структурированных медицинских сведений" displayName="Протокол лабораторного исследования">
+								<originalText>
+									<reference value="#VREFERENCE504"></reference>
+								</originalText>
+							</code>
+							<!-- R [1..1] Дата создания документа -->
+							<effectiveTime value="202007241600+0300" />
+							<!-- [0..*] Массив услуг в рамках документа -->
+							<value xsi:type="CD" code="B03.016.004" displayName="Анализ крови биохимический общетерапевтический" codeSystem="1.2.643.5.1.13.13.11.1070" codeSystemVersion="2.6" codeSystemName="Номенклатура медицинских услуг" >
+								<originalText>
+									<reference value="#VREFERENCE505"></reference>
+								</originalText>
+							</value>
+						</observation>
+					</entry>
+				</section>
+			</component>
+			<!-- R [1..1] ВИМИС: Данные о медицинских картах пациента  -->
+			<component>
+				<section>
+					<!-- R [1..1] Код секции -->
+					<code code="vimisMedicalCard" codeSystem="vimis1" codeSystemVersion="1.0" displayName="Медицинские карты пациента" codeSystemName="Секции СЭМД beta-версии" />
+					<!-- R [1..1] Заголовок секции -->
+					<title>Данные о медицинских картах пациента</title>
+					<!-- R [1..1] Наполнение секции -->
+					<text>
+						<!-- R [1..1] Наполнение секции -->
+						<paragraph><caption ID="VREFERENCE_100">Индивидуальная карта беременной и родильницы</caption></paragraph>
+						<table>
+							<tbody>
+								<tr>
+									<th>Номер</th>
+									<td ID="VREFERENCE_101">КВ-3020/901</td>
+								</tr>
+								<tr>
+									<th>Дата создания</th>
+									<td ID="VREFERENCE_102">25.07.2018</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<!-- R [1..*] ВИМИС: Данные о медицинских картах пациента -->
+					<entry>
+						<observation classCode="OBS" moodCode="EVN">
+							<!-- R [1..1] Уникальный идентификатор медицинской карты -->
+							<id root="1.2.643.5.1.13.3.25.77.50.100.1.1.59" extension="3020/901"/>
+							<!-- R [1..1] Тип медицинской карты -->
+							<code code="4" codeSystem="1.2.643.5.1.13.13.99.2.682" codeSystemVersion="1.1" codeSystemName="Вид медицинской документации" displayName="Индивидуальная карта беременной и родильницы" >
+								<originalText>
+									<reference value="#VREFERENCE_100"></reference>
+								</originalText>
+							</code>
+							<!-- [1..1] Номер медицинской карты -->
+							<text>
+								<reference value="#VREFERENCE_101"></reference>
+								КВ-3020/901
+							</text>
+							<!-- [1..1] Дата создания медицинской карты  -->
+							<effectiveTime value="201807251600+0300"/>
+						</observation>
+					</entry>
+				</section>
+			</component>
+		</structuredBody>
+	</component>
+</ClinicalDocument>

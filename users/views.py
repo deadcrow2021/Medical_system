@@ -849,10 +849,19 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     return render(request, template_name, { 'profile_id': profile_id })
 
 samd_temlates = {
-    'make_1': make_1,
+    'medical_services_provision_referral': medical_services_provision_referral,
+    'instrumental_research_protocol': instrumental_research_protocol,
+
+    'laboratory_test_protocol': laboratory_test_protocol,
+    'patient_examination_consultation': patient_examination_consultation,
+    'treatment_in_hospital': treatment_in_hospital,
+    'maternity_hospital_discharge_epicrisis': maternity_hospital_discharge_epicrisis,
+    'cytological_examination_protocol': cytological_examination_protocol,
+    'medical_death_certificate': medical_death_certificate,
+    'medical_perinatal_death_certificate': medical_perinatal_death_certificate,
 }
 
 def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> HttpResponse:
     template_name: str = 'users/generate_samd.html'
     print(f'{samd_temlates[samd]()}')
-    return render(request, template_name)
+    return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
