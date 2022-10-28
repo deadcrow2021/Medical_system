@@ -19,11 +19,11 @@
     Пациент: <strong>{{ current_user.patient.get_full_name }}</strong>
 </div>
 
-<div class="fields">
+<div class="fields center_div">
     {% for p in form %}
     <div class="fields__input">
         <div class="fields__input__label">
-            {{ p.label_tag }}
+            <strong>{{ p.label_tag }}</strong>
         </div>
         <div class="fields__input__field noborder">
         {% if p.field.choices %}
@@ -48,7 +48,7 @@
         {% for p in risk %}
         <div class="fields__input">
             <div class="fields__input__label">
-                {{ p.label_tag }}
+                <strong>{{ p.label_tag }}</strong>
             </div>
             <div class="fields__input__field noborder">
             {% for i in p.field.choices %}
@@ -63,7 +63,7 @@
                 {% for p in risk_form %}
                 <div class="fields__input">
                     <div class="fields__input__label">
-                        {{ p.label_tag }}
+                        <strong>{{ p.label_tag }}</strong>
                     </div>
                     <div class="fields__input__field noborder">
                     {% if not p.value %}
@@ -83,7 +83,7 @@
         let elem = document.querySelector(`label[for=id_${id}]`);
         if (elem === null)
             return;
-        elem = elem.parentNode.parentNode;
+        elem = elem.parentNode.parentNode.parentNode;
         
         let label = document.createElement('h3');
         label.innerText = name + ':';

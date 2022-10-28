@@ -6,14 +6,16 @@
 </div>
 
 {% if user.doctor %}
+<div class="cut_width">
     {% for key, name in keys_names %}
     <div class="block__profile__docs">
         <div class="block__lines">
-            <div class="lines__element btn">
+            <div class="lines__element btn same_btn">
                 <a href="{% url 'profile-models-template' current_user.id key %}">{{ name }}</a>
             </div>
         </div>
     </div>
     {% endfor %}
+</div>
 {% endif %}
 {% endblock %}

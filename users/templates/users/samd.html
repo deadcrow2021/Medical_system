@@ -1,0 +1,55 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
+</div>
+
+<div class="block__profile__docs cut_width">
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Направление на оказание медицинских услуг</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Протокол инструментального исследования</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Протокол лабораторного исследования</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Осмотр (консультация) пациента</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Лечение в условиях стационара (дневного стационара)</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Выписной эпикриз родильного дома</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Протокол цитологического исследования</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Медицинское свидетельство о смерти (CDA)</a>
+        </div>
+    </div>
+    <div class="block__lines">
+        <div class="lines__element btn same_btn">
+            <a href="{% url 'generate-samd' profile_id 'make_1' %}">Медицинское свидетельство о перинатальной смерти (CDA)</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

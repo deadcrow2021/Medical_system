@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="file__page__block">
-    <div class="upload-file">
+    <div class="upload-file btn">
         {% if user.is_superuser %}
             <a href="{% url 'upload-files-page' %}">Загрузить Файлы</a>
         {% endif %}
