@@ -900,3 +900,5 @@ class MODelivery(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='mo_delivery')
     delivery = models.CharField('МО родоразрешения', max_length=10, blank=True, null=True, choices=MO_DELIVERY)
     
+    def __str__(self) -> str:
+        return self.delivery if self.delivery else "Недостаточно данных"

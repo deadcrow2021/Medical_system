@@ -97,7 +97,22 @@
                 </div>
             </div>
             {% endfor %}
+            
+            {% for name, val in risks %}
             <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ name }}</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {% if val %}
+                        {{ val }}
+                    {% else %}
+                        Недостаточно данных
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% comment %} <div class="fields__input">
                 <div class="fields__input__label">
                     <strong>Дата рождения:</strong>
                 </div>
@@ -139,7 +154,7 @@
             </div>
             <div class="fields__input">
                 <div class="fields__input__label">
-                    <strong>Преждевременные роды: </strong>
+                    <strong>Преждевременные роды:</strong>
                 </div>
                 <div class="fields__input__field noborder">
                     {{premature_birth}}
@@ -164,7 +179,7 @@
                         не указан
                     {% endif %}
                 </div>
-            </div>
+            </div> {% endcomment %}
         </div>
         
         {% if user.is_superuser %}

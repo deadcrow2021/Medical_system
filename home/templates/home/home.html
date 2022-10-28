@@ -24,9 +24,20 @@
         </div>
         
         {% if user.patient %}
-        <div class="lines__element btn">
-            <p><a href="{% url 'records' %}">Записи самонаблюдения</a></p>
+        <a href="{% url 'records' %}">
+            <div class="lines__element btn same_btn">
+                <p>Записи самонаблюдения</p>
+            </div>
+        </a>
+        {% for key, name in keys_names %}
+        <div class="block__profile__docs">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <a href="{% url 'observation' user.id key %}">{{ name }}</a>
+                </div>
+            </div>
         </div>
+        {% endfor %}
         {% endif %}
     </div>
     {% endif %}

@@ -158,9 +158,12 @@ def profile(request: HttpRequest, profile_id):
 
         try:
             last_pregnancy = user_profile.pregnancy_info.latest('id')
-            if  any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()) or user_profile.card.age >= 35 \
-                or (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24) \
-                or last_pregnancy.pregnancy == '4' or last_pregnancy.pregnancy_1 == '2' or user_profile.patient_information.latest('id').sti:
+            if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
+                    user_profile.card.age >= 35,
+                    (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
+                    last_pregnancy.pregnancy == '4',
+                    last_pregnancy.pregnancy_1 == '2',
+                    user_profile.patient_information.latest('id').sti):
                 premature_birth = 'Высокий'
             else:
                 premature_birth = 'Низкий'
@@ -183,7 +186,18 @@ def profile(request: HttpRequest, profile_id):
                     risk_values_sum = 0
         except:
             risk_values_sum = 'Введено не числовое значение'
-
+        
+        risks = (
+            ('Преэклампсия',               preeclampsia),
+            ('Преждевременные роды',       premature_birth),
+            ('Баллы перинатального риска', risk_values_sum),
+            ('Лечащий врач',               treating_doctor),
+            ('Срок беременности',          gestation_period),
+            ('Дата рождения',              date_of_birth),
+            ('Адрес проживания',           residence_address),
+            ('МО родоразрешения',          mo_delivery),
+        )
+        
         return render(request, template_name, {
             'profile':           user_profile,
             'user_type':         user_type,
@@ -193,14 +207,15 @@ def profile(request: HttpRequest, profile_id):
             'buttons':           buttons,
             'examinations':      examinations,
             'notes':             notes,
-            'preeclampsia':      preeclampsia,
-            'mo_delivery':       mo_delivery,
-            'premature_birth':   premature_birth,
-            'risk_values_sum':   risk_values_sum,
-            'treating_doctor':   treating_doctor,
-            'gestation_period':  gestation_period,
-            'date_of_birth':     date_of_birth,
-            'residence_address': residence_address,
+            'risks':             risks
+            # 'preeclampsia':      preeclampsia,
+            # 'mo_delivery':       mo_delivery,
+            # 'premature_birth':   premature_birth,
+            # 'risk_values_sum':   risk_values_sum,
+            # 'treating_doctor':   treating_doctor,
+            # 'gestation_period':  gestation_period,
+            # 'date_of_birth':     date_of_birth,
+            # 'residence_address': residence_address,
         })
 
 
