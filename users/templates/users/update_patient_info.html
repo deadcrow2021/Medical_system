@@ -6,31 +6,89 @@
 </div>
 
 {% if user.doctor %}
-<div class="form__block">
-    <div class="outer_div">
-        <div class="border_div">
-            <form action="" method="POST">
-                {% csrf_token %}
-                <div class="fields add_form">
-                    {% for p in form %}
-                    <div class="fields__input">
-                        <div class="fields__input__label">
-                            {{ p.label_tag }}
-                        </div>
-                        <div class="fields__input__field">
-                            {{ p }}
-                        </div>
-                    </div>
-                    {{ p.errors }}
-                    {% endfor %}
-                    {{ form.errors }}
-                </div>
-                <div class="submit-btn">
-                    <button type="submit" class="btn">Добавить</button>
-                </div>
-            </form>
+<form action="" method="POST"  style="display: none">
+    {% csrf_token %}
+    <div class="fields">
+        {% for p in form %}
+        <div class="fields__input">
+            <div class="fields__input__label">
+                <strong>{{ p.label_tag }}</strong>
+            </div>
+            <div class="fields__input__field">
+                {{ p }}
+            </div>
+        </div>
+        {{ p.errors }}
+        {% endfor %}
+        {{ form.errors }}
+        <div class="submit-btn">
+            <button type="submit" class="btn">Сохранить</button>
         </div>
     </div>
-</div>
+</form>
+
 {% endif %}
+<script type="text/javascript">
+    var count = {
+        'Врожденные пороки развития': 2,
+        'Рост': 1,
+        'Масса тела': 1,
+        'ИМТ': 1,
+        'Риск преэклампсии': 2,
+        'Риск преждевременных родов': 2,
+        'Риск задержки роста плода': 2,
+        'Риск тромбоэболических осложнений': 2,
+        'Другие риски': 2,
+        'Детские инфекции': 2,
+        'Диспансерский учет': 2,
+        'Травмы/операции': 2,
+        'Соматические заболевания': 2,
+        'Социально значимые инфекции': 2,
+        'ВИЧ-статус': 3,
+        'Антиретровирусная терапия': 1,
+        'Наследственные заболевания': 2,
+        'Гемотрансфузии': 2,
+        'Последняя флюорография': 2,
+        'Вредные привычки': 5,
+        'Профессиональные вредности': 2,
+        'Сведения о прививках': 8,
+        'Менструация': 4,
+        'Половая жизнь': 1,
+        'Контрацепция': 2,
+        'Гинекологические заболевания': 2,
+        'Инфекции, передаваемые половым путем': 3,
+        'Последнее обследование молочных желез': 3,
+        'Последнее цитологическое исследование микропрепарата шейки матки': 3,
+        //'Подтверждение врача': 1,
+    }
+    
+    var fields = document.getElementsByClassName('fields')[0];
+    var elem = fields.children[0];
+    
+    for (let [name, idx] of Object.entries(count)) {
+        let div = document.createElement('div');
+        div.setAttribute('class', 'outer_div');
+        
+        let inner_div = document.createElement('div');
+        inner_div.setAttribute('class', 'border_div');
+        
+        if (elem.children[0].innerText.indexOf(name) < 0) {
+            inner_div.innerHTML = `<div class="fields__input"><div class="fields__input__label"><strong>${name}:</strong></div></div>`;
+        }
+        
+        for(let i = 0; i < idx; i++) {
+            let next = elem.nextElementSibling;
+            inner_div.appendChild(elem);
+            elem = next;
+            if (elem === null)
+                break;
+        }
+        
+        div.appendChild(inner_div);
+        fields.appendChild(div);
+    }
+    fields.appendChild(fields.children[0]);
+    var form = document.querySelector('form');
+    form.style.display = 'block';
+</script>
 {% endblock %}

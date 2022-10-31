@@ -73,6 +73,12 @@ def generate_pdf(lines: list):
     return FileResponse(buf, as_attachment=True, filename='sampled_patients.pdf')
 
 
+observation_template_models = (
+    ('appointments', 'Лист назначений' ),
+    ('medications', 'Прием лекарственных препаратов во время данной беременности' ),
+)
+
+
 @login_required
 def home_page(request):
     template_name: str = 'home/home.html'
@@ -90,11 +96,15 @@ def home_page(request):
         context |= { 'account': user_account, 'related_patients': related_patients }
         return render(request, template_name, context)
     elif user_type == 'patient':
+        keys_names = []
+        for key, val in observation_template_models:
+            keys_names.append((key, val))
         user_account = user.patient
         # records = user_account.records.all()
         notes = [ReceptionViewForm(instance=x) for x in ReceptionNotes.objects.filter(patient=user_account)]
         context |= { 'notes': notes }
         context |= { 'account': user_account }#'records': records }
+        context |= { 'keys_names': keys_names }
         return render(request, template_name, context)
     else:
         return render(request, template_name, context)
