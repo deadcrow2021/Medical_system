@@ -209,14 +209,13 @@ class ReceptionView(LoginRequiredMixin, ListView):
         return context
 
 
-class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
+def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name = 'home/add_reception.html'
-    success_url: str = 'profile'
     form_class = ReceptionAddForm
-    context_object_name: str = 'form'
+    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     
-    def post(self, request: HttpRequest, profile_id: int, *args: Any, **kwargs: Any) -> HttpResponse:
-        form: ReceptionAddForm = self.form_class(request.POST)
+    if request.method == "POST":
+        form: ReceptionAddForm = form_class(request.POST)
         if form.is_valid():
             commit: ReceptionNotes = form.save(commit=False)
             commit.doctor = request.user.doctor
@@ -225,9 +224,14 @@ class ReceptionAddView(LoginRequiredMixin, UserIsDoctor, CreateView):
             commit.med_organization = request.user.doctor.med_org
             commit.patient = User.objects.get(pk=profile_id).patient
             commit.save()
-            return HttpResponseRedirect(reverse(self.success_url, kwargs={ 'profile_id': profile_id }))
+            # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
+            notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+            form: ReceptionAddForm = form_class()
+            return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
         else:
-            return render(request, self.template_name, { 'form': form })
+            return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
+    
+    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
 
 
 def records_page(request: HttpRequest) -> HttpResponse:
