@@ -6,24 +6,28 @@
 </div>
 
 <div class="form__block">
-    <form action="" method="POST">
-        {% csrf_token %}
-        <div class="fields">
-            {% for f in form %}
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    {{ f.label }}:
+    <div class="outer_div">
+        <div class="border_div">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields">
+                    {% for f in form %}
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            {{ f.label }}:
+                        </div>
+                        <div class="fields__input__field">
+                            {{ f }}
+                        </div>
+                    </div>
+                    <p>{{ f.errors }}</p>
+                    {% endfor %}
                 </div>
-                <div class="fields__input__field">
-                    {{ f }}
+                <div class="submit-btn">
+                    <input type="submit" value="Сохранить">
                 </div>
-            </div>
-            <p>{{ f.errors }}</p>
-            {% endfor %}
+            </form>
         </div>
-        <div class="submit-btn">
-            <input type="submit" value="Сохранить">
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

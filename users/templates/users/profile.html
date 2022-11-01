@@ -26,7 +26,7 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
-                <p><a href="{% url 'add-reception' profile.user.id %}">Добавить прием</a></p>
+                <p><a href="{% url 'patient-reception' profile.user.id %}">План посещений</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -68,118 +68,45 @@
     {% endif %}
     
     <div class="">
-        <div class="">
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong><p>ФИО:</p></strong>
+        <div class="profile_data">
+            <div>
+                {% for p in form %}
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <strong>{{ p.label_tag }}</strong>
+                    </div>
+                    <div class="fields__input__field noborder">
+                    {% if p.field.choices %}
+                        {% for i in p.field.choices %}
+                            {% if p.value == i.0 %}
+                                {{i.1}}
+                            {% endif %}
+                        {% endfor %}
+                    {% elif p.value %}
+                        {{ p.value }}
+                    {% elif not p.value %}
+                        ---------
+                    {% endif %}
+                    </div>
                 </div>
-                <div class="fields__input__field noborder">
-                    {{ form.instance.get_full_name }}
-                </div>
+                {% endfor %}
             </div>
-            {% for p in form %}
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>{{ p.label_tag }}</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                {% if p.field.choices %}
-                    {% for i in p.field.choices %}
-                        {% if p.value == i.0 %}
-                            {{i.1}}
+            <div>
+                {% for name, val in risks %}
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <strong>{{ name }}</strong>
+                    </div>
+                    <div class="fields__input__field noborder">
+                        {% if val %}
+                            {{ val }}
+                        {% else %}
+                            Недостаточно данных
                         {% endif %}
-                    {% endfor %}
-                {% elif p.value %}
-                    {{ p.value }}
-                {% elif not p.value %}
-                    ---------
-                {% endif %}
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-            
-            {% for name, val in risks %}
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>{{ name }}</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if val %}
-                        {{ val }}
-                    {% else %}
-                        Недостаточно данных
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-            {% comment %} <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Дата рождения:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if date_of_birth %}
-                        {{date_of_birth}}
-                    {% else %}
-                        не указана
-                    {% endif %}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Адрес проживания:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if residence_address %}
-                        {{residence_address}}
-                    {% else %}
-                        не указан
-                    {% endif %}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Баллы перинатального риска:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {{risk_values_sum}}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Преэклампсия:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {{preeclampsia}}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Преждевременные роды:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {{premature_birth}}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Лечащий врач:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {{treating_doctor}}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Срок беременности:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if gestation_period %}
-                        {{gestation_period}} недель
-                    {% else %}
-                        не указан
-                    {% endif %}
-                </div>
-            </div> {% endcomment %}
         </div>
         
         {% if user.is_superuser %}
@@ -199,82 +126,88 @@
                 {% endif %} {% endcomment %}
             </div>
         {% endif %}
-       
+        
         {% if user.doctor %}
-            <div class="">
-                <div class="fields__input">
-                    <form action="{% url 'follow-unfollow' %}" method="post">
-                        {% csrf_token %}
-                        <div class="fields__input__field hide">
-                            <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-                        </div>
-                        {% if follow %}
-                        <div class="">
-                            <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
-                        </div>
-                        {% else %}
-                        <div class="">
-                            <button id="follow-btn" class="btn" type="submit">Привязать</button>
-                        </div>
-                        {% endif %}
-                    </form>
+        <div class="fields__input">
+            <form action="{% url 'follow-unfollow' %}" method="post">
+                {% csrf_token %}
+                <div class="fields__input__field hide">
+                    <input type="hidden" name="profile_pk" value="{{profile.pk}}">
                 </div>
-            </div>
+                {% if follow %}
+                <div class="">
+                    <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
+                </div>
+                {% else %}
+                <div class="">
+                    <button id="follow-btn" class="btn" type="submit">Привязать</button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
         {% endif %}
-    
+        {% if not user.patient %}
+        <a href="{% url 'update-profile' profile.user.id %}">
+            <div class="fields__input btn">
+                <p>Изменить</p>
+            </div>
+        </a>
+        {% endif %}
+        
         <div>
             <h4>Планы посещений пациента</h4>
         </div>
         {% if notes %}
-            <div class="block__profile__disease">
-                <div class="block__lines">
-                    <div class="lines__element">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>{% if user.patient %}
-                                        Пациент
-                                        {% else %}
-                                        Доктор
-                                        {% endif %}
-                                    </th>
-                                    {% if user.is_superuser %}
-                                    <th>Пациент</th>
+        <div class="block__profile__disease border_div">
+            <div class="block__lines">
+                <div class="lines__element">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% if user.patient %}
+                                    Пациент
+                                    {% else %}
+                                    Доктор
                                     {% endif %}
-                                    <th>Дата</th>
-                                    <th>Медицинская организация</th>
-                                    <th>Специальность</th>
-                                    <th>Номер посещения специалиста</th>
-                                    <th>Кабинет</th>
-                                    <th>Посещено</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for note in notes %}
-                                <tr>
-                                    <td>
-                                        {% if user.patient %}
-                                            <p>{{ note.patient.get_full_name }}</p>
-                                        {% else %}
-                                            <p>{{ note.doctor.get_full_name }}</p>
-                                        {% endif %}
-                                    </td>
-                                    {% if user.is_superuser %}
-                                    <td><p>{{ note.patient.get_full_name }}</p></td>
+                                </th>
+                                {% if user.is_superuser %}
+                                <th>Пациент</th>
+                                {% endif %}
+                                <th>Дата</th>
+                                <th>Медицинская организация</th>
+                                <th>Специальность</th>
+                                <th>Номер посещения специалиста</th>
+                                <th>Кабинет</th>
+                                <th>Посещено</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for note in notes %}
+                            <tr>
+                                <td>
+                                    {% if user.patient %}
+                                        <p>{{ note.patient.get_full_name }}</p>
+                                    {% else %}
+                                        <p>{{ note.doctor.get_full_name }}</p>
                                     {% endif %}
-                                    <td><p class="">{{ note.date_meeting }}</p></td>
-                                    <td><p>{{ note.get_med_organization_display }}</p></td>
-                                    <td><p>{{ note.get_specialization_display }}</p></td>
-                                    <td><p>{{ note.visit_number }}</p></td>
-                                    <td><p>{{ note.cabinet }}</p></td>
-                                    <td><p>{{ note.status }}</p></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                </td>
+                                {% if user.is_superuser %}
+                                <td><p>{{ note.patient.get_full_name }}</p></td>
+                                {% endif %}
+                                <td><p class="">{{ note.date_meeting }}</p></td>
+                                <td><p>{{ note.get_med_organization_display }}</p></td>
+                                <td><p>{{ note.get_specialization_display }}</p></td>
+                                <td><p>{{ note.visit_number }}</p></td>
+                                <td><p>{{ note.cabinet }}</p></td>
+                                <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td>
+                                {% comment %} <td><p>{{ note.status }}</p></td> {% endcomment %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
         {% else %}
             <p>Посещения не назначены</p>
         {% endif %}
@@ -304,11 +237,11 @@
         banner.style.display = 'none';
     }
 </script>
-<script type='text/javascript'>
+{% comment %} <script type='text/javascript'>
     for (let name of ["first", "last", "father"]) {
         var elem = document.querySelector('label[for=id_'+name+'_name]')
         // console.log(elem);
         elem.parentNode.parentNode.parentNode.remove()
     }
-</script>
+</script> {% endcomment %}
 {% endblock %}
