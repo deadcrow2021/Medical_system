@@ -96,7 +96,7 @@
                     {% for patient in related_patients %}
                     <div class="user__block__border logs__row">
                         <div class="user__block__element">
-                            <p>{{ patient.get_full_name }}, {{ patient.age }} лет</p>
+                            <p><strong>ФИО:</strong> {{ patient.get_full_name }}, {{ patient.age }} лет</p>
                             <p><strong>Тел.:</strong> {{ patient.telephone }}, <strong>Email:</strong> {{ patient.email }}</p>
                         </div>
                         <div class="user__block__element">
@@ -115,13 +115,15 @@
             <h3>Клинические и методические рекомендации</h3>
         </legend>
         <div class="recomendations">
-            {% for doc in docs %}
-            <div class="user__block__border">
-                <div class="user__block__element">
-                    <a href="{{ doc.document.url }}" download>{{ doc.title }}</a>
+            <ul>
+                {% for doc in docs %}
+                <div class="user__block__border">
+                    <div class="user__block__element">
+                        <li><a href="{{ doc.document.url }}" download>{{ doc.title }}</a></li>
+                    </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            </ul>
         </div>
     </fieldset>
     {% endif %}

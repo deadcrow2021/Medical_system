@@ -31,7 +31,7 @@ button{cursor: pointer;}
 button::-moz-focus-inner {padding:0;border:0;}
 a, a:visited{text-decoration: none;}
 a:hover{text-decoration: none;}
-ul li{list-style: none;}
+ul li{list-style: disc;}
 img{vertical-align: top;}
 
 h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
@@ -50,6 +50,10 @@ fieldset {
 
 fieldset legend h3 {
     line-height: 32px;
+}
+
+fieldset .user__block__element {
+    font-size: 26px;
 }
 
 h2 {
@@ -535,7 +539,9 @@ a:hover {
 }
 
 .block__profile__disease {
-    margin: 0 20px;
+    /* margin: 0 20px; */
+    max-height: 30vh;
+    overflow: scroll;
 }
 
 th {
@@ -574,6 +580,11 @@ th {
     padding-bottom: 20px;
 }
 
+.recomendations li {
+    list-style-position: inside;
+    margin-bottom: 10px;
+}
+
 .cut_width {
     width: fit-content;
     max-width: 30vw;
@@ -584,8 +595,16 @@ th {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 100vw;
+    width: 100%;
     /* margin: 0; */
+}
+
+.center_paginate {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .statistics_block {
@@ -604,4 +623,18 @@ th {
     border: 1px solid black;
     border-radius: 10px;
     margin: 0 0 40px 0;
+}
+
+.profile_data {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.reception_page {
+    max-height: 60vh;
+}
+
+.reception_page tbody td,
+.reception_page thead th {
+    font-size: 20px;
 }
