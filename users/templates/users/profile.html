@@ -21,22 +21,12 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
-                <p><a href="{% url 'pregnancy-observation' profile.user.id %}">Наблюдение во время настоящей беременности</a></p>
-            </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'add-reception' profile.user.id %}">Добавить прием</a></p>
-            </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'portion-page' profile.user.id 'doctors_examinations' 'doctors_examinations' %}">Осмотры врачей специалистов</a></p>
-            </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
                 <p><a href="{% url 'portion-page' profile.user.id 'current_pregnancy' 'current_pregnancy' %}">Текущая беременность</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <p><a href="{% url 'pregnancy-observation' profile.user.id %}">Наблюдение во время настоящей беременности</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -46,17 +36,22 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
+                <p><a href="{% url 'add-reception' profile.user.id %}">Планы посещений</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <p><a href="{% url 'portion-page' profile.user.id 'doctors_examinations' 'doctors_examinations' %}">Осмотры врачей специалистов</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
                 <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности и родов</a></p>
-            </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'self-monitoring' profile.user.id %}">Записи самонаблюдений</a></p>
-            </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'update-mo-delivery' profile.user.id %}">МО родоразрешения</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -105,7 +100,11 @@
                 </div>
                 <div class="fields__input__field noborder">
                     {% if val %}
-                        {{ val }}
+                        {% if name == 'МО родоразрешения' %}
+                            <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
+                        {% else %}
+                            {{ val }}
+                        {% endif %}
                     {% else %}
                         Недостаточно данных
                     {% endif %}

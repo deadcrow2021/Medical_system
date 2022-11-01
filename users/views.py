@@ -2,6 +2,7 @@ from copy import deepcopy
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from datetime import timedelta
+from datetime import date
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
@@ -13,7 +14,6 @@ from django.utils.crypto import get_random_string
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from .search_patterns import *
 import django.contrib.messages as messages
 from home.views import add_log
@@ -246,7 +246,13 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            
+            data = form.save(commit=False)
+            date_of_birth = form.cleaned_data['date_of_birth']
+            today = date.today()
+            age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+            data.age = age
+            data.save()
             return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
     return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })
@@ -588,7 +594,11 @@ def update_patient_info_page(request, profile_id):
     if request.method == "POST":
         form = PatientInformationForm(request.POST, instance=instance)
         if form.is_valid():
-            form.save()
+
+            data = form.save(commit=False)
+            data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+            data.save()
+
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     else:
         form = PatientInformationForm(instance=instance)
@@ -784,6 +794,11 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
         if form.is_valid():
             patient = current_user.patient
             data = form.save(commit=False)
+            
+            if model_name == 'father':
+                data = form.save(commit=False)
+                data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+            
             data.patient = patient
             data.save()
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
@@ -857,19 +872,28 @@ def statistics_pade(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
     patients = Patient.objects.all()
     patients_number = len(patients)
-    gestation_period_undo_12 = 0
+    age_15_45 = 0
+    p_1 = 0
+    p_3 = 0
     
     for p in patients:
+        if p.card.age and 15 <= p.card.age <= 45:
+            age_15_45 += 1
+        
         first_exam_list = p.first_examination.all()
         if len([x for x in first_exam_list]) >= 1:
             if first_exam_list[0].gestation_period_weeks and int(first_exam_list[0].gestation_period_weeks) < 12:
-                gestation_period_undo_12 += 1
-                
+                p_1 += 1
+    
+        if any(x.if_abortion for x in p.pregnancy_outcome.all()) and 15 <= p.card.age <= 45:
+            p_3 += 1
         
     
     
     return render(request, template_name, {
-        'gestation_period_undo_12':gestation_period_undo_12*100/patients_number,
+        'p_1': p_1*100/patients_number,
+        'p_3': p_3*1000/age_15_45,
+        
     })
 
 
