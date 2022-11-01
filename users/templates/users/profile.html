@@ -81,51 +81,6 @@
                         {{ p.value }}
                     {% elif not p.value %}
                         ---------
-                {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-            
-            {% for name, val in risks %}
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>{{ name }}</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if val %}
-                        {% if name == 'МО родоразрешения' %}
-                            <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
-                        {% else %}
-                            {{ val }}
-                        {% endif %}
-                    {% else %}
-                        Недостаточно данных
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-            {% comment %} <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Дата рождения:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if date_of_birth %}
-                        {{date_of_birth}}
-                    {% else %}
-                        не указана
-                    {% endif %}
-                </div>
-            </div>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong>Адрес проживания:</strong>
-                </div>
-                <div class="fields__input__field noborder">
-                    {% if residence_address %}
-                        {{residence_address}}
-                    {% else %}
-                        не указан
->>>>>>> main
                     {% endif %}
                     </div>
                 </div>
@@ -139,7 +94,11 @@
                     </div>
                     <div class="fields__input__field noborder">
                         {% if val %}
-                            {{ val }}
+                            {% if name == 'МО родоразрешения' %}
+                                <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
+                            {% else %}
+                                {{ val }}
+                            {% endif %}
                         {% else %}
                             Недостаточно данных
                         {% endif %}
