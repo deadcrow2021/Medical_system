@@ -34,5 +34,4 @@ urlpatterns = [
     path('statistics', views.statistics_pade, name='statistics'),
     path('samd/<profile_id>', views.samd_page, name='samd'),
     path('generate_samd/<profile_id>/<samd>', views.generate_samd_page, name='generate-samd'),
-    path('patient_reception/<profile_id>', views.patient_reception, name='patient-reception'),
 ]

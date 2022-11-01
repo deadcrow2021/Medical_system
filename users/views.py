@@ -904,7 +904,6 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
 samd_temlates = {
     'medical_services_provision_referral': medical_services_provision_referral,
     'instrumental_research_protocol': instrumental_research_protocol,
-
     'laboratory_test_protocol': laboratory_test_protocol,
     'patient_examination_consultation': patient_examination_consultation,
     'treatment_in_hospital': treatment_in_hospital,
@@ -918,14 +917,4 @@ def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> Http
     template_name: str = 'users/generate_samd.html'
     print(f'{samd_temlates[samd]()}')
     return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
-
-
-def patient_reception(request: HttpRequest, profile_id: int) -> HttpResponse:
-    template_name: str = 'users/patient_reception.html'
-    # user: Patient = User.objects.get(pk=profile_id).patient
-    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    context = { 'notes': notes, 'profile_id': profile_id }
-    
-    return render(request, template_name, context)
-
 
