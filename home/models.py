@@ -586,7 +586,7 @@ class CurrentPregnancyinfo(models.Model):
     embryo_transfer = models.CharField('Перенос эмбрионов', max_length=1, choices=EMBRYO, blank=True)
     embryo_date = models.DateField('Дата переноса эмбриона', blank=True, null=True)
     embryo_number = models.PositiveSmallIntegerField('Число перенесенных эмбрионов', validators=[MaxValueValidator(999)], blank=True, null=True)
-    mother_age = models.PositiveSmallIntegerField('Число перенесенных эмбрионов', validators=[MaxValueValidator(999)], blank=True, null=True)
+    mother_age = models.PositiveSmallIntegerField('Возраст матери/донора на дату криоконсервации ', validators=[MaxValueValidator(99)], blank=True, null=True)
     
     upcoming_births = models.CharField('Предстоящие роды', max_length=1, choices=UPCOMING_BIRTH, blank=True)
     pregnancy_1 = models.CharField('Беременность', max_length=1, choices=PREGNANCY_1, blank=True)
