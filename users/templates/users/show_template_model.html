@@ -4,7 +4,7 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
-{% if not request.user.patient %}
+{% if request.user.doctor and request.user.doctor.role == 'obstetrician-gynecologist' %}
 <div class="back__button">
     <a href="{% url 'update-observation' current_user.id model_name -1 %}">Добавить</a>
 </div>

@@ -4,9 +4,12 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
+
+{% if request.user.doctor and request.user.doctor.role == 'obstetrician-gynecologist' %}
 <div class="back__button">
     <a href="{% url 'add-profile-models-template' current_user.id model_name -1 %}">Добавить</a>
 </div>
+{% endif %}
 
 {% if exists %}
 {% for form in forms %}
