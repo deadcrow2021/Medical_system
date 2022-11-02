@@ -60,6 +60,8 @@
             </div>
         </div>
     </div>
+    {% elif user.is_superuser %}
+    <div></div>
     {% endif %}
     
     <div class="">
@@ -94,7 +96,7 @@
                     </div>
                     <div class="fields__input__field noborder">
                         {% if val %}
-                            {% if name == 'МО родоразрешения' %}
+                            {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
                                 <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
                             {% else %}
                                 {{ val }}
@@ -109,21 +111,21 @@
         </div>
         
         {% if user.is_superuser %}
-            <div class="block__lines">
-                {% comment %} <div class="lines__element btn">
-                    <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
-                </div> {% endcomment %}
-                {% if not user.patient %}
-                <div class="lines__element">
-                    <p><button class="btn delete_btn">Удалить</button></p>
-                </div>
-                {% endif %}
-                {% comment %} {% if user.doctor %}
-                <div class="lines__element btn">
-                    <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
-                </div>
-                {% endif %} {% endcomment %}
+        <div class="block__lines">
+            {% comment %} <div class="lines__element btn">
+                <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
+            </div> {% endcomment %}
+            {% if not user.patient %}
+            <div class="lines__element">
+                <p><button class="btn delete_btn">Удалить</button></p>
             </div>
+            {% endif %}
+            {% comment %} {% if user.doctor %}
+            <div class="lines__element btn">
+                <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
+            </div>
+            {% endif %} {% endcomment %}
+        </div>
         {% endif %}
         
         {% if user.doctor %}

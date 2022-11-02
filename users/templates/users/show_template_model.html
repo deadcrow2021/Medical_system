@@ -4,7 +4,7 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
-{% if request.user.doctor and request.user.doctor.role == 'obstetrician-gynecologist' %}
+{% if request.user.doctor.role == 'obstetrician-gynecologist' %}
 <div class="back__button">
     <a href="{% url 'update-observation' current_user.id model_name -1 %}">Добавить</a>
 </div>
@@ -17,6 +17,7 @@
 <div class="fields">
     <div class="outer_div">
         <div class="border_div">
+            <div class="hide_info">
             {% for p in form %}
                 <div class="fields__input">
                     <div class="fields__input__label">
@@ -42,13 +43,16 @@
                 </div>
                 {% endfor %}
                 {{ form.errors }}
-            {% if not user.patient and request.user.doctor.role == 'obstetrician-gynecologist' %}
-            <div class="btn">
-                <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
             </div>
-            <div>
-                <button class="btn delete_btn">Удалить</button>
-                <input type="hidden" value="{{ form.instance.pk }}">
+            {% if request.user.doctor.role == 'obstetrician-gynecologist' %}
+            <div style="display: flex; justify-content: space-between">
+                <div class="btn">
+                    <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
+                </div>
+                <div>
+                    <button class="btn delete_btn">Удалить</button>
+                    <input type="hidden" value="{{ form.instance.pk }}">
+                </div>
             </div>
             {% endif %}
         </div>
@@ -82,6 +86,17 @@
     }
     cancel_btn.onclick = e => {
         banner.style.display = 'none';
+    }
+</script>
+<script type="text/javascript">
+    var infos = document.getElementsByClassName('hide_info');
+    for (let info of infos) {
+        info.addEventListener('click', e => {
+            if (e.currentTarget.style.maxHeight)
+                e.currentTarget.style.maxHeight = null;
+            else
+                e.currentTarget.style.maxHeight = e.currentTarget.scrollHeight + "px";
+        })
     }
 </script>
 {% else %}

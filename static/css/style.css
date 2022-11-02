@@ -638,3 +638,10 @@ th {
 .reception_page thead th {
     font-size: 20px;
 }
+
+.hide_info {
+    max-height: 30px;
+    cursor: pointer;
+    overflow-y: hidden;
+    transition: max-height 0.5s ease-out;
+}
