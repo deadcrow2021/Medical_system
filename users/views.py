@@ -796,8 +796,12 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
             data = form.save(commit=False)
             
             if model_name == 'father':
-                data = form.save(commit=False)
-                data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+                mass = form.cleaned_data.get('mass')
+                height = form.cleaned_data.get('height')
+                if mass is not None and height is not None:
+                    data.imt = mass / ((height / 100) ** 2)
+                else:
+                    data.imt = 0
             
             data.patient = patient
             data.save()

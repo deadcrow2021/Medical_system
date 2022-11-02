@@ -79,6 +79,8 @@
 </div>
 
 <script type='text/javascript'>
+    var fields = document.getElementsByClassName('fields')[0];
+    
     function set_name_with_border(name, id, count) {
         let elem = document.querySelector(`label[for=id_${id}]`);
         if (elem === null)
@@ -103,7 +105,7 @@
         div.setAttribute('class', 'outer_div');
         div.appendChild(label);
         div.appendChild(inner_div);
-        document.getElementsByClassName('fields')[0].prepend(div);
+        fields.prepend(div);
     }
     
     let nodes_id = [
