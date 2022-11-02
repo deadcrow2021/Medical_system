@@ -61,13 +61,13 @@ def sum_risk_values(risk_objs):
 
 
 def add_disease(request, profile_id):
-    user: User = User.objects.get(id=profile_id)
+    # user: User = User.objects.get(id=profile_id)
     form = DiseaseCreationForm()
     if request.method == 'POST':
         form = DiseaseCreationForm(request.POST)
         if form.is_valid():
             disease = form.save(commit=False)
-            patient = Patient.objects.get(user=user)
+            patient = Patient.objects.get(user__id=profile_id)
             disease.patient = patient
             add_log(request.user,
                     f'пациент {patient.get_full_name()}',
@@ -868,7 +868,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
     return render(request, 'users/add_examination_template.html', context)
 
 
-def statistics_pade(request: HttpRequest) -> HttpResponse:
+def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
     patients = Patient.objects.all()
     patients_number = len(patients)
