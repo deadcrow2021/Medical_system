@@ -42,13 +42,15 @@
                 </div>
                 {% endfor %}
                 {{ form.errors }}
-                <div class="btn">
-                    <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
+            {% if not user.patient and request.user.doctor.role == 'obstetrician-gynecologist' %}
+            <div class="btn">
+                <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
             </div>
             <div>
                 <button class="btn delete_btn">Удалить</button>
                 <input type="hidden" value="{{ form.instance.pk }}">
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

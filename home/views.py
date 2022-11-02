@@ -143,21 +143,17 @@ def data_sampling_page(request):
             # age = form_data['age']
 
             if form_data['mkb_10']:
-                patients = Patient.objects.select_related().filter(history__disease = form_data['mkb_10'])
-            # if form_data['medical_organization']:
-            #     patients = patients.filter(med_org=form_data['medical_organization'])
-            # if form_data['territory']:
-            #     patients = patients.filter(territory=form_data['territory'])
-            # if age:
-            #     today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).date()
-            #     patients = patients.filter(
-            #         date_of_birth__gte = today - relativedelta(years=age+1, days=-1),
-            #         date_of_birth__lte = today - relativedelta(years=age),
-            #     )
-            # if form_data['date_of_birth']:
-            #     patients = patients.filter(date_of_birth=form_data['date_of_birth'])
-            # if form_data['date_of_death']:
-            #     patients = patients.filter(date_death=form_data['date_of_death'])
+                patients = Patient.objects.select_related().filter(card__diagnosis = form_data['mkb_10'])
+            if form_data['medical_organization']:
+                patients = patients.select_related().filter(doctors__med_org=form_data['medical_organization'])
+            if form_data['territory']:
+                patients = patients.select_related().filter(card__residence_address=form_data['territory'])
+            if form_data['age']:
+                patients = patients.select_related().filter(card__age=form_data['age'])
+            if form_data['date_of_birth']:
+                patients = patients.select_related().filter(card__date_of_birth=form_data['date_of_birth'])
+            if form_data['date_of_death']:
+                patients = patients.select_related().filter(pregnancy_outcome__death_time=form_data['date_of_death'])
             # if form_data['city_village']:
             #     patients = patients.filter(city_village=form_data['city_village'])
 
@@ -166,7 +162,6 @@ def data_sampling_page(request):
                 lines.append(f'First name: {patient.first_name}')
                 lines.append(f'Last name: {patient.last_name}')
                 lines.append(f'Father name: {patient.father_name}')
-                lines.append(f'Gender: {patient.gender}')
                 lines.append('===============')
             return generate_pdf(lines)  
 

@@ -114,13 +114,18 @@ class ReceptionViewForm(forms.ModelForm):
 
 class DataSamplingForm(forms.Form):    
     mkb_10 = forms.CharField(label='Заболевание по МКБ-10', max_length=270, required=False)
-    # medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
-    # territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
-    # age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
-    # date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
-    # date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
-    # city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
-
+    medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
+    territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
+    age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
+    date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
+    date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
+    city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
+    
+    class Meta:
+        widgets = {
+            'date_of_birth': DateInput(),
+            'date_of_death': DateTimeInput()
+        }
 
 class MedicalCardForm(forms.ModelForm):
     class Meta:

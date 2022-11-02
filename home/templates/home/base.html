@@ -15,9 +15,11 @@
             <div class="navbar__element">
                 <a href="{% url 'home' %}">Главная</a>
             </div>
-            <div class="navbar__element">
-                <a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" height="70px"></a>
-            </div>
+            {% if not user.patient %}
+                <div class="navbar__element">
+                    <a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" height="70px"></a>
+                </div>
+            {% endif %}
             {% if user.patient %}
             <div class="navbar__element">
                 <a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</a>
