@@ -59,6 +59,7 @@
                             <th>Номер посещения специалиста</th>
                             <th>Кабинет</th>
                             <th>Посещено</th>
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,7 +81,14 @@
                             <td><p>{{ note.visit_number }}</p></td>
                             <td><p>{{ note.cabinet }}</p></td>
                             <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td>
-                            {% comment %} <td><p>{{ note.status }}</p></td> {% endcomment %}
+                            <td>
+                                <p class="btn same_btn"><a href="{% url 'update-reception' profile_id note.pk %}">Изменить</a></p>
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="delete_id" value="{{ note.pk }}">
+                                    <button type="submit" class="btn same_btn">Удалить</button>
+                                </form>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

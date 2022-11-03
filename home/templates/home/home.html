@@ -20,6 +20,10 @@
                 <div class="fio__element">
                     <p><strong>Специальность:</strong> {{ account.get_role_display }}</p>
                 </div>
+                
+                <div class="notes__element back__button">
+                    <p><a href="{% url 'reception' %}">План посещений</a></p>
+                </div>
             {% endif %}
         </div>
         

@@ -645,8 +645,9 @@ th {
 }
 
 .hide_info {
-    max-height: 30px;
+    max-height: 25px;
     cursor: pointer;
     overflow-y: hidden;
     transition: max-height 0.5s ease-out;
 }
+

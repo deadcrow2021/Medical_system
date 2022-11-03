@@ -207,9 +207,14 @@ class ReceptionView(LoginRequiredMixin, ListView):
 def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name = 'home/add_reception.html'
     form_class = ReceptionAddForm
-    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     
     if request.method == "POST":
+        delete_id = request.POST.get('delete_id', None)
+        if delete_id is not None:
+            ReceptionNotes.objects.get(pk=delete_id).delete()
+            notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+            return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
+        
         form: ReceptionAddForm = form_class(request.POST)
         if form.is_valid():
             commit: ReceptionNotes = form.save(commit=False)
@@ -219,20 +224,37 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             commit.med_organization = doctor.med_org
             patient = User.objects.get(pk=profile_id).patient
             commit.patient = patient
-            commit.visit_number = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first().visit_number + 1
+            reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
+            if reception_note is not None:
+                commit.visit_number = reception_note.visit_number + 1
+            else:
+                commit.visit_number = 1
             commit.save()
-            # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
-            notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
             form: ReceptionAddForm = form_class()
-            return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
-        else:
-            return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
+        notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+        return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
     
+    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
 
 
+def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:
+    template_name: str = 'home/update_reception.html'
+    form_class = ReceptionAddForm
+    
+    if request.method == "POST":
+        form: ReceptionAddForm = form_class(request.POST, instance=ReceptionNotes.objects.get(pk=note_id))
+        if form.is_valid():
+            form.save()
+            request.method = "GET"
+            return reception_add_page(request, profile_id)
+    
+    form: ReceptionAddForm = form_class(instance=ReceptionNotes.objects.get(pk=note_id))
+    return render(request, template_name, { 'form': form })
+
+
 def records_page(request: HttpRequest) -> HttpResponse:
-    user: User = User.objects.get(id=request.user.id)
+    user: User = User.objects.get(pk=request.user.id)
     records = user.patient.records.all()
     template_name = 'home/records.html'
     
