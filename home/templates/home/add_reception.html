@@ -40,60 +40,58 @@
     {% if notes %}
     <div class="block__profile__disease border_div reception_page">
         <div class="block__lines">
-            <div class="lines__element">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{% if user.patient %}
-                                Пациент
-                                {% else %}
-                                Доктор
-                                {% endif %}
-                            </th>
-                            {% if user.is_superuser %}
-                            <th>Пациент</th>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% if user.patient %}
+                            Пациент
+                            {% else %}
+                            Доктор
                             {% endif %}
-                            <th>Дата</th>
-                            <th>Медицинская организация</th>
-                            <th>Специальность</th>
-                            <th>Номер посещения специалиста</th>
-                            <th>Кабинет</th>
-                            <th>Посещено</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for note in notes %}
-                        <tr>
-                            <td>
-                                {% if user.patient %}
-                                    <p>{{ note.patient.get_full_name }}</p>
-                                {% else %}
-                                    <p>{{ note.doctor.get_full_name }}</p>
-                                {% endif %}
-                            </td>
-                            {% if user.is_superuser %}
-                            <td><p>{{ note.patient.get_full_name }}</p></td>
+                        </th>
+                        {% if user.is_superuser %}
+                        <th>Пациент</th>
+                        {% endif %}
+                        <th>Дата</th>
+                        <th>Медицинская организация</th>
+                        <th>Специальность</th>
+                        <th>Номер посещения специалиста</th>
+                        <th>Кабинет</th>
+                        <th>Посещено</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                    <tr>
+                        <td>
+                            {% if user.patient %}
+                                <p>{{ note.patient.get_full_name }}</p>
+                            {% else %}
+                                <p>{{ note.doctor.get_full_name }}</p>
                             {% endif %}
-                            <td><p class="">{{ note.date_meeting }}</p></td>
-                            <td><p>{{ note.get_med_organization_display }}</p></td>
-                            <td><p>{{ note.get_specialization_display }}</p></td>
-                            <td><p>{{ note.visit_number }}</p></td>
-                            <td><p>{{ note.cabinet }}</p></td>
-                            <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td>
-                            <td>
-                                <p class="btn same_btn"><a href="{% url 'update-reception' profile_id note.pk %}">Изменить</a></p>
-                                <form action="" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="delete_id" value="{{ note.pk }}">
-                                    <button type="submit" class="btn same_btn">Удалить</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                        </td>
+                        {% if user.is_superuser %}
+                        <td><p>{{ note.patient.get_full_name }}</p></td>
+                        {% endif %}
+                        <td><p class="">{{ note.date_meeting }}</p></td>
+                        <td><p>{{ note.get_med_organization_display }}</p></td>
+                        <td><p>{{ note.get_specialization_display }}</p></td>
+                        <td><p>{{ note.visit_number }}</p></td>
+                        <td><p>{{ note.cabinet }}</p></td>
+                        <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td>
+                        <td>
+                            <p class="btn same_btn"><a href="{% url 'update-reception' profile_id note.pk %}">Изменить</a></p>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_id" value="{{ note.pk }}">
+                                <button type="submit" class="btn same_btn">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
     {% else %}
