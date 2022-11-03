@@ -213,12 +213,13 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
         form: ReceptionAddForm = form_class(request.POST)
         if form.is_valid():
             commit: ReceptionNotes = form.save(commit=False)
-            commit.doctor = request.user.doctor
-            commit.specialization = request.user.doctor.role
-            commit.cabinet = request.user.doctor.cabinet
-            commit.med_organization = request.user.doctor.med_org
-            commit.patient = User.objects.get(pk=profile_id).patient
-            commit.visit_number = ReceptionNotes.objects.first().visit_number + 1
+            doctor = commit.doctor
+            commit.specialization = doctor.role
+            commit.cabinet = doctor.cabinet
+            commit.med_organization = doctor.med_org
+            patient = User.objects.get(pk=profile_id).patient
+            commit.patient = patient
+            commit.visit_number = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first().visit_number + 1
             commit.save()
             # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
             notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
