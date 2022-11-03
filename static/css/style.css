@@ -42,6 +42,11 @@ body {
     font-family: sans;
 }
 
+thead {
+    position: sticky;
+    top: -10px;
+}
+
 fieldset {
     border: 1px solid black;
     border-radius: 20px;
@@ -631,7 +636,7 @@ th {
 }
 
 .reception_page {
-    max-height: 60vh;
+    max-height: 50vh;
 }
 
 .reception_page tbody td,

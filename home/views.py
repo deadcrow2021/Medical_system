@@ -218,6 +218,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             commit.cabinet = request.user.doctor.cabinet
             commit.med_organization = request.user.doctor.med_org
             commit.patient = User.objects.get(pk=profile_id).patient
+            commit.visit_number = ReceptionNotes.objects.first().visit_number + 1
             commit.save()
             # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
             notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
