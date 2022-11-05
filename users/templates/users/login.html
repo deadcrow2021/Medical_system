@@ -17,7 +17,7 @@
                         Имя пользователя:
                     </div>
                     <div class="fields__input__field">
-                        <input type="text" name="username">
+                        <input type="text" name="username" placeholder="Login">
                     </div>
                 </div>
                 <div class="fields__input">
@@ -25,7 +25,7 @@
                         Пароль:
                     </div>
                     <div class="fields__input__field">
-                        <input type="password" name="password">
+                        <input type="password" name="password" placeholder="Password">
                     </div>
                 </div>
             </div>
@@ -33,6 +33,7 @@
                 <input type="submit" value="Войти">
             </div>
         </form>
+        <h4>{{ msg }}</h4>
         <div class="center_div forgot_pass">
             <button class="btn" style="margin-bottom: 10px" id="forgot_btn">Восстановить пароль</button>
             <form action="" method="POST">
@@ -43,20 +44,6 @@
                     </div>
                     <div class="fields__input__field">
                         <input type="email" name="email" id="email" placeholder="Email" required>
-                    </div>
-                </div>
-                <div class="fields__input" id="radio_btns">
-                    <div class="">
-                        <label>
-                            <input type="radio" name="user_type" id="Doctor" value="Doctor" required>
-                            Доктор
-                        </label>
-                    </div>
-                    <div class="">
-                        <label>
-                            <input type="radio" name="user_type" id="Patient" value="Patient" required>
-                            Пациент
-                        </label>
                     </div>
                 </div>
                 <div class="submit-btn">

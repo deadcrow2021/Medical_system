@@ -488,11 +488,15 @@ def login_page(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         email = request.POST.get('email', None)
         if email is not None:
-            user_type = request.POST.get('user_type', None)
-            if user_type == "Doctor":
-                user = Doctor.objects.get(email=email).user
-            elif user_type == "Patient":
-                user = Patient.objects.get(email=email).user
+            msg = ""
+            user = Doctor.objects.filter(email=email)
+            if len(user) != 1:
+                user = Patient.objects.filter(email=email)
+            if len(user) != 1:
+                msg = "Указанный email не был найден в базе данных"
+                return render(request, 'users/login.html', { 'msg': msg })
+            
+            user = user[0].user
             password = get_random_string(length=8)
             user.set_password(password)
             user.save()
