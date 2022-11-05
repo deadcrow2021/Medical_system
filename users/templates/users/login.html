@@ -9,7 +9,6 @@
 
 <div class="login__wraper">
     <div class="login">
-        
         <form method="POST" action="">
             {% csrf_token %}
             <div class="fields">
@@ -34,6 +33,45 @@
                 <input type="submit" value="Войти">
             </div>
         </form>
+        <div class="center_div forgot_pass">
+            <button class="btn" style="margin-bottom: 10px" id="forgot_btn">Восстановить пароль</button>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="fields__input__field">
+                        <input type="email" name="email" id="email" placeholder="Email" required>
+                    </div>
+                </div>
+                <div class="fields__input" id="radio_btns">
+                    <div class="">
+                        <label>
+                            <input type="radio" name="user_type" id="Doctor" value="Doctor" required>
+                            Доктор
+                        </label>
+                    </div>
+                    <div class="">
+                        <label>
+                            <input type="radio" name="user_type" id="Patient" value="Patient" required>
+                            Пациент
+                        </label>
+                    </div>
+                </div>
+                <div class="submit-btn">
+                    <input type="submit" value="Восстановить">
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+<script type="text/javascript" defer>
+    document.getElementById('forgot_btn').addEventListener('click', e => {
+        if (e.target.parentNode.style.maxHeight)
+            e.target.parentNode.style.maxHeight = null;
+        else
+            e.target.parentNode.style.maxHeight = e.target.parentNode.scrollHeight + 5 + "px";
+    })
+</script>
 {% endblock %}
