@@ -9,7 +9,6 @@
 
 <div class="login__wraper">
     <div class="login">
-        
         <form method="POST" action="">
             {% csrf_token %}
             <div class="fields">
@@ -18,7 +17,7 @@
                         Имя пользователя:
                     </div>
                     <div class="fields__input__field">
-                        <input type="text" name="username">
+                        <input type="text" name="username" placeholder="Login">
                     </div>
                 </div>
                 <div class="fields__input">
@@ -26,7 +25,7 @@
                         Пароль:
                     </div>
                     <div class="fields__input__field">
-                        <input type="password" name="password">
+                        <input type="password" name="password" placeholder="Password">
                     </div>
                 </div>
             </div>
@@ -34,6 +33,32 @@
                 <input type="submit" value="Войти">
             </div>
         </form>
+        <h4>{{ msg }}</h4>
+        <div class="center_div forgot_pass">
+            <button class="btn" style="margin-bottom: 10px" id="forgot_btn">Восстановить пароль</button>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="fields__input__field">
+                        <input type="email" name="email" id="email" placeholder="Email" required>
+                    </div>
+                </div>
+                <div class="submit-btn">
+                    <input type="submit" value="Восстановить">
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+<script type="text/javascript" defer>
+    document.getElementById('forgot_btn').addEventListener('click', e => {
+        if (e.target.parentNode.style.maxHeight)
+            e.target.parentNode.style.maxHeight = null;
+        else
+            e.target.parentNode.style.maxHeight = e.target.parentNode.scrollHeight + 5 + "px";
+    })
+</script>
 {% endblock %}
