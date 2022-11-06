@@ -9,8 +9,6 @@ from django.views.generic import ListView, CreateView
 from .forms import MODeliveryForm, ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
 from .models import Patient, ChangeControlLog, ReceptionNotes
 from administration.models import ClinicRecomendations
-from dateutil.relativedelta import relativedelta
-import datetime
 from .choices import CHANGETYPE
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse

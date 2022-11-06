@@ -875,29 +875,342 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
     patients = Patient.objects.all()
+    form = StatisticsPeriodForm()
     patients_number = len(patients)
+
     age_15_45 = 0
+    age_less_18 = 0
+    birth_number = 0
+    birth_number_period = 0
+    birth_dead_number = 0
+    card_childbirth = 0
+
     p_1 = 0
     p_3 = 0
+    p_4 = 0
+    p_5 = 0
+    p_6 = 0
+    p_7 = 0
+    p_8 = 0
+    p_9 = 0
+    p_10 = 0
+    p_11 = 0
+    p_12 = 0
+    p_13 = 0
+    p_14 = 0
+    p_15 = 0
+    p_16 = 0
+    p_17 = 0
+    p_18 = 0
+    p_19 = 0
+    p_20 = 0
+    p_25_1 = 0
+    p_25_2 = 0
+    p_26_1 = 0
+    p_26_2 = 0
+    p_27 = {
+        'to_14': 0,
+        '15_17': 0,
+        '18_34': 0,
+        '18_24': 0,
+        '25_29': 0,
+        '30_34': 0,
+        '35_44': 0,
+        '35_39': 0,
+        '40_44': 0,
+        '45_49': 0,
+        '50_up': 0,
+    }
+    p_28 = 0
+    p_29 = 0
+    p_31  = {
+        '22_23': 0,
+        '24_27': 0,
+        '24_25': 0,
+        '26_27': 0,
+        '28_36': 0,
+        '28_30': 0,
+        '31_33': 0,
+        '34_36': 0,
+        '37_41': 0,
+        '42_up': 0,
+    }
     
+    if request.method == 'POST':
+        form = StatisticsPeriodForm(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
+                form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
+
     for p in patients:
-        if p.card.age and 15 <= p.card.age <= 45:
+        card = p.card
+
+        if card.age and 15 <= card.age <= 45:
             age_15_45 += 1
-        
+
+        if card.age and card.age < 18:
+            age_less_18 += 1
+
         first_exam_list = p.first_examination.all()
         if len([x for x in first_exam_list]) >= 1:
             if first_exam_list[0].gestation_period_weeks and int(first_exam_list[0].gestation_period_weeks) < 12:
                 p_1 += 1
-    
-        if any(x.if_abortion for x in p.pregnancy_outcome.all()) and 15 <= p.card.age <= 45:
-            p_3 += 1
+
+        pregnancy_outcome_list = [x for x in p.pregnancy_outcome.all()]
+        if any(x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list) and card.age and 15 <= card.age <= 45:
+            p_3 += len([x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list])
+
+        if any(x.pregnancy_outcome == 'd' for x in p.pregnancy_outcome.all()):
+            p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
+            birth_dead_number = p_12
+            p_13 += len([(x.pregnancy_outcome == 'd' and x.gestation_period_weeks >= 28) for x in pregnancy_outcome_list])
+
+        if any(x.pregnancy_outcome == 'b' for x in p.pregnancy_outcome.all()):
+            birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
+            if request.method == 'POST':
+                for i in pregnancy_outcome_list:
+                    if i.childbirth_date and form_data['date_from'] <= i.childbirth_date <= form_data['date_to']:
+                        birth_number_period +=len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
+
+            p_15 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
+            if card.age:
+                if card.age < 18:
+                    p_8 += 1
+                if card.age >= 35:
+                    p_7 += 1
+
+        if any((x.imt if x.imt else 0) >= 30 for x in p.patient_information.all()):
+            p_9 += 1
         
+        if card.gestation_period_weeks and card.gestation_period_weeks < 12:
+            p_11 += 1
+        
+        pregnancy_info_list = [x for x in p.pregnancy_info.all()]
+        if len(pregnancy_info_list) == 1 and pregnancy_info_list[0].pregnancy == '1':
+            p_10 += 1
+            if request.method == 'POST':
+                if form_data['date_from'] <= pregnancy_info_list[0].last_menstruation <= form_data['date_to']:
+                    if any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                        p_18 += 1
+            else:
+                if any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                    p_18 += 1
+        
+        if any(x.pregnancy == '4' for x in pregnancy_info_list):
+            p_6 += len([x.pregnancy == '4' for x in pregnancy_info_list])
+        
+        if any(x.pregnancy_1 == '2' for x in pregnancy_info_list):
+            p_14 += len([x.pregnancy_1 == '2' for x in pregnancy_info_list])
+        
+        if request.method == 'POST':
+            if pregnancy_info_list and pregnancy_info_list[0].last_menstruation and form_data['date_from'] <= pregnancy_info_list[0].last_menstruation <= form_data['date_to']:
+                if len(pregnancy_info_list) >= 2 and any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
+                        and any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                    p_19 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
+            if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
+                if card.diagnosis and 'O14.1' in card.diagnosis:
+                    p_16 += 1
+
+                if card.diagnosis and 'O15' in card.diagnosis:
+                    p_20 += 1
+        else:
+            if len(pregnancy_info_list) >= 2 and any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
+                    and any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                p_19 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
+            
+            if card.diagnosis and 'O14.1' in card.diagnosis:
+                p_16 += 1
+
+            if card.diagnosis and 'O15' in card.diagnosis:
+                p_20 += 1
+
+        normal_pregnancy = [
+            'Z32.1', 'Z33', 'Z34.0', 'Z34.8', 'Z35.0', 'Z35.1', 'Z35.2',
+            'Z35.3', 'Z35.4', 'Z35.5', 'Z35.6', 'Z35.7', 'Z35.8', 'Z35.9',
+            'Z36.0', 'Z36.3'
+            ]
+        pathology_pregnancy = [
+            'O10', 'O11', 'O12', 'O13', 'O14', 'O15', 'O16', 'O20',
+            'O21', 'O22', 'O23', 'O24', 'O25', 'O26', 'O27', 'O28',
+            'O29', 'O30', 'O31', 'O32', 'O33', 'O34', 'O35', 'O36',
+            'O37', 'O38', 'O39', 'O40', 'O41', 'O42', 'O43', 'O44',
+            'O45', 'O46', 'O47', 'O48', 'O98', 'O99'
+            ]
+
+        if request.method == 'POST':
+            if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
+                if any(x in (card.diagnosis if card.diagnosis else '') for x in normal_pregnancy):
+                    p_25_1 += 1
+                if any(x in (card.diagnosis if card.diagnosis else '') for x in pathology_pregnancy):
+                    p_25_2 += 1
+
+                if card.diagnosis and 'O80' in card.diagnosis:
+                    p_26_1 += 1
+                if any(x in (card.diagnosis if card.diagnosis else '') for x in ['O81', 'O82', 'O83', 'O84']):
+                    p_26_2 += 1
+            
+            for i in [x.childbirth_date for x in pregnancy_outcome_list]:
+                if card.age and i and (form_data['date_from'] <= i.date() <= form_data['date_to']):
+                    if card.age <= 14:
+                        p_27['to_14'] += 1
+                    elif 15 <= card.age <= 17:
+                        p_27['15_17'] += 1
+                    elif 18 <= card.age <= 24:
+                        p_27['18_24'] += 1
+                        p_27['18_34'] += 1
+                    elif 25 <= card.age <= 29:
+                        p_27['25_29'] += 1
+                        p_27['18_34'] += 1
+                    elif 30 <= card.age <= 34:
+                        p_27['30_34'] += 1
+                        p_27['35_44'] += 1
+                    elif 35 <= card.age <= 39:
+                        p_27['35_39'] += 1
+                        p_27['35_44'] += 1
+                    elif 40 <= card.age <= 44:
+                        p_27['40_44'] += 1
+                        p_27['35_44'] += 1
+                    elif 45 <= card.age <= 49:
+                        p_27['45_49'] += 1
+                    elif 50 <= card.age:
+                        p_27['50_up'] += 1
+                    break
+        else:
+            if any(x in (card.diagnosis if card.diagnosis else '') for x in normal_pregnancy):
+                p_25_1 += 1
+            if any(x in (card.diagnosis if card.diagnosis else '') for x in pathology_pregnancy):
+                p_25_2 += 1
+
+            if card.diagnosis and 'O80' in card.diagnosis:
+                p_26_1 += 1
+            if any(x in (card.diagnosis if card.diagnosis else '') for x in ['O81', 'O82', 'O83', 'O84']):
+                p_26_2 += 1
+
+            if any(x.childbirth_date for x in pregnancy_outcome_list) and card.age:
+                if card.age <= 14:
+                    p_27['to_14'] += 1
+                elif 15 <= card.age <= 17:
+                    p_27['15_17'] += 1
+                elif 18 <= card.age <= 24:
+                    p_27['18_24'] += 1
+                    p_27['18_34'] += 1
+                elif 25 <= card.age <= 29:
+                    p_27['25_29'] += 1
+                    p_27['18_34'] += 1
+                elif 30 <= card.age <= 34:
+                    p_27['30_34'] += 1
+                    p_27['35_44'] += 1
+                elif 35 <= card.age <= 39:
+                    p_27['35_39'] += 1
+                    p_27['35_44'] += 1
+                elif 40 <= card.age <= 44:
+                    p_27['40_44'] += 1
+                    p_27['35_44'] += 1
+                elif 45 <= card.age <= 49:
+                    p_27['45_49'] += 1
+                elif 50 <= card.age:
+                    p_27['50_up'] += 1
     
-    
+        if card.diagnosis:
+            p_28 += 1
+        if card.diagnosis or any(x for x in pregnancy_outcome_list):
+            p_29 += 1
+        
+        if request.method == 'POST':
+            if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
+                if card.childbirth_gestation_period:
+                    card_childbirth += 1
+                    if 22 <= card.childbirth_gestation_period <= 23:
+                        p_31['22_23'] += 1
+                    if 24 <= card.childbirth_gestation_period <= 25:
+                        p_31['24_25'] += 1
+                        p_31['24_27'] += 1
+                    if 26 <= card.childbirth_gestation_period <= 27:
+                        p_31['26_27'] += 1
+                        p_31['24_27'] += 1
+                    if 28 <= card.childbirth_gestation_period <= 30:
+                        p_31['28_30'] += 1
+                        p_31['28_36'] += 1
+                    if 31 <= card.childbirth_gestation_period <= 33:
+                        p_31['31_33'] += 1
+                        p_31['28_36'] += 1
+                    if 34 <= card.childbirth_gestation_period <= 36:
+                        p_31['34_36'] += 1
+                        p_31['28_36'] += 1
+                    if 37 <= card.childbirth_gestation_period <= 41:
+                        p_31['37_41'] += 1
+                    if card.childbirth_gestation_period >= 42:
+                        p_31['42_up'] += 1
+        else:
+            if card.childbirth_gestation_period:
+                card_childbirth += 1
+                if 22 <= card.childbirth_gestation_period <= 23:
+                    p_31['22_23'] += 1
+                if 24 <= card.childbirth_gestation_period <= 25:
+                    p_31['24_25'] += 1
+                    p_31['24_27'] += 1
+                if 26 <= card.childbirth_gestation_period <= 27:
+                    p_31['26_27'] += 1
+                    p_31['24_27'] += 1
+                if 28 <= card.childbirth_gestation_period <= 30:
+                    p_31['28_30'] += 1
+                    p_31['28_36'] += 1
+                if 31 <= card.childbirth_gestation_period <= 33:
+                    p_31['31_33'] += 1
+                    p_31['28_36'] += 1
+                if 34 <= card.childbirth_gestation_period <= 36:
+                    p_31['34_36'] += 1
+                    p_31['28_36'] += 1
+                if 37 <= card.childbirth_gestation_period <= 41:
+                    p_31['37_41'] += 1
+                if card.childbirth_gestation_period >= 42:
+                    p_31['42_up'] += 1
+
+    if not birth_number:
+        birth_number = 1
+    if not birth_number_period:
+        birth_number_period = 1
+    if not birth_dead_number:
+        birth_dead_number = 1
+        
+    if not request.method == 'POST':
+        birth_number_period = birth_number
     return render(request, template_name, {
+        'form': form,
         'p_1': p_1*100/patients_number,
         'p_3': p_3*1000/age_15_45,
-        
+        # 'p_4': p_3,
+        # 'p_5': p_3,
+        'p_6': p_6*100/birth_number,
+        'p_7': p_7*100/birth_number,
+        'p_8': p_8*100/birth_number,
+        'p_9': p_9*100/birth_number,
+        'p_10': p_10*100/birth_number,
+        'p_11': p_11*100/birth_number,
+        'p_12': p_12*1000/(birth_number + birth_dead_number),
+        'p_13': p_13*1000/(birth_number + birth_dead_number),
+        'p_14': p_14*100/birth_number,
+        'p_15': p_15*100/birth_number,
+        'p_16': p_16*1000/birth_number_period,
+        # 'p_17': p_17,
+        'p_18': p_18*100/birth_number_period,
+        'p_19': p_19*100/birth_number_period,
+        'p_20': p_20*100/birth_number_period,
+        'p_21': p_6*1000/birth_number_period, ###
+        'p_25': {
+                '1': p_25_1*100/birth_number_period,
+                '2': p_25_2*100/birth_number_period
+                },
+        'p_26': {
+                '1': p_26_1*100/birth_number_period,
+                '2': p_26_2*100/birth_number_period
+                },
+        'p_27': {x: p_27[x]*100/birth_number_period for x in p_27},
+        'p_28': p_28*100/patients_number,
+        'p_29': p_29*100/patients_number,
+        'p_31': {x: p_31[x]*100/birth_number_period for x in p_31},
+        'ex' : {'abc': 5, 'zxc': 10}
     })
 
 

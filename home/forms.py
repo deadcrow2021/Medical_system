@@ -556,3 +556,9 @@ class MODeliveryForm(forms.ModelForm):
     class Meta:
         model = MODelivery
         fields = 'delivery',
+
+
+class StatisticsPeriodForm(forms.Form):
+    date_from = forms.DateField(label='От', required=False, widget=DateInput())
+    date_to = forms.DateField(label='До', required=False, widget=DateInput())
+
