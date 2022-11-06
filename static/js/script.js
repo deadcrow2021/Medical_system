@@ -58,5 +58,6 @@ document.addEventListener("DOMContentLoaded", function() {
         inp.onfocus();
         inp.onblur();
     }
+    
 });
 

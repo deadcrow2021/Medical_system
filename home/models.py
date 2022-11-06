@@ -850,7 +850,8 @@ class Doctor(models.Model):
         ordering = ['-date_updated']
         
     def __str__(self) -> str:
-        return self.user.username
+        # return self.user.username
+        return self.get_full_name()
     
     def get_full_name(self) -> str:
         return f"{self.last_name} {self.first_name} {self.father_name}"
@@ -859,14 +860,14 @@ class Doctor(models.Model):
 class ReceptionNotes(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-
+    
     date_meeting = models.DateTimeField('Дата и время приема')
     med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
     specialization = models.CharField('Специальность врача', max_length=30, choices=ROLES)
     visit_number = models.PositiveSmallIntegerField('Номер посещения специалиста', validators=[MaxValueValidator(999)], blank=True, null=True)
     cabinet = models.CharField('Номер кабинета', max_length=10, blank=True)
     status = models.BooleanField('Статус', default=False, null=True)
-
+    
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     

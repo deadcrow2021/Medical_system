@@ -1,0 +1,60 @@
+{% extends 'home/base.html' %}
+
+
+{% block content %}
+<div class="back__button">
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
+    {% comment %} <a href="{% url 'profile' profile_id %}">Вернуться</a> {% endcomment %}
+</div>
+
+<div class="center_div">
+    <div>
+        <h3>Планы посещений пациента</h3>
+    </div>
+    
+    <div class="outer_div">
+        <div class="border_div">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields add_form">
+                    {% for p in form %}
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            {{ p.label_tag }}
+                        </div>
+                        <div class="fields__input__field">
+                            {{ p }}
+                        </div>
+                    </div>
+                    {{ p.errors }}
+                    {% endfor %}
+                    {{ form.errors }}
+                </div>
+                <div class="submit-btn">
+                    <button type="submit" class="btn">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" defer>
+    var date_inputs = document.querySelectorAll('input[type=datetime-local]');
+    for (let inp of date_inputs) {
+        inp.onfocus = (e) => {
+            let i = inp;
+            let date = i.defaultValue;
+            i.type = 'datetime-local';
+            i.defaultValue = date;
+        };
+        inp.onblur = (e) => {
+            let i = inp;
+            let date = i.defaultValue;// !== '' ? i.defaultValue : "дд.мм.гггг";
+            i.type = 'text';
+            i.placeholder = 'дд.мм.гггг, чч:мм';
+            i.defaultValue = date;
+        };
+        inp.onfocus();
+        inp.onblur();
+    }
+</script>
+{% endblock %}

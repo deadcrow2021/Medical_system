@@ -5,37 +5,39 @@
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
-<div class="notes__block">
+<div class="notes__block center_div">
     {% for note in notes %}
         <div class="outer_div">
             <div class="border_div">
-                <div class="notes__row">
-                    {% if user.patient %}
+                <div class="hide_info">
+                    <div class="notes__row">
                         <div class="notes__element">
-                            <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
+                            <p class="date"><strong>Дата:</strong> {{ note.date_meeting }}</p>
                         </div>
-                    {% else %}
+                        {% if user.patient %}
+                            <div class="notes__element">
+                                <p><strong>Доктор:</strong> {{ note.doctor.get_full_name }}</p>
+                            </div>
+                        {% else %}
+                            <div class="notes__element">
+                                <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+                            </div>
+                        {% endif %}
                         <div class="notes__element">
-                            <p><strong>Пациент:</strong> {{ note.patient.get_full_name }}</p>
+                            <p><strong>Медицинская организация:</strong> {{ note.med_organization }}</p>
                         </div>
-                    {% endif %}
-                    <div class="notes__element">
-                        <p class="date"><strong>Дата:</strong> {{ note.date_meeting }}</p>
-                    </div>
-                    <div class="notes__element">
-                        <p><strong>Медицинская организация:</strong> {{ note.med_organization }}</p>
-                    </div>
-                    <div class="notes__element">
-                        <p><strong>Специальность:</strong> {{ note.specialization }}</p>
-                    </div>
-                    <div class="notes__element">
-                        <p><strong>Номер посещения специалиста:</strong> {{ note.visit_number }}</p>
-                    </div>
-                    <div class="notes__element">
-                        <p><strong>Кабинет:</strong> {{ note.cabinet }}</p>
-                    </div>
-                    <div class="notes__element">
-                        <p><strong>Посещено:</strong> {{ note.status }}</p>
+                        <div class="notes__element">
+                            <p><strong>Специальность:</strong> {{ note.specialization }}</p>
+                        </div>
+                        <div class="notes__element">
+                            <p><strong>Номер посещения специалиста:</strong> {{ note.visit_number }}</p>
+                        </div>
+                        <div class="notes__element">
+                            <p><strong>Кабинет:</strong> {{ note.cabinet }}</p>
+                        </div>
+                        <div class="notes__element">
+                            <p><strong>Посещено:</strong> {% if note.status == True %}Да{% else %}Нет{% endif %}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,6 +45,14 @@
     {% endfor %}
 </div>
 <script type="text/javascript">
-    
+    var infos = document.getElementsByClassName('hide_info');
+    for (let info of infos) {
+        info.addEventListener('click', e => {
+            if (e.currentTarget.style.maxHeight)
+                e.currentTarget.style.maxHeight = null;
+            else
+                e.currentTarget.style.maxHeight = e.currentTarget.scrollHeight + "px";
+        })
+    }
 </script>
 {% endblock %}

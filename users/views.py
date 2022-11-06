@@ -1,4 +1,5 @@
 from copy import deepcopy
+import med_system.settings as settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from datetime import timedelta
@@ -416,7 +417,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             user.username = generate_username(last_name, user.date_joined)
             send_mail('Данные для входа в систему',
                       f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
-                      's@aistteam.ru',
+                      settings.EMAIL_HOST_USER,
                       [form.cleaned_data['email']])
             user.save()
             personal.user = user
@@ -483,8 +484,27 @@ class RegisterPatientView(RegisterView):
         return context
 
 
-def login_page(request):
+def login_page(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
+        email = request.POST.get('email', None)
+        if email is not None:
+            msg = ""
+            user = Doctor.objects.filter(email=email)
+            if len(user) != 1:
+                user = Patient.objects.filter(email=email)
+            if len(user) != 1:
+                msg = "Указанный email не был найден в базе данных"
+                return render(request, 'users/login.html', { 'msg': msg })
+            
+            user = user[0].user
+            password = get_random_string(length=8)
+            user.set_password(password)
+            user.save()
+            send_mail('Восстановление данных',
+                      f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
+                      settings.EMAIL_HOST_USER,
+                      [email])
+            return render(request, 'users/login.html')
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
