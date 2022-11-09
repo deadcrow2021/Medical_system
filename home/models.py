@@ -903,3 +903,11 @@ class MODelivery(models.Model):
     
     def __str__(self) -> str:
         return self.delivery if self.delivery else "Недостаточно данных"
+
+
+class TelegramUsers(models.Model):
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE)
+    tg_user_id = models.PositiveBigIntegerField('ID пользователя в Telegram', unique=True)
+    
+    def __str__(self) -> str:
+        return self.patient.get_full_name()

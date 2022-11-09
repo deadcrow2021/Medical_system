@@ -134,3 +134,7 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 's@aistteam.ru'
 EMAIL_HOST_PASSWORD = 'eabojtituuaxexuy'
+
+
+# Telegarm Bot
+API_TOKEN = '5680514613:AAEMEhAyd2vr-MU3tUWJAGtTMGqWQAmCDRk'
