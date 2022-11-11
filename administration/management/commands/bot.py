@@ -76,6 +76,13 @@ async def show_commands(message: types.Message):
     await message.answer("Первая помощь")
 
 
+# def get_from_bd(model, prefetch: list[str], **filter):
+#     ans = model
+#     for field in prefetch:
+#         ans = ans.prefetch_related(field)
+#     return ans.filter(**filter)
+
+
 @dp.message_handler(commands=['show_reception_notes'])
 async def show_commands(message: types.Message):
     patient = (await TelegramUsers.objects.select_related('patient').aget(tg_user_id=message.from_user.id)).patient

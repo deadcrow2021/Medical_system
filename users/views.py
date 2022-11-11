@@ -894,9 +894,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 
 def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
-    patients = Patient.objects.all()
     form = StatisticsPeriodForm()
-    patients_number = len(patients)
 
     age_15_45 = 0
     age_less_18 = 0
@@ -963,6 +961,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
                 form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
 
+    patients = Patient.objects.select_related('card')\
+                            .select_related('first_examination')\
+                            .select_related('pregnancy_outcome')\
+                            .select_related('patient_information')\
+                            .select_related('pregnancy_info')\
+                            .all()
+    patients_number = len(patients)
+
     for p in patients:
         card = p.card
 
@@ -981,12 +987,12 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         if any(x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list) and card.age and 15 <= card.age <= 45:
             p_3 += len([x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list])
 
-        if any(x.pregnancy_outcome == 'd' for x in p.pregnancy_outcome.all()):
+        if any(x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list):
             p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
             birth_dead_number = p_12
             p_13 += len([(x.pregnancy_outcome == 'd' and x.gestation_period_weeks >= 28) for x in pregnancy_outcome_list])
 
-        if any(x.pregnancy_outcome == 'b' for x in p.pregnancy_outcome.all()):
+        if any(x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list):
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
             if request.method == 'POST':
                 for i in pregnancy_outcome_list:

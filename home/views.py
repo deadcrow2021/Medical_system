@@ -59,7 +59,7 @@ def generate_pdf(lines: list):
     textobj = canv.beginText()
     textobj.setTextOrigin(inch, inch)
     textobj.setFont('Times-Roman', 14)
-
+    
     for i in lines:
         textobj.textLine(i)
         
@@ -133,36 +133,39 @@ def data_sampling_page(request):
         form = DataSamplingForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-
+            
             if all(not x for x in [i for i in form_data.values()]):
                 # add message: fill any field
                 return render(request, 'home/data_sampling.html', {'form':form})
-
+            
             # age = form_data['age']
-
+            
             if form_data['mkb_10']:
-                patients = Patient.objects.select_related().filter(card__diagnosis = form_data['mkb_10'])
+                patients = Patient.objects.filter(card__diagnosis = form_data['mkb_10'])
             if form_data['medical_organization']:
-                patients = patients.select_related().filter(doctors__med_org=form_data['medical_organization'])
+                patients = patients.filter(doctors__med_org=form_data['medical_organization'])
             if form_data['territory']:
-                patients = patients.select_related().filter(card__residence_address=form_data['territory'])
+                patients = patients.filter(card__residence_address=form_data['territory'])
             if form_data['age']:
-                patients = patients.select_related().filter(card__age=form_data['age'])
+                patients = patients.filter(card__age=form_data['age'])
             if form_data['date_of_birth']:
-                patients = patients.select_related().filter(card__date_of_birth=form_data['date_of_birth'])
+                patients = patients.filter(card__date_of_birth=form_data['date_of_birth'])
             if form_data['date_of_death']:
-                patients = patients.select_related().filter(pregnancy_outcome__death_time=form_data['date_of_death'])
+                patients = patients.filter(pregnancy_outcome__death_time=form_data['date_of_death'])
             # if form_data['city_village']:
             #     patients = patients.filter(city_village=form_data['city_village'])
-
+            
+            if len(patients) < 1:
+                return render(request, 'home/data_sampling.html', {'form':form, 'nodata': "Не найдено записей с такими данными"})
+            
             for patient in patients:
                 # may be change fields
                 lines.append(f'First name: {patient.first_name}')
                 lines.append(f'Last name: {patient.last_name}')
                 lines.append(f'Father name: {patient.father_name}')
                 lines.append('===============')
-            return generate_pdf(lines)  
-
+            return generate_pdf(lines)
+    
     return render(request, 'home/data_sampling.html', {'form':form})
 
 
