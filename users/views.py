@@ -99,6 +99,53 @@ def follow_unfollow_patient(request):
     return redirect('patients')
 
 
+def calc_preeclampsia(user_profile: Patient) -> str:
+    try:
+        last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
+        if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
+                int(last_monitoring.systolic_blood_pressure) >= 140,
+                int(last_monitoring.protein_in_urine) >= 300):
+            return 'Высокий'
+        else:
+            return 'Низкий'
+    except:
+        return 'Недостаточно данных'
+
+
+def calc_premature_birth(user_profile: Patient) -> str:
+    try:
+        last_pregnancy = user_profile.pregnancy_info.latest('id')
+        if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
+                user_profile.card.age >= 35,
+                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
+                last_pregnancy.pregnancy == '4',
+                last_pregnancy.pregnancy_1 == '2',
+                user_profile.patient_information.latest('id').sti):
+            return 'Высокий'
+        else:
+            return 'Низкий'
+    except:
+        return 'Недостаточно данных'
+
+
+def calc_risk_values_sum(user_profile: Patient) -> str | int:
+    try:
+        for risk in user_profile.card.risks.all():
+            visit = risk.visit
+            if visit == '30-40':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '18-20':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '11-14':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '1':
+                return sum_risk_values(risk.complications.all())
+            else:
+                return 0
+    except:
+        return 'Введено не числовое значение'
+
+
 def profile(request: HttpRequest, profile_id):
     follow = False
     template_name: str = 'users/profile.html'
@@ -124,7 +171,7 @@ def profile(request: HttpRequest, profile_id):
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
         examinations = {(key, val[2]) for key, val in doctors_examinations.items()}
-        user_profile = user.patient
+        user_profile: Patient = user.patient
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
             if user_profile in my_profile.patients.all():
@@ -146,47 +193,9 @@ def profile(request: HttpRequest, profile_id):
         except:
             treating_doctor = 'Нет врача'
 
-        try:
-            last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
-            if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
-                    int(last_monitoring.systolic_blood_pressure) >= 140,
-                    int(last_monitoring.protein_in_urine) >= 300):
-                preeclampsia = 'Высокий'
-            else:
-                preeclampsia = 'Низкий'
-        except:
-            preeclampsia = 'Недостаточно данных'
-
-        try:
-            last_pregnancy = user_profile.pregnancy_info.latest('id')
-            if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
-                    user_profile.card.age >= 35,
-                    (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
-                    last_pregnancy.pregnancy == '4',
-                    last_pregnancy.pregnancy_1 == '2',
-                    user_profile.patient_information.latest('id').sti):
-                premature_birth = 'Высокий'
-            else:
-                premature_birth = 'Низкий'
-        except:
-            premature_birth = 'Недостаточно данных'
-
-        try:
-            risk_values_sum = 0
-            for risk in user_profile.card.risks.all():
-                visit = risk.visit
-                if visit == '30-40':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                elif visit == '18-20':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                elif visit == '11-14':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                elif visit == '1':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                else:
-                    risk_values_sum = 0
-        except:
-            risk_values_sum = 'Введено не числовое значение'
+        preeclampsia = calc_preeclampsia(user_profile)
+        premature_birth = calc_premature_birth(user_profile)
+        risk_values_sum = calc_risk_values_sum(user_profile)
         
         risks = (
             ('Преэклампсия',               preeclampsia),
@@ -228,7 +237,7 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
 
 
 def medical_card(request, profile_id):
-    current_user = User.objects.get(pk=profile_id)
+    current_user = User.objects.select_related('patient').get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
     
     risks = current_user.patient.card.risks.all()
@@ -1261,3 +1270,9 @@ def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> Http
     print(f'{samd_temlates[samd]()}')
     return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
 
+
+def doctor_profile_page(request: HttpRequest, profile_id: int):
+    template_name: str = 'users/doctor_profile.html'
+    user = Doctor.objects.get(pk=profile_id)
+    
+    return render(request, template_name, { 'account': user })

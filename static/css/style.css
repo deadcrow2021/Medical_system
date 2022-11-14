@@ -327,11 +327,16 @@ a:hover {
 }
 
 .account {
-    /* display: flex;
-    flex-direction: column; */
-    display: grid;
+    display: flex;
+    justify-content: space-evenly;
+    /* display: grid;
     grid-template-columns: 300px 1fr 1fr;
-    grid-column-gap: 20px;
+    grid-column-gap: 20px; */
+}
+
+.account > *{
+    flex: 1;
+    margin: 0 20px;
 }
 
 .fio {

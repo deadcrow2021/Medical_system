@@ -2,47 +2,40 @@
 
 {% block content %}
 <div class="account">
-    {% if not user.is_superuser %}
+    {% comment %} {% if not user.is_superuser %}
+    {% if not user.doctor %} {% endcomment %}
+    {% if user.patient %}
     <div>
-        <div class="fio">
-            <div class="fio__element">
-                <p><strong>Фамилия:</strong> {{ account.last_name }}</p>
-            </div>
-            <div class="fio__element">
-                <p><strong>Имя:</strong> {{ account.first_name }}</p>
-            </div>
-            {% if account.father_name %}
+        <div class="cut_width">
+            <div class="fio">
+                <div class="fio__element">
+                    <p><strong>Фамилия:</strong> {{ account.last_name }}</p>
+                </div>
+                <div class="fio__element">
+                    <p><strong>Имя:</strong> {{ account.first_name }}</p>
+                </div>
+                {% if account.father_name %}
                 <div class="fio__element">
                     <p><strong>Отчество:</strong> {{ account.father_name }}</p>
                 </div>
-            {% endif %}
-            {% if user.doctor %}
-                <div class="fio__element">
-                    <p><strong>Специальность:</strong> {{ account.get_role_display }}</p>
-                </div>
-                
-                <div class="notes__element back__button">
-                    <p><a href="{% url 'reception' %}">План посещений</a></p>
-                </div>
-            {% endif %}
-        </div>
-        
-        {% if user.patient %}
-        <a href="{% url 'records' %}">
-            <div class="lines__element btn same_btn">
-                <p>Записи самонаблюдения</p>
+                {% endif %}
             </div>
-        </a>
-        {% for key, name in keys_names %}
-        <div class="block__profile__docs">
-            <div class="block__lines">
+            
+            <a href="{% url 'records' %}">
                 <div class="lines__element btn same_btn">
-                    <a href="{% url 'observation' user.id key %}">{{ name }}</a>
+                    <p>Записи самонаблюдения</p>
+                </div>
+            </a>
+            {% for key, name in keys_names %}
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">
+                        <a href="{% url 'observation' user.id key %}">{{ name }}</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-        {% endif %}
     </div>
     {% endif %}
     
@@ -99,11 +92,23 @@
             </legend>
             <div class="user__block">
                 <div class="user__block__row">
-                    {% for patient in related_patients %}
+                    {% comment %} {% for patient in related_patients %} {% endcomment %}
+                    {% for patient, risks in pats %}
                     <div class="user__block__border logs__row">
                         <div class="user__block__element">
-                            <p><strong>ФИО:</strong> {{ patient.get_full_name }}, {{ patient.age }} лет</p>
-                            <p><strong>Тел.:</strong> {{ patient.telephone }}, <strong>Email:</strong> {{ patient.email }}</p>
+                            <p><strong>ФИО:</strong> {{ patient.get_full_name }}</p>
+                            <p><strong>Дата поступления:</strong> {{ patient.user.date_joined }}</p>
+                            <p><strong>Дата рождения:</strong> {{ patient.card.date_of_birth }}</p>
+                            <p><strong>Возраст:</strong> {{ patient.card.age }} лет</p>
+                            <p><strong>Срок:</strong>
+                                {% if patient.card.gestation_period_weeks %}
+                                    {{ patient.card.gestation_period_weeks }} недели
+                                {% else %}
+                                    Неизвестно
+                                {% endif %}</p>
+                            <p><strong>Преэклампсия:</strong> {{ risks.0 }}</p>
+                            <p><strong>Что-то:</strong> {{ risks.1 }}</p>
+                            <p><strong>сумма:</strong> {{ risks.2 }}</p>
                         </div>
                         <div class="user__block__element">
                             <a href="{% url 'profile' patient.user.id %}">Профиль</a>
