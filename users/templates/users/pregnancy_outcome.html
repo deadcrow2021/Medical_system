@@ -4,6 +4,7 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
+{% if request.user.doctor.role not in rolesNA %}
 <div class="block__lines">
     <div class="lines__element btn">
         <p><a href="{% url 'add-pregnancy-outcome' current_user.id -1 %}">Добавить</a></p>
@@ -77,4 +78,7 @@
         banner.style.display = 'none';
     }
 </script>
+{% else %}
+<h2>Доступ к данной странице запрещен</h2>
+{% endif %}
 {% endblock %}

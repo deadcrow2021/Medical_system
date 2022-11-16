@@ -345,8 +345,11 @@ ROLES = {
     ('dentist', 'Стоматолог'),
     ('ophthalmologist', 'Офтальмолог'),
     ('specialist', 'Специалист'),
-    ('pediator', 'Педиатор')
-}
+    ('pediator', 'Педиатор'),
+    ('assistant', 'Лаборант'),
+    ('nurse', 'Медсестра'),
+    ('receptionist', 'Регистратор')
+} 
 
 MARITAL_STATUS = {
     ('', '----'),

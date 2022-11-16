@@ -4,16 +4,18 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
-<div class="block__lines">
-    <div class="lines__element btn">
-        <p><a href="{% url 'update-medical-card' current_user.id %}">Изменить</a></p>
+{% if request.user.doctor.role in roles %}
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <p><a href="{% url 'update-medical-card' current_user.id %}">Изменить</a></p>
+        </div>
     </div>
-</div>
-<div class="block__lines">
-    <div class="lines__element btn">
-        <p><a href="{% url 'appearance' current_user.id %}">Добавить риски осложнений</a></p>
+    <div class="block__lines">
+        <div class="lines__element btn">
+            <p><a href="{% url 'appearance' current_user.id %}">Добавить риски осложнений</a></p>
+        </div>
     </div>
-</div>
+{% endif %}
 
 <div style="font-size: 30px">
     Пациент: <strong>{{ current_user.patient.get_full_name }}</strong>

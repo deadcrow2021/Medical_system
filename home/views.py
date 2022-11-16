@@ -297,8 +297,10 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
         notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
         return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
     
+    rolesR = ('assistant', )
+    rolesNA = ('receptionist', )
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
+    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA })
 
 
 def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:

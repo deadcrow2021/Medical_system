@@ -233,7 +233,8 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
     user: User = User.objects.get(id=profile_id)
     records = user.patient.records.all()
     exists: bool = True if len(records) > 0 else False
-    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists })
+    rolesNA = ('assistant', 'receptionist')
+    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists, 'rolesNA': rolesNA })
 
 
 def medical_card(request, profile_id):
@@ -246,8 +247,9 @@ def medical_card(request, profile_id):
     for risk in risks:
         complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
+    roles = ('receptionist',)
     
-    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, })
+    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, 'roles': roles })
 
 
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
@@ -278,7 +280,8 @@ def pregnancy_outcome(request: HttpRequest, profile_id: int):
     
     outcomes = current_user.patient.pregnancy_outcome.all()
     forms = [PregnancyOutcomeForm(instance=outcome) for outcome in outcomes]
-    return render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user})
+    rolesNA = ('assistant', 'receptionist')
+    return render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user, 'rolesNA': rolesNA})
 
 
 def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int):
@@ -622,7 +625,8 @@ def patient_info_page(request, profile_id):
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
     key_value = ((key, val[2]) for key, val in patinet_info_models.items())
-    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value })
+    roles = ('receptionist', )
+    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
 
 
 def update_patient_info_page(request, profile_id):

@@ -5,24 +5,28 @@
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
-{% if user.doctor %}
-    {% if exists %}
-        {% for record in records %}
-        <div class="outer_div">
-            <div class="border_div">
-                <div class="user__block__element">
-                    <p><strong>Название:</strong> {{ record.title }}</p>
-                </div>
-                <div class="user__block__element">
-                    <p><strong>Описание:</strong> {{ record.description }}</p>
+{% if request.user.doctor.role not in rolesNA %}
+    {% if user.doctor %}
+        {% if exists %}
+            {% for record in records %}
+            <div class="outer_div">
+                <div class="border_div">
+                    <div class="user__block__element">
+                        <p><strong>Название:</strong> {{ record.title }}</p>
+                    </div>
+                    <div class="user__block__element">
+                        <p><strong>Описание:</strong> {{ record.description }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endfor %}
-    {% else %}
-    <h3>Нет наблюдений</h3>
+            {% endfor %}
+        {% else %}
+        <h3>Нет наблюдений</h3>
+        {% endif %}
     {% endif %}
+    <script type="text/javascript">
+    </script>
+{% else %}
+    <h2>Доступ к данной странице запрещен</h2>
 {% endif %}
-<script type="text/javascript">
-</script>
 {% endblock %}
