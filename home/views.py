@@ -17,6 +17,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from datetime import date
+from administration.management.commands import bot
+from asgiref.sync import async_to_sync
 import io
 
 def user_is_admin(user):
@@ -288,6 +290,9 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             else:
                 commit.visit_number = 1
             commit.save()
+            # bot
+            async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
+                    f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
             form: ReceptionAddForm = form_class()
         notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
         return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
