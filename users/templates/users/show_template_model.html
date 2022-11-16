@@ -13,92 +13,124 @@
 <h3>{{ page_name }}</h3>
 
 {% if exists %}
-{% for form in forms %}
-<div class="fields">
-    <div class="outer_div">
-        <div class="border_div">
-            <div class="hide_info">
-            {% for p in form %}
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <strong>{{ p.label_tag }}</strong>
-                    </div>
-                    <div class="fields__input__field noborder">
-                    {% if p.field.choices %}
-                        {% for i in p.field.choices %}
-                            {% if p.value == i.0 %}
-                                {% if not i.0 %}
-                                    ---------
-                                {% else %}
-                                    {{i.1}}
-                                {% endif %}
-                            {% endif %}
+{% if model_name == 'appointments' %}
+    <div class="block__profile__disease border_div">
+        <div class="block__lines">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Номер посещения:</th>
+                        <th>Дата:</th>
+                        <th>Срок беременности (недели):</th>
+                        <th>Услуга:</th>
+                        <th>Анализ:</th>
+                        <th>Назначения:</th>
+                        <th>Листок нетрудоспособности:</th>
+                        <th>Дата след. визита:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in forms %}
+                    <tr>
+                        {% for p in form %}
+                            <td><p>{{ p.value }}</p></td>
+                            {% comment %} <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td> {% endcomment %}
+                            {% comment %} <td><p>{{ note.status }}</p></td> {% endcomment %}
                         {% endfor %}
-                    {% elif p.value %}
-                        {{ p.value }}
-                    {% else %}
-                        ---------
-                    {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-                {{ form.errors }}
-            </div>
-            {% if request.user.doctor.role == 'obstetrician-gynecologist' %}
-            <div style="display: flex; justify-content: space-between">
-                <div class="btn">
-                    <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
-                </div>
-                <div>
-                    <button class="btn delete_btn">Удалить</button>
-                    <input type="hidden" value="{{ form.instance.pk }}">
-                </div>
-            </div>
-            {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
-{% endfor %}
-
-<div class="banner" style="display: none;">
-    <div class="lines__element banner__content">
-        <p>Вы действительно хотите удалить?</p>
-        <button type="button" class="btn cancel_btn">Отменить</button>
-        <form action="" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn">Удалить</button>
-            <input type="hidden" id='delete_outcome' name="delete" value="{{ form.instance.pk }}">
-        </form>
+{% else %}
+    {% for form in forms %}
+    <div class="fields">
+        <div class="outer_div">
+            <div class="border_div">
+                <div class="hide_info">
+                {% for p in form %}
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            <strong>{{ p.label_tag }}</strong>
+                        </div>
+                        <div class="fields__input__field noborder">
+                        {% if p.field.choices %}
+                            {% for i in p.field.choices %}
+                                {% if p.value == i.0 %}
+                                    {% if not i.0 %}
+                                        ---------
+                                    {% else %}
+                                        {{i.1}}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% elif p.value %}
+                            {{ p.value }}
+                        {% else %}
+                            ---------
+                        {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {{ form.errors }}
+                </div>
+                {% if request.user.doctor.role == 'obstetrician-gynecologist' %}
+                <div style="display: flex; justify-content: space-between">
+                    <div class="btn">
+                        <a href="{% url 'update-observation' current_user.id model_name form.instance.pk %}">Изменить</a>
+                    </div>
+                    <div>
+                        <button class="btn delete_btn">Удалить</button>
+                        <input type="hidden" value="{{ form.instance.pk }}">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-</div>
+    {% endfor %}
 
-<script type="text/javascript">
-    var delete_btns = document.getElementsByClassName('delete_btn');
-    var hidden_input = document.getElementById('delete_outcome');
-    var cancel_btn = document.getElementsByClassName('cancel_btn')[0];
-    var banner = document.getElementsByClassName('banner')[0];
-    
-    for (let delete_btn of delete_btns) {
-        delete_btn.onclick = e => {
-            hidden_input.value = delete_btn.nextElementSibling.value
-            banner.style.display = 'flex';
+    <div class="banner" style="display: none;">
+        <div class="lines__element banner__content">
+            <p>Вы действительно хотите удалить?</p>
+            <button type="button" class="btn cancel_btn">Отменить</button>
+            <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn">Удалить</button>
+                <input type="hidden" id='delete_outcome' name="delete" value="{{ form.instance.pk }}">
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var delete_btns = document.getElementsByClassName('delete_btn');
+        var hidden_input = document.getElementById('delete_outcome');
+        var cancel_btn = document.getElementsByClassName('cancel_btn')[0];
+        var banner = document.getElementsByClassName('banner')[0];
+        
+        for (let delete_btn of delete_btns) {
+            delete_btn.onclick = e => {
+                hidden_input.value = delete_btn.nextElementSibling.value
+                banner.style.display = 'flex';
+            }
         }
-    }
-    cancel_btn.onclick = e => {
-        banner.style.display = 'none';
-    }
-</script>
-<script type="text/javascript">
-    var infos = document.getElementsByClassName('hide_info');
-    for (let info of infos) {
-        info.addEventListener('click', e => {
-            if (e.currentTarget.style.maxHeight)
-                e.currentTarget.style.maxHeight = null;
-            else
-                e.currentTarget.style.maxHeight = e.currentTarget.scrollHeight + "px";
-        })
-    }
-</script>
+        cancel_btn.onclick = e => {
+            banner.style.display = 'none';
+        }
+    </script>
+    <script type="text/javascript">
+        var infos = document.getElementsByClassName('hide_info');
+        for (let info of infos) {
+            info.addEventListener('click', e => {
+                if (e.currentTarget.style.maxHeight)
+                    e.currentTarget.style.maxHeight = null;
+                else
+                    e.currentTarget.style.maxHeight = e.currentTarget.scrollHeight + "px";
+            })
+        }
+    </script>
+{% endif %}
 {% else %}
 <div>
     <h4>Нет данных</h4>

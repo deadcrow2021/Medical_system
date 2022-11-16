@@ -161,6 +161,7 @@ a:hover {
     display: flex;
     margin-right: 10px;
     font-size: 18px;
+    /* min-width: 50%; */
 }
 
 .fields__input__field input {
@@ -327,11 +328,16 @@ a:hover {
 }
 
 .account {
-    /* display: flex;
-    flex-direction: column; */
-    display: grid;
+    display: flex;
+    justify-content: space-evenly;
+    /* display: grid;
     grid-template-columns: 300px 1fr 1fr;
-    grid-column-gap: 20px;
+    grid-column-gap: 20px; */
+}
+
+.account > *{
+    flex: 1;
+    margin: 0 20px;
 }
 
 .fio {
@@ -666,4 +672,8 @@ th {
     flex-direction: row;
     justify-content: space-between;
     font-size: 20px;
+}
+
+.width_100 {
+    width: 100%;
 }

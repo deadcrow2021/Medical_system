@@ -99,6 +99,53 @@ def follow_unfollow_patient(request):
     return redirect('patients')
 
 
+def calc_preeclampsia(user_profile: Patient) -> str:
+    try:
+        last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
+        if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
+                int(last_monitoring.systolic_blood_pressure) >= 140,
+                int(last_monitoring.protein_in_urine) >= 300):
+            return 'Высокий'
+        else:
+            return 'Низкий'
+    except:
+        return 'Недостаточно данных'
+
+
+def calc_premature_birth(user_profile: Patient) -> str:
+    try:
+        last_pregnancy = user_profile.pregnancy_info.latest('id')
+        if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
+                user_profile.card.age >= 35,
+                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
+                last_pregnancy.pregnancy == '4',
+                last_pregnancy.pregnancy_1 == '2',
+                user_profile.patient_information.latest('id').sti):
+            return 'Высокий'
+        else:
+            return 'Низкий'
+    except:
+        return 'Недостаточно данных'
+
+
+def calc_risk_values_sum(user_profile: Patient) -> str | int:
+    try:
+        for risk in user_profile.card.risks.all():
+            visit = risk.visit
+            if visit == '30-40':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '18-20':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '11-14':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '1':
+                return sum_risk_values(risk.complications.all())
+            else:
+                return 0
+    except:
+        return 'Введено не числовое значение'
+
+
 def profile(request: HttpRequest, profile_id):
     follow = False
     template_name: str = 'users/profile.html'
@@ -124,7 +171,7 @@ def profile(request: HttpRequest, profile_id):
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
         examinations = {(key, val[2]) for key, val in doctors_examinations.items()}
-        user_profile = user.patient
+        user_profile: Patient = user.patient
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
             if user_profile in my_profile.patients.all():
@@ -146,47 +193,9 @@ def profile(request: HttpRequest, profile_id):
         except:
             treating_doctor = 'Нет врача'
 
-        try:
-            last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
-            if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
-                    int(last_monitoring.systolic_blood_pressure) >= 140,
-                    int(last_monitoring.protein_in_urine) >= 300):
-                preeclampsia = 'Высокий'
-            else:
-                preeclampsia = 'Низкий'
-        except:
-            preeclampsia = 'Недостаточно данных'
-
-        try:
-            last_pregnancy = user_profile.pregnancy_info.latest('id')
-            if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
-                    user_profile.card.age >= 35,
-                    (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
-                    last_pregnancy.pregnancy == '4',
-                    last_pregnancy.pregnancy_1 == '2',
-                    user_profile.patient_information.latest('id').sti):
-                premature_birth = 'Высокий'
-            else:
-                premature_birth = 'Низкий'
-        except:
-            premature_birth = 'Недостаточно данных'
-
-        try:
-            risk_values_sum = 0
-            for risk in user_profile.card.risks.all():
-                visit = risk.visit
-                if visit == '30-40':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                elif visit == '18-20':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                elif visit == '11-14':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                elif visit == '1':
-                    risk_values_sum = sum_risk_values(risk.complications.all())
-                else:
-                    risk_values_sum = 0
-        except:
-            risk_values_sum = 'Введено не числовое значение'
+        preeclampsia = calc_preeclampsia(user_profile)
+        premature_birth = calc_premature_birth(user_profile)
+        risk_values_sum = calc_risk_values_sum(user_profile)
         
         risks = (
             ('Преэклампсия',               preeclampsia),
@@ -224,11 +233,12 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
     user: User = User.objects.get(id=profile_id)
     records = user.patient.records.all()
     exists: bool = True if len(records) > 0 else False
-    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists })
+    rolesNA = ('assistant', 'receptionist')
+    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists, 'rolesNA': rolesNA })
 
 
 def medical_card(request, profile_id):
-    current_user = User.objects.get(pk=profile_id)
+    current_user = User.objects.select_related('patient').get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
     
     risks = current_user.patient.card.risks.all()
@@ -237,8 +247,9 @@ def medical_card(request, profile_id):
     for risk in risks:
         complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
+    roles = ('receptionist',)
     
-    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, })
+    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, 'roles': roles })
 
 
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
@@ -269,7 +280,8 @@ def pregnancy_outcome(request: HttpRequest, profile_id: int):
     
     outcomes = current_user.patient.pregnancy_outcome.all()
     forms = [PregnancyOutcomeForm(instance=outcome) for outcome in outcomes]
-    return render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user})
+    rolesNA = ('assistant', 'receptionist')
+    return render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user, 'rolesNA': rolesNA})
 
 
 def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int):
@@ -406,11 +418,11 @@ def clear_phone(phone: str) -> str:
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
-        post |= { 'telephone': [clear_phone(post['telephone'])] }
+        post |= { 'mobile_phone': [clear_phone(post['mobile_phone'])] }
         form = self.form_class(post)
         if form.is_valid():
             user: User = User()
-            personal: Patient | Doctor = form.save(commit=False)
+            personal: MedicalCard | Doctor = form.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
             last_name = translate_name(personal.last_name)
@@ -420,28 +432,38 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                       settings.EMAIL_HOST_USER,
                       [form.cleaned_data['email']])
             user.save()
-            personal.user = user
-            personal.save()
             
             user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             if user_type == 'patient':
-                med_card = MedicalCard()
-                med_card.patient = personal
-                med_card.home_phone = personal.telephone
-                med_card.save()
+                # med_card = MedicalCard()
+                # med_card.patient = personal
+                # med_card.home_phone = personal.telephone
+                # med_card.save()
+                patient = Patient()
+                patient.first_name = personal.first_name
+                patient.last_name = personal.last_name
+                patient.father_name = personal.father_name
+                patient.telephone = personal.mobile_phone
+                patient.email = personal.email
+                patient.user = user
+                patient.save()
+                personal.patient = patient
                 
                 pat_info = PatientInformation()
-                pat_info.patient = personal
+                pat_info.patient = patient
                 pat_info.save()
                 
                 current_preg = CurrentPregnancy()
-                current_preg.patient = personal
+                current_preg.patient = patient
                 current_preg.save()
-            
+                
                 mo_delivery = MODelivery()
-                mo_delivery.patient = personal
+                mo_delivery.patient = patient
                 mo_delivery.save()
-
+            else:
+                personal.user = user
+            personal.save()
+            
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
                     CHANGETYPE.Пользователь_был_создан,
@@ -603,7 +625,8 @@ def patient_info_page(request, profile_id):
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
     key_value = ((key, val[2]) for key, val in patinet_info_models.items())
-    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value })
+    roles = ('receptionist', )
+    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
 
 
 def update_patient_info_page(request, profile_id):
@@ -894,9 +917,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 
 def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
-    patients = Patient.objects.all()
     form = StatisticsPeriodForm()
-    patients_number = len(patients)
 
     age_15_45 = 0
     age_less_18 = 0
@@ -963,6 +984,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
                 form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
 
+    patients = Patient.objects.select_related('card')\
+                            .select_related('first_examination')\
+                            .select_related('pregnancy_outcome')\
+                            .select_related('patient_information')\
+                            .select_related('pregnancy_info')\
+                            .all()
+    patients_number = len(patients)
+
     for p in patients:
         card = p.card
 
@@ -981,12 +1010,12 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         if any(x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list) and card.age and 15 <= card.age <= 45:
             p_3 += len([x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list])
 
-        if any(x.pregnancy_outcome == 'd' for x in p.pregnancy_outcome.all()):
+        if any(x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list):
             p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
             birth_dead_number = p_12
             p_13 += len([(x.pregnancy_outcome == 'd' and x.gestation_period_weeks >= 28) for x in pregnancy_outcome_list])
 
-        if any(x.pregnancy_outcome == 'b' for x in p.pregnancy_outcome.all()):
+        if any(x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list):
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
             if request.method == 'POST':
                 for i in pregnancy_outcome_list:
@@ -1255,3 +1284,9 @@ def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> Http
     print(f'{samd_temlates[samd]()}')
     return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
 
+
+def doctor_profile_page(request: HttpRequest, profile_id: int):
+    template_name: str = 'users/doctor_profile.html'
+    user = Doctor.objects.get(pk=profile_id)
+    
+    return render(request, template_name, { 'account': user })

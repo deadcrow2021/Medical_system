@@ -16,6 +16,9 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+from datetime import date
+from administration.management.commands import bot
+from asgiref.sync import async_to_sync
 import io
 
 def user_is_admin(user):
@@ -59,7 +62,7 @@ def generate_pdf(lines: list):
     textobj = canv.beginText()
     textobj.setTextOrigin(inch, inch)
     textobj.setFont('Times-Roman', 14)
-
+    
     for i in lines:
         textobj.textLine(i)
         
@@ -77,6 +80,58 @@ observation_template_models = (
 )
 
 
+def sum_risk_values(risk_objs):
+    return sum([int(x.risk_value) for x in risk_objs])
+
+
+def calc_preeclampsia(user_profile: Patient) -> str:
+    try:
+        last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
+        if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
+                int(last_monitoring.systolic_blood_pressure) >= 140,
+                int(last_monitoring.protein_in_urine) >= 300):
+            return 'Высокий'
+        else:
+            return 'Низкий'
+    except:
+        return 'Недостаточно данных'
+
+
+def calc_premature_birth(user_profile: Patient) -> str:
+    try:
+        last_pregnancy = user_profile.pregnancy_info.latest('id')
+        if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
+                user_profile.card.age >= 35,
+                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
+                last_pregnancy.pregnancy == '4',
+                last_pregnancy.pregnancy_1 == '2',
+                user_profile.patient_information.latest('id').sti):
+            return 'Высокий'
+        else:
+            return 'Низкий'
+    except:
+        return 'Недостаточно данных'
+
+
+def calc_risk_values_sum(user_profile: Patient) -> str | int:
+    try:
+        for risk in user_profile.card.risks.all():
+            visit = risk.visit
+            if visit == '30-40':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '18-20':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '11-14':
+                return sum_risk_values(risk.complications.all())
+            elif visit == '1':
+                return sum_risk_values(risk.complications.all())
+            else:
+                return 0
+        return 'Недостаточно данных'
+    except:
+        return 'Введено не числовое значение'
+
+
 @login_required
 def home_page(request):
     template_name: str = 'home/home.html'
@@ -90,8 +145,12 @@ def home_page(request):
     
     if user_type == 'doctor':
         user_account = user.doctor
-        related_patients = user_account.patients.all()
-        context |= { 'account': user_account, 'related_patients': related_patients }
+        related_patients = user_account.patients.select_related('card').all()
+        today = date.today()
+        risks = ((calc_preeclampsia(x), calc_premature_birth(x), calc_risk_values_sum(x))\
+                for x in related_patients)
+        pats = zip(related_patients, risks)
+        context |= { 'account': user_account, 'related_patients': related_patients, 'pats': pats }
         return render(request, template_name, context)
     elif user_type == 'patient':
         keys_names = []
@@ -99,7 +158,7 @@ def home_page(request):
             keys_names.append((key, val))
         user_account = user.patient
         # records = user_account.records.all()
-        notes = [ReceptionViewForm(instance=x) for x in ReceptionNotes.objects.filter(patient=user_account)]
+        notes = (ReceptionViewForm(instance=x) for x in ReceptionNotes.objects.filter(patient=user_account))
         context |= { 'notes': notes }
         context |= { 'account': user_account }#'records': records }
         context |= { 'keys_names': keys_names }
@@ -133,36 +192,39 @@ def data_sampling_page(request):
         form = DataSamplingForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-
+            
             if all(not x for x in [i for i in form_data.values()]):
                 # add message: fill any field
                 return render(request, 'home/data_sampling.html', {'form':form})
-
+            
             # age = form_data['age']
-
+            
             if form_data['mkb_10']:
-                patients = Patient.objects.select_related().filter(card__diagnosis = form_data['mkb_10'])
+                patients = Patient.objects.filter(card__diagnosis = form_data['mkb_10'])
             if form_data['medical_organization']:
-                patients = patients.select_related().filter(doctors__med_org=form_data['medical_organization'])
+                patients = patients.filter(doctors__med_org=form_data['medical_organization'])
             if form_data['territory']:
-                patients = patients.select_related().filter(card__residence_address=form_data['territory'])
+                patients = patients.filter(card__residence_address=form_data['territory'])
             if form_data['age']:
-                patients = patients.select_related().filter(card__age=form_data['age'])
+                patients = patients.filter(card__age=form_data['age'])
             if form_data['date_of_birth']:
-                patients = patients.select_related().filter(card__date_of_birth=form_data['date_of_birth'])
+                patients = patients.filter(card__date_of_birth=form_data['date_of_birth'])
             if form_data['date_of_death']:
-                patients = patients.select_related().filter(pregnancy_outcome__death_time=form_data['date_of_death'])
+                patients = patients.filter(pregnancy_outcome__death_time=form_data['date_of_death'])
             # if form_data['city_village']:
             #     patients = patients.filter(city_village=form_data['city_village'])
-
+            
+            if len(patients) < 1:
+                return render(request, 'home/data_sampling.html', {'form':form, 'nodata': "Не найдено записей с такими данными"})
+            
             for patient in patients:
                 # may be change fields
                 lines.append(f'First name: {patient.first_name}')
                 lines.append(f'Last name: {patient.last_name}')
                 lines.append(f'Father name: {patient.father_name}')
                 lines.append('===============')
-            return generate_pdf(lines)  
-
+            return generate_pdf(lines)
+    
     return render(request, 'home/data_sampling.html', {'form':form})
 
 
@@ -228,12 +290,17 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             else:
                 commit.visit_number = 1
             commit.save()
+            # bot
+            async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
+                    f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
             form: ReceptionAddForm = form_class()
         notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
         return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
     
+    rolesR = ('assistant', )
+    rolesNA = ('receptionist', )
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
+    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA })
 
 
 def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:

@@ -7,11 +7,13 @@
     <a href="{% url 'profile' profile_id %}">Вернуться</a>
 </div>
 
+{% if request.user.doctor.role not in rolesNA %}
 <div class="center_div">
     <div>
         <h3>Планы посещений пациента</h3>
     </div>
     
+    {% if request.user.doctor.role not in rolesR %}
     <div class="outer_div">
         <div class="border_div">
             <form action="" method="POST">
@@ -31,11 +33,12 @@
                     {{ form.errors }}
                 </div>
                 <div class="submit-btn">
-                    <button type="submit" class="btn">Сохранить</button>
+                    <button type="submit" class="btn">Добавить</button>
                 </div>
             </form>
         </div>
     </div>
+    {% endif %}
     
     {% if notes %}
     <div class="block__profile__disease border_div reception_page">
@@ -98,4 +101,7 @@
         <h3>Посещения не назначены</h3>
     {% endif %}
 </div>
+{% else %}
+    <h2>Доступ к данной странице запрещен</h2>
+{% endif %}
 {% endblock %}

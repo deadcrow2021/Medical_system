@@ -21,7 +21,7 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
-                <p><a href="{% url 'portion-page' profile.user.id 'current_pregnancy' 'current_pregnancy' %}">Текущая беременность</a></p>
+                <p><a href="{% url 'portion-page' profile.user.id 'current_pregnancy' 'current_pregnancy' %}">Сведения о настоящей беременности</a></p>
             </div>
         </div>
         <div class="block__lines">
@@ -112,19 +112,9 @@
         
         {% if user.is_superuser %}
         <div class="block__lines">
-            {% comment %} <div class="lines__element btn">
-                <p><a href="{% url 'update-profile' profile.user.id %}">Изменить</a></p>
-            </div> {% endcomment %}
-            {% if not user.patient %}
             <div class="lines__element">
                 <p><button class="btn delete_btn">Удалить</button></p>
             </div>
-            {% endif %}
-            {% comment %} {% if user.doctor %}
-            <div class="lines__element btn">
-                <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
-            </div>
-            {% endif %} {% endcomment %}
         </div>
         {% endif %}
         
@@ -147,13 +137,13 @@
             </form>
         </div>
         {% endif %}
-        {% if not user.patient %}
+        {% comment %} {% if not user.patient %}
         <a href="{% url 'update-profile' profile.user.id %}">
             <div class="fields__input btn">
                 <p>Изменить</p>
             </div>
         </a>
-        {% endif %}
+        {% endif %} {% endcomment %}
         
         <div>
             <h4>Планы посещений пациента</h4>

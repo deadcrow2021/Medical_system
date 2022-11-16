@@ -7,29 +7,83 @@
 
 
 <div class="form__block">
-    <div class="outer_div">
-        <div class="border_div">
-            <form action="" method="POST">
-                {% csrf_token %}
-                <div class="fields add_form">
-                    {% for p in form %}
-                    <div class="fields__input">
-                        <div class="fields__input__label">
-                            {{ p.label_tag }}
-                        </div>
-                        <div class="fields__input__field">
-                            {{ p }}
-                        </div>
-                    </div>
-                    {{ p.errors }}
-                    {% endfor %}
-                    {{ form.errors }}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="fields center_div">
+            {% for p in form %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ p.label_tag }}</strong>
                 </div>
-                <div class="submit-btn">
-                    <button type="submit" class="btn">Сохранить</button>
+                <div class="fields__input__field">
+                    {{ p }}
                 </div>
-            </form>
+            </div>
+            {{ p.errors }}
+            {% endfor %}
+            {{ form.errors }}
         </div>
-    </div>
+        <div class="submit-btn">
+            <button type="submit" class="btn">Сохранить</button>
+        </div>
+    </form>
 </div>
+
+<script type='text/javascript' defer>
+    var old_fields = document.getElementsByClassName('fields')[0];
+    var form = old_fields.parentNode;
+    var fields = document.createElement('div')
+    fields.setAttribute("class", "fields")
+    
+    function set_name_with_border(name, id, count) {
+        let elem = document.querySelector(`label[for=id_${id}]`);
+        if (elem === null)
+            return;
+        elem = elem.parentNode.parentNode.parentNode;
+        
+        let label = document.createElement('h3');
+        label.innerText = name + ':';
+        
+        let inner_div = document.createElement('div');
+        inner_div.setAttribute('class', 'border_div');
+        
+        for(let i = 0; i < count; i++) {
+            let next = elem.nextElementSibling;
+            inner_div.appendChild(elem);
+            elem = next;
+            if (elem === null)
+                break;
+        }
+        
+        let div = document.createElement('div');
+        div.setAttribute('class', 'outer_div');
+        div.appendChild(label);
+        div.appendChild(inner_div);
+        fields.prepend(div);
+    }
+    
+    let nodes_id = [
+        ['Личные данные','first_name', 23],
+        ['Сведения об аллергии','allergy',2],
+        ['Сведения о группе крови и Rh-факторе','mother_blood_group',6],
+        ['Данные по беременности','pregnancy_count',4],
+        ['Роды','childbirth_date',3],
+        ['Диагноз','diagnosis',2],
+        ['Сопутствующие заболевания','somatic_diseases',2],
+        // ['Подтверждение','doctor_confirmation',1],
+        ['Декретный отпуск','maternity_leave_start', 5],
+        ['Риски осложнений','visit', 1000000]
+    ]
+    
+    for (let [name, id, count] of nodes_id) {
+        set_name_with_border(name, id, count);
+    }
+    
+    old_fields.remove()
+    form.prepend(fields)
+    
+    for (let elem of fields.children) {
+        fields.prepend(elem);
+    }
+</script>
 {% endblock %}

@@ -11,19 +11,16 @@ class DateTimeInput(forms.DateTimeInput):
 
 class PatientCreationForm(forms.ModelForm):
     class Meta:
-        model = Patient
-        fields = (
-            'first_name',
-            'last_name',
-            'father_name',
-            'telephone',
-            'email',
-        )
+        model = MedicalCard
+        fields = 'first_name', 'last_name', 'father_name',\
+                'date_of_birth', 'series_number_pass', 'when_issued',\
+                'when_whom_issued', 'registration_address', 'oms_policy',\
+                'snils', 'mobile_phone', 'email'
         widgets = {
-            'telephone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 })
+            'mobile_phone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 })
         }
         error_messages = {
-            'telephone' : {
+            'mobile_phone' : {
                 'invalid': "Неправильный формат ввода, номер должен состоять из 11 цифр"
             }
         }
@@ -133,8 +130,9 @@ class DataSamplingForm(forms.Form):
 class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
-        fields = 'date_of_birth', 'age', 'residence_address', 'registration_address', 'mobile_phone', \
-        'home_phone', 'work_phone', 'marital_status', 'trusted_person_fio', 'trusted_person_phone', \
+        fields = 'first_name', 'last_name', 'father_name', 'date_of_birth', 'age', 'series_number_pass', 'when_issued', \
+        'when_whom_issued', 'residence_address', 'registration_address', 'mobile_phone', \
+        'home_phone', 'work_phone', 'email', 'marital_status', 'trusted_person_fio', 'trusted_person_phone', \
         'education', 'profession', 'work_place', 'disability', 'oms_policy', 'snils', 'maternity_leave_start', \
         'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', \
         'generic_certificate_date', 'allergy', 'allergy_description', \

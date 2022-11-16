@@ -31,23 +31,35 @@ class Patient(models.Model):
 class MedicalCard(models.Model):
     # personal data
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='card')
-    date_of_birth= models.DateField('Дата рождения', blank=True, null=True)
+    first_name   = models.CharField("Имя", max_length=50, blank=True, null=True)
+    last_name    = models.CharField("Фамилия", max_length=50, blank=True, null=True)
+    father_name  = models.CharField("Отчество", max_length=50, blank=True)
+    date_of_birth = models.DateField('Дата рождения', blank=True, null=True)
     age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
+    series_number_pass = models.PositiveBigIntegerField("Серия и номер паспорта", blank=True, null=True)
+    when_issued = models.DateField("Когда выдан", blank=True, null=True)
+    when_whom_issued = models.CharField("Кем выдан", max_length=100, blank=True, null=True)
     residence_address = models.CharField('Адрес проживания', max_length=100, blank=True, null=True)
     registration_address = models.CharField('Адрес регистрции', max_length=100, blank=True, null=True)
+    oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True, null=True)
+    snils        = models.CharField('СНИЛС', max_length=11, blank=True, null=True)
+    
+    # contact data
     mobile_phone    = PhoneNumberField('Мобильный телефон', max_length=20, blank=True, null=True)
     home_phone    = PhoneNumberField('Домашний телефон', max_length=20, blank=True, null=True)
     work_phone    = PhoneNumberField('Рабочий телефон', max_length=20, blank=True, null=True)
+    email        = models.EmailField('Адрес электронной почты', max_length=60, blank=True, null=True)
     marital_status = models.CharField('Брачное состояние', default='', choices=MARITAL_STATUS, max_length=1, blank=True, null=True)
+    
+    # trusted person
     trusted_person_fio = models.CharField("ФИО доверенного лица", max_length=300, blank=True, null=True)
     trusted_person_phone = PhoneNumberField('Контактный телефон', max_length=20, blank=True, null=True)
     education = models.CharField('Образование', max_length=5, choices=EDUCATION, blank=True, null=True)
     profession = models.CharField('Профессия', max_length=200, blank=True, null=True)
     work_place = models.CharField('Место работы', max_length=200, blank=True, null=True)
     disability = models.CharField('Инвалидность', max_length=200, choices=DISABILITY, blank=True, null=True)
-    oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True, null=True)
-    snils        = models.CharField('СНИЛС', max_length=11, blank=True, null=True)
-
+    
+    # maternity leave
     maternity_leave_start = models.DateField('Начало декретного отпуска', blank=True, null=True)
     maternity_leave_finish = models.DateField('Окончание декретного отпуска', blank=True, null=True)
     disability_certificate = models.CharField('Номер отпуска по беременности и родам', max_length=16, blank=True, null=True)
@@ -90,8 +102,11 @@ class MedicalCard(models.Model):
         verbose_name = 'Медицинская карта'
         verbose_name_plural = 'Медицинские карты'
     
+    def get_full_name(self) -> str:
+        return f"{self.last_name} {self.first_name} {self.father_name}"
+    
     def __str__(self) -> str:
-        return self.patient.get_full_name()
+        return self.get_full_name()
 
 
 class ObstetricRisk(models.Model):
@@ -903,3 +918,11 @@ class MODelivery(models.Model):
     
     def __str__(self) -> str:
         return self.delivery if self.delivery else "Недостаточно данных"
+
+
+class TelegramUsers(models.Model):
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE)
+    tg_user_id = models.PositiveBigIntegerField('ID пользователя в Telegram', unique=True)
+    
+    def __str__(self) -> str:
+        return self.patient.get_full_name()
