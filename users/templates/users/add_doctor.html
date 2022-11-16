@@ -6,11 +6,11 @@
         <div class="border_div">
             <form action="" method="POST">
                 {% csrf_token %}
-                <div class="fields add_form">
+                <div class="fields ">
                     {% for p in form %}
-                    <div class="fields__input">
+                    <div class="fields__input width_100">
                         <div class="fields__input__label">
-                            {{ p.label_tag }}
+                            <strong>{{ p.label_tag }}</strong>
                         </div>
                         <div class="fields__input__field">
                             {{ p }}
@@ -21,7 +21,7 @@
                     {{ form.errors }}
                 </div>
                 <div class="submit-btn">
-                    <button type="submit" class="btn">Сохранить</button>
+                    <button type="submit" class="btn">Добавить</button>
                 </div>
             </form>
         </div>

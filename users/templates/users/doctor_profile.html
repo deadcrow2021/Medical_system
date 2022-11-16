@@ -1,0 +1,24 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="account">
+    <div>
+        <div class="fio">
+            <div class="fio__element">
+                <p><strong>Фамилия:</strong> {{ account.last_name }}</p>
+            </div>
+            <div class="fio__element">
+                <p><strong>Имя:</strong> {{ account.first_name }}</p>
+            </div>
+            {% if account.father_name %}
+                <div class="fio__element">
+                    <p><strong>Отчество:</strong> {{ account.father_name }}</p>
+                </div>
+            {% endif %}
+            <div class="fio__element">
+                <p><strong>Специальность:</strong> {{ account.get_role_display }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

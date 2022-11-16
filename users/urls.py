@@ -9,6 +9,7 @@ urlpatterns = [
     path('patients', views.PatientsView.as_view(), name='patients'),
     path('recent_patients', views.recent_patients, name='recent-patients'),
     path('profile/<profile_id>', views.profile, name='profile'),
+    path('doctor_profile/<profile_id>', views.doctor_profile_page, name='doc-profile'),
     path('profile_models_template/<profile_id>/<model_name>', views.profile_models_template_page, name='profile-models-template'),
     path('add_profile_models_template/<profile_id>/<model_name>/<model_id>', views.add_profile_models_template_page, name='add-profile-models-template'),
     path('examination_template_page/<profile_id>/<model_name>', views.examination_template_page, name='examination-template-page'),

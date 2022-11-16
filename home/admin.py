@@ -43,3 +43,5 @@ admin.site.register(ComprehensiveRiskAssessment),
 admin.site.register(UltrasoundExamination_19_21),
 admin.site.register(UltrasoundExamination_30_34),
 admin.site.register(MODelivery),
+
+admin.site.register(TelegramUsers),
