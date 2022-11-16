@@ -415,11 +415,11 @@ def clear_phone(phone: str) -> str:
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
-        post |= { 'telephone': [clear_phone(post['telephone'])] }
+        post |= { 'mobile_phone': [clear_phone(post['mobile_phone'])] }
         form = self.form_class(post)
         if form.is_valid():
             user: User = User()
-            personal: Patient | Doctor = form.save(commit=False)
+            personal: MedicalCard | Doctor = form.save(commit=False)
             password = get_random_string(length=8)
             user.set_password(password)
             last_name = translate_name(personal.last_name)
@@ -429,28 +429,38 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                       settings.EMAIL_HOST_USER,
                       [form.cleaned_data['email']])
             user.save()
-            personal.user = user
-            personal.save()
             
             user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             if user_type == 'patient':
-                med_card = MedicalCard()
-                med_card.patient = personal
-                med_card.home_phone = personal.telephone
-                med_card.save()
+                # med_card = MedicalCard()
+                # med_card.patient = personal
+                # med_card.home_phone = personal.telephone
+                # med_card.save()
+                patient = Patient()
+                patient.first_name = personal.first_name
+                patient.last_name = personal.last_name
+                patient.father_name = personal.father_name
+                patient.telephone = personal.mobile_phone
+                patient.email = personal.email
+                patient.user = user
+                patient.save()
+                personal.patient = patient
                 
                 pat_info = PatientInformation()
-                pat_info.patient = personal
+                pat_info.patient = patient
                 pat_info.save()
                 
                 current_preg = CurrentPregnancy()
-                current_preg.patient = personal
+                current_preg.patient = patient
                 current_preg.save()
-            
+                
                 mo_delivery = MODelivery()
-                mo_delivery.patient = personal
+                mo_delivery.patient = patient
                 mo_delivery.save()
-
+            else:
+                personal.user = user
+            personal.save()
+            
             add_log(request.user,
                     f'{user_type} {personal.get_full_name()}',
                     CHANGETYPE.Пользователь_был_создан,

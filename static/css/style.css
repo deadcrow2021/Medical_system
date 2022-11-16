@@ -161,7 +161,7 @@ a:hover {
     display: flex;
     margin-right: 10px;
     font-size: 18px;
-    width: 50%;
+    /* min-width: 50%; */
 }
 
 .fields__input__field input {

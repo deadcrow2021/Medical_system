@@ -11,19 +11,16 @@ class DateTimeInput(forms.DateTimeInput):
 
 class PatientCreationForm(forms.ModelForm):
     class Meta:
-        model = Patient
-        fields = (
-            'first_name',
-            'last_name',
-            'father_name',
-            'telephone',
-            'email',
-        )
+        model = MedicalCard
+        fields = 'first_name', 'last_name', 'father_name',\
+                'date_of_birth', 'series_number_pass', 'when_issued',\
+                'when_whom_issued', 'registration_address', 'oms_policy',\
+                'snils', 'mobile_phone', 'email'
         widgets = {
-            'telephone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 })
+            'mobile_phone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 })
         }
         error_messages = {
-            'telephone' : {
+            'mobile_phone' : {
                 'invalid': "Неправильный формат ввода, номер должен состоять из 11 цифр"
             }
         }
