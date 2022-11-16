@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     var date_inputs = document.querySelectorAll('input[type=date]');
     for (let inp of date_inputs) {
-        // inp.style.width = '140px';
+        // inp.style.width = '200px';
         inp.onfocus = (e) => {
             let i = inp;
             let date = i.defaultValue;

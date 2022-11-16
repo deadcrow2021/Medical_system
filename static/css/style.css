@@ -161,6 +161,7 @@ a:hover {
     display: flex;
     margin-right: 10px;
     font-size: 18px;
+    width: 50%;
 }
 
 .fields__input__field input {
@@ -671,4 +672,8 @@ th {
     flex-direction: row;
     justify-content: space-between;
     font-size: 20px;
+}
+
+.width_100 {
+    width: 100%;
 }

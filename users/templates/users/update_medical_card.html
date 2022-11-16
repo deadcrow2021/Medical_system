@@ -13,7 +13,7 @@
             {% for p in form %}
             <div class="fields__input">
                 <div class="fields__input__label">
-                    {{ p.label_tag }}
+                    <strong>{{ p.label_tag }}</strong>
                 </div>
                 <div class="fields__input__field">
                     {{ p }}
@@ -39,7 +39,7 @@
         let elem = document.querySelector(`label[for=id_${id}]`);
         if (elem === null)
             return;
-        elem = elem.parentNode.parentNode;
+        elem = elem.parentNode.parentNode.parentNode;
         
         let label = document.createElement('h3');
         label.innerText = name + ':';

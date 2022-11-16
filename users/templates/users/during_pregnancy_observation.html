@@ -10,7 +10,8 @@
     <div class="block__profile__docs">
         <div class="block__lines">
             <div class="lines__element btn same_btn">
-                <a href="{% url 'portion-page' current_user.id 'pregnant_woman_monitoring' 'pregnant_woman_monitoring' %}">Наблюдения за беременной</a>
+                {% comment %} <a href="{% url 'portion-page' current_user.id 'pregnant_woman_monitoring' 'pregnant_woman_monitoring' %}">Наблюдения за беременной</a> {% endcomment %}
+                <a href="{% url 'observation' current_user.id 'pregnant_woman_monitoring' %}">Наблюдения за беременной</a>
             </div>
         </div>
     </div>

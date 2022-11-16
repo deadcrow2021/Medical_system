@@ -16,6 +16,13 @@
         </div>
     </div>
     {% endfor %}
+    {% comment %} <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
+            </div>
+        </div>
+    </div> {% endcomment %}
 </div>
 {% endif %}
 {% endblock %}
