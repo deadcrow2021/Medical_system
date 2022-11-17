@@ -447,6 +447,22 @@ a:hover {
     height: max(calc(24px * 6), 100%);
 }
 
+.data_above {
+    position: absolute;
+    /* position: fixed; */
+    background-color: #ecf1f4;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: max-content;
+    height: max-content;
+    padding: 10px 20px;
+    top: 40px;
+}
+
+.relative {
+    position: relative;
+}
+
 .data_btn {
     font-size: 20px;
     background-color: transparent;
