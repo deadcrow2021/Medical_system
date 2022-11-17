@@ -62,11 +62,11 @@
     search_field.onkeyup = (e) => {
         let pattern = search_field.value.toLowerCase();
         let sliced_data = data.filter(x => x.toLowerCase().includes(pattern)).slice(0, 5);
-        if (sliced_data.length < 1) {
+        {% comment %} if (sliced_data.length < 1) {
             buttons[0].parentNode.classList.add('hide');
         } else {
             buttons[0].parentNode.classList.remove('hide');
-        }
+        } {% endcomment %}
         for (let i = 0; i < 5; i++)
             buttons[i].innerHTML = sliced_data[i] ? sliced_data[i] : '';
     }
@@ -74,12 +74,18 @@
     search_field.onfocus = (e) => {
         buttons[0].parentNode.classList.remove('hide');
     }
-    search_field.onblur = (e) => {
+    document.body.onclick = (e) => {
+        if (e.target == search_field ||
+            e.target == buttons[0].parentNode ||
+            [...buttons].indexOf(e.target) !== -1) {
+                return;
+        }
         buttons[0].parentNode.classList.add('hide');
     }
     
     search_field.onkeyup();
-    search_field.onblur();
+    document.body.onclick(data);
+    {% comment %} search_field.onblur(); {% endcomment %}
     // document.getElementById('clear').onclick = e => {
     //     search_field.value = '';
     //     search_field.onkeyup();
