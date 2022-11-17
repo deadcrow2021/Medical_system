@@ -74,12 +74,17 @@
     search_field.onfocus = (e) => {
         buttons[0].parentNode.classList.remove('hide');
     }
-    search_field.onblur = (e) => {
+    document.body.onclick = (e) => {
+        if (e.target == search_field ||
+            e.target == buttons[0].parentNode ||
+            [...buttons].indexOf(e.target) !== -1) {
+                return;
+        }
         buttons[0].parentNode.classList.add('hide');
     }
     
     search_field.onkeyup();
-    search_field.onblur();
+    document.body.onclick(data);
     // document.getElementById('clear').onclick = e => {
     //     search_field.value = '';
     //     search_field.onkeyup();
