@@ -23,6 +23,7 @@ from home.choices import CHANGETYPE
 from django.utils import timezone
 from django.core.mail import send_mail
 from .generate_samd import *
+from home.views import generate_pdf
 import time
 
 
@@ -986,8 +987,17 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         form = StatisticsPeriodForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-            if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
-                form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
+            if form_data['date_to'] and form_data['date_from']:
+                if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
+                    form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
+            elif not form_data['date_to'] and not form_data['date_from']:
+                form_data['date_to'] = date.today()
+                form_data['date_from'] = date.today()
+            elif not (form_data['date_to'] and form_data['date_from']):
+                if not form_data['date_to']:
+                    form_data['date_to'] = form_data['date_from']
+                else:
+                    form_data['date_from'] = form_data['date_to']
 
     patients = Patient.objects.all()
     patients_number = len(patients)
@@ -1022,7 +1032,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         if any(x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list):
             p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
             birth_dead_number = p_12
-            p_13 += len([(x.pregnancy_outcome == 'd' and x.gestation_period_weeks >= 28) for x in pregnancy_outcome_list])
+            p_13 += len([(x.pregnancy_outcome == 'd' and (x.gestation_period_weeks if x.gestation_period_weeks else 0) >= 28) for x in pregnancy_outcome_list])
 
         if any(x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list):
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
@@ -1253,7 +1263,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         
     if not request.method == 'POST':
         birth_number_period = birth_number
-    return render(request, template_name, {
+
+    context = {
         'form': form,
         'p_1': p_1*100/patients_number,
         'p_3': p_3*1000/age_15_45,
@@ -1290,9 +1301,48 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         'p_28': p_28*100/patients_number,
         'p_29': p_29*100/patients_number,
         'p_31': {x: p_31[x]*100/birth_number_period for x in p_31},
-        'ex' : {'abc': 5, 'zxc': 10}
-    })
+    }
 
+    # def dict_to_str(d: dict):
+    #     final_str = ''
+    #     for k, v in d.items():
+    #         final_str += f'{k, v}'
+    #     return final_str
+
+    # if request.method == 'POST':
+    #     lines = [
+    #         f"Доля поступивших беременных под наблюдение консультации со сроком беременности до 12 недель: {context['p_1']}",
+    #         f"Частота прерываний беременности (на 1000 женщин в возрасте 15 - 49 лет): {context['p_3']}",
+    #         f"Доля обследованных беременных женщин в первом триместре беременности прошедших оценку антенатального развития плода в 11-14 недель беременности от числа поставленных на учет в первый триместр беременности: {context['p_4']}",
+    #         f"Частота критических акушерских состояний во время беременности, родов и в течение 42 дней после ее окончания: {context['p_5']}",
+    #         f"Доля родов у женщин после лечения бесплодия методами ВРТ от общего числа родов: {context['p_6']}",
+    #         f"Доля родов у женщин в возрасте ≥35 лет от общего числа родов: {context['p_7']}",
+    #         f"Доля родов у женщин в возрасте меньше 18 лет от общего числа родов: {context['p_8']}",
+    #         f"Доля родов у женщин с индексом массы тела до беременности ≥30 m(кг)/h2(м) от общего числа родов: {context['p_9']}",
+    #         f"Доля родов у первородящих женщин от общего числа родов: {context['p_10']}",
+    #         f"Доля родов у женщин, вставших на учет до 12 недель беременности, от общего числа родов: {context['p_11']}",
+    #         f"Мертворождаемость: {context['p_12']}",
+    #         f"Мертворождаемость на сроке ≥ 28 недель беременности: {context['p_13']}",
+    #         f"Доля родов у женщин с многоплодной беременностью от общего числа родов: {context['p_14']}",
+    #         f"Доля кесаревых сечений от общего числа родов: {context['p_15']}",
+    #         f"Число случаев тяжелых преэклампсий на 1000 родов: {context['p_16']}",
+    #         f"Доля родов вне медицинской организации от общего числа родов: {context['p_17']}",
+    #         f"Доля родов у первородящих женщин при одноплодной беременности и тазовом предлежании от общего числа родов: {context['p_18']}",
+    #         f"Доля родов у повторнородящих женщин с рубцом на матке (после предыдущего кесарева сечения) при одноплодной беременности и тазовом предлежании от общего числа родов: {context['p_19']}",
+    #         f"Число случаев эклампсий на 1000 родов: {context['p_20']}",
+    #         f"Доля родов у женщин после лечения бесплодия методами вспомогательных репродуктивных технологий (ВРТ) от общего числа родов: {context['p_21']}",
+    #         f"Доля эпизиотомий при одноплодной беременности и неоперативных вагинальных родах на сроке ≥37 недель беременности от общего числа неоперативных вагинальных родов при одноплодной беременности на сроке ≥37 недель: {context['p_22']}",
+    #         f"Число случаев гнойно-септических заболеваний после кесарева сечения на 1000 операций кесарево сечение: {context['p_23']}",
+    #         f"Число случаев гнойно-септических заболеваний после вагинальных родов на 1000 вагинальных родов: {context['p_24']}",
+    #         f"Всего беременных за период с разбивкой на нормальную беременность/патологию (выполнение работ в рамках гарантийных обязательств по контракту): Нормальные - {context['p_25']['1']}. Патология - {context['p_25']['2']}",
+    #         f"Всего родильниц за период с разбивкой на нормальные роды/патологию (выполнение работ в рамках гарантийных обязательств по контракту):  Нормальные - {context['p_26']['1']}. Патология - {context['p_26']['2']}",
+    #         f"Всего родильниц, родивших за выбранный период, с разбивкой по возрастным группам (выполнение работ в рамках гарантийных обязательств по контракту): {dict_to_str(context['p_27'])}",
+    #         f"Структура заболеваемости беременных с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту): {context['p_28']}",
+    #         f"Структура заболеваемости родильниц с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту): {context['p_29']}",
+    #         f"Распределение всех пациенток по срокам родоразрешения: {dict_to_str(context['p_31'])}",
+    #     ]
+    #     return generate_pdf(lines)
+    return render(request, template_name, context)
 
 def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name: str = 'users/samd.html'

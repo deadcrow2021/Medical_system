@@ -10,6 +10,7 @@
         <div class="border_div">
             <form action="" method="POST">
                 {% csrf_token %}
+                <div class="fields__input__label">Родов за период</div>
                 <div class="fields add_form">
                     {% for p in form %}
                     <div class="fields__input">
