@@ -925,6 +925,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     birth_number_period = 0
     birth_dead_number = 0
     card_childbirth = 0
+    registered_first_trimester = 0
+    up_37_week_birth = 0
 
     p_1 = 0
     p_3 = 0
@@ -945,6 +947,9 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     p_18 = 0
     p_19 = 0
     p_20 = 0
+    p_22 = 0
+    p_23 = 0
+    p_24 = 0
     p_25_1 = 0
     p_25_2 = 0
     p_26_1 = 0
@@ -984,16 +989,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
                 form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
 
-    patients = Patient.objects.select_related('card')\
-                            .select_related('first_examination')\
-                            .select_related('pregnancy_outcome')\
-                            .select_related('patient_information')\
-                            .select_related('pregnancy_info')\
-                            .all()
+    patients = Patient.objects.all()
     patients_number = len(patients)
-
+        
     for p in patients:
         card = p.card
+        
+        if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
+            registered_first_trimester += 1
 
         if card.age and 15 <= card.age <= 45:
             age_15_45 += 1
@@ -1007,8 +1010,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 p_1 += 1
 
         pregnancy_outcome_list = [x for x in p.pregnancy_outcome.all()]
-        if any(x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list) and card.age and 15 <= card.age <= 45:
+        if card.age and any(x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list) and 15 <= card.age <= 45:
             p_3 += len([x.pregnancy_outcome == 'a' for x in pregnancy_outcome_list])
+        
+        if any(x.fetal_development_assessment_11_14 for x in p.current_pregnancy.pregnant_woman_monitoring.all()):
+            p_4 += 1
+        
+        if card.complications:
+            p_5 += 1
 
         if any(x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list):
             p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
@@ -1023,6 +1032,13 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                         birth_number_period +=len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
 
             p_15 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
+            
+            for i in pregnancy_outcome_list:
+                if i.gestation_period_weeks and i.number_of_fetuses and i.gestation_period_weeks >= 37 and i.number_of_fetuses == 1:
+                    up_37_week_birth += 1
+                    if i.if_childbirth == 'sc':
+                        p_22 += 1
+            
             if card.age:
                 if card.age < 18:
                     p_8 += 1
@@ -1060,9 +1076,10 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
                 if card.diagnosis and 'O14.1' in card.diagnosis:
                     p_16 += 1
-
                 if card.diagnosis and 'O15' in card.diagnosis:
                     p_20 += 1
+                if not card.med_org:
+                    p_17 += 1
         else:
             if len(pregnancy_info_list) >= 2 and any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
                     and any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
@@ -1136,7 +1153,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             if any(x in (card.diagnosis if card.diagnosis else '') for x in ['O81', 'O82', 'O83', 'O84']):
                 p_26_2 += 1
 
-            if any(x.childbirth_date for x in pregnancy_outcome_list) and card.age:
+            if card.age and any(x.childbirth_date for x in pregnancy_outcome_list):
                 if card.age <= 14:
                     p_27['to_14'] += 1
                 elif 15 <= card.age <= 17:
@@ -1163,8 +1180,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     
         if card.diagnosis:
             p_28 += 1
-        if card.diagnosis or any(x for x in pregnancy_outcome_list):
-            p_29 += 1
+            if any(x for x in pregnancy_outcome_list):
+                p_29 += 1
         
         if request.method == 'POST':
             if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
@@ -1215,13 +1232,24 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                     p_31['37_41'] += 1
                 if card.childbirth_gestation_period >= 42:
                     p_31['42_up'] += 1
-
+        septic_diseases = ['O08.0', 'O08.3', 'O41.1', 'O75.1', 'O85', 'O86', 'O86.0', 'O86.1', 'O86.2', 'O86.3', 'O86.4', 'O86.8', 'O88.3']
+        for i in (x for x in p.previous_pregnancy.all()):
+            if i.complications and (x in i.complications for x in septic_diseases):
+                if i.outcome and i.outcome == '2':
+                    p_23 += 1
+                else:
+                    p_24 += 1
+                
     if not birth_number:
         birth_number = 1
     if not birth_number_period:
         birth_number_period = 1
     if not birth_dead_number:
         birth_dead_number = 1
+    if not registered_first_trimester:
+        registered_first_trimester = 1
+    if not up_37_week_birth:
+        up_37_week_birth = 1
         
     if not request.method == 'POST':
         birth_number_period = birth_number
@@ -1229,8 +1257,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         'form': form,
         'p_1': p_1*100/patients_number,
         'p_3': p_3*1000/age_15_45,
-        # 'p_4': p_3,
-        # 'p_5': p_3,
+        'p_4': p_4*100/registered_first_trimester,
+        'p_5': p_5*1000/birth_number,
         'p_6': p_6*100/birth_number,
         'p_7': p_7*100/birth_number,
         'p_8': p_8*100/birth_number,
@@ -1242,11 +1270,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         'p_14': p_14*100/birth_number,
         'p_15': p_15*100/birth_number,
         'p_16': p_16*1000/birth_number_period,
-        # 'p_17': p_17,
+        'p_17': p_17*100/birth_number_period,
         'p_18': p_18*100/birth_number_period,
         'p_19': p_19*100/birth_number_period,
         'p_20': p_20*100/birth_number_period,
         'p_21': p_6*1000/birth_number_period, ###
+        'p_22': p_22*100/up_37_week_birth,
+        'p_23': p_23*1000/birth_number,
+        'p_24': p_24*1000/birth_number,
         'p_25': {
                 '1': p_25_1*100/birth_number_period,
                 '2': p_25_2*100/birth_number_period
