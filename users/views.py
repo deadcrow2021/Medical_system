@@ -267,7 +267,7 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
             data.save()
             return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
-    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })
+    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
@@ -307,7 +307,7 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
             form = PregnancyOutcomeForm(instance=PregnancyOutcome.objects.get(pk=outcome_id))
         else:
             form = PregnancyOutcomeForm()
-    return render(request, 'users/add_pregnancy_outcome.html', { 'form': form, 'current_user': current_user })
+    return render(request, 'users/add_pregnancy_outcome.html', { 'form': form, 'current_user': current_user, 'mkb_10': mkb10_deseases })
 
 
 def pregnancy_observation_page(request, profile_id):
@@ -856,7 +856,7 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
     else:
         form = model
     
-    context = { 'current_user': current_user, 'form': form, 'model_name': model_name }
+    context = { 'current_user': current_user, 'form': form, 'model_name': model_name, 'mkb_10': mkb10_deseases }
     return render(request, 'users/add_profile_models_template.html', context)
 
 
@@ -911,7 +911,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
     else:
         form = model
     
-    context = { 'current_user': current_user, 'form': form, 'model_name': model_name }
+    context = { 'current_user': current_user, 'form': form, 'model_name': model_name, 'mkb_10': mkb10_deseases }
     return render(request, 'users/add_examination_template.html', context)
 
 
