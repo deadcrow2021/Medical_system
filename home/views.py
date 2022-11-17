@@ -19,6 +19,7 @@ from reportlab.lib.pagesizes import letter
 from datetime import date
 from administration.management.commands import bot
 from asgiref.sync import async_to_sync
+from users.mkb10 import mkb10_deseases
 import io
 
 def user_is_admin(user):
@@ -225,7 +226,7 @@ def data_sampling_page(request):
                 lines.append('===============')
             return generate_pdf(lines)
     
-    return render(request, 'home/data_sampling.html', {'form':form})
+    return render(request, 'home/data_sampling.html', { 'form': form, 'mkb_10': mkb10_deseases})
 
 
 @login_required

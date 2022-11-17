@@ -1,35 +1,88 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-    <div class="title__block">
-        <h2>Выборка данных</h2>
-    </div>
+<div class="title__block">
+    <h2>Выборка данных</h2>
+</div>
 
-    <div class="form__block">
-        <div class="outer_div">
-            <div class="border_div">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <div class="fields add_form">
-                        {% for p in form %}
-                        <div class="fields__input">
-                            <div class="fields__input__label">
-                                {{ p.label_tag }}
-                            </div>
-                            <div class="fields__input__field">
-                                {{ p }}
-                            </div>
+<div class="form__block">
+    <div class="outer_div">
+        <div class="border_div">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields ">
+                    {% for p in form %}
+                    <div class="fields__input width_100">
+                        <div class="fields__input__label">
+                            <strong>{{ p.label_tag }}</strong>
                         </div>
-                        {{ p.errors }}
-                        {% endfor %}
-                        {{ form.errors }}
+                        <div class="fields__input__field">
+                            {{ p }}
+                        </div>
                     </div>
-                    <div class="submit-btn">
-                        <button type="submit" class="btn">Выбрать</button>
-                    </div>
-                </form>
-            </div>
-            <div class="center_div" style="position: absolute; left: 0"><h4>{{ nodata }}</h4></div>
+                    {{ p.errors }}
+                    {% endfor %}
+                    {{ form.errors }}
+                </div>
+                <div class="submit-btn">
+                    <button type="submit" class="btn">Выбрать</button>
+                </div>
+            </form>
         </div>
+        <div class="center_div" style="position: absolute; left: 0"><h4>{{ nodata }}</h4></div>
     </div>
+</div>
+
+<div class="data hide">{{ mkb_10 }}</div>
+<div class="data_btns data_above hide">
+    <button type="button" class="data_btn"></button><br>
+    <button type="button" class="data_btn"></button><br>
+    <button type="button" class="data_btn"></button><br>
+    <button type="button" class="data_btn"></button><br>
+    <button type="button" class="data_btn"></button><br>
+</div>
+
+<script type="text/javascript" defer mkb-helper>
+    var data = document.getElementsByClassName('data')[0].innerHTML.split(';');
+    var search_field = document.getElementById('id_mkb_10');
+    var buttons = document.getElementsByClassName('data_btn');
+    
+    search_field.parentNode.parentNode.style.position = 'relative';
+    search_field.parentNode.parentNode.appendChild(
+        buttons[0].parentNode
+    );
+    
+    for (let btn of buttons) {
+        btn.onclick = () => {
+            search_field.value = btn.innerHTML;
+        }
+    }
+    search_field.setAttribute('autocomplete', 'off');
+    
+    search_field.onkeyup = (e) => {
+        let pattern = search_field.value.toLowerCase();
+        let sliced_data = data.filter(x => x.toLowerCase().includes(pattern)).slice(0, 5);
+        if (sliced_data.length < 1) {
+            buttons[0].parentNode.classList.add('hide');
+        } else {
+            buttons[0].parentNode.classList.remove('hide');
+        }
+        for (let i = 0; i < 5; i++)
+            buttons[i].innerHTML = sliced_data[i] ? sliced_data[i] : '';
+    }
+    
+    search_field.onfocus = (e) => {
+        buttons[0].parentNode.classList.remove('hide');
+    }
+    search_field.onblur = (e) => {
+        buttons[0].parentNode.classList.add('hide');
+    }
+    
+    search_field.onkeyup();
+    search_field.onblur();
+    // document.getElementById('clear').onclick = e => {
+    //     search_field.value = '';
+    //     search_field.onkeyup();
+    // }
+</script>
 {% endblock %}
