@@ -10,13 +10,13 @@
         <div class="border_div">
             <form action="" method="POST">
                 {% csrf_token %}
-                <div class="fields">
+                <div class="fields width_100">
                     {% for p in form %}
                     <div class="fields__input width_100">
-                        <div class="fields__input__label"  style="width: 30%">
+                        <div class="fields__input__label">
                             <strong>{{ p.label_tag }}</strong>
                         </div>
-                        <div class="fields__input__field same_btn">
+                        <div class="fields__input__field " style="flex: 0 0 70%">
                             {{ p }}
                         </div>
                     </div>
@@ -35,26 +35,36 @@
 
 <div class="data hide">{{ mkb_10 }}</div>
 <div class="data_btns data_above hide">
-    <button type="button" class="data_btn"></button><br>
-    <button type="button" class="data_btn"></button><br>
-    <button type="button" class="data_btn"></button><br>
-    <button type="button" class="data_btn"></button><br>
-    <button type="button" class="data_btn"></button><br>
+    <button type="button" class="data_btn data_btn_mkb"></button><br>
+    <button type="button" class="data_btn data_btn_mkb"></button><br>
+    <button type="button" class="data_btn data_btn_mkb"></button><br>
+    <button type="button" class="data_btn data_btn_mkb"></button><br>
+    <button type="button" class="data_btn data_btn_mkb"></button><br>
 </div>
+<div class="data hide med_org">{{ med_org }}</div>
+<div class="data_btns data_above hide">
+    <button type="button" class="data_btn data_btn_med_org"></button><br>
+    <button type="button" class="data_btn data_btn_med_org"></button><br>
+    <button type="button" class="data_btn data_btn_med_org"></button><br>
+    <button type="button" class="data_btn data_btn_med_org"></button><br>
+    <button type="button" class="data_btn data_btn_med_org"></button><br>
+</div>
+
 
 <script type="text/javascript" defer mkb-helper>
     var data = document.getElementsByClassName('data')[0].innerHTML.split(';');
     var search_field = document.getElementById('id_mkb_10');
-    var buttons = document.getElementsByClassName('data_btn');
+    var buttons = document.getElementsByClassName('data_btn_mkb');
     
-    search_field.parentNode.parentNode.style.position = 'relative';
-    search_field.parentNode.parentNode.appendChild(
+    search_field.parentNode.style.position = 'relative';
+    search_field.parentNode.appendChild(
         buttons[0].parentNode
     );
     
     for (let btn of buttons) {
         btn.onclick = () => {
             search_field.value = btn.innerHTML;
+            buttons[0].parentNode.classList.add('hide');
         }
     }
     search_field.setAttribute('autocomplete', 'off');
@@ -74,21 +84,76 @@
     search_field.onfocus = (e) => {
         buttons[0].parentNode.classList.remove('hide');
     }
-    document.body.onclick = (e) => {
+    {% comment %} search_field.onblur = (e) => {
+        buttons[0].parentNode.classList.add('hide');
+    } {% endcomment %}
+    {% comment %} document.body.onclick = (e) => {
         if (e.target == search_field ||
             e.target == buttons[0].parentNode ||
             [...buttons].indexOf(e.target) !== -1) {
                 return;
         }
         buttons[0].parentNode.classList.add('hide');
-    }
+    } {% endcomment %}
     
     search_field.onkeyup();
-    document.body.onclick(data);
+    {% comment %} document.body.onclick(data); {% endcomment %}
     {% comment %} search_field.onblur(); {% endcomment %}
     // document.getElementById('clear').onclick = e => {
     //     search_field.value = '';
     //     search_field.onkeyup();
     // }
+</script>
+<script type="text/javascript" defer org-helper>
+    var orgs_data = document.getElementsByClassName('med_org')[0].innerHTML.split(';');
+    var search_field_orgs = document.getElementById('id_medical_organization');
+    var orgs_buttons = document.getElementsByClassName('data_btn_med_org');
+    
+    search_field_orgs.parentNode.style.position = 'relative';
+    search_field_orgs.parentNode.appendChild(
+        orgs_buttons[0].parentNode
+    );
+    
+    for (let btn of orgs_buttons) {
+        btn.onclick = () => {
+            search_field_orgs.value = btn.innerHTML;
+            orgs_buttons[0].parentNode.classList.add('hide');
+        }
+    }
+    search_field_orgs.setAttribute('autocomplete', 'off');
+    
+    search_field_orgs.onkeyup = (e) => {
+        let pattern = search_field_orgs.value.toLowerCase();
+        let sliced_data = orgs_data.filter(x => x.toLowerCase().includes(pattern)).slice(0, 5);
+        {% comment %} if (sliced_data.length < 1) {
+            orgs_buttons[0].parentNode.classList.add('hide');
+        } else {
+            orgs_buttons[0].parentNode.classList.remove('hide');
+        } {% endcomment %}
+        for (let i = 0; i < 5; i++)
+            orgs_buttons[i].innerHTML = sliced_data[i] ? sliced_data[i] : '';
+    }
+    
+    search_field_orgs.onfocus = (e) => {
+        orgs_buttons[0].parentNode.classList.remove('hide');
+    }
+    {% comment %} search_field_orgs.onblur = (e) => {
+        orgs_buttons[0].parentNode.classList.add('hide');
+    } {% endcomment %}
+    document.body.onclick = (e) => {
+        if (e.target == search_field ||
+            e.target == buttons[0].parentNode ||
+            [...buttons].indexOf(e.target) !== -1 ||
+            e.target == search_field_orgs ||
+            e.target == orgs_buttons[0].parentNode ||
+            [...orgs_buttons].indexOf(e.target) !== -1) {
+                return;
+        }
+        orgs_buttons[0].parentNode.classList.add('hide');
+        buttons[0].parentNode.classList.add('hide');
+    }
+    
+    search_field_orgs.onkeyup();
+    document.body.onclick(orgs_data);
 </script>
 {% endblock %}

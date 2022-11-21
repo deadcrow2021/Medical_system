@@ -31,8 +31,8 @@ class Patient(models.Model):
 class MedicalCard(models.Model):
     # personal data
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='card')
-    first_name   = models.CharField("Имя", max_length=50, default='Noname')
-    last_name    = models.CharField("Фамилия", max_length=50, default='Noname')
+    first_name   = models.CharField("Имя", max_length=50)
+    last_name    = models.CharField("Фамилия", max_length=50)
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     date_of_birth = models.DateField('Дата рождения', blank=True, null=True)
     age = models.PositiveSmallIntegerField('Полных лет', validators=[MaxValueValidator(99)], blank=True, null=True)
@@ -48,7 +48,7 @@ class MedicalCard(models.Model):
     mobile_phone    = PhoneNumberField('Мобильный телефон', max_length=20, blank=True, null=True)
     home_phone    = PhoneNumberField('Домашний телефон', max_length=20, blank=True, null=True)
     work_phone    = PhoneNumberField('Рабочий телефон', max_length=20, blank=True, null=True)
-    email        = models.EmailField('Адрес электронной почты', max_length=60, default='no@email.none')
+    email        = models.EmailField('Адрес электронной почты', max_length=60)
     marital_status = models.CharField('Брачное состояние', default='', choices=MARITAL_STATUS, max_length=1, blank=True, null=True)
     
     # trusted person
