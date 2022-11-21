@@ -268,13 +268,17 @@ class ReceptionView(LoginRequiredMixin, ListView):
 def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name = 'home/add_reception.html'
     form_class = ReceptionAddForm
+    rolesR = ('assistant', )
+    rolesNA = ('receptionist', )
+    context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA }
     
     if request.method == "POST":
         delete_id = request.POST.get('delete_id', None)
         if delete_id is not None:
             ReceptionNotes.objects.get(pk=delete_id).delete()
             notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-            return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
+            context.update({ 'form': form_class(), 'notes': notes })
+            return render(request, template_name, context)
         
         form: ReceptionAddForm = form_class(request.POST)
         if form.is_valid():
@@ -286,7 +290,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             patient = User.objects.get(pk=profile_id).patient
             commit.patient = patient
             reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
-            if reception_note is not None:
+            if reception_note is not None and reception_note.visit_number is not None:
                 commit.visit_number = reception_note.visit_number + 1
             else:
                 commit.visit_number = 1
@@ -296,12 +300,12 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
             form: ReceptionAddForm = form_class()
         notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-        return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
+        context.update({ 'form': form, 'notes': notes })
+        return render(request, template_name, context)
     
-    rolesR = ('assistant', )
-    rolesNA = ('receptionist', )
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA })
+    context.update({ 'form': form_class(), 'notes': notes })
+    return render(request, template_name, context)
 
 
 def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:
