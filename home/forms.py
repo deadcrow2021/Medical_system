@@ -18,7 +18,8 @@ class PatientCreationForm(forms.ModelForm):
                 'snils', 'mobile_phone', 'email'
         widgets = {
             'mobile_phone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 }),
-            'date_of_birth': DateInput()
+            'date_of_birth': DateInput(),
+            'when_issued': DateInput()
         }
         error_messages = {
             'mobile_phone' : {
