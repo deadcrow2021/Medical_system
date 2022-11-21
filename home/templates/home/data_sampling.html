@@ -6,14 +6,14 @@
 </div>
 
 <div class="form__block">
-    <div class="outer_div">
+    <div class="outer_div" style="width: 60%">
         <div class="border_div">
             <form action="" method="POST">
                 {% csrf_token %}
-                <div class="fields ">
+                <div class="fields">
                     {% for p in form %}
                     <div class="fields__input width_100">
-                        <div class="fields__input__label same_btn">
+                        <div class="fields__input__label"  style="width: 30%">
                             <strong>{{ p.label_tag }}</strong>
                         </div>
                         <div class="fields__input__field same_btn">
