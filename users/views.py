@@ -174,22 +174,22 @@ def profile(request: HttpRequest, profile_id):
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
         examinations = {(key, val[2]) for key, val in doctors_examinations.items()}
-        user_profile: Patient = user.patient
+        user_profile: MedicalCard = user.patient.card
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
-            if user_profile in my_profile.patients.all():
+            if user_profile.patient in my_profile.patients.all():
                 follow = True
             else:
                 follow = False
         form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
-        diseases = user_profile.history.all()
+        diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
-        mo_delivery = user_profile.mo_delivery
+        mo_delivery = user_profile.patient.mo_delivery
 
-        med_card = user_profile.card
-        gestation_period = med_card.gestation_period_weeks
-        date_of_birth = med_card.date_of_birth
-        residence_address = med_card.residence_address
+        # med_card = user_profile.card
+        gestation_period = user_profile.gestation_period_weeks
+        date_of_birth = user_profile.date_of_birth
+        residence_address = user_profile.residence_address
 
         try:
             treating_doctor = user.patient.doctors.all()[0].get_full_name()
@@ -212,7 +212,7 @@ def profile(request: HttpRequest, profile_id):
         )
         
         return render(request, template_name, {
-            'profile':           user_profile,
+            'profile':           user_profile.patient,
             'user_type':         user_type,
             'diseases':          diseases,
             'form':              form,
@@ -250,7 +250,7 @@ def medical_card(request, profile_id):
     for risk in risks:
         complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
-    roles = ('receptionist',)
+    roles = ('receptionist', 'obstetrician-gynecologist')
     
     return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, 'roles': roles })
 
