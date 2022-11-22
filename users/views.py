@@ -430,7 +430,7 @@ def clear_phone(phone: str) -> str:
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
-        post |= { 'mobile_phone': [clear_phone(post['mobile_phone'])] }
+        post |= { 'mobile_phone': [clear_phone(post.get('mobile_phone', ''))] }
         form = self.form_class(post)
         if form.is_valid():
             user: User = User()
@@ -492,7 +492,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
 
 class RegisterDoctorView(UserIsAdmin, RegisterView):
     template_name = 'users/add_doctor.html'
-    success_url: Optional[str] = reverse_lazy('admin-page')
+    success_url: Optional[str] = reverse_lazy('home')
     form_class = DoctorCreationForm
     
     def post(self, request, *args, **kwargs):

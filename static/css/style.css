@@ -375,14 +375,17 @@ a:hover {
 }
 
 .block__profile {
-    display: grid;
-    grid-template-columns: 400px 1fr;
+    /* display: grid;
+    grid-template-columns: 400px 1fr; */
+    display: flex;
+    /* justify-content: center; */
 }
 
 .block__profile__info {
     border-right: 1px solid black;
     margin-right: 15px;
     padding-right: 20px;
+    flex: 0 0 400px;
 }
 
 .disease {

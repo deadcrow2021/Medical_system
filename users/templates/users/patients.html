@@ -42,7 +42,7 @@
                         </div>
                         <div class="search_filters">
                             <label for="age"><strong>Возраст:</strong></label>
-                            <input type="num" name="age" value="{{ prev_data.age }}" placeholder="Возраст">
+                            <input type="number" name="age" value="{{ prev_data.age }}" placeholder="Возраст">
                             <label for="snils"><strong>Снилс:</strong></label>
                             <input type="text" name="snils" value="{{ prev_data.snils }}" placeholder="Снилс">
                         </div>
@@ -130,15 +130,4 @@
         {% endif %}
     </div>
 {% endif %}
-
-
-<script type="text/javascript">
-    var inputs = document.querySelectorAll('input[type=num]');
-    for (let inp of inputs) {
-        inp.oninput = (e) => {
-            let data = e.target.value.replace(/\D/g, "");
-            e.target.value = data;
-        }
-    }
-</script>
 {% endblock %}
