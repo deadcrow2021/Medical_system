@@ -25,6 +25,7 @@ from django.core.mail import send_mail
 from .generate_samd import *
 from home.views import generate_pdf
 from django.core.paginator import Paginator
+from random import randint
 import time
 
 
@@ -43,8 +44,8 @@ class UserIsAdmin(UserPassesTestMixin):
         user_obj = self.request.user
         return not (hasattr(user_obj, 'doctor') or hasattr(user_obj, 'patient'))
 
-def generate_username(first_name, date):
-    return f'{first_name}_{date.strftime("%d%m%Y")}'
+def generate_username(first_name: str, date):
+    return f'{first_name[:8]}_{randint(100000, 999999)}'
 
 
 def translate_name(name):
@@ -439,6 +440,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             user.set_password(password)
             last_name = translate_name(personal.last_name)
             user.username = generate_username(last_name, user.date_joined)
+            
+            while (len(User.objects.filter(username=user.username)) > 0):
+                user.username = generate_username(last_name, user.date_joined)
+            
             send_mail('Данные для входа в систему',
                       f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
                       settings.EMAIL_HOST_USER,
