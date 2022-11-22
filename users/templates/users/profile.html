@@ -109,7 +109,7 @@
         </div>
         
         {% if user.is_superuser %}
-        <div class="block__lines">
+        <div class="block__lines" style="margin-top: 20px">
             <div class="lines__element">
                 <p><button class="btn delete_btn">Удалить</button></p>
             </div>
@@ -122,7 +122,7 @@
         {% endif %}
         
         {% if user.doctor %}
-        <div class="fields__input">
+        <div class="fields__input" style="margin-top: 20px">
             <form action="{% url 'follow-unfollow' %}" method="post">
                 {% csrf_token %}
                 <div class="fields__input__field hide">

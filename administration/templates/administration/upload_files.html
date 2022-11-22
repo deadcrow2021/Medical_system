@@ -15,21 +15,19 @@
                 </div>
             </div>
             {% for p in form %}
-            
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <label class="form-label" for="{{ f.id_for_label }}">{{ p.label }}</label>
-                    </div>
-                    <div class="fields__input__field">
-                        <p>{{ p }}</p>
-                    </div>
+            <div class="fields__input same_btn">
+                <div class="fields__input__label width_100">
+                    <label class="form-label" for="{{ p.id_for_label }}"><strong>{{ p.label }}</strong></label>
                 </div>
-
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        {{ f.errors }}
-                    </div>
+                <div class="fields__input__field width_100">
+                    <p>{{ p }}</p>
                 </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    {{ f.errors }}
+                </div>
+            </div>
             {% endfor %}
         </div>
         <div class="submit-btn">

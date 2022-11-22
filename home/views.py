@@ -188,6 +188,7 @@ def account(request):
 def data_sampling_page(request):
     lines = []
     form = DataSamplingForm()
+    print(f'Here')
     if request.method == 'POST':
         cards = MedicalCard.objects.select_related('patient')
         form = DataSamplingForm(request.POST)
@@ -204,7 +205,7 @@ def data_sampling_page(request):
                 cards = cards.filter(diagnosis = form_data['mkb_10'])
             if form_data['medical_organization']:
                 cards = cards.filter(med_org=form_data['medical_organization'])
-            if form_data['territory']:
+            if form_data['territory'] and form_data['territory'] != '':
                 cards = cards.filter(residence_address=form_data['territory'])
             if form_data['age']:
                 cards = cards.filter(age=form_data['age'])
