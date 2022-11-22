@@ -161,6 +161,9 @@ a:hover {
     display: flex;
     margin-right: 10px;
     font-size: 18px;
+    flex: 0 0 50%;
+    text-align: left;
+    justify-content: flex-start;
     /* min-width: 50%; */
 }
 
@@ -223,7 +226,7 @@ a:hover {
 
 .user__block {
     margin: 10px 0;
-    height: 60vh;
+    max-height: 50vh;
     overflow: auto;
 }
 
@@ -373,7 +376,7 @@ a:hover {
 
 .block__profile {
     display: grid;
-    grid-template-columns: 400px 1fr 300px;
+    grid-template-columns: 400px 1fr;
 }
 
 .block__profile__info {
@@ -449,6 +452,7 @@ a:hover {
 
 .data_above {
     position: absolute;
+    z-index: 2;
     /* position: fixed; */
     background-color: #ecf1f4;
     border: 1px solid black;
@@ -457,6 +461,7 @@ a:hover {
     height: max-content;
     padding: 10px 20px;
     top: 40px;
+    left: -5px;
 }
 
 .relative {
@@ -552,7 +557,7 @@ a:hover {
 	border-left: 1px solid #868686;
 	border-right: 1px solid #868686;
 	padding: 10px 15px;
-	font-size: 14px;
+	font-size: 18px;
 	vertical-align: top;
 }
 .table thead tr th:first-child, .table tbody tr td:first-child {
@@ -692,4 +697,27 @@ th {
 
 .width_100 {
     width: 100%;
+}
+
+.search_filters_container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.search_filters {
+    width: 22%;
+    display: flex;
+    flex-direction: column;
+}
+
+.search_filters label {
+    font-size: 20px;
+}
+
+.search_filters input {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    padding: 3px;
 }

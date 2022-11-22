@@ -66,13 +66,13 @@
     
     <div class="">
         <div class="profile_data">
-            <div>
+            <div class="">
                 {% for p in form %}
                 <div class="fields__input">
-                    <div class="fields__input__label">
+                    <div class="fields__input__label profile_data_label">
                         <strong>{{ p.label_tag }}</strong>
                     </div>
-                    <div class="fields__input__field noborder">
+                    <div class="fields__input__field noborder profile_data_field">
                     {% if p.field.choices %}
                         {% for i in p.field.choices %}
                             {% if p.value == i.0 %}
@@ -88,13 +88,13 @@
                 </div>
                 {% endfor %}
             </div>
-            <div>
+            <div class="">
                 {% for name, val in risks %}
                 <div class="fields__input">
-                    <div class="fields__input__label">
+                    <div class="fields__input__label profile_data_label">
                         <strong>{{ name }}</strong>
                     </div>
-                    <div class="fields__input__field noborder">
+                    <div class="fields__input__field noborder profile_data_field">
                         {% if val %}
                             {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
                                 <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>

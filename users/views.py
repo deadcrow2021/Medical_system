@@ -351,30 +351,34 @@ def update_profile(request, profile_id):
 
 
 class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
-    paginate_by: int = 4
+    paginate_by: int = 8
     model = Patient
     template_name: str = 'users/patients.html'
     context_object_name = 'users'
     
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        pattern: list[str] =  str(request.POST['search']).lower().split()
-        try:
-            match pattern:
-                case longStr, :
-                    if len(longStr) % 2 == 1:
-                        context = one_word_odd(longStr)
-                    else:
-                        context = one_word_even(longStr)
-                case name, surname, fathername:
-                    context = three_words(name, surname, fathername)
-                case name, surname, fathername, params:
-                    context = four_words(name, surname, fathername, params)
-                case _:
-                    return self.get(request)
-        except Exception as ex:
-            return render(request, self.template_name, { 'error': ' '.join(pattern), 'btn': 'Вернуться' })
+        users = MedicalCard.objects
+        for f in tuple(request.POST.items())[1:]:
+            if len(f[1]) > 0:
+                print(f'{f=}')
+                match f[0]:
+                    case 'last_name':
+                        users = users.filter(last_name__startswith=f[1])
+                    case 'first_name':
+                        users = users.filter(first_name__startswith=f[1])
+                    case 'father_name':
+                        users = users.filter(father_name__startswith=f[1])
+                    case 'snils':
+                        users = users.filter(snils__startswith=f[1])
+                    case _:
+                        users = users.filter(**dict((f,)))
         
-        context |= { 'btn': 'Вернуться' }
+        if not isinstance(users, MedicalCard.objects.__class__):
+            users = tuple(x.patient for x in users)
+        else:
+            users = []
+        
+        context = { 'users': users }
         return render(request, self.template_name, context)
 
 

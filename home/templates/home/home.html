@@ -88,7 +88,7 @@
         
         {% if user.doctor %}
             <legend>
-                <h3>Мои пациенты:</h3>
+                <h3>Мои пациенты: {{ cnt }} человек</h3>
             </legend>
             <div class="user__block">
                 <div class="user__block__row">
@@ -107,8 +107,8 @@
                                     Неизвестно
                                 {% endif %}</p>
                             <p><strong>Преэклампсия:</strong> {{ risks.0 }}</p>
-                            <p><strong>Что-то:</strong> {{ risks.1 }}</p>
-                            <p><strong>сумма:</strong> {{ risks.2 }}</p>
+                            <p><strong>Преждевременный роды:</strong> {{ risks.1 }}</p>
+                            <p><strong>Баллы перинатального риска:</strong> {{ risks.2 }}</p>
                         </div>
                         <div class="user__block__element">
                             <a href="{% url 'profile' patient.user.id %}">Профиль</a>

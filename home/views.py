@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from .forms import MODeliveryForm, ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
-from .models import Patient, ChangeControlLog, ReceptionNotes
+from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard
 from administration.models import ClinicRecomendations
 from .choices import CHANGETYPE
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -20,6 +20,7 @@ from datetime import date
 from administration.management.commands import bot
 from asgiref.sync import async_to_sync
 from users.mkb10 import mkb10_deseases
+from home.choices import MEDICAL_ORGANIZATION
 import io
 
 def user_is_admin(user):
@@ -147,11 +148,10 @@ def home_page(request):
     if user_type == 'doctor':
         user_account = user.doctor
         related_patients = user_account.patients.select_related('card').all()
-        today = date.today()
         risks = ((calc_preeclampsia(x), calc_premature_birth(x), calc_risk_values_sum(x))\
                 for x in related_patients)
         pats = zip(related_patients, risks)
-        context |= { 'account': user_account, 'related_patients': related_patients, 'pats': pats }
+        context |= { 'account': user_account, 'pats': pats, 'cnt': len(related_patients) }
         return render(request, template_name, context)
     elif user_type == 'patient':
         keys_names = []
@@ -189,7 +189,7 @@ def data_sampling_page(request):
     lines = []
     form = DataSamplingForm()
     if request.method == 'POST':
-        patients = Patient.objects.all()
+        cards = MedicalCard.objects.select_related('patient')
         form = DataSamplingForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
@@ -201,32 +201,39 @@ def data_sampling_page(request):
             # age = form_data['age']
             
             if form_data['mkb_10']:
-                patients = Patient.objects.filter(card__diagnosis = form_data['mkb_10'])
+                cards = cards.filter(diagnosis = form_data['mkb_10'])
             if form_data['medical_organization']:
-                patients = patients.filter(doctors__med_org=form_data['medical_organization'])
+                cards = cards.filter(med_org=form_data['medical_organization'])
             if form_data['territory']:
-                patients = patients.filter(card__residence_address=form_data['territory'])
+                cards = cards.filter(residence_address=form_data['territory'])
             if form_data['age']:
-                patients = patients.filter(card__age=form_data['age'])
+                cards = cards.filter(age=form_data['age'])
             if form_data['date_of_birth']:
-                patients = patients.filter(card__date_of_birth=form_data['date_of_birth'])
+                cards = cards.filter(date_of_birth=form_data['date_of_birth'])
             if form_data['date_of_death']:
-                patients = patients.filter(pregnancy_outcome__death_time=form_data['date_of_death'])
-            # if form_data['city_village']:
-            #     patients = patients.filter(city_village=form_data['city_village'])
+                cards = cards.filter(patient__pregnancy_outcome__death_time=form_data['date_of_death'])
             
-            if len(patients) < 1:
+            if isinstance(cards, MedicalCard.objects.__class__):
+                cards = cards.all()
+            
+            if len(cards) < 1:
                 return render(request, 'home/data_sampling.html', {'form':form, 'nodata': "Не найдено записей с такими данными"})
             
-            for patient in patients:
+            for card in cards:
                 # may be change fields
-                lines.append(f'First name: {patient.first_name}')
-                lines.append(f'Last name: {patient.last_name}')
-                lines.append(f'Father name: {patient.father_name}')
+                lines.append(f'Имя: {card.first_name}')
+                lines.append(f'Фамилия: {card.last_name}')
+                lines.append(f'Отчество: {card.father_name}')
+                lines.append(f'Диагноз: {card.diagnosis}')
+                lines.append(f'Медицинская организация: {card.med_org}')
+                lines.append(f'Адрес проживания: {card.residence_address}')
+                lines.append(f'Возраст: {card.age}')
+                lines.append(f'Дата рождения: {card.date_of_birth}')
                 lines.append('===============')
             return generate_pdf(lines)
-    
-    return render(request, 'home/data_sampling.html', { 'form': form, 'mkb_10': mkb10_deseases})
+    med_org = ';'.join(tuple(x[1] for x in MEDICAL_ORGANIZATION[1:]))
+    # med_org = tuple(x[1] for x in MEDICAL_ORGANIZATION)
+    return render(request, 'home/data_sampling.html', { 'form': form, 'mkb_10': mkb10_deseases, 'med_org': med_org })
 
 
 @login_required
@@ -268,13 +275,17 @@ class ReceptionView(LoginRequiredMixin, ListView):
 def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name = 'home/add_reception.html'
     form_class = ReceptionAddForm
+    rolesR = ('assistant', )
+    rolesNA = ('receptionist', )
+    context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA }
     
     if request.method == "POST":
         delete_id = request.POST.get('delete_id', None)
         if delete_id is not None:
             ReceptionNotes.objects.get(pk=delete_id).delete()
             notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-            return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id })
+            context.update({ 'form': form_class(), 'notes': notes })
+            return render(request, template_name, context)
         
         form: ReceptionAddForm = form_class(request.POST)
         if form.is_valid():
@@ -286,7 +297,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             patient = User.objects.get(pk=profile_id).patient
             commit.patient = patient
             reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
-            if reception_note is not None:
+            if reception_note is not None and reception_note.visit_number is not None:
                 commit.visit_number = reception_note.visit_number + 1
             else:
                 commit.visit_number = 1
@@ -296,12 +307,12 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
             form: ReceptionAddForm = form_class()
         notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-        return render(request, template_name, { 'form': form, 'notes': notes, 'profile_id': profile_id })
+        context.update({ 'form': form, 'notes': notes })
+        return render(request, template_name, context)
     
-    rolesR = ('assistant', )
-    rolesNA = ('receptionist', )
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    return render(request, template_name, { 'form': form_class(), 'notes': notes, 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA })
+    context.update({ 'form': form_class(), 'notes': notes })
+    return render(request, template_name, context)
 
 
 def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:

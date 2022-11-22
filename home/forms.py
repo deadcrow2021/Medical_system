@@ -17,7 +17,9 @@ class PatientCreationForm(forms.ModelForm):
                 'when_whom_issued', 'registration_address', 'oms_policy',\
                 'snils', 'mobile_phone', 'email'
         widgets = {
-            'mobile_phone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 })
+            'mobile_phone': forms.NumberInput(attrs={ 'type': 'tel', 'minlength': 11 }),
+            'date_of_birth': DateInput(),
+            'when_issued': DateInput()
         }
         error_messages = {
             'mobile_phone' : {
@@ -112,14 +114,15 @@ class ReceptionViewForm(forms.ModelForm):
         )
 
 
-class DataSamplingForm(forms.Form):    
+class DataSamplingForm(forms.Form):
     mkb_10 = forms.CharField(label='Заболевание по МКБ-10', max_length=270, required=False)
-    medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
+    medical_organization = forms.CharField(label='Медицинская организация', max_length=270, required=False)
+    # medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
     territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
     age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
     date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
     date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
-    city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
+    # city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
     
     class Meta:
         widgets = {
