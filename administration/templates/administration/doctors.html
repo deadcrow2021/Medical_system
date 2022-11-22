@@ -23,29 +23,39 @@
             </div>
         </form>
     </div>
-    
-    <div class="user__block">
-        {% for user_i in page_obj.object_list %}
-            <div class="user__block__row center_div">
-                <div class="user__block__element">
-                    <p>ФИО: {{ user_i.get_full_name }}</p>
-                </div>
-                {% if user_i.user.doctor %}
-                    <div class="user__block__element">
-                        <p>Доктор</p>
-                    </div>
-                {% else %}
-                    <div class="user__block__element">
-                        <p>Пациент</p>
-                    </div>
-                {% endif %}
-                <div class="user__block__element">
-                    <p><a href="{% url 'profile' user_i.user.pk %}">Профиль</a></p>
-                </div>
+
+    <div class="center_div" style="margin: 50px 0">
+        <div class=" border_div" style="width: 70%">
+            <div class="block__lines">
+                <table class="table search_field_table">
+                    <thead>
+                        <tr>
+                            <th><strong>Фамилия:</strong></th>
+                            <th><strong>Имя:</strong></th>
+                            <th><strong>Отчество:</strong></th>
+                            <th><strong>Специальность</strong></th>
+                            <th><strong>Медицинская организация</strong></th>
+                            <th><strong>Ссылка на профиль</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doctor in users %}
+                        <tr>
+                            <td>{{ doctor.last_name }}</td>
+                            <td>{{ doctor.first_name }}</td>
+                            <td>{{ doctor.father_name }}</td>
+                            <td>{{ doctor.get_role_display }}</td>
+                            <td>{{ doctor.get_med_org_display }}</td>
+                            <td><a href="{% url 'profile' doctor.user.id %}">Профиль</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        {% endfor %}
+        </div>
     </div>
-    
+
+
     {% if page_obj.has_other_pages %}
         <div class="paginate center_paginate">
             {% if page_obj.has_previous %}
