@@ -154,6 +154,12 @@ class MedicalCardForm(forms.ModelForm):
         }
 
 
+class MedicalCardProfileForm(forms.ModelForm):
+    class Meta:
+        model = MedicalCard
+        fields = 'first_name', 'last_name', 'father_name', 'mobile_phone', 'email'
+
+
 class ObstetricRiskCreationForm(forms.ModelForm):
     class Meta:
         model = ObstetricRisk

@@ -181,7 +181,7 @@ def profile(request: HttpRequest, profile_id):
                 follow = True
             else:
                 follow = False
-        form = PatientChangeForm(request.POST or None, instance=user_profile)
+        form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
         diseases = user_profile.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.mo_delivery
