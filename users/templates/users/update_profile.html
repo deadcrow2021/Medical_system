@@ -12,9 +12,9 @@
                 {% csrf_token %}
                 <div class="fields">
                     {% for f in form %}
-                    <div class="fields__input">
+                    <div class="fields__input width_100">
                         <div class="fields__input__label">
-                            {{ f.label }}:
+                            <strong>{{ f.label }}:</strong>
                         </div>
                         <div class="fields__input__field">
                             {{ f }}
