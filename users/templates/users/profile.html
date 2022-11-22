@@ -66,48 +66,46 @@
     
     <div class="">
         <div class="profile_data">
-            <div class="">
-                {% for p in form %}
-                <div class="fields__input">
-                    <div class="fields__input__label profile_data_label">
-                        <strong>{{ p.label_tag }}</strong>
-                    </div>
-                    <div class="fields__input__field noborder profile_data_field">
-                    {% if p.field.choices %}
-                        {% for i in p.field.choices %}
-                            {% if p.value == i.0 %}
-                                {{i.1}}
+            <table>
+                <tbody>
+                    {% for p in form %}
+                    <tr>
+                        <td><strong>{{ p.label_tag }}</strong></td>
+                        <td>
+                            {% if p.field.choices %}
+                                {% for i in p.field.choices %}
+                                    {% if p.value == i.0 %}
+                                        {{i.1}}
+                                    {% endif %}
+                                {% endfor %}
+                            {% elif p.value %}
+                                {{ p.value }}
+                            {% elif not p.value %}
+                                ---------
                             {% endif %}
-                        {% endfor %}
-                    {% elif p.value %}
-                        {{ p.value }}
-                    {% elif not p.value %}
-                        ---------
-                    {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <table>
                 {% for name, val in risks %}
-                <div class="fields__input">
-                    <div class="fields__input__label profile_data_label">
-                        <strong>{{ name }}</strong>
-                    </div>
-                    <div class="fields__input__field noborder profile_data_field">
-                        {% if val %}
-                            {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
-                                <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
-                            {% else %}
-                                {{ val }}
-                            {% endif %}
+                <tr>
+                    <td><strong>{{ name }}</strong></td>
+                    <td>
+                    {% if val %}
+                        {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
+                            <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
                         {% else %}
-                            Недостаточно данных
+                            {{ val }}
                         {% endif %}
-                    </div>
-                </div>
+                    {% else %}
+                        Недостаточно данных
+                    {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
-            </div>
+            </table>
         </div>
         
         {% if user.is_superuser %}

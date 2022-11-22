@@ -665,6 +665,23 @@ th {
     justify-content: space-evenly;
 }
 
+.profile_data table {
+    border-spacing: 0px;
+    border: none;
+    margin-right: 30px;
+}
+
+.profile_data tr {
+    font-size: 20px;
+}
+
+.profile_data td {
+    font-size: 20px;
+    /* border-top: 1px solid black; */
+    padding: 5px;
+    border-bottom: 1px solid black;
+}
+
 .reception_page {
     max-height: 50vh;
 }
