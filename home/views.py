@@ -304,8 +304,11 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 commit.visit_number = 1
             commit.save()
             # bot
-            async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
-                    f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
+            try:
+                async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
+                        f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
+            except:
+                pass
             form: ReceptionAddForm = form_class()
         notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
         context.update({ 'form': form, 'notes': notes })
