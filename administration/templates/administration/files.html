@@ -21,6 +21,7 @@
                         <div class="files__block__element">
                             <a href="{{ f.document.url }}" download class="btn">Скачать файл</a>
                         </div>
+                        {% if user.is_superuser %}
                         <div class="files__block__element">
                             <a href="{% url 'upload-files-page' f.pk %}" class="btn">Изменить</a>
                         </div>
@@ -31,6 +32,7 @@
                                 <button type="submit" class="btn">Удалить</button>
                             </form>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

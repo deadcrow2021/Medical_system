@@ -9,7 +9,7 @@
 </div>
 
 
-<div class="user__block">
+<div class="user__block" style="width: fit-content">
     <div class="user__block__row">
         {% for record in records %}
         <div class="outer_div">
@@ -19,6 +19,12 @@
                 </div>
                 <div class="user__block__element">
                     <p><strong>Описание:</strong> {{ record.description }}</p>
+                </div>
+                <div class="user__block__element">
+                    <p><strong>Дата создания:</strong> {{ record.date_created }}</p>
+                </div>
+                <div class="user__block__element">
+                    <p><strong>Дата поледнего изменения:</strong> {{ record.date_updated }}</p>
                 </div>
             </div>
         </div>
