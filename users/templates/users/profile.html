@@ -115,6 +115,11 @@
             <div class="lines__element">
                 <p><button class="btn delete_btn">Удалить</button></p>
             </div>
+            {% if user_type == 'doctor' %}
+            <div class="lines__element">
+                <p><a href="{% url 'update-profile' profile.user.id %}" class="btn">Изменить</a></p>
+            </div>
+            {% endif %}
         </div>
         {% endif %}
         
