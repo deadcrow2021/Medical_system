@@ -1,93 +1,114 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-<div class="admin__page__block center_div">
-    <div class="">
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="fields fileds-in-row">
-                <div class="fields__input">
-                    <div class="fields__input__field">
-                        <input type="text" name="search">
+
+<div class="title__block center_div">
+    <h2>Доктора</h2>
+</div>
+
+<div class="">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="fields">
+            <div class="" style="width: 40%">
+                <div class="border_div center_div">
+                    <div class="width_100 search_filters_container">
+                        <div class="search_filters">
+                            <label for="last_name"><strong>Фамилия:</strong></label>
+                            <input type="text" name="last_name" value="{{ prev_data.last_name }}" placeholder="Фамилия">
+                            <label for="first_name"><strong>Имя:</strong></label>
+                            <input type="text" name="first_name" value="{{ prev_data.first_name }}" placeholder="Имя">
+                        </div>
+                        <div class="search_filters">
+                            <label for="father_name"><strong>Отчество:</strong></label>
+                            <input type="text" name="father_name" value="{{ prev_data.father_name }}" placeholder="Отчество">
+                            <label for="role"><strong>Должность врача:</strong></label>
+                            <select name="role" id="role">
+                                <option value="" selected="">Все</option>
+                                <option value="obstetrician-gynecologist">Акушер-гинеколог</option>
+                                <option value="therapist">Терапевт</option>
+                                <option value="dentist">Стоматолог</option>
+                                <option value="ophthalmologist">Офтальмолог</option>
+                                <option value="specialist">Специалист</option>
+                                <option value="pediator">Педиатор</option>
+                                <option value="assistant">Лаборант</option>
+                                <option value="nurse">Медсестра</option>
+                                <option value="receptionist">Регистратор</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="">
+                        <button type="submit" class="btn">Искать</button>
                     </div>
                 </div>
-                {% if btn %}
-                <div class="submit-btn">
-                    <button type="submit">{{ btn }}</button>
-                </div>
-                {% else %}
-                <div class="submit-btn">
-                    <button type="submit">Искать</button>
-                </div>
-                {% endif %}
-            </div>
-        </form>
-    </div>
-
-    <div class="center_div" style="margin: 50px 0">
-        <div class=" border_div" style="width: 70%">
-            <div class="block__lines">
-                <table class="table search_field_table">
-                    <thead>
-                        <tr>
-                            <th><strong>Фамилия:</strong></th>
-                            <th><strong>Имя:</strong></th>
-                            <th><strong>Отчество:</strong></th>
-                            <th><strong>Специальность</strong></th>
-                            <th><strong>Медицинская организация</strong></th>
-                            <th><strong>Ссылка на профиль</strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for doctor in users %}
-                        <tr>
-                            <td>{{ doctor.last_name }}</td>
-                            <td>{{ doctor.first_name }}</td>
-                            <td>{{ doctor.father_name }}</td>
-                            <td>{{ doctor.get_role_display }}</td>
-                            <td>{{ doctor.get_med_org_display }}</td>
-                            <td><a href="{% url 'profile' doctor.user.id %}">Профиль</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
             </div>
         </div>
-    </div>
-
-
-    {% if page_obj.has_other_pages %}
-        <div class="paginate center_paginate">
-            {% if page_obj.has_previous %}
-            <div class="paginate__element">
-                <a href="?page=1">Первая</a>
-            </div>
-            <div class="paginate__element">
-                <a href="?page={{ page_obj.previous_page_number }}">Пред.</a>
-            </div>
-            {% endif %}
-            
-            {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                <div class="paginate__element">
-                    <span>{{ num }}</span>
-                </div>
-                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                <div class="paginate__element">
-                    <a href="?page={{ num }}">{{ num }}</a>
-                </div>
-                {% endif %}
-            {% endfor %}
-        
-            {% if page_obj.has_next %}
-            <div class="paginate__element">
-                <a href="?page={{ page_obj.next_page_number }}">След.</a>
-            </div>
-            <div class="paginate__element">
-                <a href="?page={{ page_obj.paginator.num_pages }}">Последняя</a>
-            </div>
-            {% endif %}
-        </div>
-    {% endif %}
+    </form>
 </div>
+
+<div class="center_div" style="margin: 50px 0">
+    <div class=" border_div" style="width: 70%">
+        <div class="block__lines">
+            <table class="table search_field_table">
+                <thead>
+                    <tr>
+                        <th><strong>Фамилия:</strong></th>
+                        <th><strong>Имя:</strong></th>
+                        <th><strong>Отчество:</strong></th>
+                        <th><strong>Специальность</strong></th>
+                        <th><strong>Медицинская организация</strong></th>
+                        <th><strong>Ссылка на профиль</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in users %}
+                    <tr>
+                        <td>{{ doctor.last_name }}</td>
+                        <td>{{ doctor.first_name }}</td>
+                        <td>{{ doctor.father_name }}</td>
+                        <td>{{ doctor.get_role_display }}</td>
+                        <td>{{ doctor.get_med_org_display }}</td>
+                        <td><a href="{% url 'profile' doctor.user.id %}">Профиль</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% if page_obj.has_other_pages %}
+    <div class="paginate center_paginate">
+        {% if page_obj.has_previous %}
+        <div class="paginate__element">
+            <a href="?page=1">Первая</a>
+        </div>
+        <div class="paginate__element">
+            <a href="?page={{ page_obj.previous_page_number }}">Пред.</a>
+        </div>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <div class="paginate__element">
+                <span>{{ num }}</span>
+            </div>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <div class="paginate__element">
+                <a href="?page={{ num }}">{{ num }}</a>
+            </div>
+            {% endif %}
+        {% endfor %}
+    
+        {% if page_obj.has_next %}
+        <div class="paginate__element">
+            <a href="?page={{ page_obj.next_page_number }}">След.</a>
+        </div>
+        <div class="paginate__element">
+            <a href="?page={{ page_obj.paginator.num_pages }}">Последняя</a>
+        </div>
+        {% endif %}
+    </div>
+{% endif %}
 {% endblock %}
