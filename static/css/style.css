@@ -705,19 +705,23 @@ th {
 }
 
 .search_filters {
-    width: 22%;
     display: flex;
     flex-direction: column;
+    margin: 0 10px;
+    /* width: 100%; */
 }
 
 .search_filters label {
     font-size: 20px;
+    width: 100%;
 }
 
+.search_filters select,
 .search_filters input {
     border: 1px solid black;
     border-radius: 5px;
     margin-bottom: 10px;
     font-size: 20px;
     padding: 3px;
+    width: 100%;
 }

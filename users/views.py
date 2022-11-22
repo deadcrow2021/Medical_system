@@ -24,6 +24,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from .generate_samd import *
 from home.views import generate_pdf
+from django.core.paginator import Paginator
 import time
 
 
@@ -350,17 +351,15 @@ def update_profile(request, profile_id):
     return render(request, 'users/update_profile.html', context)
 
 
-class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
-    paginate_by: int = 8
-    model = Patient
+# class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
+def patients_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/patients.html'
-    context_object_name = 'users'
+    page_number: int = request.GET.get('page', 1)
     
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    if request.method == "POST":
         users = MedicalCard.objects
         for f in tuple(request.POST.items())[1:]:
             if len(f[1]) > 0:
-                print(f'{f=}')
                 match f[0]:
                     case 'last_name':
                         users = users.filter(last_name__startswith=f[1])
@@ -374,12 +373,20 @@ class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
                         users = users.filter(**dict((f,)))
         
         if not isinstance(users, MedicalCard.objects.__class__):
-            users = tuple(x.patient for x in users)
+            users = tuple(x for x in users)
         else:
-            users = []
+            users = tuple(users.all())
         
-        context = { 'users': users }
-        return render(request, self.template_name, context)
+        prev_data = request.POST.copy()
+        context = { 'prev_data': prev_data }
+    else:
+        context = {}
+        users = MedicalCard.objects.all()
+    
+    paginator = Paginator(users, 8)
+    page_obj = paginator.get_page(page_number)
+    context.update({ 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator })
+    return render(request, template_name, context)
 
 
 def recent_patients(request: HttpRequest):

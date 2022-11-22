@@ -30,25 +30,25 @@
                     <div class="width_100 search_filters_container">
                         <div class="search_filters">
                             <label for="last_name"><strong>Фамилия:</strong></label>
-                            <input type="text" name="last_name" placeholder="Фамилия">
+                            <input type="text" name="last_name" value="{{ prev_data.last_name }}" placeholder="Фамилия">
                             <label for="first_name"><strong>Имя:</strong></label>
-                            <input type="text" name="first_name" placeholder="Имя">
+                            <input type="text" name="first_name" value="{{ prev_data.first_name }}" placeholder="Имя">
                         </div>
                         <div class="search_filters">
                             <label for="father_name"><strong>Отчество:</strong></label>
-                            <input type="text" name="father_name" placeholder="Отчество">
+                            <input type="text" name="father_name" value="{{ prev_data.father_name }}" placeholder="Отчество">
                             <label for="date_of_birth"><strong>Дата:</strong></label>
-                            <input type="date" name="date_of_birth" placeholder="Дата рождения">
+                            <input type="date" name="date_of_birth" value="{{ prev_data.date_of_birth }}" placeholder="Дата рождения">
                         </div>
                         <div class="search_filters">
                             <label for="age"><strong>Возраст:</strong></label>
-                            <input type="num" name="age" placeholder="Возраст">
+                            <input type="num" name="age" value="{{ prev_data.age }}" placeholder="Возраст">
                             <label for="snils"><strong>Снилс:</strong></label>
-                            <input type="text" name="snils" placeholder="Снилс">
+                            <input type="text" name="snils" value="{{ prev_data.snils }}" placeholder="Снилс">
                         </div>
                         <div class="search_filters">
                             <label for="residence_address"><strong>Адрес:</strong></label>
-                            <input type="text" name="residence_address" placeholder="Адрес проживания">
+                            <input type="text" name="residence_address" value="{{ prev_data.residence_address }}" placeholder="Адрес проживания">
                         </div>
                     </div>
                     <div class="">
@@ -87,8 +87,8 @@
                         <td>{{ patient.first_name }}</td>
                         <td>{{ patient.father_name }}</td>
                         <td>{{ patient.date_of_birth }}</td>
-                        <td>{{ patient.card.snils }}</td>
-                        <td><a href="{% url 'profile' patient.user.id %}">Профиль</a></td>
+                        <td>{{ patient.snils }}</td>
+                        <td><a href="{% url 'profile' patient.patient.user.id %}">Профиль</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

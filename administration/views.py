@@ -27,36 +27,36 @@ class UserIsAdmin(UserPassesTestMixin):
 @user_passes_test(user_is_admin)
 def doctors(request: HttpRequest):
     template_name: str = 'administration/doctors.html'
-    context = { 'users': Doctor.objects.all() }
-    paginator = Paginator(list(context['users']), 4)
-    page_number: int = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context |= { 'page_obj': page_obj, 'paginator': paginator }
+    page_number: int = request.GET.get('page', 1)
     
     if request.method == 'POST':
-        pattern: list[str] =  str(request.POST['search']).lower().split()
-        try:
-            match pattern:
-                case longStr, :
-                    if len(longStr) % 2 == 1:
-                        context = one_word_odd(longStr)
-                    else:
-                        context = one_word_even(longStr)
-                case name, surname, fathername:
-                    context = three_words(name, surname, fathername)
-                # case name, surname, fathername, params:
-                #     context = four_words(name, surname, fathername, params)
-                case _:
-                    return render(request, template_name, context)
-        except Exception as ex:
-            return render(request, template_name, { 'error': ' '.join(pattern), 'btn': 'Вернуться' })
-        paginator = Paginator(list(context['users']), 6)
-        page_obj = paginator.get_page(page_number)
-        context.update({ 'page_obj': page_obj, 'paginator': paginator })
-        context |= { 'btn': 'Вернуться' }
-        return render(request, template_name, context)
+        users = Doctor.objects
+        for f in tuple(request.POST.items())[1:]:
+            if len(f[1]) > 0:
+                match f[0]:
+                    case 'last_name':
+                        users = users.filter(last_name__startswith=f[1])
+                    case 'first_name':
+                        users = users.filter(first_name__startswith=f[1])
+                    case 'father_name':
+                        users = users.filter(father_name__startswith=f[1])
+                    case _:
+                        users = users.filter(**dict((f,)))
+        if isinstance(users, Doctor.objects.__class__):
+            if request.POST['role'] == '':
+                users = users.all()
+            else:
+                users = []
+        prev_data = request.POST.copy()
+        context = { 'prev_data': prev_data }
     else:
-        return render(request, template_name, context)
+        context = {}
+        users = Doctor.objects.all()
+    
+    paginator = Paginator(users, 8)
+    page_obj = paginator.get_page(page_number)
+    context |= { 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
+    return render(request, template_name, context)
 
 @login_required
 def files_page(request):
