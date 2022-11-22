@@ -104,9 +104,9 @@ def follow_unfollow_patient(request):
 def calc_preeclampsia(user_profile: Patient) -> str:
     try:
         last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
-        if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
-                int(last_monitoring.systolic_blood_pressure) >= 140,
-                int(last_monitoring.protein_in_urine) >= 300):
+        if (int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)) or \
+                int(last_monitoring.systolic_blood_pressure) >= 140 or \
+                int(last_monitoring.protein_in_urine) >= 300:
             return 'Высокий'
         else:
             return 'Низкий'
@@ -117,12 +117,12 @@ def calc_preeclampsia(user_profile: Patient) -> str:
 def calc_premature_birth(user_profile: Patient) -> str:
     try:
         last_pregnancy = user_profile.pregnancy_info.latest('id')
-        if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
-                user_profile.card.age >= 35,
-                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
-                last_pregnancy.pregnancy == '4',
-                last_pregnancy.pregnancy_1 == '2',
-                user_profile.patient_information.latest('id').sti):
+        if  any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()) or \
+                user_profile.card.age >= 35 or \
+                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24) or \
+                last_pregnancy.pregnancy == '4' or \
+                last_pregnancy.pregnancy_1 == '2' or \
+                user_profile.patient_information.latest('id').sti:
             return 'Высокий'
         else:
             return 'Низкий'
@@ -249,7 +249,7 @@ def medical_card(request, profile_id):
     for risk in risks:
         complication_risk_forms.append([ComplicationRiskCreationForm(request.POST or None, instance=i) for i in risk.complications.all()])
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
-    roles = ('receptionist',)
+    roles = ('receptionist', 'obstetrician-gynecologist')
     
     return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, 'roles': roles })
 
@@ -1049,7 +1049,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
             if request.method == 'POST':
                 for i in pregnancy_outcome_list:
-                    if i.childbirth_date and form_data['date_from'] <= i.childbirth_date <= form_data['date_to']:
+                    if i.childbirth_date and form_data['date_from'] <= i.childbirth_date.date() <= form_data['date_to']:
                         birth_number_period +=len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
 
             p_15 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])

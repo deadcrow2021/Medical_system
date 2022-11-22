@@ -347,4 +347,4 @@ def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:
             form.save()
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     
-    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })
+    return render(request, 'home/mo_delivery_update.html', { 'form': form, 'profile_id': profile_id })
