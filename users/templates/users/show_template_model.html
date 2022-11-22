@@ -119,12 +119,14 @@
             banner.style.display = 'none';
         }
     </script>
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
         var infos = document.getElementsByClassName('hide_info');
         for (let info of infos) {
+            info.style.maxHeight = info.firstElementChild.firstElementChild.firstElementChild.offsetHeight + "px";;
             info.addEventListener('click', e => {
-                if (e.currentTarget.style.maxHeight)
-                    e.currentTarget.style.maxHeight = null;
+                let h = e.currentTarget.firstElementChild.firstElementChild.firstElementChild.offsetHeight + "px";
+                if (Number(e.currentTarget.style.maxHeight.slice(0, -2)) > Number(h.slice(0, -2)))
+                    e.currentTarget.style.maxHeight = h;
                 else
                     e.currentTarget.style.maxHeight = e.currentTarget.scrollHeight + "px";
             })
