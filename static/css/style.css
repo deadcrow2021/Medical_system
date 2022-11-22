@@ -495,10 +495,10 @@ a:hover {
     height: max(40vh, 200px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     text-align: center;
-    background-color: #BFBEB0;
+    background-color: #ecf1f4;
     border: 2px solid black;
 }
 
