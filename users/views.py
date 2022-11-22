@@ -25,6 +25,7 @@ from django.core.mail import send_mail
 from .generate_samd import *
 from home.views import generate_pdf
 from django.core.paginator import Paginator
+from random import randint
 import time
 
 
@@ -43,8 +44,8 @@ class UserIsAdmin(UserPassesTestMixin):
         user_obj = self.request.user
         return not (hasattr(user_obj, 'doctor') or hasattr(user_obj, 'patient'))
 
-def generate_username(first_name, date):
-    return f'{first_name}_{date.strftime("%d%m%Y")}'
+def generate_username(first_name: str, date):
+    return f'{first_name[:8]}_{randint(100000, 999999)}'
 
 
 def translate_name(name):
@@ -173,22 +174,22 @@ def profile(request: HttpRequest, profile_id):
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
         examinations = {(key, val[2]) for key, val in doctors_examinations.items()}
-        user_profile: Patient = user.patient
+        user_profile: MedicalCard = user.patient.card
         if hasattr(request.user, 'doctor'):
             my_profile = Doctor.objects.get(user=request.user)
-            if user_profile in my_profile.patients.all():
+            if user_profile.patient in my_profile.patients.all():
                 follow = True
             else:
                 follow = False
-        form = PatientChangeForm(request.POST or None, instance=user_profile)
-        diseases = user_profile.history.all()
+        form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
+        diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
-        mo_delivery = user_profile.mo_delivery
+        mo_delivery = user_profile.patient.mo_delivery
 
-        med_card = user_profile.card
-        gestation_period = med_card.gestation_period_weeks
-        date_of_birth = med_card.date_of_birth
-        residence_address = med_card.residence_address
+        # med_card = user_profile.card
+        gestation_period = user_profile.gestation_period_weeks
+        date_of_birth = user_profile.date_of_birth
+        residence_address = user_profile.residence_address
 
         try:
             treating_doctor = user.patient.doctors.all()[0].get_full_name()
@@ -211,7 +212,7 @@ def profile(request: HttpRequest, profile_id):
         )
         
         return render(request, template_name, {
-            'profile':           user_profile,
+            'profile':           user_profile.patient,
             'user_type':         user_type,
             'diseases':          diseases,
             'form':              form,
@@ -439,6 +440,10 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             user.set_password(password)
             last_name = translate_name(personal.last_name)
             user.username = generate_username(last_name, user.date_joined)
+            
+            while (len(User.objects.filter(username=user.username)) > 0):
+                user.username = generate_username(last_name, user.date_joined)
+            
             send_mail('Данные для входа в систему',
                       f'Ваши данные для входа в систему.\nЛогин: {user.username}\nПароль: {password}',
                       settings.EMAIL_HOST_USER,

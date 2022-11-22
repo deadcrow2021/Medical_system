@@ -60,6 +60,10 @@ def doctors(request: HttpRequest):
 
 @login_required
 def files_page(request):
+    if request.method == "POST":
+        id = request.POST.get('delete_id')
+        Files.objects.get(pk=id).delete()
+    
     files = Files.objects.all()
     return render(request, 'administration/files.html', { 'files': files })
 
@@ -69,8 +73,13 @@ class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
     template_name: str = 'administration/upload_files.html'
     success_url: str = reverse_lazy('files-page')
     
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        form = FileUploadForm(request.POST, request.FILES)
+    def post(self, request: HttpRequest, file_id: int, *args: Any, **kwargs: Any) -> HttpResponse:
+        if int(file_id) > -1:
+            file = Files.objects.get(pk=file_id)
+            form = FileUploadForm(request.POST, request.FILES, instance=file)
+        else:
+            form = FileUploadForm(request.POST, request.FILES)
+        
         if form.is_valid():
             form.save(commit=True)
             add_log(request.user, f'Добавлен файл.', '-', '-', f'Файл {form.cleaned_data["title"]} был создан.')
@@ -78,10 +87,18 @@ class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
             return redirect(self.success_url)
         else:
             return render(request, self.template_name, { 'form': form })
+    
+    def get(self, request: HttpRequest, file_id: int, *args: str, **kwargs: Any) -> HttpResponse:
+        if int(file_id) > -1:
+            file = Files.objects.get(pk=file_id)
+            form = FileUploadForm(request.POST, request.FILES, instance=file)
+        else:
+            form = FileUploadForm(request.POST, request.FILES)
+        return render(request, self.template_name, { 'form': form })
 
 
 class ChangeLogsView(UserIsAdmin, LoginRequiredMixin, ListView):
     model = ChangeControlLog
-    paginate_by: int = 3
+    paginate_by: int = 6
     template_name: str = 'administration/change_logs.html'
     context_object_name: str = 'logs'

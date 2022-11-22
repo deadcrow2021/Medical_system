@@ -851,7 +851,7 @@ class Doctor(models.Model):
     first_name   = models.CharField("Имя", max_length=50, default='usr')
     last_name    = models.CharField("Фамилия", max_length=50, default='sur')
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
-    cabinet      = models.CharField('Кабинет', max_length=6)
+    cabinet      = models.CharField('Кабинет', max_length=6, blank=True, null=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)

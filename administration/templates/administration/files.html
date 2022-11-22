@@ -4,7 +4,7 @@
 <div class="file__page__block center_div">
     {% if user.is_superuser %}
         <div class="upload-file btn">
-            <a href="{% url 'upload-files-page' %}">Загрузить Файлы</a>
+            <a href="{% url 'upload-files-page' -1 %}">Загрузить Файлы</a>
         </div>
     {% endif %}
     <div class="outer_div">
@@ -17,8 +17,22 @@
                     <div class="files__block__element">
                         <p><strong>Описание:</strong> {{ f.description }}</p>
                     </div>
-                    <div class="files__block__element">
-                        <a href="{{ f.document.url }}" download>Скачать файл</a>
+                    <div class="navbar__row">
+                        <div class="files__block__element">
+                            <a href="{{ f.document.url }}" download class="btn">Скачать файл</a>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div class="files__block__element">
+                            <a href="{% url 'upload-files-page' f.pk %}" class="btn">Изменить</a>
+                        </div>
+                        <div class="files__block__element">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_id" id="" value="{{ f.pk }}">
+                                <button type="submit" class="btn">Удалить</button>
+                            </form>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -66,52 +66,50 @@
     
     <div class="">
         <div class="profile_data">
-            <div class="">
-                {% for p in form %}
-                <div class="fields__input">
-                    <div class="fields__input__label profile_data_label">
-                        <strong>{{ p.label_tag }}</strong>
-                    </div>
-                    <div class="fields__input__field noborder profile_data_field">
-                    {% if p.field.choices %}
-                        {% for i in p.field.choices %}
-                            {% if p.value == i.0 %}
-                                {{i.1}}
+            <table>
+                <tbody>
+                    {% for p in form %}
+                    <tr>
+                        <td><strong>{{ p.label_tag }}</strong></td>
+                        <td>
+                            {% if p.field.choices %}
+                                {% for i in p.field.choices %}
+                                    {% if p.value == i.0 %}
+                                        {{i.1}}
+                                    {% endif %}
+                                {% endfor %}
+                            {% elif p.value %}
+                                {{ p.value }}
+                            {% elif not p.value %}
+                                ---------
                             {% endif %}
-                        {% endfor %}
-                    {% elif p.value %}
-                        {{ p.value }}
-                    {% elif not p.value %}
-                        ---------
-                    {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <table>
                 {% for name, val in risks %}
-                <div class="fields__input">
-                    <div class="fields__input__label profile_data_label">
-                        <strong>{{ name }}</strong>
-                    </div>
-                    <div class="fields__input__field noborder profile_data_field">
-                        {% if val %}
-                            {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
-                                <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
-                            {% else %}
-                                {{ val }}
-                            {% endif %}
+                <tr>
+                    <td><strong>{{ name }}</strong></td>
+                    <td>
+                    {% if val %}
+                        {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
+                            <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
                         {% else %}
-                            Недостаточно данных
+                            {{ val }}
                         {% endif %}
-                    </div>
-                </div>
+                    {% else %}
+                        Недостаточно данных
+                    {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
-            </div>
+            </table>
         </div>
         
         {% if user.is_superuser %}
-        <div class="block__lines">
+        <div class="block__lines" style="margin-top: 20px">
             <div class="lines__element">
                 <p><button class="btn delete_btn">Удалить</button></p>
             </div>
@@ -124,7 +122,7 @@
         {% endif %}
         
         {% if user.doctor %}
-        <div class="fields__input">
+        <div class="fields__input" style="margin-top: 20px">
             <form action="{% url 'follow-unfollow' %}" method="post">
                 {% csrf_token %}
                 <div class="fields__input__field hide">
@@ -211,11 +209,13 @@
 <div class="banner" style="display: none;">
     <div class="lines__element banner__content">
         <p>Вы действительно хотите удалить пациента?</p>
-        <button type="button" class="btn cancel_btn">Отменить</button>
-        <form action="" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn">Удалить</button>
-        </form>
+        <div style="display: flex">
+            <button type="button" class="btn cancel_btn" style="margin-right: 30px">Отменить</button>
+            <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn">Удалить</button>
+            </form>
+        </div>
     </div>
 </div>
 
