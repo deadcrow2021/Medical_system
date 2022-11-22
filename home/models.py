@@ -857,7 +857,7 @@ class Doctor(models.Model):
     med_org      = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
     role         = models.CharField('Должность врача', max_length=30, choices=ROLES, default='----')
     telephone    = PhoneNumberField('Телефонный номер', blank=True, null=True)
-    email        = models.EmailField('Email', max_length=60, blank=True, null=True)
+    email        = models.EmailField('Email', max_length=60)
     
     class Meta:
         verbose_name = 'Доктор'
