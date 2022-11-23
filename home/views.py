@@ -64,7 +64,7 @@ def generate_pdf(lines: list):
     canv = canvas.Canvas(buf, pagesize=letter, bottomup=0)
     
     
-    fname = 'a010013l'
+    # fname = 'a010013l'
 
     # faceName - view a010013l.AFM file as a plain text and look at
     # row beginning with 'FontName' word (it's usually the fourth row).
@@ -72,10 +72,10 @@ def generate_pdf(lines: list):
     faceName = 'URWGothicL-Book'
 
     # Define new Type 1 font
-    cyrFace = pdfmetrics.EmbeddedType1Face(fname+'.afm', fname+'.pfb')
+    # cyrFace = pdfmetrics.EmbeddedType1Face(fname+'.afm', fname+'.pfb')
 
     # Create a new encoding called 'CP1251'
-    cyrenc = pdfmetrics.Encoding('CP1251')
+    # cyrenc = pdfmetrics.Encoding('CP1251')
 
     # Fill in the tuple with Unicode glyphs in accordance with cp1251 (win1251)
     # encoding
@@ -108,25 +108,25 @@ def generate_pdf(lines: list):
     )
 
     # Replace glyphs from code 128 to code 256 with cp1251 values
-    for i in range(128,256):
-        cyrenc[i] = cp1251[i-128]
+    # for i in range(128,256):
+    #     cyrenc[i] = cp1251[i-128]
 
     # Register newly created encoding
-    pdfmetrics.registerEncoding(cyrenc)
+    # pdfmetrics.registerEncoding(cyrenc)
 
     # Register type face
-    pdfmetrics.registerTypeFace(cyrFace)
+    # pdfmetrics.registerTypeFace(cyrFace)
 
     # Register the font with adding '1251' to its name
-    pdfmetrics.registerFont(pdfmetrics.Font(faceName+'1251', faceName, 'CP1251'))
+    # pdfmetrics.registerFont(pdfmetrics.Font(faceName+'1251', faceName, 'CP1251'))
 
     # Use this font and set font size
-    canv.setFont(faceName+'1251', 14)
+    # canv.setFont(faceName+'1251', 14)
     
     
     textobj = canv.beginText()
     textobj.setTextOrigin(inch, inch)
-    # textobj.setFont('Times-Roman', 14)
+    textobj.setFont('Times-Roman', 14)
     
     for i in lines:
         textobj.textLine(i)
@@ -281,14 +281,14 @@ def data_sampling_page(request):
             
             for card in cards:
                 # may be change fields
-                lines.append(f'Имя: {card.first_name}')
-                lines.append(f'Фамилия: {card.last_name}')
-                lines.append(f'Отчество: {card.father_name}')
-                lines.append(f'Диагноз: {card.diagnosis}')
-                lines.append(f'Медицинская организация: {card.med_org}')
-                lines.append(f'Адрес проживания: {card.residence_address}')
-                lines.append(f'Возраст: {card.age}')
-                lines.append(f'Дата рождения: {card.date_of_birth}')
+                lines.append(f'Name: {card.first_name}')
+                lines.append(f'Last name: {card.last_name}')
+                lines.append(f'Fathername: {card.father_name}')
+                lines.append(f'Diagnosis: {card.diagnosis}')
+                lines.append(f'Medical organization: {card.med_org}')
+                lines.append(f'Residential address: {card.residence_address}')
+                lines.append(f'Age: {card.age}')
+                lines.append(f'Date of birth: {card.date_of_birth}')
                 lines.append('===============')
             return generate_pdf(lines)
     med_org = ';'.join(tuple(x[1] for x in MEDICAL_ORGANIZATION[1:]))
