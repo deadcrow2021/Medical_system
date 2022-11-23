@@ -93,16 +93,16 @@
             <div class="user__block">
                 <div class="user__block__row">
                     {% comment %} {% for patient in related_patients %} {% endcomment %}
-                    {% for patient, risks in pats %}
+                    {% for card, risks in pats %}
                     <div class="user__block__border logs__row">
                         <div class="user__block__element">
-                            <p><strong>ФИО:</strong> {{ patient.get_full_name }}</p>
-                            <p><strong>Дата поступления:</strong> {{ patient.user.date_joined }}</p>
-                            <p><strong>Дата рождения:</strong> {{ patient.card.date_of_birth }}</p>
-                            <p><strong>Возраст:</strong> {{ patient.card.age }} лет</p>
+                            <p><strong>ФИО:</strong> {{ card.get_full_name }}</p>
+                            <p><strong>Дата поступления:</strong> {{ card.patient.user.date_joined }}</p>
+                            <p><strong>Дата рождения:</strong> {{ card.date_of_birth }}</p>
+                            <p><strong>Возраст:</strong> {{ card.age }} лет</p>
                             <p><strong>Срок:</strong>
-                                {% if patient.card.gestation_period_weeks %}
-                                    {{ patient.card.gestation_period_weeks }} недели
+                                {% if card.gestation_period_weeks %}
+                                    {{ card.gestation_period_weeks }} недели
                                 {% else %}
                                     Неизвестно
                                 {% endif %}</p>
@@ -111,7 +111,7 @@
                             <p><strong>Баллы перинатального риска:</strong> {{ risks.2 }}</p>
                         </div>
                         <div class="user__block__element">
-                            <a href="{% url 'profile' patient.user.id %}">Профиль</a>
+                            <a href="{% url 'profile' card.patient.user.id %}">Профиль</a>
                         </div>
                     </div>
                     {% endfor %}
