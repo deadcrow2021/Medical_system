@@ -1394,4 +1394,5 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     template_name: str = 'users/doctor_profile.html'
     user = Doctor.objects.get(pk=profile_id)
     form = DoctorCreationForm(request.POST or None, instance=user)
-    return render(request, template_name, { 'form': form })
+    notes = ReceptionNotes.objects.filter(doctor=user)
+    return render(request, template_name, { 'form': form, 'notes':notes })

@@ -64,33 +64,6 @@
         </div>
         {% endif %}
         
-        {% if user.doctor %}
-        <div class="fields__input" style="margin-top: 20px">
-            <form action="{% url 'follow-unfollow' %}" method="post">
-                {% csrf_token %}
-                <div class="fields__input__field hide">
-                    <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-                </div>
-                {% if follow %}
-                <div class="">
-                    <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
-                </div>
-                {% else %}
-                <div class="">
-                    <button id="follow-btn" class="btn" type="submit">Привязать</button>
-                </div>
-                {% endif %}
-            </form>
-        </div>
-        {% endif %}
-        {% comment %} {% if not user.patient %}
-        <a href="{% url 'update-profile' profile.user.id %}">
-            <div class="fields__input btn">
-                <p>Изменить</p>
-            </div>
-        </a>
-        {% endif %} {% endcomment %}
-        
         <div>
             <h4>Планы посещений</h4>
         </div>
