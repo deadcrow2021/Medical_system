@@ -225,8 +225,7 @@ def home_page(request):
         context |= { 'notes': notes }
         context |= { 'account': user_account }#'records': records }
         context |= { 'keys_names': keys_names }
-    response = render(request, template_name, context)
-    return response
+    return render(request, template_name, context)
 
 
 @login_required
