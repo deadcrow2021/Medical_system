@@ -642,7 +642,7 @@ def patient_info_page(request, profile_id):
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
     key_value = ((key, val[2]) for key, val in patinet_info_models.items())
-    roles = ('receptionist', )
+    roles = ('receptionist', 'obstetrician-gynecologist')
     return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
 
 
@@ -1385,5 +1385,5 @@ def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> Http
 def doctor_profile_page(request: HttpRequest, profile_id: int):
     template_name: str = 'users/doctor_profile.html'
     user = Doctor.objects.get(pk=profile_id)
-    
-    return render(request, template_name, { 'account': user })
+    form = DoctorCreationForm(request.POST or None, instance=user)
+    return render(request, template_name, { 'form': form })

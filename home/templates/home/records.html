@@ -21,11 +21,11 @@
                     <p><strong>Описание:</strong> {{ record.description }}</p>
                 </div>
                 <div class="user__block__element">
-                    <p><strong>Дата создания:</strong> {{ record.date_created }}</p>
+                    <p><strong>Добавлена:</strong> {{ record.date_created }}</p>
                 </div>
-                <div class="user__block__element">
+                {% comment %} <div class="user__block__element">
                     <p><strong>Дата поледнего изменения:</strong> {{ record.date_updated }}</p>
-                </div>
+                </div> {% endcomment %}
             </div>
         </div>
         {% endfor %}
