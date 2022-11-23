@@ -215,7 +215,6 @@ def home_page(request):
                 for x in related_patients)
         pats = zip(related_patients, risks)
         context |= { 'account': user_account, 'pats': pats, 'cnt': len(related_patients) }
-        return render(request, template_name, context)
     elif user_type == 'patient':
         keys_names = []
         for key, val in observation_template_models:
@@ -226,9 +225,8 @@ def home_page(request):
         context |= { 'notes': notes }
         context |= { 'account': user_account }#'records': records }
         context |= { 'keys_names': keys_names }
-        return render(request, template_name, context)
-    else:
-        return render(request, template_name, context)
+    response = render(request, template_name, context)
+    return response
 
 
 @login_required
