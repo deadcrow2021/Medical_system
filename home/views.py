@@ -18,6 +18,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from datetime import date
+from django.core.paginator import Paginator
 from administration.management.commands import bot
 from asgiref.sync import async_to_sync
 from users.mkb10 import mkb10_deseases
@@ -319,14 +320,33 @@ class ReceptionView(LoginRequiredMixin, ListView):
     model: ReceptionNotes = ReceptionNotes
     context_object_name: str = 'notes'
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        user_type = 'doctor' if hasattr(self.request.user, 'doctor') else 'patient'
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        user_type = 'doctor' if hasattr(request.user, 'doctor') else 'patient'
         if user_type == 'doctor':
-            context |= { 'notes': self.model.objects.filter(doctor=self.request.user.doctor) }
+            notes = self.model.objects.filter(doctor=request.user.doctor)
+            # context |= { 'notes': self.model.objects.filter(doctor=request.user.doctor) }
         else:
-            context |= { 'notes': self.model.objects.filter(patient=self.request.user.patient) }
-        return context
+            notes = self.model.objects.filter(patient=request.user.patient)
+            # context |= { 'notes': self.model.objects.filter(patient=request.user.patient) }
+        page_number: int = request.GET.get('page', 1)
+        paginator = Paginator(notes, 8)
+        page_obj = paginator.get_page(page_number)
+        context = { 'notes': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
+        return render(request, self.template_name, context)
+    
+    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    #     context = super().get_context_data(**kwargs)
+    #     user_type = 'doctor' if hasattr(self.request.user, 'doctor') else 'patient'
+    #     if user_type == 'doctor':
+    #         notes = self.model.objects.filter(doctor=self.request.user.doctor)
+    #         # context |= { 'notes': self.model.objects.filter(doctor=self.request.user.doctor) }
+    #     else:
+    #         notes = self.model.objects.filter(patient=self.request.user.patient)
+    #         # context |= { 'notes': self.model.objects.filter(patient=self.request.user.patient) }
+    #     page_number = 
+    #     paginator = Paginator(notes, 6)
+    #     context = { 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
+    #     return context
 
 
 def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
