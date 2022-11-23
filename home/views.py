@@ -121,12 +121,12 @@ def generate_pdf(lines: list):
     pdfmetrics.registerFont(pdfmetrics.Font(faceName+'1251', faceName, 'CP1251'))
     
     # Use this font and set font size
-    canv.setFont(faceName+'1251', 14)
+    # canv.setFont(faceName+'1251', 14)
     
     
     textobj = canv.beginText()
     textobj.setTextOrigin(inch, inch)
-    # textobj.setFont('Times-Roman', 14)
+    textobj.setFont('Times-Roman', 14)
     
     for i in lines:
         textobj.textLine(i)
@@ -281,14 +281,14 @@ def data_sampling_page(request):
             
             for card in cards:
                 # may be change fields
-                lines.append(f'Имя: {card.first_name}')
-                lines.append(f'Фамилия: {card.last_name}')
-                lines.append(f'Отчество: {card.father_name}')
-                lines.append(f'Диагноз: {card.diagnosis}')
-                lines.append(f'Медицинская организация: {card.med_org}')
-                lines.append(f'Адрес проживания: {card.residence_address}')
-                lines.append(f'Возраст: {card.age}')
-                lines.append(f'Дата рождения: {card.date_of_birth}')
+                lines.append(f'Name: {card.first_name}')
+                lines.append(f'Last name: {card.last_name}')
+                lines.append(f'Fathername: {card.father_name}')
+                lines.append(f'Diagnosis: {card.diagnosis}')
+                lines.append(f'Medical organization: {card.med_org}')
+                lines.append(f'Residential address: {card.residence_address}')
+                lines.append(f'Age: {card.age}')
+                lines.append(f'Date of birth: {card.date_of_birth}')
                 lines.append('===============')
             return generate_pdf(lines)
     med_org = ';'.join(tuple(x[1] for x in MEDICAL_ORGANIZATION[1:]))
@@ -410,4 +410,4 @@ def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:
             form.save()
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     
-    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id })
+    return render(request, 'home/mo_delivery_update.html', { 'form': form, 'profile_id': profile_id })

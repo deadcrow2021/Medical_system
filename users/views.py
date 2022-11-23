@@ -105,9 +105,9 @@ def follow_unfollow_patient(request):
 def calc_preeclampsia(user_profile: Patient) -> str:
     try:
         last_monitoring = user_profile.current_pregnancy.pregnant_woman_monitoring.latest('id')
-        if any((int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)),
-                int(last_monitoring.systolic_blood_pressure) >= 140,
-                int(last_monitoring.protein_in_urine) >= 300):
+        if (int(last_monitoring.gestation_period_weeks) and (int(last_monitoring.blood_pressure_diastolic) >= 90)) or \
+                int(last_monitoring.systolic_blood_pressure) >= 140 or \
+                int(last_monitoring.protein_in_urine) >= 300:
             return 'Высокий'
         else:
             return 'Низкий'
@@ -118,12 +118,12 @@ def calc_preeclampsia(user_profile: Patient) -> str:
 def calc_premature_birth(user_profile: Patient) -> str:
     try:
         last_pregnancy = user_profile.pregnancy_info.latest('id')
-        if  any(any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()),
-                user_profile.card.age >= 35,
-                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24),
-                last_pregnancy.pregnancy == '4',
-                last_pregnancy.pregnancy_1 == '2',
-                user_profile.patient_information.latest('id').sti):
+        if  any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()) or \
+                user_profile.card.age >= 35 or \
+                (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24) or \
+                last_pregnancy.pregnancy == '4' or \
+                last_pregnancy.pregnancy_1 == '2' or \
+                user_profile.patient_information.latest('id').sti:
             return 'Высокий'
         else:
             return 'Низкий'
@@ -642,7 +642,7 @@ def patient_info_page(request, profile_id):
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
     key_value = ((key, val[2]) for key, val in patinet_info_models.items())
-    roles = ('receptionist', )
+    roles = ('receptionist', 'obstetrician-gynecologist')
     return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
 
 
@@ -705,6 +705,10 @@ ultrasound_models = {
 doctors_examinations_models = {
     'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
     'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ), ######
+    'pediator': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры педиатра' ), ######
+    'specialist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры специалиста' ), ######
+    'ophthalmologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры офтальмолога' ), ######
+    'obstetrician-gynecologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры акушера-гинеколога' ), ######
 }
 
 current_pregnancy_models = {
@@ -880,6 +884,10 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
 doctors_examinations = {
     'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
     'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ), ######
+    'pediator': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры педиатра' ), ######
+    'specialist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры специалиста' ), ######
+    'ophthalmologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры офтальмолога' ), ######
+    'obstetrician-gynecologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры акушера-гинеколога' ), ######
 }
 
 def examination_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
@@ -1054,7 +1062,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
             if request.method == 'POST':
                 for i in pregnancy_outcome_list:
-                    if i.childbirth_date and form_data['date_from'] <= i.childbirth_date <= form_data['date_to']:
+                    if i.childbirth_date and form_data['date_from'] <= i.childbirth_date.date() <= form_data['date_to']:
                         birth_number_period +=len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
 
             p_15 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
@@ -1385,5 +1393,6 @@ def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> Http
 def doctor_profile_page(request: HttpRequest, profile_id: int):
     template_name: str = 'users/doctor_profile.html'
     user = Doctor.objects.get(pk=profile_id)
-    
-    return render(request, template_name, { 'account': user })
+    form = DoctorCreationForm(request.POST or None, instance=user)
+    notes = ReceptionNotes.objects.filter(doctor=user)
+    return render(request, template_name, { 'form': form, 'notes':notes })

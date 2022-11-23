@@ -4,11 +4,6 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
-{% if request.user.doctor.role in roles %}
-    <div class="back__button">
-        <a href="{% url 'update-patient-info' current_user.id %}" class="back_btn">Изменить</a>
-    </div>
-{% endif %}
 
 {% if user.doctor %}
 <div class="cut_width">
@@ -20,6 +15,12 @@
     </div>
     {% endfor %}
 </div>
+
+{% if request.user.doctor.role in roles %}
+    <div class="back__button">
+        <a href="{% url 'update-patient-info' current_user.id %}" class="back_btn">Изменить</a>
+    </div>
+{% endif %}
 
 <div class="fields">
     {% for p in form %}
