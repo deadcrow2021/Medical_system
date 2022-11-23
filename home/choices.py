@@ -338,7 +338,7 @@ ROLES = {
     ('dentist', 'Стоматолог'),
     ('ophthalmologist', 'Офтальмолог'),
     ('specialist', 'Специалист'),
-    ('pediator', 'Педиатор'),
+    ('pediator', 'Педиатр'),
     ('assistant', 'Лаборант'),
     ('nurse', 'Медсестра'),
     ('receptionist', 'Регистратор')

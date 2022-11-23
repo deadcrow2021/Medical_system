@@ -705,6 +705,10 @@ ultrasound_models = {
 doctors_examinations_models = {
     'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
     'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ), ######
+    'pediator': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры педиатра' ), ######
+    'specialist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры специалиста' ), ######
+    'ophthalmologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры офтальмолога' ), ######
+    'obstetrician-gynecologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры акушера-гинеколога' ), ######
 }
 
 current_pregnancy_models = {
@@ -880,6 +884,10 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
 doctors_examinations = {
     'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
     'dentist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры дантиста' ), ######
+    'pediator': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры педиатра' ), ######
+    'specialist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры специалиста' ), ######
+    'ophthalmologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры офтальмолога' ), ######
+    'obstetrician-gynecologist': ( DoctorExaminationsDentist, DoctorExaminationsDentistForm, 'Осмотры акушера-гинеколога' ), ######
 }
 
 def examination_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
