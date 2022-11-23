@@ -881,7 +881,7 @@ class ReceptionNotes(models.Model):
     specialization = models.CharField('Специальность врача', max_length=30, choices=ROLES)
     visit_number = models.PositiveSmallIntegerField('Номер посещения специалиста', validators=[MaxValueValidator(999)], blank=True, null=True)
     cabinet = models.CharField('Номер кабинета', max_length=10, blank=True)
-    status = models.BooleanField('Статус', default=False, null=True)
+    status = models.BooleanField('Статус явки', default=False, null=True)
     
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)

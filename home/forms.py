@@ -101,6 +101,7 @@ class ReceptionAddForm(forms.ModelForm):
             'date_meeting': DateTimeInput()
         }
         labels = {
+            "status": "Статус явки",
             "doctor": "Доктор"
         }
 
