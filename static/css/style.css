@@ -228,6 +228,8 @@ a:hover {
     margin: 0 20px 0 0;
 }
 
+/* .home_fieldset {} */
+
 .user__block {
     margin: 10px 0;
     max-height: 50vh;
@@ -771,4 +773,75 @@ th {
 .message-content {
     font-size: 24px;
     margin-bottom: 10px;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    /* background-color: #ced2d5; */
+    background-color: #ecf1f4;
+    width: fit-content;
+    /* height: fit-content; */
+    height: 41px;
+}
+
+.nav_span {
+    position: relative;
+    display: flex;
+    border: 0;
+    padding-left: 30px;
+    /* height: 40px; */
+    /* height: fit-content; */
+    border-bottom: 3px solid #585858;
+    border-top: 3px solid #585858;
+}
+
+.container {
+    position: relative;
+}
+
+.absolute_arrow_right,
+.arrow_right {
+    padding: 13px;
+    /* padding: 10vh; */
+    background-color: #ecf1f4;
+    border-top: 3px solid #585858;
+    border-left: 3px solid #585858;
+    position: relative;
+    transform: rotate(135deg);
+    top: 3px;
+    left: 13px;
+}
+
+.absolute_arrow_right {
+    position: absolute;
+    left: -44px;
+    z-index: -1;
+}
+
+.nav_span:hover {
+    background-color: #585858;
+    transition: all ease 0.3s;
+}
+
+.nav_span:hover .nav_link {
+    color: white;
+    transition: all ease 0.3s;
+}
+
+.nav_span:hover .arrow_right {
+    background-color: #585858;
+    transition: all ease 0.3s;
+}
+
+.nav_span:hover .absolute_arrow_right {
+    z-index: 2;
+    transition: all ease 0.3s;
+}
+
+.nav_link {
+    font-size: 22px;
+    color: #1d1d1d;
+    line-height: 35px;
+    height: 100%;
 }

@@ -23,6 +23,8 @@ from administration.management.commands import bot
 from asgiref.sync import async_to_sync
 from users.mkb10 import mkb10_deseases
 from home.choices import MEDICAL_ORGANIZATION
+from med_system.funcs import get_and_add_cookie
+from urllib.parse import quote
 import io
 
 def user_is_admin(user):
@@ -199,10 +201,11 @@ def calc_risk_values_sum(user_profile: Patient) -> str | int:
 
 
 @login_required
-def home_page(request):
+def home_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'home/home.html'
     user: User = User.objects.get(id=request.user.id)
     docs = ClinicRecomendations.objects.all()
+    to_add: str = f'/!Главная'
     # user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     if hasattr(user, 'doctor'): user_type = 'doctor'
     elif user.is_superuser: user_type = 'admin'
@@ -226,7 +229,9 @@ def home_page(request):
         context |= { 'notes': notes }
         context |= { 'account': user_account }#'records': records }
         context |= { 'keys_names': keys_names }
-    return render(request, template_name, context)
+    resp = render(request, template_name, context)
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite="strict")
+    return resp
 
 
 @login_required
@@ -249,6 +254,7 @@ def account(request):
 def data_sampling_page(request):
     lines = []
     form = DataSamplingForm()
+    to_add: str = f'/data_sampling!Выборка данных'
     if request.method == 'POST':
         cards = MedicalCard.objects.select_related('patient')
         form = DataSamplingForm(request.POST)
@@ -275,7 +281,9 @@ def data_sampling_page(request):
                 cards = cards.filter(patient__pregnancy_outcome__death_time=form_data['date_of_death'])
             
             if len(cards) < 1:
-                return render(request, 'home/data_sampling.html', {'form':form, 'nodata': "Не найдено записей с такими данными", 'mkb_10': mkb10_deseases, 'med_org': med_org })
+                resp = render(request, 'home/data_sampling.html', {'form':form, 'nodata': "Не найдено записей с такими данными", 'mkb_10': mkb10_deseases, 'med_org': med_org })
+                resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+                return resp
             
             for card in cards:
                 # may be change fields
@@ -290,8 +298,10 @@ def data_sampling_page(request):
                 lines.append('===============')
             return generate_pdf(lines)
     med_org = ';'.join(tuple(x[1] for x in MEDICAL_ORGANIZATION[1:]))
-    # med_org = tuple(x[1] for x in MEDICAL_ORGANIZATION)
-    return render(request, 'home/data_sampling.html', { 'form': form, 'mkb_10': mkb10_deseases, 'med_org': med_org })
+    
+    resp = render(request, 'home/data_sampling.html', { 'form': form, 'mkb_10': mkb10_deseases, 'med_org': med_org })
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    return resp
 
 
 @login_required
@@ -319,6 +329,7 @@ class ReceptionView(LoginRequiredMixin, ListView):
     template_name: str = 'home/reception.html'
     model: ReceptionNotes = ReceptionNotes
     context_object_name: str = 'notes'
+    to_add = f'/account/reception!План посещений'
     
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         user_type = 'doctor' if hasattr(request.user, 'doctor') else 'patient'
@@ -332,7 +343,10 @@ class ReceptionView(LoginRequiredMixin, ListView):
         paginator = Paginator(notes, 8)
         page_obj = paginator.get_page(page_number)
         context = { 'notes': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
-        return render(request, self.template_name, context)
+        
+        resp = render(request, self.template_name, context)
+        resp.set_cookie('nav', quote(self.to_add, safe='!#/'), samesite='strict')
+        return resp
     
     # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
     #     context = super().get_context_data(**kwargs)
@@ -355,44 +369,43 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     rolesR = ('assistant', )
     rolesNA = ('receptionist', )
     context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA }
+    to_add = f'#/account/reception/add/{profile_id}!Планы посещений пациента'
     
     if request.method == "POST":
         delete_id = request.POST.get('delete_id', None)
         if delete_id is not None:
             ReceptionNotes.objects.get(pk=delete_id).delete()
-            notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-            context.update({ 'form': form_class(), 'notes': notes })
-            return render(request, template_name, context)
-        
-        form: ReceptionAddForm = form_class(request.POST)
-        if form.is_valid():
-            commit: ReceptionNotes = form.save(commit=False)
-            doctor = commit.doctor
-            commit.specialization = doctor.role
-            commit.cabinet = doctor.cabinet if doctor.cabinet is not None else 'Не известно'
-            commit.med_organization = doctor.med_org
-            patient = User.objects.get(pk=profile_id).patient
-            commit.patient = patient
-            reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
-            if reception_note is not None and reception_note.visit_number is not None:
-                commit.visit_number = reception_note.visit_number + 1
-            else:
-                commit.visit_number = 1
-            commit.save()
-            # bot
-            try:
-                async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
-                        f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
-            except:
-                pass
-            form: ReceptionAddForm = form_class()
-        notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-        context.update({ 'form': form, 'notes': notes })
-        return render(request, template_name, context)
-    
+            context.update({ 'form': form_class() })
+        else:
+            form: ReceptionAddForm = form_class(request.POST)
+            if form.is_valid():
+                commit: ReceptionNotes = form.save(commit=False)
+                doctor = commit.doctor
+                commit.specialization = doctor.role
+                commit.cabinet = doctor.cabinet if doctor.cabinet is not None else 'Не известно'
+                commit.med_organization = doctor.med_org
+                patient = User.objects.get(pk=profile_id).patient
+                commit.patient = patient
+                reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
+                if reception_note is not None and reception_note.visit_number is not None:
+                    commit.visit_number = reception_note.visit_number + 1
+                else:
+                    commit.visit_number = 1
+                commit.save()
+                # bot
+                try:
+                    async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
+                            f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
+                except:
+                    pass
+                form: ReceptionAddForm = form_class()
+            context.update({ 'form': form })
+    else:
+        context.update({ 'form': form_class() })
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    context.update({ 'form': form_class(), 'notes': notes })
-    return render(request, template_name, context)
+    context.update({ 'notes': notes })
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:
@@ -414,8 +427,10 @@ def records_page(request: HttpRequest) -> HttpResponse:
     user: User = User.objects.get(pk=request.user.id)
     records = user.patient.records.all()
     template_name = 'home/records.html'
+    to_add = f'#/account/records!Записи самонаблюдений'
     
-    return render(request, template_name, { 'records': records })
+    resp = render(request, template_name, { 'records': records })
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:

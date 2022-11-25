@@ -97,6 +97,20 @@
             </div>
         </div>
     </div>
+    <nav>
+        {% comment %} <div class="hide nav_links">{{ request.COOKIES.nav }}</div> {% endcomment %}
+        {% comment %} <span class="nav_span">
+            <p><a href="{{ link }}" class="nav_link">{{ name }}</a></p>
+            <div class="container">
+                <div class="arrow_right"></div>
+            </div>
+        </span> {% endcomment %}
+        {% comment %}
+        <div class="container">
+            <div class="absolute_arrow_right"></div>
+        </div>
+        {% endcomment %}
+    </nav>
 {% endif %}
     
     <div class="messages">
@@ -119,7 +133,7 @@
     </div>
     
     
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
         let menu = document.getElementsByClassName('menu__options')[0];
         let button = document.getElementsByClassName('toggle_btn')[0];
         
@@ -131,5 +145,30 @@
         };
     </script>
     <script src="{% static 'js/script.js' %}" defer></script>
+    <script type="text/javascript" defer>
+        window.addEventListener('load', () => {
+            var nav = document.getElementsByTagName('nav')[0];
+            var links = document.cookie.match(new RegExp("nav=\"(.*)\""))[1].split('#');
+            for (let [idx, elem] of links.entries()) {
+                [link, name] = elem.split('!');
+                name = decodeURIComponent(name);
+                html = `<span class="nav_span">`;
+                if (idx > 0) {
+                    html +=     `<div class="container">\
+                                    <div class="absolute_arrow_right"></div>\
+                                </div>\n`;
+                }
+                if (idx === links.length - 1)
+                    html += `<p class="nav_link">${name}</p>\n`;
+                else
+                    html += `<p><a href="${link}" class="nav_link">${name}</a></p>\n`;
+                nav.innerHTML += html + 
+                                    `   <div class="container">\
+                                            <div class="arrow_right"></div>\
+                                        </div>\
+                                    </span>`;
+            }
+        })
+    </script>
 </body>
 </html>

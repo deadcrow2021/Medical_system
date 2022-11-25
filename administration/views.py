@@ -13,6 +13,8 @@ from django.contrib import messages
 from .search_patterns import *
 from django.core.paginator import Paginator
 from home.views import add_log
+from med_system.funcs import get_and_add_cookie
+from urllib.parse import quote
 
 def user_is_admin(user):
     return not (hasattr(user, 'doctor') or hasattr(user, 'patient'))
@@ -28,6 +30,7 @@ class UserIsAdmin(UserPassesTestMixin):
 def doctors(request: HttpRequest):
     template_name: str = 'administration/doctors.html'
     page_number: int = request.GET.get('page', 1)
+    to_add = f'/doctors!Доктора'
     
     if request.method == 'POST':
         users = Doctor.objects
@@ -56,16 +59,23 @@ def doctors(request: HttpRequest):
     paginator = Paginator(users, 8)
     page_obj = paginator.get_page(page_number)
     context |= { 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
-    return render(request, template_name, context)
+    resp = render(request, template_name, context)
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    return resp
 
 @login_required
 def files_page(request):
+    to_add: str = f'/files!Файлы'
+    
     if request.method == "POST":
         id = request.POST.get('delete_id')
         Files.objects.get(pk=id).delete()
     
     files = Files.objects.all()
-    return render(request, 'administration/files.html', { 'files': files })
+    
+    resp = render(request, 'administration/files.html', { 'files': files })
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    return resp
 
 
 class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
@@ -97,8 +107,16 @@ class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
         return render(request, self.template_name, { 'form': form })
 
 
-class ChangeLogsView(UserIsAdmin, LoginRequiredMixin, ListView):
-    model = ChangeControlLog
-    paginate_by: int = 6
+# class ChangeLogsView(UserIsAdmin, LoginRequiredMixin, ListView):
+def logs_page(request: HttpRequest):
     template_name: str = 'administration/change_logs.html'
-    context_object_name: str = 'logs'
+    to_add = '/logs!Жунал изменений'
+    page_number: int = request.GET.get('page', 1)
+    
+    logs = ChangeControlLog.objects.all()
+    paginator = Paginator(logs, 5)
+    page_obj = paginator.get_page(page_number)
+    context = { 'logs': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
+    resp = render(request, template_name, context)
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    return resp
