@@ -592,6 +592,42 @@ class DoctorExaminationsDentist(models.Model):
     doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
 
 
+class DoctorExaminationsPediator(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination_pediator')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
+    
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
+
+
+class DoctorExaminationsSpecialist(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination_specialist')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
+    
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
+
+
+class DoctorExaminationsOphthalmologist(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination_ophthamologist')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
+    
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
+
+
+class DoctorExaminationsObstetricianGynecologist(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='doctor_examination_gynecologist')
+    date = models.DateField('Дата осмотра', blank=True, null=True)
+    result = models.CharField('Результаты осмотра, заключение', max_length=1000, blank=True, null=True)
+    
+    med_org = models.CharField('Медицинская организация', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True)
+    doctor_fio = models.CharField('Ф.И.О. врача, проводившего осмотр', max_length=300, blank=True, null=True)
+
+
 # Сведения о настоящей беременности
 class CurrentPregnancyinfo(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_info')

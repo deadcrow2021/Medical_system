@@ -443,6 +443,38 @@ class DoctorExaminationsDentistForm(forms.ModelForm):
             'date': DateInput()
         }
 
+class DoctorExaminationsPediatorForm(forms.ModelForm):
+    class Meta:
+        model = DoctorExaminationsPediator
+        fields = 'date', 'result', 'med_org', 'doctor_fio',
+        widgets = {
+            'date': DateInput()
+        }
+
+class DoctorExaminationsSpecialistForm(forms.ModelForm):
+    class Meta:
+        model = DoctorExaminationsSpecialist
+        fields = 'date', 'result', 'med_org', 'doctor_fio',
+        widgets = {
+            'date': DateInput()
+        }
+
+class DoctorExaminationsOphthalmologistForm(forms.ModelForm):
+    class Meta:
+        model = DoctorExaminationsOphthalmologist
+        fields = 'date', 'result', 'med_org', 'doctor_fio',
+        widgets = {
+            'date': DateInput()
+        }
+
+class DoctorExaminationsObstetricianGynecologistForm(forms.ModelForm):
+    class Meta:
+        model = DoctorExaminationsObstetricianGynecologist
+        fields = 'date', 'result', 'med_org', 'doctor_fio',
+        widgets = {
+            'date': DateInput()
+        }
+
 
 class CurrentPregnancyinfoForm(forms.ModelForm):
     class Meta:
