@@ -40,7 +40,7 @@
     {% endif %}
     
     {% if not user.is_superuser %}
-    <fieldset>
+    <fieldset class="home_fieldset">
         {% if user.patient %}
             <legend>
                 <h3>План посещений:</h3>
@@ -130,7 +130,7 @@
                 {% for doc in docs %}
                 <div class="user__block__border">
                     <div class="user__block__element">
-                        <li><a href="{{ doc.document.url }}" download>{{ doc.title }}</a></li>
+                        <li><a href="{{ doc.document.url }}" inline>{{ doc.title }}</a></li>
                     </div>
                 </div>
                 {% endfor %}

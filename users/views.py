@@ -26,6 +26,8 @@ from .generate_samd import *
 from home.views import generate_pdf
 from django.core.paginator import Paginator
 from random import randint
+from med_system.funcs import get_and_add_cookie
+from urllib.parse import quote
 import time
 
 
@@ -149,11 +151,12 @@ def calc_risk_values_sum(user_profile: Patient) -> str | int:
         return 'Введено не числовое значение'
 
 
-def profile(request: HttpRequest, profile_id):
+def profile(request: HttpRequest, profile_id: int):
     follow = False
     template_name: str = 'users/profile.html'
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
+    to_add = f'#/profile/{profile_id}!Профиль'
     
     # delete patient
     if request.POST:
@@ -170,7 +173,9 @@ def profile(request: HttpRequest, profile_id):
         user_profile = user.doctor
         form = DoctorCreationForm(request.POST or None, instance=user_profile)
         notes = ReceptionNotes.objects.filter(doctor=user.doctor)
-        return render(request, template_name, { 'profile': user_profile, 'user_type': user_type, 'notes':notes, 'form':form })
+        
+        resp = render(request, template_name, { 'profile': user_profile, 'user_type': user_type, 'notes':notes, 'form':form })
+        return get_and_add_cookie(request, to_add, resp)
     else:
         buttons = {(key, val[2]) for key, val in name_model.items()}
         examinations = {(key, val[2]) for key, val in doctors_examinations.items()}
@@ -211,7 +216,7 @@ def profile(request: HttpRequest, profile_id):
             ('МО родоразрешения',          mo_delivery),
         )
         
-        return render(request, template_name, {
+        resp = render(request, template_name, {
             'profile':           user_profile.patient,
             'user_type':         user_type,
             'diseases':          diseases,
@@ -230,6 +235,7 @@ def profile(request: HttpRequest, profile_id):
             # 'date_of_birth':     date_of_birth,
             # 'residence_address': residence_address,
         })
+        return get_and_add_cookie(request, to_add, resp)
 
 
 def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
@@ -237,12 +243,15 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
     records = user.patient.records.all()
     exists: bool = True if len(records) > 0 else False
     rolesNA = ('assistant', 'receptionist')
-    return render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists, 'rolesNA': rolesNA })
+    to_add = f'#/self_monitoring/{profile_id}!Дневник самонаблюдений'
+    resp = render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists, 'rolesNA': rolesNA })
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def medical_card(request, profile_id):
     current_user = User.objects.select_related('patient').get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
+    to_add: str = f'#/medical_card/{profile_id}!Медицинская карта'
     
     risks = current_user.patient.card.risks.all()
     obstetric_risk_forms = [ObstetricRiskCreationForm(request.POST or None, instance=i) for i in risks]
@@ -252,7 +261,8 @@ def medical_card(request, profile_id):
     risks = list(zip(obstetric_risk_forms, complication_risk_forms))
     roles = ('receptionist', 'obstetrician-gynecologist')
     
-    return render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, 'roles': roles })
+    resp = render(request, 'users/medical_card.html', { 'form': form, 'current_user': current_user,'risks': risks, 'roles': roles })
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
@@ -275,6 +285,7 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
     current_user = User.objects.get(pk=profile_id)
+    to_add = f'#/pregnancy_outcome/{profile_id}!Исход беременности и родов'
     # form = PregnancyOutcomeForm(request.POST or None, instance=current_user.patient.pregnancy_outcome)
     
     if request.method == 'POST':
@@ -284,7 +295,8 @@ def pregnancy_outcome(request: HttpRequest, profile_id: int):
     outcomes = current_user.patient.pregnancy_outcome.all()
     forms = [PregnancyOutcomeForm(instance=outcome) for outcome in outcomes]
     rolesNA = ('assistant', 'receptionist')
-    return render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user, 'rolesNA': rolesNA})
+    resp = render(request, 'users/pregnancy_outcome.html', {'outcome_forms': forms, 'current_user': current_user, 'rolesNA': rolesNA})
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int):
@@ -315,10 +327,12 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
 
 def pregnancy_observation_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
+    to_add = f'#/pregnancy_observation/{profile_id}!Наблюдение во время настоящей беременности'
     keys_names = []
     for key, val in observation_template_models.items():
         keys_names.append((key, val[2]))
-    return render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user, 'keys_names': keys_names})
+    resp = render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user, 'keys_names': keys_names})
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def update_profile(request, profile_id):
@@ -356,6 +370,7 @@ def update_profile(request, profile_id):
 def patients_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/patients.html'
     page_number: int = request.GET.get('page', 1)
+    to_add: str = f'/patients!Пациенты'
     
     if request.method == "POST":
         users = MedicalCard.objects
@@ -384,10 +399,13 @@ def patients_page(request: HttpRequest) -> HttpResponse:
         context = {}
         users = MedicalCard.objects.all()
     
-    paginator = Paginator(users, 8)
+    paginator = Paginator(users, 7)
     page_obj = paginator.get_page(page_number)
     context.update({ 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator })
-    return render(request, template_name, context)
+    
+    resp = render(request, template_name, context)
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='Strict')
+    return resp
 
 
 def recent_patients(request: HttpRequest):
@@ -429,6 +447,11 @@ def clear_phone(phone: str) -> str:
 
 
 class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        resp = render(request, self.template_name, self.get_context_data())
+        resp.set_cookie('nav', quote(self.to_add, safe='!#/'), samesite='strict')
+        return resp
+    
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
         post |= { 'mobile_phone': [clear_phone(post.get('mobile_phone', ''))] }
@@ -492,20 +515,23 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
             messages.success(request, 'Запись успешно добавлена!')
             return redirect(self.success_url)
         else:
-            return render(request, self.template_name, { 'form': form })
+            resp = render(request, self.template_name, { 'form': form })
+            resp.set_cookie('nav', quote(self.to_add, safe='!#/'), samesite='strict')
+            return resp
 
 
 class RegisterDoctorView(UserIsAdmin, RegisterView):
     template_name = 'users/add_doctor.html'
     success_url: Optional[str] = reverse_lazy('home')
     form_class = DoctorCreationForm
+    to_add: str = f'/add_doctor!Добавить доктора'
     
     def post(self, request, *args, **kwargs):
         return super().post(request)
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context |= { 'form': DoctorCreationForm }
+        # context = super().get_context_data(**kwargs)
+        context = { 'form': DoctorCreationForm }
         return context
 
 
@@ -513,13 +539,14 @@ class RegisterPatientView(RegisterView):
     template_name = 'users/add_patient.html'
     success_url: Optional[str] = reverse_lazy('patients')
     form_class = PatientCreationForm
+    to_add: str = f'/add_patient!Добавить пациента'
     
     def post(self, request, *args, **kwargs):
         return super().post(request)
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context |= { 'form': PatientCreationForm }
+        # context = super().get_context_data(**kwargs)
+        context = { 'form': PatientCreationForm }
         return context
 
 
@@ -643,7 +670,9 @@ def patient_info_page(request, profile_id):
     form = PatientInformationForm(instance=instance)
     key_value = ((key, val[2]) for key, val in patinet_info_models.items())
     roles = ('receptionist', 'obstetrician-gynecologist')
-    return render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
+    to_add = f'#/patient_info/{profile}!Сведения о пациентке'
+    resp = render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def update_patient_info_page(request, profile_id):
@@ -717,19 +746,21 @@ current_pregnancy_models = {
 }
 
 portion_models = {
-    'pregnant_woman_monitoring': pregnant_woman_monitoring_models,
-    'examination_list':          examination_list_models,
-    'determine_antibodies':      determine_antibodies,
-    'ultrasound':                ultrasound_models,
-    'doctors_examinations':      doctors_examinations_models,
-    'current_pregnancy':         current_pregnancy_models
+    'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
+    'examination_list':          (examination_list_models, 'Лист обследования'),
+    'determine_antibodies':      (determine_antibodies, 'Определение антител'),
+    'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
+    'doctors_examinations':      (doctors_examinations_models, 'Осмотры врачей специалистов'),
+    'current_pregnancy':         (current_pregnancy_models, 'Сведения о настоящей беременности')
 }
 
 def portion_models_template_page(request: HttpRequest, profile_id: int, template_name: str, portion_name: str):
     current_user: User = User.objects.get(pk=profile_id)
-    template_name = 'users/' + template_name + '.html'
-    keys_names = ((key, name[2]) for key, name in portion_models[portion_name].items())
-    return render(request, template_name, { 'current_user': current_user, 'keys_names': keys_names })
+    new_template_name = 'users/' + template_name + '.html'
+    keys_names = ((key, name[2]) for key, name in portion_models[portion_name][0].items())
+    resp = render(request, new_template_name, { 'current_user': current_user, 'keys_names': keys_names })
+    return get_and_add_cookie(request, f'#/portion_page/{profile_id}/{template_name}/{portion_name}!\
+                            {portion_models[portion_name][1]}', resp)
 
 
 observation_forms_models = {
@@ -761,6 +792,8 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
     current_pregnancy = current_user.patient.current_pregnancy
     form = observation_forms_models[model_name][0]
     model = observation_forms_models[model_name][1]
+    name = observation_forms_models[model_name][2] if len(observation_forms_models[model_name][2]) < 50 else observation_forms_models[model_name][2][:48] + '...'
+    to_add = f'#/observation/{profile_id}/{model_name}!{name}'
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
@@ -774,7 +807,8 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
         exists = False
     
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name, 'page_name': observation_forms_models[model_name][2] }
-    return render(request, template_name, context)
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def update_observation_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
@@ -827,6 +861,7 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
     model = name_model[model_name][0]
     form = name_model[model_name][1]
     exists = True
+    to_add = f'#/profile_models_template/{profile_id}/{model_name}!{name_model[model_name][2]}'
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
@@ -840,7 +875,8 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
         exists = False
     
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
-    return render(request, 'users/profile_models_template.html', context)
+    resp = render(request, 'users/profile_models_template.html', context)
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def add_profile_models_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
@@ -895,6 +931,7 @@ def examination_template_page(request: HttpRequest, profile_id: int, model_name:
     model = doctors_examinations[model_name][0]
     form = doctors_examinations[model_name][1]
     exists = True
+    to_add = f'#/examination_template_page/{profile_id}/{model_name}!{doctors_examinations[model_name][2]}'
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
@@ -908,7 +945,8 @@ def examination_template_page(request: HttpRequest, profile_id: int, model_name:
         exists = False
     
     context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name }
-    return render(request, 'users/examination_template.html', context)
+    resp = render(request, 'users/examination_template.html', context)
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def add_examination_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
@@ -943,6 +981,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
     form = StatisticsPeriodForm()
+    to_add: str = '/statistics!Статистика'
 
     age_15_45 = 0
     age_less_18 = 0
@@ -1366,11 +1405,15 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     #         f"Распределение всех пациенток по срокам родоразрешения: {dict_to_str(context['p_31'])}",
     #      ]
     #     return generate_pdf(lines)
-    return render(request, template_name, context)
+    resp = render(request, template_name, context)
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    return resp
 
 def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name: str = 'users/samd.html'
-    return render(request, template_name, { 'profile_id': profile_id })
+    to_add = f'#/samd/{profile_id}!СЭМД документы'
+    resp = render(request, template_name, { 'profile_id': profile_id })
+    return get_and_add_cookie(request, to_add, resp)
 
 samd_temlates = {
     'medical_services_provision_referral': medical_services_provision_referral,
@@ -1395,4 +1438,8 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     user = Doctor.objects.get(pk=profile_id)
     form = DoctorCreationForm(request.POST or None, instance=user)
     notes = ReceptionNotes.objects.filter(doctor=user)
-    return render(request, template_name, { 'form': form, 'notes':notes })
+    to_add = f'/profile/{profile_id}!Профиль'
+    
+    resp = render(request, template_name, { 'form': form, 'notes':notes })
+    resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    return resp
