@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from .forms import MODeliveryForm, ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
-from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard
+from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor
 from administration.models import ClinicRecomendations
 from .choices import CHANGETYPE
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -64,19 +64,19 @@ def generate_pdf(lines: list):
     canv = canvas.Canvas(buf, pagesize=letter, bottomup=0)
     
     
-    # fname = 'a010013l'
-
+    fname = 'a010013l'
+    
     # faceName - view a010013l.AFM file as a plain text and look at
     # row beginning with 'FontName' word (it's usually the fourth row).
     # The word after 'FontName' is the faceName ('URWGothicL-Book' in this case).
     faceName = 'URWGothicL-Book'
-
+    
     # Define new Type 1 font
-    # cyrFace = pdfmetrics.EmbeddedType1Face(fname+'.afm', fname+'.pfb')
-
+    cyrFace = pdfmetrics.EmbeddedType1Face(fname+'.afm', fname+'.pfb')
+    
     # Create a new encoding called 'CP1251'
-    # cyrenc = pdfmetrics.Encoding('CP1251')
-
+    cyrenc = pdfmetrics.Encoding('CP1251')
+    
     # Fill in the tuple with Unicode glyphs in accordance with cp1251 (win1251)
     # encoding
     cp1251=(
@@ -106,20 +106,20 @@ def generate_pdf(lines: list):
     'afii10089', 'afii10090', 'afii10091', 'afii10092', 'afii10093',
     'afii10094', 'afii10095', 'afii10096', 'afii10097'
     )
-
+    
     # Replace glyphs from code 128 to code 256 with cp1251 values
-    # for i in range(128,256):
-    #     cyrenc[i] = cp1251[i-128]
-
+    for i in range(128,256):
+        cyrenc[i] = cp1251[i-128]
+    
     # Register newly created encoding
-    # pdfmetrics.registerEncoding(cyrenc)
-
+    pdfmetrics.registerEncoding(cyrenc)
+    
     # Register type face
-    # pdfmetrics.registerTypeFace(cyrFace)
-
+    pdfmetrics.registerTypeFace(cyrFace)
+    
     # Register the font with adding '1251' to its name
-    # pdfmetrics.registerFont(pdfmetrics.Font(faceName+'1251', faceName, 'CP1251'))
-
+    pdfmetrics.registerFont(pdfmetrics.Font(faceName+'1251', faceName, 'CP1251'))
+    
     # Use this font and set font size
     # canv.setFont(faceName+'1251', 14)
     
@@ -209,9 +209,9 @@ def home_page(request):
     context = {'docs':docs }
     
     if user_type == 'doctor':
-        user_account = user.doctor
-        related_patients = user_account.patients.select_related('card').all()
-        risks = ((calc_preeclampsia(x), calc_premature_birth(x), calc_risk_values_sum(x))\
+        user_account: Doctor = user.doctor
+        related_patients = tuple(x.card for x in user_account.patients.select_related('card').all())
+        risks = ((calc_preeclampsia(x.patient), calc_premature_birth(x.patient), calc_risk_values_sum(x.patient))\
                 for x in related_patients)
         pats = zip(related_patients, risks)
         context |= { 'account': user_account, 'pats': pats, 'cnt': len(related_patients) }
@@ -352,7 +352,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             commit: ReceptionNotes = form.save(commit=False)
             doctor = commit.doctor
             commit.specialization = doctor.role
-            commit.cabinet = doctor.cabinet
+            commit.cabinet = doctor.cabinet if doctor.cabinet is not None else 'Не известно'
             commit.med_organization = doctor.med_org
             patient = User.objects.get(pk=profile_id).patient
             commit.patient = patient
