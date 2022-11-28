@@ -845,3 +845,21 @@ nav {
     line-height: 35px;
     height: 100%;
 }
+
+.statistics_table {
+    width: 100%;
+    /* border: 1px solid black; */
+    border-spacing: 0;
+    font-size: 26px;
+    padding: 5vh 5vw;
+}
+
+.statistics_table th,
+.statistics_table td {
+    border: 1px solid black;
+    padding: 5px 10px;
+}
+
+.tab {
+    text-indent: 40px;
+}
