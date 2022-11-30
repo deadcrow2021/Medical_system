@@ -33,7 +33,32 @@
     </div>
 </div>
 <div class="statistics_block">
-    <div class="block__lines">
+    <table class="statistics_table">
+        <thead style="position: static">
+            <tr>
+                <th style="font-weight: 600; font-size: 30px"><strong>Статистика</strong></th>
+                <th style="font-weight: 600; font-size: 30px"><strong>Значение</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for k, v in stats.items %}
+            <tr>
+                <td>{{ k }}:</td>
+                {% if v.items %}
+                    <td></td>
+                    {% for k1, v1 in v.items %}
+                    <tr>
+                        <td class="tab">&#x2022;{{ k1 }}:</td> <td>{{ v1 }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <td>{{ v }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% comment %} <div class="block__lines">
         <p><strong>Доля поступивших беременных под наблюдение консультации со сроком беременности до 12 недель:</strong> {{p_1}}</p>
     </div>
     <div class="block__lines">
@@ -149,6 +174,6 @@
         <p>От 34 до 36 лет: <span>{{p_31.34_36}}</span></p>
         <p>От 37 до 41 лет: <span>{{p_31.37_41}}</span></p>
         <p>От 42 лет: <span>{{p_31.42_up}}</span></p>
-    </div>
+    </div> {% endcomment %}
 </div>
 {% endblock %}

@@ -679,7 +679,8 @@ def patient_info_page(request, profile_id):
     form = PatientInformationForm(instance=instance)
     key_value = ((key, val[2]) for key, val in patinet_info_models.items())
     roles = ('receptionist', 'obstetrician-gynecologist')
-    to_add = f'#/patient_info/{profile}!Сведения о пациентке'
+    
+    to_add = f'#/patient_info/{profile_id}!Сведения о пациентке'
     resp = render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
     return get_and_add_cookie(request, to_add, resp)
 
@@ -1035,31 +1036,31 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     p_26_1 = 0
     p_26_2 = 0
     p_27 = {
-        'to_14': 0,
-        '15_17': 0,
-        '18_34': 0,
-        '18_24': 0,
-        '25_29': 0,
-        '30_34': 0,
-        '35_44': 0,
-        '35_39': 0,
-        '40_44': 0,
-        '45_49': 0,
-        '50_up': 0,
+        'До 14 лет': 0,
+        'От 15 до 17 лет': 0,
+        'От 18 до 34 лет': 0,
+        'От 18 до 24 лет': 0,
+        'От 25 до 29 лет': 0,
+        'От 30 до 34 лет': 0,
+        'От 35 до 44 лет': 0,
+        'От 35 до 39 лет': 0,
+        'От 40 до 44 лет': 0,
+        'От 45 до 49 лет': 0,
+        'От 50 лет': 0,
     }
     p_28 = 0
     p_29 = 0
     p_31  = {
-        '22_23': 0,
-        '24_27': 0,
-        '24_25': 0,
-        '26_27': 0,
-        '28_36': 0,
-        '28_30': 0,
-        '31_33': 0,
-        '34_36': 0,
-        '37_41': 0,
-        '42_up': 0,
+        'От 22 до 23 лет': 0,
+        'От 24 до 27 лет': 0,
+        'От 24 до 25 лет': 0,
+        'От 26 до 27 лет': 0,
+        'От 28 до 36 лет': 0,
+        'От 28 до 30 лет': 0,
+        'От 31 до 33 лет': 0,
+        'От 34 до 36 лет': 0,
+        'От 37 до 41 лет': 0,
+        'От 42 лет': 0,
     }
     
     if request.method == 'POST':
@@ -1342,46 +1343,94 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         
     if not request.method == 'POST':
         birth_number_period = birth_number
-
+    
+    stats = {
+        # 'form': form,
+        # 'p_1': p_1*100/patients_number,
+        # 'p_3': p_3*1000/age_15_45,
+        # 'p_4': p_4*100/registered_first_trimester,
+        # 'p_5': p_5*1000/birth_number,
+        # 'p_6': p_6*100/birth_number,
+        # 'p_7': p_7*100/birth_number,
+        # 'p_8': p_8*100/birth_number,
+        # 'p_9': p_9*100/birth_number,
+        # 'p_10': p_10*100/birth_number,
+        # 'p_11': p_11*100/birth_number,
+        # 'p_12': p_12*1000/(birth_number + birth_dead_number),
+        # 'p_13': p_13*1000/(birth_number + birth_dead_number),
+        # 'p_14': p_14*100/birth_number,
+        # 'p_15': p_15*100/birth_number,
+        # 'p_16': p_16*1000/birth_number_period,
+        # 'p_17': p_17*100/birth_number_period,
+        # 'p_18': p_18*100/birth_number_period,
+        # 'p_19': p_19*100/birth_number_period,
+        # 'p_20': p_20*100/birth_number_period,
+        # 'p_21': p_6*1000/birth_number_period, ###
+        # 'p_22': p_22*100/up_37_week_birth,
+        # 'p_23': p_23*1000/birth_number,
+        # 'p_24': p_24*1000/birth_number,
+        # 'p_25': {
+        #     '1': p_25_1*100/birth_number_period,
+        #     '2': p_25_2*100/birth_number_period
+        # },
+        # 'p_26': {
+        #     '1': p_26_1*100/birth_number_period,
+        #     '2': p_26_2*100/birth_number_period
+        # },
+        # 'p_27': {
+        #     x: p_27[x]*100/birth_number_period for x in p_27
+        # },
+        # 'p_28': p_28*100/patients_number,
+        # 'p_29': p_29*100/patients_number,
+        # 'p_31': {
+        #     x: p_31[x]*100/birth_number_period for x in p_31
+        # },
+        "Доля поступивших беременных под наблюдение консультации со сроком беременности до 12 недель": p_1*100/patients_number,
+        "Частота прерываний беременности (на 1000 женщин в возрасте 15 - 49 лет)": p_3*1000/age_15_45,
+        "Доля обследованных беременных женщин в первом триместре беременности прошедших оценку антенатального развития плода в 11-14 недель беременности от числа поставленных на учет в первый триместр беременности": p_4*100/registered_first_trimester,
+        "Частота критических акушерских состояний во время беременности, родов и в течение 42 дней после ее окончания": p_5*1000/birth_number,
+        "Доля родов у женщин после лечения бесплодия методами ВРТ от общего числа родов": p_6*100/birth_number,
+        "Доля родов у женщин в возрасте ≥35 лет от общего числа родов": p_7*100/birth_number,
+        "Доля родов у женщин в возрасте меньше 18 лет от общего числа родов": p_8*100/birth_number,
+        "Доля родов у женщин с индексом массы тела до беременности ≥30 m(кг)/h2(м) от общего числа родов": p_9*100/birth_number,
+        "Доля родов у первородящих женщин от общего числа родов": p_10*100/birth_number,
+        "Доля родов у женщин, вставших на учет до 12 недель беременности, от общего числа родов": p_11*100/birth_number,
+        "Мертворождаемость": p_12*1000/(birth_number + birth_dead_number),
+        "Мертворождаемость на сроке ≥ 28 недель беременности": p_13*1000/(birth_number + birth_dead_number),
+        "Доля родов у женщин с многоплодной беременностью от общего числа родов": p_14*100/birth_number,
+        "Доля кесаревых сечений от общего числа родов": p_15*100/birth_number,
+        "Число случаев тяжелых преэклампсий на 1000 родов": p_16*1000/birth_number_period,
+        "Доля родов вне медицинской организации от общего числа родов": p_17*100/birth_number_period,
+        "Доля родов у первородящих женщин при одноплодной беременности и тазовом предлежании от общего числа родов": p_18*100/birth_number_period,
+        "Доля родов у повторнородящих женщин с рубцом на матке (после предыдущего кесарева сечения) при одноплодной беременности и тазовом предлежании от общего числа родов": p_19*100/birth_number_period,
+        "Число случаев эклампсий на 1000 родов": p_20*100/birth_number_period,
+        "Доля родов у женщин после лечения бесплодия методами вспомогательных репродуктивных технологий (ВРТ) от общего числа родов": p_6*1000/birth_number_period,
+        "Доля эпизиотомий при одноплодной беременности и неоперативных вагинальных родах на сроке ≥37 недель беременности от общего числа неоперативных вагинальных родов при одноплодной беременности на сроке ≥37 недель": p_22*100/up_37_week_birth,
+        "Число случаев гнойно-септических заболеваний после кесарева сечения на 1000 операций кесарево сечение": p_23*1000/birth_number,
+        "Число случаев гнойно-септических заболеваний после вагинальных родов на 1000 вагинальных родов": p_24*1000/birth_number,
+        "Всего беременных за период с разбивкой на нормальную беременность/патологию (выполнение работ в рамках гарантийных обязательств по контракту)": {
+            'Нормальные': p_25_1*100/birth_number_period,
+            'Патология': p_25_2*100/birth_number_period
+        },
+        "Всего родильниц за период с разбивкой на нормальные роды/патологию (выполнение работ в рамках гарантийных обязательств по контракту)": {
+            'Нормальные': p_26_1*100/birth_number_period,
+            'Патология': p_26_2*100/birth_number_period
+        },
+        "Всего родильниц, родивших за выбранный период, с разбивкой по возрастным группам (выполнение работ в рамках гарантийных обязательств по контракту)": {
+            x: p_27[x]*100/birth_number_period for x in p_27
+        },
+        "Структура заболеваемости беременных с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": p_28*100/patients_number,
+        "Структура заболеваемости родильниц с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": p_29*100/patients_number,
+        "Распределение всех пациенток по срокам родоразрешения": {
+            x: p_31[x]*100/birth_number_period for x in p_31
+        }
+    }
+    
     context = {
         'form': form,
-        'p_1': p_1*100/patients_number,
-        'p_3': p_3*1000/age_15_45,
-        'p_4': p_4*100/registered_first_trimester,
-        'p_5': p_5*1000/birth_number,
-        'p_6': p_6*100/birth_number,
-        'p_7': p_7*100/birth_number,
-        'p_8': p_8*100/birth_number,
-        'p_9': p_9*100/birth_number,
-        'p_10': p_10*100/birth_number,
-        'p_11': p_11*100/birth_number,
-        'p_12': p_12*1000/(birth_number + birth_dead_number),
-        'p_13': p_13*1000/(birth_number + birth_dead_number),
-        'p_14': p_14*100/birth_number,
-        'p_15': p_15*100/birth_number,
-        'p_16': p_16*1000/birth_number_period,
-        'p_17': p_17*100/birth_number_period,
-        'p_18': p_18*100/birth_number_period,
-        'p_19': p_19*100/birth_number_period,
-        'p_20': p_20*100/birth_number_period,
-        'p_21': p_6*1000/birth_number_period, ###
-        'p_22': p_22*100/up_37_week_birth,
-        'p_23': p_23*1000/birth_number,
-        'p_24': p_24*1000/birth_number,
-        'p_25': {
-                '1': p_25_1*100/birth_number_period,
-                '2': p_25_2*100/birth_number_period
-                },
-        'p_26': {
-                '1': p_26_1*100/birth_number_period,
-                '2': p_26_2*100/birth_number_period
-                },
-        'p_27': {x: p_27[x]*100/birth_number_period for x in p_27},
-        'p_28': p_28*100/patients_number,
-        'p_29': p_29*100/patients_number,
-        'p_31': {x: p_31[x]*100/birth_number_period for x in p_31},
+        'stats': stats
     }
-
+    
     # def dict_to_str(d: dict):
     #     final_str = ''
     #     for k, v in d.items():
