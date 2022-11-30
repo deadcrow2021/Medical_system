@@ -275,9 +275,11 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
             data = form.save(commit=False)
             date_of_birth = form.cleaned_data['date_of_birth']
             today = date.today()
-            age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
-            data.age = age
+            if date_of_birth:
+                age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+                data.age = age
             data.save()
+            # add_log  обновлена мед карта. Было: Стало:
             return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
     return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
@@ -291,6 +293,7 @@ def pregnancy_outcome(request: HttpRequest, profile_id: int):
     if request.method == 'POST':
         id = request.POST['delete_outcome']
         PregnancyOutcome.objects.get(pk=id).delete()
+        # add_log Пациент Х. Удален исход беременности
     
     outcomes = current_user.patient.pregnancy_outcome.all()
     forms = [PregnancyOutcomeForm(instance=outcome) for outcome in outcomes]
@@ -316,10 +319,12 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
                 patient = Patient.objects.get(user=current_user)
                 outcome.patient = patient
                 outcome.save()
+                # add_log Пациент Х. Добавлен исход беременности
             return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
     else:
         if int(outcome_id) > 0:
             form = PregnancyOutcomeForm(instance=PregnancyOutcome.objects.get(pk=outcome_id))
+                # add_log Пациент Х. Наверно обновлен исход беременности. Было: Стало:
         else:
             form = PregnancyOutcomeForm()
     return render(request, 'users/add_pregnancy_outcome.html', { 'form': form, 'current_user': current_user, 'mkb_10': mkb10_deseases })
@@ -602,6 +607,7 @@ def appearance(request: HttpResponse, profile_id: int):
     
     if request.method == 'POST':
         obstetric_risk = ObstetricRisk.objects.get(pk=request.POST["delete_pk"])
+        # add_log Паиент Х. Удален риск осложнений АБВ
         obstetric_risk.delete()
     
     forms = get_risks()
@@ -620,6 +626,7 @@ def add_appearance_page(request: HttpRequest, profile_id: int):
             app: ObstetricRisk = form.save(commit=False)
             app.card = current_user.patient.card
             app.save()
+            # add_log Пациент Х. Добавлена явка АБВ
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'obsteric_id': app.pk }))
     
     return render(request, template_name, context={ 'current_user': current_user, 'form': form_class })
@@ -637,6 +644,7 @@ def add_complication_page(request: HttpRequest, profile_id: int, obsteric_id: in
             app: ComplicationRisk = form.save(commit=False)
             app.risk = ObstetricRisk.objects.get(pk=obsteric_id)
             app.save()
+            # add_log Пациент Х. Добавлен риск осложнения АБВ
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     
     return render(request, template_name, context={ 'current_user': current_user, 'form': form_class })
@@ -652,6 +660,7 @@ def update_complication_page(request: HttpRequest, profile_id: int, complication
     if request.method == 'POST':
         if form.is_valid():
             form.save()
+            # add_log Пациент Х. Обновлен риск осложнения. Было: Стало:
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     
     return render(request, template_name, context={ 'current_user': current_user, 'form': form })
@@ -687,6 +696,7 @@ def update_patient_info_page(request, profile_id):
             data = form.save(commit=False)
             data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
             data.save()
+            # add_log Пациент Х. Обновлена информация о пациенте. Было: Стало:
 
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     else:
@@ -798,6 +808,7 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
         to_delete.delete()
+        # add_log Запись уддалена
     
     instance = tuple(model.objects.filter(current_pregnancy=current_pregnancy))
     if (len(instance) > 0):
@@ -829,6 +840,7 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
             data = form.save(commit=False)
             data.current_pregnancy = current_pregnancy
             data.save()
+            # add_log
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
     
     if int(model_id) > -1:
@@ -866,6 +878,7 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
         to_delete.delete()
+        # add_log
     
     instances = tuple(model.objects.filter(patient=current_user.patient))
     if (len(instances) > 0):
@@ -905,6 +918,7 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
             
             data.patient = patient
             data.save()
+            # add_log
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
     
     if int(model_id) > -1:
@@ -936,6 +950,7 @@ def examination_template_page(request: HttpRequest, profile_id: int, model_name:
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
         to_delete.delete()
+        # add_log
     
     instances = tuple(model.objects.filter(patient=current_user.patient))
     if (len(instances) > 0):
@@ -966,6 +981,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
             data = form.save(commit=False)
             data.patient = patient
             data.save()
+            # add_log
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
     
     if int(model_id) > -1:

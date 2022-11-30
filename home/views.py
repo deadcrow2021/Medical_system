@@ -392,6 +392,8 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 else:
                     commit.visit_number = 1
                 commit.save()
+                # add_log
+
                 # bot
                 try:
                     async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
@@ -416,6 +418,7 @@ def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -
         form: ReceptionAddForm = form_class(request.POST, instance=ReceptionNotes.objects.get(pk=note_id))
         if form.is_valid():
             form.save()
+            # add_log
             request.method = "GET"
             return reception_add_page(request, profile_id)
     
@@ -440,6 +443,7 @@ def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:
     if request.method == "POST":
         if form.is_valid():
             form.save()
+            # add_log
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     
     return render(request, 'home/mo_delivery_update.html', { 'form': form, 'profile_id': profile_id })
