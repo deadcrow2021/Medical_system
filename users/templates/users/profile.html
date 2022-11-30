@@ -56,7 +56,8 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
-                <p><a href="{% url 'samd' profile.user.id %}">СЭМД документы</a></p>
+                {% comment %} <p><a href="{% url 'samd' profile.user.id %}">СЭМД документы</a></p> {% endcomment %}
+                <p><a href="{% url 'samd' profile.user.id %}">Журнал документов для ВИМИС</a></p>
             </div>
         </div>
     </div>
