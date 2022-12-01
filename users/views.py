@@ -677,11 +677,32 @@ def patient_info_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
-    key_value = ((key, val[2]) for key, val in patinet_info_models.items())
+    
+    instances = []
+    forms = []
+    exists = []
+    names = []
+    for key, val in patinet_info_models.items():
+        instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
+        print(f'{val[1]=}')
+        if len(instances[-1]) > 0:
+            forms.append([val[1](instance=i) for i in instances[-1]])
+            exists.append(True)
+        else:
+            forms.append([])
+            exists.append(False)
+        names.append(val[2])
+    
+    tabs = zip(names, exists, forms)
+    print(f'{forms=}')
+    print(f'{exists=}')
+    # key_value = ((key, val[2]) for key, val in patinet_info_models.items())
     roles = ('receptionist', 'obstetrician-gynecologist')
     
     to_add = f'#/patient_info/{profile_id}!Сведения о пациентке'
-    resp = render(request, 'users/patient_info.html', { 'current_user': current_user, 'form': form, 'key_val': key_value, 'roles': roles })
+    context = { 'current_user': current_user, 'form': form, 'roles': roles }
+    context.update({ 'forms': forms, 'exists': exists, 'names': names, 'idx': [0, 1, 2], 'tabs': tabs })
+    resp = render(request, 'users/patient_info.html', context)
     return get_and_add_cookie(request, to_add, resp)
 
 
@@ -693,7 +714,6 @@ def update_patient_info_page(request, profile_id):
     if request.method == "POST":
         form = PatientInformationForm(request.POST, instance=instance)
         if form.is_valid():
-
             data = form.save(commit=False)
             data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
             data.save()

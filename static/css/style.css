@@ -866,6 +866,55 @@ nav {
     padding: 5px 10px;
 }
 
-.tab {
+.tabulation {
     text-indent: 40px;
+}
+
+
+
+
+.tabs {
+    position: relative;         /* Относительное позиционирование */
+    width: fit-content;
+    display: flex;
+}
+.tab, .tab-title {
+    /* display: inline-block;      Выстраиваем по горизонтали */
+    font-size: 20px;
+    /* font-weight: bold; */
+    width: fit-content;
+}
+.tab input[type="radio"] { display: none; }
+.tab-title {
+    background: #ccc;         /* Цвет фона */
+    padding: 5px 10px;          /* Поля вокруг текста */
+    border: 2px solid black;   /* Параметры рамки */
+    font-weight: bold;
+    display: block;
+    /* border-bottom: none;        Снизу линию убираем */
+}
+.tab-content {
+    position: absolute;         /* Абсолютное позиционирование */
+    border: 2px solid black;   /* Параметры рамки */
+    border-top: 0;
+    border-radius: 0 0 10px 10px;
+    /* padding: 10px;              Поля вокруг текста */
+    left: 0;                    /* Размещаем у левого края */
+    width: 100%;   /* Ширина содержимого */
+    display: none;              /* Прячем вкладку */
+    height: 600px;
+    overflow-y: scroll;
+}
+.tab-title:first-of-type {
+    border-radius: 10px 10px 0 0;
+}
+.tab :checked + .tab-title {
+    position: relative;         /* Относительное позиционирование */
+    background: #ecf1f4;         /* Цвет фона */
+    top: 1px;                   /* Сдвигаем вниз */
+    z-index: 1;                 /* Отображаем поверх содержимого */
+    border-bottom: none;
+}
+.tab :checked ~ .tab-content {
+    display: flex;              /* Показываем активную вкладку */
 }
