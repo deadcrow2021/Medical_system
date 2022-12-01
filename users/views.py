@@ -1476,7 +1476,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
 
 def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name: str = 'users/samd.html'
-    to_add = f'#/samd/{profile_id}!СЭМД документы'
+    to_add = f'#/samd/{profile_id}!Журнал документов для ВИМИС'
     resp = render(request, template_name, { 'profile_id': profile_id })
     return get_and_add_cookie(request, to_add, resp)
 
