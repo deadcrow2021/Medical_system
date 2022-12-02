@@ -53,6 +53,10 @@ fieldset {
     padding: 0 20px;
 }
 
+fieldset.outer_div {
+    padding-top: 20px;
+}
+
 fieldset legend h3 {
     line-height: 32px;
 }

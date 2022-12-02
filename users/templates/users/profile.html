@@ -31,6 +31,11 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
+                <p><a href="{% url 'examination-list' profile.user.id %}">Лист обследования</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
                 <p><a href="{% url 'profile-models-template' profile.user.id 'hospitalization' %}">Сведения о госпитализации во время беременности</a></p>
             </div>
         </div>

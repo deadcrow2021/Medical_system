@@ -336,7 +336,27 @@ def pregnancy_observation_page(request, profile_id):
     keys_names = []
     for key, val in observation_template_models.items():
         keys_names.append((key, val[2]))
-    resp = render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user, 'keys_names': keys_names})
+    context = { 'current_user': current_user, 'keys_names': keys_names }
+    
+    models = {
+        'pregnant_woman_monitoring': (PregnantWomanMonitoring, PregnantWomanMonitoringForm, 'Наблюдение за беременной' ),
+    }
+    instances = []
+    model_forms = []
+    exists = []
+    
+    for key, val in models.items():
+        instances.append(tuple(val[0].objects.filter(current_pregnancy=current_user.patient.current_pregnancy)))
+        if (len(instances) > 0):
+            model_forms.append([val[1](instance=i) for i in instances[-1]])
+            exists.append(True)
+        else:
+            model_forms.append([])
+            exists.append(False)
+    
+    data = zip(model_forms, exists)
+    context.update({ 'data': data })
+    resp = render(request, 'users/during_pregnancy_observation.html', context)
     return get_and_add_cookie(request, to_add, resp)
 
 
@@ -736,31 +756,6 @@ pregnant_woman_monitoring_models = {
     'pregnant_woman_monitoring': ( PregnantWomanMonitoringForm, PregnantWomanMonitoring, 'Наблюдение за беременной' ),
 }
 
-examination_list_models = {
-    'blood_analysis':            ( BloodAnalysisForm, BloodAnalysis, 'Анализ крови' ),
-    'biochemical_blood':         ( BiochemicalBloodAnalysisForm, BiochemicalBloodAnalysis, 'Биохимический анализ крови' ),
-    'сoagulogram':               ( CoagulogramForm, Coagulogram, 'Коагулограмма' ),
-    'glucose_test':              ( GlucoseToleranceTestForm, GlucoseToleranceTest, 'Пероральный глюкозотолерантный тест, ммоль/л' ),
-    'ts_hormonr':                ( ThyroidStimulatingHormoneForm, ThyroidStimulatingHormone, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ),
-    'smears':                    ( SmearsForm, Smears, 'Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом' ),
-    'bacterio_smears':           ( BacterioscopicSmearsExaminationForm, BacterioscopicSmearsExamination, 'Бактериоскопическое исследование мазков' ),
-    'cervix_exam':               ( CervixCytologicalExaminationForm, CervixCytologicalExamination, 'Цитологическое исследование микропрепарата шейки матки' ),
-    'urine':                     ( UrineAnalysisForm, UrineAnalysis, 'Общий анализ мочи' ),
-    'urine_sowing':              ( UrineSowingForm, UrineSowing, 'Посев мочи на бессимптомную бактериурию' ),
-}
-
-determine_antibodies = {
-    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
-    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
-    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ),
-}
-
-ultrasound_models = {
-    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
-    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
-    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
-    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
-}
 
 doctors_examinations_models = {
     'therapist': ( DoctorExaminationsTherapist, DoctorExaminationsTherapistForm, 'Осмотры терапевта' ), ######
@@ -778,9 +773,9 @@ doctors_examinations_models = {
 
 portion_models = {
     'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
-    'examination_list':          (examination_list_models, 'Лист обследования'),
-    'determine_antibodies':      (determine_antibodies, 'Определение антител'),
-    'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
+    #'examination_list':          (examination_list_models, 'Лист обследования'),
+    #'determine_antibodies':      (determine_antibodies, 'Определение антител'),
+    #'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
     'doctors_examinations':      (doctors_examinations_models, 'Осмотры врачей специалистов'),
     #'current_pregnancy':         (current_pregnancy_models, 'Сведения о настоящей беременности')
 }
@@ -1553,6 +1548,56 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
             exists.append(False)
     
     data = zip(model_forms, exists)
-    context = { 'model_forms': model_forms, 'exists': exists, 'data': data }
+    context = { 'data': data }
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+examination_list_models = {
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
+    'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
+    'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
+    'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
+    'blood_analysis':     ( BloodAnalysis, BloodAnalysisForm, 'Анализ крови' ),
+    'biochemical_blood':  ( BiochemicalBloodAnalysis, BiochemicalBloodAnalysisForm, 'Биохимический анализ крови' ),
+    'сoagulogram':        ( Coagulogram, CoagulogramForm, 'Коагулограмма' ),
+    'glucose_test':       ( GlucoseToleranceTest, GlucoseToleranceTestForm, 'Пероральный глюкозотолерантный тест, ммоль/л' ),
+    'ts_hormonr':         ( ThyroidStimulatingHormone, ThyroidStimulatingHormoneForm, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ),
+    'smears':             ( Smears, SmearsForm, 'Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом' ),
+    'bacterio_smears':    ( BacterioscopicSmearsExamination, BacterioscopicSmearsExaminationForm, 'Бактериоскопическое исследование мазков' ),
+    'cervix_exam':        ( CervixCytologicalExamination, CervixCytologicalExaminationForm, 'Цитологическое исследование микропрепарата шейки матки' ),
+    'urine':              ( UrineAnalysis, UrineAnalysisForm, 'Общий анализ мочи' ),
+    'urine_sowing':       ( UrineSowing, UrineSowingForm, 'Посев мочи на бессимптомную бактериурию' ),
+}
+
+def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+    current_user: User = User.objects.get(pk=profile_id)
+    template_name: str = 'users/examination_list.html'
+    to_add: str = f'#/examination_list/{profile_id}!Лист обследования'
+    
+    # instances = []
+    model_forms = []
+    exists = []
+    names = []
+    
+    for idx, (key, val) in enumerate(examination_list_models.items()):
+        if idx < 4:
+            instances = tuple(val[0].objects.filter(patient=current_user.patient))
+        else:
+            instances = tuple(val[0].objects.filter(current_pregnancy=current_user.patient.current_pregnancy))
+        
+        if (len(instances) > 0):
+            model_forms.append([val[1](instance=i) for i in instances])
+            exists.append(True)
+        else:
+            model_forms.append([])
+            exists.append(False)
+        names.append(val[2])
+    
+    data = zip(model_forms, exists, names)
+    context = { 'data': data }
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
