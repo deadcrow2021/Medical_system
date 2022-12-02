@@ -6,16 +6,131 @@
 </div>
 
 {% if user.doctor %}
-<div class="cut_width">
-    {% for key, name in keys_names %}
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <a href="{% url 'profile-models-template' current_user.id key %}">{{ name }}</a>
-            </div>
-        </div>
+<div class="fields center_div">
+    <div class="tabs">
     </div>
+    {% for forms, exists in data %}
+        {% if exists %}
+            {% for form in forms %}
+                {% for p in form %}
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <strong>{{ p.label_tag }}</strong>
+                    </div>
+                    <div class="fields__input__field noborder">
+                    {% if p.field.choices %}
+                        {% for i in p.field.choices %}
+                            {% if p.value == i.0 %}
+                                {% if not i.0 %}
+                                    ---------
+                                {% else %}
+                                    {{i.1}}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% elif not p.value %}
+                        ---------
+                    {% elif p.value %}
+                        {{ p.value }}
+                    {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
     {% endfor %}
 </div>
+
+<script type='text/javascript' defer>
+    var fields = document.getElementsByClassName('fields')[0];
+    var tabs = document.getElementsByClassName('tabs')[0];
+    
+    function set_name_with_border(name, id, count) {
+        let elem = document.querySelector(`label[for=id_${id}]`);
+        if (elem === null)
+            return;
+        elem = elem.parentNode.parentNode.parentNode;
+        
+        // let label = document.createElement('legend');
+        // let h3 = document.createElement('h3');
+        // h3.innerText = name;
+        // label.appendChild(h3);
+        
+        let inner_div = document.createElement('div');
+        
+        for(let i = 0; i < count; i++) {
+            let next = elem.nextElementSibling;
+            inner_div.appendChild(elem);
+            elem = next;
+            if (elem === null)
+                break;
+        }
+        
+        let div = document.createElement('fieldset');
+        div.setAttribute('class', 'outer_div');
+        // div.appendChild(label);
+        div.appendChild(inner_div);
+        fields.prepend(div);
+    }
+    
+    function make_tabs(name, count, fildsets) {
+        let label = document.createElement('label');
+        label.innerText = name;
+        label.classList.add('tab-title');
+        label.setAttribute('for', `${name}`);
+        
+        let input = document.createElement('input');
+        input.setAttribute('type', `radio`);
+        input.setAttribute('id', `${name}`);
+        input.setAttribute('name', `tab-group`);
+        
+        let section = document.createElement('section');
+        section.classList.add('tab-content', 'center_div');
+        
+        if (count > fildsets.length) count = fildsets.length;
+        
+        for(let i = 0; i < count; i++) {
+            section.appendChild(fildsets[i]);
+        }
+        
+        let div = document.createElement('div');
+        div.setAttribute('class', 'tab');
+        div.appendChild(input);
+        div.appendChild(label);
+        div.appendChild(section);
+        tabs.appendChild(div);
+    }
+    
+    let nodes_id = [
+        ['Основные сведения', 'pregnancy', 16],
+        ['Первое обследование', 'date', 10],
+        ['Осмотр и пальпация', 'mammary', 15],
+        ['Генекологический осмотр', 'cervix_examination', 30000]
+    ]
+    
+    for (let [name, id, count] of nodes_id) {
+        set_name_with_border(name, id, count);
+    }
+    
+    var fields = document.getElementsByClassName('fields')[0];
+    for (let elem of fields.children) {
+        fields.prepend(elem);
+    }
+    
+    var tabs_names = [
+        ['Основные сведения', 1],
+        ['Первое обследование', 1],
+        ['Осмотр и пальпация', 1],
+        ['Генекологический осмотр', 1],
+    ]
+    
+    var fieldsets = [...document.querySelectorAll('fieldset')];
+    
+    for (let [name, count] of tabs_names) {
+        make_tabs(name, count, fieldsets.splice(0, count));
+    }
+    
+    document.querySelector('input[id="Основные сведения"]').setAttribute('checked', '');
+</script>
 {% endif %}
 {% endblock %}

@@ -771,10 +771,10 @@ doctors_examinations_models = {
     'obstetrician-gynecologist': ( DoctorExaminationsObstetricianGynecologist, DoctorExaminationsObstetricianGynecologistForm, 'Осмотры акушера-гинеколога' ), ######
 }
 
-current_pregnancy_models = {
-    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
-}
+# current_pregnancy_models = {
+#     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+#     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+# }
 
 portion_models = {
     'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
@@ -782,7 +782,7 @@ portion_models = {
     'determine_antibodies':      (determine_antibodies, 'Определение антител'),
     'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
     'doctors_examinations':      (doctors_examinations_models, 'Осмотры врачей специалистов'),
-    'current_pregnancy':         (current_pregnancy_models, 'Сведения о настоящей беременности')
+    #'current_pregnancy':         (current_pregnancy_models, 'Сведения о настоящей беременности')
 }
 
 def portion_models_template_page(request: HttpRequest, profile_id: int, template_name: str, portion_name: str):
@@ -1528,3 +1528,31 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     resp = render(request, template_name, { 'form': form, 'notes':notes })
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
+
+
+def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+    current_user: User = User.objects.get(pk=profile_id)
+    template_name: str = 'users/current_pregnancy.html'
+    to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
+    
+    models = {
+        'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+        'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' )
+    }
+    instances = []
+    model_forms = []
+    exists = []
+    
+    for key, val in models.items():
+        instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
+        if (len(instances) > 0):
+            model_forms.append([val[1](instance=i) for i in instances[-1]])
+            exists.append(True)
+        else:
+            model_forms.append([])
+            exists.append(False)
+    
+    data = zip(model_forms, exists)
+    context = { 'model_forms': model_forms, 'exists': exists, 'data': data }
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
