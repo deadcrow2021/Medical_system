@@ -1474,29 +1474,6 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
 
-def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
-    template_name: str = 'users/samd.html'
-    to_add = f'#/samd/{profile_id}!СЭМД документы'
-    resp = render(request, template_name, { 'profile_id': profile_id })
-    return get_and_add_cookie(request, to_add, resp)
-
-samd_temlates = {
-    'medical_services_provision_referral': medical_services_provision_referral,
-    'instrumental_research_protocol': instrumental_research_protocol,
-    'laboratory_test_protocol': laboratory_test_protocol,
-    'patient_examination_consultation': patient_examination_consultation,
-    'treatment_in_hospital': treatment_in_hospital,
-    'maternity_hospital_discharge_epicrisis': maternity_hospital_discharge_epicrisis,
-    'cytological_examination_protocol': cytological_examination_protocol,
-    'medical_death_certificate': medical_death_certificate,
-    'medical_perinatal_death_certificate': medical_perinatal_death_certificate,
-}
-
-def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> HttpResponse:
-    template_name: str = 'users/generate_samd.html'
-    print(f'{samd_temlates[samd]()}')
-    return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
-
 
 def doctor_profile_page(request: HttpRequest, profile_id: int):
     template_name: str = 'users/doctor_profile.html'
@@ -1504,7 +1481,28 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     form = DoctorCreationForm(request.POST or None, instance=user)
     notes = ReceptionNotes.objects.filter(doctor=user)
     to_add = f'/profile/{profile_id}!Профиль'
-    
+
     resp = render(request, template_name, { 'form': form, 'notes':notes })
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
+
+
+def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+    template_name: str = 'users/samd.html'
+    current_user = User.objects.get(pk=profile_id) # patient
+    samd_docs = current_user.patient.samd.all()
+    to_add = f'#/samd/{profile_id}!СЭМД документы'
+    resp = render(request, template_name, { 'profile_id': profile_id, 'samd_docs': samd_docs, 'current_user': current_user })
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def sign_document(request, samd_id, profile_id):
+    if request.method == 'POST':
+        my_profile = Doctor.objects.get(user=request.user)
+        user = User.objects.get(id=profile_id)
+        patient = user.patient
+        current_samd = patient.samd.get(id=samd_id)
+        current_samd.signed = True
+        current_samd.save()
+        return redirect(request.META.get('HTTP_REFERER'))
+    return HttpResponseRedirect(reverse('samd', args=(profile_id,)))

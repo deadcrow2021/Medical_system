@@ -5,51 +5,43 @@
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
-<div class="block__profile__docs cut_width">
+<div class="block__profile__disease border_div">
     <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'medical_services_provision_referral' %}">Направление на оказание медицинских услуг</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'instrumental_research_protocol' %}">Протокол инструментального исследования</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'laboratory_test_protocol' %}">Протокол лабораторного исследования</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'patient_examination_consultation' %}">Осмотр (консультация) пациента</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'treatment_in_hospital' %}">Лечение в условиях стационара (дневного стационара)</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'maternity_hospital_discharge_epicrisis' %}">Выписной эпикриз родильного дома</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'cytological_examination_protocol' %}">Протокол цитологического исследования</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'medical_death_certificate' %}">Медицинское свидетельство о смерти (CDA)</a>
-        </div>
-    </div>
-    <div class="block__lines">
-        <div class="lines__element btn same_btn">
-            <a href="{% url 'generate-samd' profile_id 'medical_perinatal_death_certificate' %}">Медицинское свидетельство о перинатальной смерти (CDA)</a>
-        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Доктор</th>
+                    <th>Медицинская организация</th>
+                    <th>Тип СМС</th>
+                    <th>Подпись</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in samd_docs %}
+                <tr>
+                    <td><p>{{ doc.doctor.get_full_name }}</p></td>
+                    <td><p>{{ doc.get_med_org_display }}</p></td>
+                    <td><p>{{ doc.get_sms_type_display }}</p></td>
+                    <td><p>{{ doc.signed }} {% if not doc.signed %}
+                        
+                        <div class="fields__input">
+                            <form action="{% url 'sign-samd' doc.id current_user.id %}" method="post">
+                                {% csrf_token %}
+                                <!-- <div class="fields__input__field hide">
+                                    <input type="hidden" name="profile_pk" value="{{profile.pk}}">
+                                </div> -->
+                                <div class="">
+                                    <button id="unfollow-btn" class="btn" type="submit">Подписать</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        {% endif %}</p></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
 {% endblock %}
