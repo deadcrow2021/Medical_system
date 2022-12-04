@@ -6,99 +6,30 @@
 </div>
 
 {% if user.doctor %}
-
-<div class="fields center_div">
-    <div class="tabs" style="width: 700px">
-    </div>
-    {% for forms, exists, name in data %}
-        {% if exists %}
-            {% for form in forms %}
-            <fieldset class="outer_div">
-                <legend><h3>{{ name }}</h3></legend>
-                <div class="">
-                    {% for p in form %}
-                    <div class="fields__input">
-                        <div class="fields__input__label">
-                            <strong>{{ p.label_tag }}</strong>
-                        </div>
-                        <div class="fields__input__field noborder">
-                        {% if p.field.choices %}
-                            {% for i in p.field.choices %}
-                                {% if p.value == i.0 %}
-                                    {% if not i.0 %}
-                                        ---------
-                                    {% else %}
-                                        {{i.1}}
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        {% elif not p.value %}
-                            ---------
-                        {% elif p.value %}
-                            {{ p.value }}
-                        {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </fieldset>
-            {% endfor %}
-        {% else %}
-        <fieldset class="outer_div">
-            <legend><h3>{{ name }}</h3></legend>
-            <div class="fields__input">
-                <div class="fields__input__label">
-                    <strong><h4>Нет данных</h4></strong>
-                </div>
+<div class="cut_width">
+    <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <a href="{% url 'portion-page' current_user.id 'determine_antibodies' 'determine_antibodies' %}">Определение антител</a>
             </div>
-        </fieldset>
-        {% endif %}
+        </div>
+    </div>
+    {% for key, name in keys_names %}
+    <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
+            </div>
+        </div>
+    </div>
     {% endfor %}
+    <div class="block__profile__docs">
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <a href="{% url 'portion-page' current_user.id 'ultrasound' 'ultrasound' %}">Узи</a>
+            </div>
+        </div>
+    </div>
 </div>
-<script type='text/javascript' defer>
-    var fields = document.getElementsByClassName('fields')[0];
-    var tabs = document.getElementsByClassName('tabs')[0];
-    
-    function make_tabs(name, count, fildsets) {
-        let label = document.createElement('label');
-        label.innerText = name;
-        label.classList.add('tab-title');
-        label.setAttribute('for', `${name}`);
-        
-        let input = document.createElement('input');
-        input.setAttribute('type', `radio`);
-        input.setAttribute('id', `${name}`);
-        input.setAttribute('name', `tab-group`);
-        
-        let section = document.createElement('section');
-        section.classList.add('tab-content', 'center_div');
-        
-        if (count > fildsets.length) count = fildsets.length;
-        
-        for(let i = 0; i < count; i++) {
-            section.appendChild(fildsets[i]);
-        }
-        
-        let div = document.createElement('div');
-        div.setAttribute('class', 'tab');
-        div.appendChild(input);
-        div.appendChild(label);
-        div.appendChild(section);
-        tabs.appendChild(div);
-    }
-    
-    var tabs_names = [
-        ['Инструментальные исследования', 4],
-        ['Лабораторные исследования', 10000],
-    ]
-    
-    var fieldsets = [...document.querySelectorAll('fieldset')];
-    
-    for (let [name, count] of tabs_names) {
-        make_tabs(name, count, fieldsets.splice(0, count));
-    }
-    
-    document.querySelector('input[id="Личные данные"]').setAttribute('checked', '');
-</script>
 {% endif %}
 {% endblock %}

@@ -41,20 +41,23 @@
     {% endfor %}
 </div>
 
-<script type='text/javascript' defer>
+<script type='text/javascript'>
     var fields = document.getElementsByClassName('fields')[0];
-    var tabs = document.getElementsByClassName('tabs')[0];
     
     function set_name_with_border(name, id, count) {
         let elem = document.querySelector(`label[for=id_${id}]`);
-        if (elem === null)
+        if (elem === null) {
+            document.body.innerHTML += `\
+                <fieldset class="outer_div">
+                    <div class="fields__input">
+                        <div class="fields__input__label">
+                            <strong><h4>Нет данных</h4></strong>
+                        </div>
+                    </div>
+                </fieldset>`
             return;
+        }
         elem = elem.parentNode.parentNode.parentNode;
-        
-        // let label = document.createElement('legend');
-        // let h3 = document.createElement('h3');
-        // h3.innerText = name;
-        // label.appendChild(h3);
         
         let inner_div = document.createElement('div');
         
@@ -124,6 +127,7 @@
         ['Генекологический осмотр', 1],
     ]
     
+    var tabs = document.getElementsByClassName('tabs')[0];
     var fieldsets = [...document.querySelectorAll('fieldset')];
     
     for (let [name, count] of tabs_names) {

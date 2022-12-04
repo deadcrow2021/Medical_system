@@ -9,62 +9,77 @@
     {% if user.doctor %}
     <div class="block__profile__info">
         <h3>Индивидуальная карта</h3>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'medical-card' profile.user.id %}">Медицинская карта</a></p>
+        <a href="{% url 'medical-card' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Медицинская карта</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'patient-info' profile.user.id %}">Сведения о пациентке</a></p>
+        </a>
+        <a href="{% url 'patient-info' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Сведения о пациентке</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'current-pregnancy-info' profile.user.id %}">Сведения о настоящей беременности</a></p>
+        </a>
+        <a href="{% url 'current-pregnancy-info' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Сведения о настоящей беременности</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'pregnancy-observation' profile.user.id %}">Наблюдение во время настоящей беременности</a></p>
+        </a>
+        <a href="{% url 'pregnancy-observation' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Наблюдение во время настоящей беременности</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'examination-list' profile.user.id %}">Лист обследования</a></p>
+        </a>
+        <a href="{% url 'profile-models-template' profile.user.id 'hospitalization' %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Сведения о госпитализации во время беременности</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'profile-models-template' profile.user.id 'hospitalization' %}">Сведения о госпитализации во время беременности</a></p>
+        </a>
+        <a href="{% url 'add-reception' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>План посещений</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'add-reception' profile.user.id %}">План посещений</a></p>
+        </a>
+        <a href="{% url 'portion-page' profile.user.id 'doctors_examinations' 'doctors_examinations' %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Осмотры врачей специалистов</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'portion-page' profile.user.id 'doctors_examinations' 'doctors_examinations' %}">Осмотры врачей специалистов</a></p>
+        </a>
+        <a href="{% url 'self-monitoring' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Дневник самонаблюдений</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'self-monitoring' profile.user.id %}">Дневник самонаблюдений</a></p>
+        </a>
+        <a href="{% url 'pregnancy-outcome' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Исход беременности и родов</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <p><a href="{% url 'pregnancy-outcome' profile.user.id %}">Исход беременности и родов</a></p>
+        </a>
+        <a href="{% url 'samd' profile.user.id %}">
+            <div class="block__lines">
+                <div class="lines__element btn same_btn">
+                    <p>Журнал документов для ВИМИС</p>
+                </div>
             </div>
-        </div>
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                {% comment %} <p><a href="{% url 'samd' profile.user.id %}">СЭМД документы</a></p> {% endcomment %}
-                <p><a href="{% url 'samd' profile.user.id %}">Журнал документов для ВИМИС</a></p>
-            </div>
-        </div>
+        </a>
+        
     </div>
     {% elif user.is_superuser %}
     <div></div>
@@ -155,7 +170,7 @@
         {% endif %} {% endcomment %}
         
         <div>
-            <h4>Планы посещений</h4>
+            <h3>Планы посещений</h3>
         </div>
         {% if notes %}
         <div class="block__profile__disease border_div">
