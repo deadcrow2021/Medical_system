@@ -397,6 +397,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 samd.patient = patient
                 samd.doctor = doctor
                 samd.sms_type = '1'
+                samd.sms_status = '3'
                 samd.med_org = doctor.med_org if doctor.med_org is not None else 'Не известно'
                 samd.trigger = 'Выявление направления на оказание медицинских услуг'
                 samd.save()

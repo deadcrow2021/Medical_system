@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, ChangeControlLog
 from .models import Files
+from home.models import SAMD
 from .forms import FileUploadForm
 from django.views.generic import CreateView, ListView
 from django.contrib import messages
@@ -120,3 +121,12 @@ def logs_page(request: HttpRequest):
     resp = render(request, template_name, context)
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
+
+
+def admin_samd(request: HttpRequest) -> HttpResponse:
+    template_name: str = 'administration/admin_samd.html'
+    samd_docs = SAMD.objects.all()
+    to_add = f'#/samd/!СЭМД документы'
+    resp = render(request, template_name, { 'samd_docs': samd_docs })
+    return get_and_add_cookie(request, to_add, resp)
+

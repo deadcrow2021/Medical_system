@@ -11,6 +11,9 @@
             <thead>
                 <tr>
                     <th>Доктор</th>
+                    <th>ФИО пациента</th>
+                    <th>Дата рождения пациента</th>
+                    <th>Дата создания</th>
                     <th>Медицинская организация</th>
                     <th>Тип СМС</th>
                     <th>Статус СМС</th>
@@ -21,24 +24,13 @@
                 {% for doc in samd_docs %}
                 <tr>
                     <td><p>{{ doc.doctor.get_full_name }}</p></td>
+                    <td><p>{{ doc.patient.get_full_name }}</p></td>
+                    <td><p>{{ doc.patient.card.date_of_birth }}</p></td>
+                    <td><p>{{ doc.create_date }}</p></td>
                     <td><p>{{ doc.get_med_org_display }}</p></td>
                     <td><p>{{ doc.get_sms_type_display }}</p></td>
                     <td><p>{{ doc.get_sms_status_display }}</p></td>
-                    <td><p>{{ doc.signed }} {% if not doc.signed %}
-                        
-                        <div class="fields__input">
-                            <form action="{% url 'sign-samd' doc.id current_user.id %}" method="post">
-                                {% csrf_token %}
-                                <!-- <div class="fields__input__field hide">
-                                    <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-                                </div> -->
-                                <div class="">
-                                    <button id="unfollow-btn" class="btn" type="submit">Подписать</button>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        {% endif %}</p></td>
+                    <td><p>{{ doc.signed }}</p></td>
                 </tr>
                 {% endfor %}
             </tbody>

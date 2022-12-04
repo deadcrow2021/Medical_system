@@ -1503,6 +1503,7 @@ def sign_document(request, samd_id, profile_id):
         patient = user.patient
         current_samd = patient.samd.get(id=samd_id)
         current_samd.signed = True
+        current_samd.sms_status = '4'
         current_samd.save()
         return redirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect(reverse('samd', args=(profile_id,)))
