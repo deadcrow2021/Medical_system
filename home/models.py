@@ -540,15 +540,15 @@ class FatherInfo(models.Model):
     mass = models.PositiveSmallIntegerField('Масса тела при поставке на учет (кг)', validators=[MaxValueValidator(999)], blank=True, null=True)
     imt = models.PositiveSmallIntegerField('ИМТ (кг/м2)', blank=True, null=True) # auto
     bad_habits = models.CharField('Вредные привычки', max_length=10, blank=True, null=True, choices=BAD_HABITS)
-
+    
     chronic_operations = models.CharField('Хронические заболевания', max_length=1000, blank=True, null=True)
     chronic_str = models.CharField('Дополнительная информация', max_length=1000, blank=True, null=True)
-
+    
     sti = models.BooleanField('Инфекции, передаваемые половым путем', default=False, null=True)
     sti_str = models.CharField('Дополнительная информация', max_length=200, blank=True, null=True)
     treatment = models.CharField('Лечение', max_length=200, blank=True, null=True)
     treatment_date = models.DateField('Дата', blank=True, null=True)
-
+    
     # Социально значимые инфекции
     hiv = models.BooleanField('ВИЧ', default=False, null=True)
     tuberculosis = models.BooleanField('Туберкулез', default=False, null=True)

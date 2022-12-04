@@ -21,12 +21,17 @@
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
-                <p><a href="{% url 'portion-page' profile.user.id 'current_pregnancy' 'current_pregnancy' %}">Сведения о настоящей беременности</a></p>
+                <p><a href="{% url 'current-pregnancy-info' profile.user.id %}">Сведения о настоящей беременности</a></p>
             </div>
         </div>
         <div class="block__lines">
             <div class="lines__element btn same_btn">
                 <p><a href="{% url 'pregnancy-observation' profile.user.id %}">Наблюдение во время настоящей беременности</a></p>
+            </div>
+        </div>
+        <div class="block__lines">
+            <div class="lines__element btn same_btn">
+                <p><a href="{% url 'examination-list' profile.user.id %}">Лист обследования</a></p>
             </div>
         </div>
         <div class="block__lines">
