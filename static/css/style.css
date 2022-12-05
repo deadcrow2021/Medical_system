@@ -934,13 +934,15 @@ nav {
     text-indent: 40px;
 }
 
-
-
-
 .tabs {
     position: relative;         /* Относительное позиционирование */
     width: fit-content;
     display: flex;
+    max-width: 70vw;
+    height: fit-content;
+}
+.tab {
+    flex: 1 0 min-content;
 }
 .tab, .tab-title {
     /* display: inline-block;      Выстраиваем по горизонтали */
@@ -955,6 +957,13 @@ nav {
     border: 2px solid black;   /* Параметры рамки */
     font-weight: bold;
     display: block;
+    width: 100%;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* white-space: nowrap; */
     /* border-bottom: none;        Снизу линию убираем */
 }
 .tab-content {
@@ -999,4 +1008,8 @@ nav {
     justify-content: center;
     flex-direction: row;
     margin-bottom: 20px;
+}
+
+.text_center {
+    text-align: center;
 }

@@ -6,29 +6,33 @@
 </div>
 
 {% if user.doctor %}
-<form action="" method="POST"  style="display: none">
-    {% csrf_token %}
-    <div class="fields">
-        {% for p in form %}
-        <div class="fields__input">
-            <div class="fields__input__label">
-                <strong>{{ p.label_tag }}</strong>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="fields">
+            <div class="tabs" style="min-width: 700px;">
             </div>
-            <div class="fields__input__field">
-                {{ p }}
+            {% for p in form %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ p.label_tag }}</strong>
+                </div>
+                <div class="fields__input__field">
+                    {{ p }}
+                </div>
             </div>
+            {{ p.errors }}
+            {% endfor %}
+            {{ form.errors }}
         </div>
-        {{ p.errors }}
-        {% endfor %}
-        {{ form.errors }}
-        <div class="submit-btn">
-            <button type="submit" class="btn">Сохранить</button>
-        </div>
-    </div>
-</form>
+    </form>
 
 {% endif %}
-<script type="text/javascript">
+<script type="text/javascript" defer>
+    var tabs_names = [
+        ['Сведения №1', 9],
+        ['Сведения №2', 20],
+    ]
+    
     var count = {
         'Врожденные пороки развития': 2,
         'Рост': 1,
@@ -63,32 +67,71 @@
     }
     
     var fields = document.getElementsByClassName('fields')[0];
-    var elem = fields.children[0];
+    var elem = fields.children[1];
     
     for (let [name, idx] of Object.entries(count)) {
         let div = document.createElement('div');
         div.setAttribute('class', 'outer_div');
         
-        let inner_div = document.createElement('div');
-        inner_div.setAttribute('class', 'border_div');
+        let border_div = document.createElement('div');
+        border_div.setAttribute('class', 'border_div');
         
         if (elem.children[0].innerText.indexOf(name) < 0) {
-            inner_div.innerHTML = `<div class="fields__input"><div class="fields__input__label"><strong>${name}:</strong></div></div>`;
+            border_div.innerHTML = `<div class="fields__input"><div class="fields__input__label"><strong>${name}</strong></div></div>`;
         }
         
         for(let i = 0; i < idx; i++) {
             let next = elem.nextElementSibling;
-            inner_div.appendChild(elem);
+            border_div.appendChild(elem);
             elem = next;
             if (elem === null)
                 break;
         }
         
-        div.appendChild(inner_div);
+        div.appendChild(border_div);
         fields.appendChild(div);
     }
-    fields.appendChild(fields.children[0]);
-    var form = document.querySelector('form');
-    form.style.display = 'block';
+    
+    document.querySelector('.fields').appendChild(document.querySelector('.fields').children[0]);
+    var tabs = document.getElementsByClassName('tabs')[0];
+    var fieldsets = [...document.getElementsByClassName('outer_div')];
+    function make_tabs() {
+        for (let [name, cnt] of tabs_names) {
+            let fildsets = fieldsets.splice(0, cnt);
+            let label = document.createElement('label');
+            label.innerText = name;
+            label.classList.add('tab-title');
+            label.setAttribute('for', `${name}`);
+            
+            let input = document.createElement('input');
+            input.setAttribute('type', `radio`);
+            input.setAttribute('id', `${name}`);
+            input.setAttribute('name', `tab-group`);
+            
+            let section = document.createElement('section');
+            section.classList.add('tab-content', 'center_div');
+            
+            if (cnt > fildsets.length) cnt = fildsets.length;
+            
+            for(let i = 0; i < cnt; i++) {
+                section.appendChild(fildsets[i]);
+            }
+            section.innerHTML += `\
+                <div class="submit-btn">\
+                    <button type="submit" class="btn">Сохранить</button>\
+                </div>`
+            
+            let div = document.createElement('div');
+            div.setAttribute('class', 'tab');
+            div.appendChild(input);
+            div.appendChild(label);
+            div.appendChild(section);
+            tabs.appendChild(div);
+        }
+    }
+    make_tabs();
+    // document.querySelector('.tabs').prepend(document.querySelector('.tabs').children[4]);
+    // document.querySelector('.tabs').prepend(document.querySelector('.tabs').children[4]);
+    document.getElementById('Сведения №1').setAttribute('checked', '');
 </script>
 {% endblock %}

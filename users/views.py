@@ -681,15 +681,21 @@ patinet_info_models = {
 }
 
 
-def patient_info_page(request, profile_id):
+def patient_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
+    
+    if request.method == "POST":
+        model_name = request.POST.get('model_name')
+        m_id = request.POST.get('m_id')
+        patinet_info_models[model_name][0].objects.get(pk=m_id).delete()
     
     instances = []
     forms = []
     exists = []
     names = []
+    model_names = []
     for key, val in patinet_info_models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
         print(f'{val[1]=}')
@@ -700,8 +706,9 @@ def patient_info_page(request, profile_id):
             forms.append([])
             exists.append(False)
         names.append(val[2])
+        model_names.append(key)
     
-    tabs = zip(names, exists, forms)
+    tabs = zip(names, exists, forms, model_names)
     print(f'{forms=}')
     print(f'{exists=}')
     # key_value = ((key, val[2]) for key, val in patinet_info_models.items())
@@ -726,7 +733,7 @@ def update_patient_info_page(request, profile_id):
             data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
             data.save()
             # add_log Пациент Х. Обновлена информация о пациенте. Было: Стало:
-
+            
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     else:
         form = PatientInformationForm(instance=instance)

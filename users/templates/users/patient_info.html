@@ -52,7 +52,7 @@
     </div>
     {% endfor %}
     <div class="tabs">
-        {% for name, exist, forms in tabs %}
+        {% for name, exist, forms, mname in tabs %}
         <div class="tab">
             <input type="radio" id="{{ name }}" name="tab-group">
             <label class="tab-title" for="{{ name }}">{{ name }}</label>
@@ -72,26 +72,34 @@
                                         {% if p.value == i.0 %}
                                             {% if not i.0 %}
                                                 ---------
-                                            {% else %}
+                                                {% else %}
                                                 {{i.1}}
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 {% elif not p.value %}
                                     ---------
-                                {% elif p.value %}
+                                    {% elif p.value %}
                                     {{ p.value }}
-                                {% endif %}
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
+                            <form action="" method="POST" style="display: flex; justify-content: space-around">
+                                {% csrf_token %}
+                                <a href="{% url 'add-profile-models-template' current_user.id mname form.instance.pk %}" class="btn">Изменить</a>
+                                <input type="hidden" name="model_name" value="{{ mname }}">
+                                <input type="hidden" name="m_id" value="{{ form.instance.pk }}">
+                                <button type="submit" class="btn">Удалить</button>
+                            </form>
                         </div>
                     </div>
                     {% endfor %}
+                    <a href="{% url 'add-profile-models-template' current_user.id mname -1 %}" class="btn">Добавить</a>
                 {% else %}
                     <div class="fields__input">
                         <div class="fields__input__label">
-                            <h3>Нет данных</h3>
+                            <h3 class="forgot_pass">Нет данных</h3>
                         </div>
                     </div>
                 {% endif %}

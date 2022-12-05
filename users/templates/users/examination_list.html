@@ -6,29 +6,31 @@
 </div>
 
 {% if user.doctor %}
-<div class="cut_width">
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <a href="{% url 'portion-page' current_user.id 'determine_antibodies' 'determine_antibodies' %}">Определение антител</a>
+<div class="center_div">
+    <div class="cut_width">
+        <a href="{% url 'portion-page' current_user.id 'determine_antibodies' 'determine_antibodies' %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">Определение антител</div>
+                </div>
             </div>
-        </div>
-    </div>
-    {% for key, name in keys_names %}
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
+        </a>
+        {% for key, name in keys_names %}
+        <a href="{% url 'observation' current_user.id key %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">{{ name }}</div>
+                </div>
             </div>
-        </div>
-    </div>
-    {% endfor %}
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <a href="{% url 'portion-page' current_user.id 'ultrasound' 'ultrasound' %}">Узи</a>
+        </a>
+        {% endfor %}
+        <a href="{% url 'portion-page' current_user.id 'ultrasound' 'ultrasound' %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">Узи</div>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 {% endif %}
