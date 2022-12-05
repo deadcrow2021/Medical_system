@@ -250,7 +250,7 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
 
 def medical_card(request, profile_id):
     current_user = User.objects.select_related('patient').get(pk=profile_id)
-    form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
+    form = MedicalCardForm(None, instance=current_user.patient.card)
     to_add: str = f'#/medical_card/{profile_id}!Медицинская карта'
     
     risks = current_user.patient.card.risks.all()

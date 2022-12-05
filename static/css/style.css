@@ -42,6 +42,10 @@ body {
     font-family: sans;
 }
 
+a * {
+    color: #00385e;
+}
+
 thead {
     position: sticky;
     top: -10px;
@@ -486,7 +490,7 @@ a:hover {
     width: 100%;
     padding: 0%;
     border: none;
-    color: #1d1d1d;
+    color: #00385e;
 }
 
 .menu__element a:hover {
