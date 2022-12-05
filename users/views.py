@@ -790,10 +790,10 @@ ultrasound_models = {
     'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
 }
 
-# current_pregnancy_models = {
-#     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-#     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
-# }
+current_pregnancy_models = {
+    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+}
 
 portion_models = {
     'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
@@ -1553,16 +1553,24 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/current_pregnancy.html'
     to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
+    context = {}
     
-    models = {
-        'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-        'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' )
-    }
+    if request.method == "POST":
+        if request.POST.get('modify', None) != None:
+            context.update({ 'modify': True })
+        else:
+            for key, val in current_pregnancy_models.items():
+                inst = val[0].objects.get(patient=current_user.patient)
+                form = val[1](request.POST, instance=inst)
+                if form.is_valid():
+                    form.save()
+    
     instances = []
     model_forms = []
     exists = []
+    model_names = []
     
-    for key, val in models.items():
+    for key, val in current_pregnancy_models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
         if (len(instances[-1]) > 0):
             model_forms.append([val[1](instance=i) for i in instances[-1]])
@@ -1570,17 +1578,20 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
         else:
             model_forms.append([])
             exists.append(False)
-    data = zip(model_forms, exists)
-    context = { 'data': data }
+        model_names.append(key)
+    
+    data = zip(model_forms, exists, model_names)
+    context.update({ 'data': data, 'current_user': current_user })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
+
 
 def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/examination_list.html'
     to_add: str = f'#/examination_list/{profile_id}!Лист обследования'
+    context = {}
     
-    # instances = []
     model_forms = []
     exists = []
     names = []
@@ -1600,6 +1611,6 @@ def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse
         names.append(val[2])
     
     data = zip(model_forms, exists, names)
-    context = { 'data': data }
+    context.update({ 'data': data })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)

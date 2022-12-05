@@ -4,12 +4,25 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
+{% if modify != True %}
+<div class="back__button">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="modify" value="True">
+        <button type="submit" class="btn">Изменить</button>
+    </form>
+</div>
+{% endif %}
 
 {% if user.doctor %}
+{% if modify == True %}
+<form action="" method="POST">
+    {% csrf_token %}
+{% endif %}
 <div class="fields center_div">
     <div class="tabs">
     </div>
-    {% for forms, exists in data %}
+    {% for forms, exists, model_name in data %}
         {% if exists %}
             {% for form in forms %}
                 {% for p in form %}
@@ -17,21 +30,26 @@
                     <div class="fields__input__label">
                         <strong>{{ p.label_tag }}</strong>
                     </div>
+                    {% if modify == True %}
+                    <div class="fields__input__field">
+                        {{ p }}
+                    {% else %}
                     <div class="fields__input__field noborder">
-                    {% if p.field.choices %}
-                        {% for i in p.field.choices %}
-                            {% if p.value == i.0 %}
-                                {% if not i.0 %}
-                                    ---------
-                                {% else %}
-                                    {{i.1}}
+                        {% if p.field.choices %}
+                            {% for i in p.field.choices %}
+                                {% if p.value == i.0 %}
+                                    {% if not i.0 %}
+                                        ---------
+                                    {% else %}
+                                        {{i.1}}
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% elif not p.value %}
-                        ---------
-                    {% elif p.value %}
-                        {{ p.value }}
+                            {% endfor %}
+                        {% elif not p.value %}
+                            ---------
+                        {% elif p.value %}
+                            {{ p.value }}
+                        {% endif %}
                     {% endif %}
                     </div>
                 </div>
@@ -40,6 +58,9 @@
         {% endif %}
     {% endfor %}
 </div>
+{% if modify == True %}
+</form>
+{% endif %}
 
 <script type='text/javascript'>
     var fields = document.getElementsByClassName('fields')[0];
@@ -95,6 +116,12 @@
         for(let i = 0; i < count; i++) {
             section.appendChild(fildsets[i]);
         }
+        {% if modify == True %}
+        section.innerHTML += `\
+            <div class="submit-btn">\
+                <button type="submit" class="btn">Сохранить</button>\
+            </div>`
+        {% endif %}
         
         let div = document.createElement('div');
         div.setAttribute('class', 'tab');
@@ -136,5 +163,6 @@
     
     document.querySelector('input[id="Основные сведения"]').setAttribute('checked', '');
 </script>
+
 {% endif %}
 {% endblock %}
