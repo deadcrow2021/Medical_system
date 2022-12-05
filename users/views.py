@@ -755,10 +755,6 @@ doctors_examinations_models = {
 }
 
 examination_list_models = {
-    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
-    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
-    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
-    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
     'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
     'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
     'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
@@ -774,6 +770,19 @@ examination_list_models = {
     'urine_sowing':       ( UrineSowing, UrineSowingForm, 'Посев мочи на бессимптомную бактериурию' ),
 }
 
+determine_antibodies = {
+    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
+    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
+    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ),
+}
+
+ultrasound_models = {
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
+}
+
 # current_pregnancy_models = {
 #     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
 #     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
@@ -782,8 +791,8 @@ examination_list_models = {
 portion_models = {
     'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
     'examination_list':          (examination_list_models, 'Лист обследования'),
-    #'determine_antibodies':      (determine_antibodies, 'Определение антител'),
-    #'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
+    'determine_antibodies':      (determine_antibodies, 'Определение антител'),
+    'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
     'doctors_examinations':      (doctors_examinations_models, 'Осмотры врачей специалистов'),
     #'current_pregnancy':         (current_pregnancy_models, 'Сведения о настоящей беременности')
 }

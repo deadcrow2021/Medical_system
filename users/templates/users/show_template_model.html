@@ -10,7 +10,9 @@
 </div>
 {% endif %}
 
-<h3>{{ page_name }}</h3>
+<div class="center_div">
+    <h3>{{ page_name }}</h3>
+</div>
 
 {% if exists %}
 {% if model_name == 'appointments' %}
@@ -134,8 +136,8 @@
     </script>
 {% endif %}
 {% else %}
-<div>
-    <h4>Нет данных</h4>
+<div class="center_div forgot_pass">
+    <h3>Нет данных</h3>
 </div>
 {% endif %}
 
