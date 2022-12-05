@@ -10,15 +10,17 @@
             <p><a href="{% url 'update-medical-card' current_user.id %}">Изменить</a></p>
         </div>
     </div>
+    <!--
     <div class="block__lines">
         <div class="lines__element btn">
-            <p><a href="{% url 'appearance' current_user.id %}">Добавить риски осложнений</a></p>
+            <p><a href="{% url 'appearance' current_user.id %}">Риски осложнений</a></p>
         </div>
     </div>
+    -->
 {% endif %}
 
-<div style="font-size: 30px">
-    Пациент: <strong>{{ current_user.patient.get_full_name }}</strong>
+<div class="name_of_user">
+    <strong>{{ current_user.patient.get_full_name }}</strong>
 </div>
 
 <div class="fields center_div">
@@ -181,5 +183,9 @@
     }
     
     document.querySelector('input[id="Личные данные"]').setAttribute('checked', '');
+</script>
+<script>
+    var elem = document.querySelector('[for="id_diagnosis"]').parentNode.parentNode.nextElementSibling;
+    elem.innerText = elem.innerText.trim().split(' ')[0];
 </script>
 {% endblock %}

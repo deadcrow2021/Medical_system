@@ -267,21 +267,23 @@ def medical_card(request, profile_id):
 
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
-    form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
     
     if request.method == "POST":
+        form = MedicalCardForm(request.POST, instance=current_user.patient.card)
+        print(f'{form.non_field_errors()}')
+        print(f'{[(f.label, f.errors) for f in form if len(f.errors) > 0]=}')
         if form.is_valid():
-            
             data = form.save(commit=False)
             date_of_birth = form.cleaned_data['date_of_birth']
-            today = date.today()
             if date_of_birth:
+                today = date.today()
                 age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
                 data.age = age
             data.save()
             # add_log  обновлена мед карта. Было: Стало:
             return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
+    form = MedicalCardForm(None, instance=current_user.patient.card)
     return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
 
 
@@ -329,6 +331,10 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
             form = PregnancyOutcomeForm()
     return render(request, 'users/add_pregnancy_outcome.html', { 'form': form, 'current_user': current_user, 'mkb_10': mkb10_deseases })
 
+observation_template_models = {
+    'appointments':              ( AppointmentListForm, AppointmentList, 'Лист назначений' ),
+    'medications':               ( TakingMedicationsForm, TakingMedications, 'Прием лекарственных препаратов во время данной беременности' ),
+}
 
 def pregnancy_observation_page(request, profile_id):
     current_user = User.objects.get(pk=profile_id)
@@ -336,27 +342,7 @@ def pregnancy_observation_page(request, profile_id):
     keys_names = []
     for key, val in observation_template_models.items():
         keys_names.append((key, val[2]))
-    context = { 'current_user': current_user, 'keys_names': keys_names }
-    
-    models = {
-        'pregnant_woman_monitoring': (PregnantWomanMonitoring, PregnantWomanMonitoringForm, 'Наблюдение за беременной' ),
-    }
-    instances = []
-    model_forms = []
-    exists = []
-    
-    for key, val in models.items():
-        instances.append(tuple(val[0].objects.filter(current_pregnancy=current_user.patient.current_pregnancy)))
-        if (len(instances) > 0):
-            model_forms.append([val[1](instance=i) for i in instances[-1]])
-            exists.append(True)
-        else:
-            model_forms.append([])
-            exists.append(False)
-    
-    data = zip(model_forms, exists)
-    context.update({ 'data': data })
-    resp = render(request, 'users/during_pregnancy_observation.html', context)
+    resp = render(request, 'users/during_pregnancy_observation.html', {'current_user': current_user, 'keys_names': keys_names})
     return get_and_add_cookie(request, to_add, resp)
 
 
@@ -616,6 +602,7 @@ def logout_user(request):
 def appearance(request: HttpResponse, profile_id: int):
     current_user = User.objects.get(pk=profile_id)
     template_name: str = 'users/appearance.html'
+    to_add: str = f"#/appearance/{profile_id}!Риски осложнений"
     
     def get_risks() -> list:
         risks = current_user.patient.card.risks.all()
@@ -631,7 +618,8 @@ def appearance(request: HttpResponse, profile_id: int):
         obstetric_risk.delete()
     
     forms = get_risks()
-    return render(request, template_name, context={ 'forms' : forms, 'current_user': current_user })
+    resp = render(request, template_name, context={ 'forms' : forms, 'current_user': current_user })
+    return get_and_add_cookie(request, to_add, resp)
 
 
 def add_appearance_page(request: HttpRequest, profile_id: int):
@@ -766,6 +754,26 @@ doctors_examinations_models = {
     'obstetrician-gynecologist': ( DoctorExaminationsObstetricianGynecologist, DoctorExaminationsObstetricianGynecologistForm, 'Осмотры акушера-гинеколога' ), ######
 }
 
+examination_list_models = {
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
+    'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
+    'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
+    'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
+    'blood_analysis':     ( BloodAnalysis, BloodAnalysisForm, 'Анализ крови' ),
+    'biochemical_blood':  ( BiochemicalBloodAnalysis, BiochemicalBloodAnalysisForm, 'Биохимический анализ крови' ),
+    'сoagulogram':        ( Coagulogram, CoagulogramForm, 'Коагулограмма' ),
+    'glucose_test':       ( GlucoseToleranceTest, GlucoseToleranceTestForm, 'Пероральный глюкозотолерантный тест, ммоль/л' ),
+    'ts_hormonr':         ( ThyroidStimulatingHormone, ThyroidStimulatingHormoneForm, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ),
+    'smears':             ( Smears, SmearsForm, 'Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом' ),
+    'bacterio_smears':    ( BacterioscopicSmearsExamination, BacterioscopicSmearsExaminationForm, 'Бактериоскопическое исследование мазков' ),
+    'cervix_exam':        ( CervixCytologicalExamination, CervixCytologicalExaminationForm, 'Цитологическое исследование микропрепарата шейки матки' ),
+    'urine':              ( UrineAnalysis, UrineAnalysisForm, 'Общий анализ мочи' ),
+    'urine_sowing':       ( UrineSowing, UrineSowingForm, 'Посев мочи на бессимптомную бактериурию' ),
+}
+
 # current_pregnancy_models = {
 #     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
 #     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
@@ -773,7 +781,7 @@ doctors_examinations_models = {
 
 portion_models = {
     'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
-    #'examination_list':          (examination_list_models, 'Лист обследования'),
+    'examination_list':          (examination_list_models, 'Лист обследования'),
     #'determine_antibodies':      (determine_antibodies, 'Определение антител'),
     #'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
     'doctors_examinations':      (doctors_examinations_models, 'Осмотры врачей специалистов'),
@@ -1539,38 +1547,16 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
     
     for key, val in models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
-        if (len(instances) > 0):
+        if (len(instances[-1]) > 0):
             model_forms.append([val[1](instance=i) for i in instances[-1]])
             exists.append(True)
         else:
             model_forms.append([])
             exists.append(False)
-    
     data = zip(model_forms, exists)
     context = { 'data': data }
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
-
-
-examination_list_models = {
-    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
-    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
-    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
-    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
-    'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
-    'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
-    'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
-    'blood_analysis':     ( BloodAnalysis, BloodAnalysisForm, 'Анализ крови' ),
-    'biochemical_blood':  ( BiochemicalBloodAnalysis, BiochemicalBloodAnalysisForm, 'Биохимический анализ крови' ),
-    'сoagulogram':        ( Coagulogram, CoagulogramForm, 'Коагулограмма' ),
-    'glucose_test':       ( GlucoseToleranceTest, GlucoseToleranceTestForm, 'Пероральный глюкозотолерантный тест, ммоль/л' ),
-    'ts_hormonr':         ( ThyroidStimulatingHormone, ThyroidStimulatingHormoneForm, 'Уровень тиретропного гормона (ТТГ), мкМЕ/л' ),
-    'smears':             ( Smears, SmearsForm, 'Определение стрептококка группы B (S. agalactiae) в отделяемом цервикального канала или ректовагинальном отделяемом' ),
-    'bacterio_smears':    ( BacterioscopicSmearsExamination, BacterioscopicSmearsExaminationForm, 'Бактериоскопическое исследование мазков' ),
-    'cervix_exam':        ( CervixCytologicalExamination, CervixCytologicalExaminationForm, 'Цитологическое исследование микропрепарата шейки матки' ),
-    'urine':              ( UrineAnalysis, UrineAnalysisForm, 'Общий анализ мочи' ),
-    'urine_sowing':       ( UrineSowing, UrineSowingForm, 'Посев мочи на бессимптомную бактериурию' ),
-}
 
 def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user: User = User.objects.get(pk=profile_id)

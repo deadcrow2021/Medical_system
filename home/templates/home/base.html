@@ -16,6 +16,9 @@
             <div class="navbar__element">
                 <a href="{% url 'home' %}">Главная</a>
             </div>
+            <div>
+                <span class="company_btn" onselectstart="return false" onmousedown="return false">АСМИК</span><div class="company" >Информационная система «Региональный акушерский мониторинг»</div>
+            </div>
             {% if not user.patient %}
                 <div class="navbar__element">
                     <a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" height="70px"></a>
@@ -40,9 +43,11 @@
                             <div class="menu__element">
                                 <a href="{% url 'doc-profile' request.user.doctor.id %}">Профиль</a>
                             </div>
+                            {% if user.doctor.role == 'receptionist' %}
                             <div class="menu__element">
                                 <a href="{% url 'add-patient' %}">Добавить пациента</a>
                             </div>
+                            {% endif %}
                             <div class="menu__element">
                                 <a href="{% url 'reception' %}">План посещений</a>
                             </div>
@@ -137,14 +142,28 @@
     
     
     <script type="text/javascript" defer>
-        let menu = document.getElementsByClassName('menu__options')[0];
-        let button = document.getElementsByClassName('toggle_btn')[0];
+        var menu = document.getElementsByClassName('menu__options')[0];
+        var button = document.getElementsByClassName('toggle_btn')[0];
         
         button.onclick = (e) => {
             if (menu.style.display !== 'none')
                 menu.style.display = 'none';
             else
                 menu.style.display = 'block';
+        };
+        
+        var company = document.getElementsByClassName('company')[0];
+        var company_btn = document.getElementsByClassName('company_btn')[0];
+        
+        company_btn.onmouseover = (e) => {
+            company.style.maxHeight = '100px';
+            company.style.padding = '15px';
+            company.style.border = '1px solid black';
+        };
+        company_btn.onmouseout = (e) => {
+                company.style.maxHeight = '0px';
+                company.style.padding = '0px';
+                company.style.border = '0';
         };
     </script>
     <script src="{% static 'js/script.js' %}" defer></script>

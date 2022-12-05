@@ -884,8 +884,8 @@ class MedicalHistory(models.Model):
 class Doctor(models.Model):
     user         = models.OneToOneField(User, on_delete=models.CASCADE)
     patients     = models.ManyToManyField(Patient, related_name='doctors', blank=True)
-    first_name   = models.CharField("Имя", max_length=50, default='usr')
-    last_name    = models.CharField("Фамилия", max_length=50, default='sur')
+    first_name   = models.CharField("Имя", max_length=50)
+    last_name    = models.CharField("Фамилия", max_length=50)
     father_name  = models.CharField("Отчество", max_length=50, blank=True)
     cabinet      = models.CharField('Кабинет', max_length=6, blank=True, null=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')

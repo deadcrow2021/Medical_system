@@ -213,6 +213,8 @@ def home_page(request: HttpRequest) -> HttpResponse:
     context = {'docs':docs }
     
     if user_type == 'doctor':
+        if user.doctor.role != 'obstetrician-gynecologist':
+            return redirect('patients')
         user_account: Doctor = user.doctor
         related_patients = tuple(x.card for x in user_account.patients.select_related('card').all())
         risks = ((calc_preeclampsia(x.patient), calc_premature_birth(x.patient), calc_risk_values_sum(x.patient))\
