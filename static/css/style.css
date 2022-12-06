@@ -85,11 +85,11 @@ h4 {
 }
 
 button:hover {
-    color: #018876;
+    color: #00a5b1;
 }
 
-a:hover {
-    color: #018876;
+a:hover * {
+    color: #00a5b1;
 }
 
 .navbar {
@@ -185,7 +185,7 @@ a:hover {
 
 .lines__element {
     font-size: 18px;
-    margin: 0 0 15px 0;
+    margin: 7px 0 8px 0;
 }
 
 .fields {
@@ -757,7 +757,7 @@ th {
     font-size: 20px;
     /* border-top: 1px solid black; */
     padding: 5px;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid rgb(121, 121, 121);
 }
 
 .reception_page {
@@ -842,7 +842,7 @@ th {
 
 .message-content {
     font-size: 24px;
-    margin-bottom: 10px;
+    margin: 20px 0;
 }
 
 nav {
@@ -1012,4 +1012,8 @@ nav {
 
 .text_center {
     text-align: center;
+}
+
+.red_text {
+    color: rgb(172, 18, 18);
 }

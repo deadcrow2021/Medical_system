@@ -270,8 +270,6 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     
     if request.method == "POST":
         form = MedicalCardForm(request.POST, instance=current_user.patient.card)
-        print(f'{form.non_field_errors()}')
-        print(f'{[(f.label, f.errors) for f in form if len(f.errors) > 0]=}')
         if form.is_valid():
             data = form.save(commit=False)
             date_of_birth = form.cleaned_data['date_of_birth']
@@ -1038,7 +1036,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
     form = StatisticsPeriodForm()
     to_add: str = '/statistics!Статистика'
-
+    
     age_15_45 = 0
     age_less_18 = 0
     birth_number = 0
@@ -1047,7 +1045,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     card_childbirth = 0
     registered_first_trimester = 0
     up_37_week_birth = 0
-
+    
     p_1 = 0
     p_3 = 0
     p_4 = 0
@@ -1126,13 +1124,13 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
             registered_first_trimester += 1
-
+        
         if card.age and 15 <= card.age <= 45:
             age_15_45 += 1
-
+        
         if card.age and card.age < 18:
             age_less_18 += 1
-
+        
         first_exam_list = p.first_examination.all()
         if len([x for x in first_exam_list]) >= 1:
             if first_exam_list[0].gestation_period_weeks and int(first_exam_list[0].gestation_period_weeks) < 12:
@@ -1147,19 +1145,19 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         
         if card.complications:
             p_5 += 1
-
+        
         if any(x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list):
             p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
             birth_dead_number = p_12
             p_13 += len([(x.pregnancy_outcome == 'd' and (x.gestation_period_weeks if x.gestation_period_weeks else 0) >= 28) for x in pregnancy_outcome_list])
-
+        
         if any(x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list):
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
             if request.method == 'POST':
                 for i in pregnancy_outcome_list:
                     if i.childbirth_date and form_data['date_from'] <= i.childbirth_date.date() <= form_data['date_to']:
                         birth_number_period +=len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
-
+            
             p_15 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
             
             for i in pregnancy_outcome_list:
@@ -1173,7 +1171,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                     p_8 += 1
                 if card.age >= 35:
                     p_7 += 1
-
+        
         if any((x.imt if x.imt else 0) >= 30 for x in p.patient_information.all()):
             p_9 += 1
         
@@ -1216,10 +1214,10 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             
             if card.diagnosis and 'O14.1' in card.diagnosis:
                 p_16 += 1
-
+            
             if card.diagnosis and 'O15' in card.diagnosis:
                 p_20 += 1
-
+        
         normal_pregnancy = [
             'Z32.1', 'Z33', 'Z34.0', 'Z34.8', 'Z35.0', 'Z35.1', 'Z35.2',
             'Z35.3', 'Z35.4', 'Z35.5', 'Z35.6', 'Z35.7', 'Z35.8', 'Z35.9',
@@ -1232,14 +1230,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             'O37', 'O38', 'O39', 'O40', 'O41', 'O42', 'O43', 'O44',
             'O45', 'O46', 'O47', 'O48', 'O98', 'O99'
             ]
-
+        
         if request.method == 'POST':
             if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
                 if any(x in (card.diagnosis if card.diagnosis else '') for x in normal_pregnancy):
                     p_25_1 += 1
                 if any(x in (card.diagnosis if card.diagnosis else '') for x in pathology_pregnancy):
                     p_25_2 += 1
-
+                
                 if card.diagnosis and 'O80' in card.diagnosis:
                     p_26_1 += 1
                 if any(x in (card.diagnosis if card.diagnosis else '') for x in ['O81', 'O82', 'O83', 'O84']):
@@ -1612,5 +1610,29 @@ def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse
     
     data = zip(model_forms, exists, names)
     context.update({ 'data': data })
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_doctor_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_doctor_vimis.html"
+    to_add: str = f"#/add_doctor_vimis!Добавить доктора из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
+    
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_patient_vimis.html"
+    to_add: str = f"#/add_patient_vimis!Добавить пациента из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
+    
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)

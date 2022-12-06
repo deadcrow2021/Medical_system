@@ -37,4 +37,6 @@ urlpatterns = [
     path('generate_samd/<profile_id>/<samd>', views.generate_samd_page, name='generate-samd'),
     path('current_pregnancy/<profile_id>', views.current_pregnancy_info_page, name='current-pregnancy-info'),
     path('examination_list/<profile_id>', views.examination_list_page, name='examination-list'),
+    path('add_doctor_vimis', views.add_doctor_vimis_page, name='add-doctor-vimis'),
+    path('add_patient_vimis', views.add_patient_vimis_page, name='add-patient-vimis'),
 ]
