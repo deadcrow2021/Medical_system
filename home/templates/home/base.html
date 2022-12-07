@@ -14,19 +14,21 @@
     <div class="navbar">
         <div class="navbar__row">
             <div class="navbar__element">
-                <a href="{% url 'home' %}">Главная</a>
+                <p><a href="{% url 'home' %}">Главная</a></p>
             </div>
-            <div>
-                <span class="company_btn" onselectstart="return false" onmousedown="return false">АСМИК</span><div class="company" >Информационная система «Региональный акушерский мониторинг»</div>
+            <div class="navbar__element">
+                {% comment %} <span class="company_btn" onselectstart="return false" onmousedown="return false">АСМИК</span> {% endcomment %}
+                <p><a class="company_btn" onselectstart="return false" onmousedown="return false">Акушерская система мониторинга и контроля (АСМиК)</a></p>
+                <div class="company" >Информационная система «Региональный акушерский мониторинг»</div>
             </div>
             {% if not user.patient %}
-                <div class="navbar__element">
-                    <a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" height="70px"></a>
-                </div>
+            <div class="navbar__element">
+                <p><a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" style="height: 70px"></a></p>
+            </div>
             {% endif %}
             {% if user.patient %}
             <div class="navbar__element">
-                <a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</a>
+                <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</a></p>
                 <div class="relative">
                     <div class="menu__options"  style="display: none">
                         <div class="menu__element">
@@ -37,59 +39,58 @@
             </div>
             {% elif user.doctor %}
             <div class="navbar__element">
-                    <a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</a>
-                    <div class="relative">
-                        <div class="menu__options"  style="display: none">
-                            <div class="menu__element">
-                                <a href="{% url 'doc-profile' request.user.doctor.id %}">Профиль</a>
-                            </div>
-                            {% if user.doctor.role == 'receptionist' %}
-                            <div class="menu__element">
-                                <a href="{% url 'add-patient' %}">Добавить пациента</a>
-                            </div>
-                            {% endif %}
-                            <div class="menu__element">
-                                <a href="{% url 'reception' %}">План посещений</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'data-sampling' %}">Выборка данных</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'patients' %}">Пациенты</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'files-page' %}">Файлы</a>
-                            </div>
+                <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</a></p>
+                <div class="relative">
+                    <div class="menu__options"  style="display: none">
+                        <div class="menu__element">
+                            <a href="{% url 'doc-profile' request.user.doctor.id %}">Профиль</a>
+                        </div>
+                        {% if user.doctor.role == 'receptionist' %}
+                        <div class="menu__element">
+                            <a href="{% url 'add-patient' %}">Добавить пациента</a>
+                        </div>
+                        {% endif %}
+                        <div class="menu__element">
+                            <a href="{% url 'reception' %}">План посещений</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'data-sampling' %}">Выборка данных</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'patients' %}">Пациенты</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'files-page' %}">Файлы</a>
                         </div>
                     </div>
+                </div>
             </div>
             {% elif user.is_superuser %}
             <div class="navbar__element">
-                    <a class="toggle_btn" onselectstart="return false" onmousedown="return false">Администратор</a>
-                    <div class="relative">
-                        <div class="menu__options" style="display: none">
-                            
-                            <div class="menu__element">
-                                <a href="{% url 'doctors-page' %}">Доктора</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'patients' %}">Пациенты</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'add-doctor' %}">Добавить доктора</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'logs-page' %}">Журнал изменений</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'data-sampling' %}">Выборка данных</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'files-page' %}">Файлы</a>
-                            </div>
-                            
+                <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">Администратор</a></p>
+                <div class="relative">
+                    <div class="menu__options" style="display: none">
+                        
+                        <div class="menu__element">
+                            <a href="{% url 'doctors-page' %}">Доктора</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'patients' %}">Пациенты</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'add-doctor' %}">Добавить доктора</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'logs-page' %}">Журнал изменений</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'data-sampling' %}">Выборка данных</a>
+                        </div>
+                        <div class="menu__element">
+                            <a href="{% url 'files-page' %}">Файлы</a>
                         </div>
                     </div>
+                </div>
             </div>
             {% endif %}
             {% comment %} <div class="navbar__element">
@@ -98,7 +99,7 @@
                 {% endif %}
             </div> {% endcomment %}
             <div class="navbar__element">
-                <a href="{% url 'logout' %}">Выход</a>
+                <p><a href="{% url 'logout' %}">Выход</a></p>
             </div>
         </div>
     </div>
@@ -153,14 +154,14 @@
         var company_btn = document.getElementsByClassName('company_btn')[0];
         
         company_btn.onmouseover = (e) => {
-            company.style.maxHeight = '100px';
+            company.style.maxHeight = company.scrollHeight + 30 + 'px';
             company.style.padding = '15px';
             company.style.border = '1px solid black';
         };
         company_btn.onmouseout = (e) => {
-                company.style.maxHeight = '0px';
-                company.style.padding = '0px';
-                company.style.border = '0';
+            company.style.maxHeight = '0px';
+            company.style.padding = '0px';
+            company.style.border = '0';
         };
     </script>
     <script src="{% static 'js/script.js' %}" defer></script>
