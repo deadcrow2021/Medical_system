@@ -84,10 +84,6 @@ h4 {
     font-size: 16px;
 }
 
-button:hover {
-    color: #00a5b1;
-}
-
 a:hover * {
     color: #00a5b1;
 }
@@ -516,6 +512,15 @@ a:hover * {
     color: #15539e;
     display: block;
     box-sizing: border-box;
+}
+
+.btn a:visited {
+    color: #15539e;
+}
+
+.btn:hover,
+.btn a:hover {
+    color: #00a5b1;
 }
 
 a.btn {
@@ -1021,4 +1026,23 @@ nav {
 
 .red_text {
     color: rgb(172, 18, 18);
+}
+
+.modification_btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.mod_btn {
+    margin: 0 0px 5px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px;
+    display: block;
+    line-height: normal;
 }

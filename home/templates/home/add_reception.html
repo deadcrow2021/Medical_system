@@ -7,6 +7,7 @@
     <a href="{% url 'profile' profile_id %}">Вернуться</a>
 </div>
 
+<input type="hidden" name="profile_id" value="{{ profile_id }}">
 {% if request.user.doctor.role not in rolesNA %}
 <div class="center_div">
     <div>
@@ -40,6 +41,15 @@
     </div>
     {% endif %}
     
+    <div class="modification_btns">
+        <button type="submit" class="mod_btn btn">Добавить</button>
+        <a href="" class="mod_btn btn">Изменить</a>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="delete_id" value="-1">
+            <button type="submit" class="mod_btn btn same_btn">Удалить</button>
+        </form>
+    </div>
     {% if notes %}
     <div class="block__profile__disease border_div reception_page">
         <div class="block__lines">
@@ -66,7 +76,8 @@
                 </thead>
                 <tbody>
                     {% for note in notes %}
-                    <tr>
+                    <tr class="chooseable">
+                        <input type="hidden" name="note.pk" value="{{ note.pk }}">
                         <td>
                             {% if user.patient %}
                                 <p>{{ note.patient.get_full_name }}</p>
@@ -101,6 +112,37 @@
         <h3>Посещения не назначены</h3>
     {% endif %}
 </div>
+<script type="text/javascript">
+    var change = document.querySelector('a[class="mod_btn btn"]');
+    var delete_id = document.querySelector('input[name="delete_id"]');
+    var url = document.URL.split('/').slice(0, 3).join('/') + '/';
+    var profile_id = document.querySelector('input[name="profile_id"]').value;
+    var choosen = undefined;
+    
+    var rows = [...document.getElementsByClassName('chooseable')];
+    for (let row of rows) {
+        row.onclick = (e) => {
+            if (choosen !== undefined && choosen !== e.currentTarget) {
+                choosen.style = "";
+                choosen.selected = "false";
+            }
+            if (e.currentTarget.selected !== "true") {
+                let notepk = e.currentTarget.children[0].value;
+                e.currentTarget.style.background = "#ffe55b";
+                change.href = url + `account/reception/update/${profile_id}/${notepk}`;
+                delete_id.value = notepk;
+                e.currentTarget.selected = "true";
+                choosen = e.currentTarget
+            } else {
+                e.currentTarget.style = "";
+                change.href = '#';
+                delete_id.value = "-1";
+                e.currentTarget.selected = "false";
+                choosen = undefined;
+            }
+        };
+    }
+</script>
 {% else %}
     <h2>Доступ к данной странице запрещен</h2>
 {% endif %}
