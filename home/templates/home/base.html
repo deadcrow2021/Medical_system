@@ -172,6 +172,8 @@
             for (let [idx, elem] of links.entries()) {
                 [link, name] = elem.split('!');
                 name = decodeURIComponent(name);
+                console.log(`${name}`);
+                if (name.length > 40) name = name.slice(0, 40) + '...';
                 html = `<span class="nav_span">`;
                 if (idx > 0) {
                     html +=     `<div class="container">\

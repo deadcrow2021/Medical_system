@@ -807,8 +807,8 @@ def portion_models_template_page(request: HttpRequest, profile_id: int, template
     new_template_name = 'users/' + template_name + '.html'
     keys_names = ((key, name[2]) for key, name in portion_models[portion_name][0].items())
     resp = render(request, new_template_name, { 'current_user': current_user, 'keys_names': keys_names })
-    return get_and_add_cookie(request, f'#/portion_page/{profile_id}/{template_name}/{portion_name}!\
-                            {portion_models[portion_name][1]}', resp)
+    to_add: str = f'#/portion_page/{profile_id}/{template_name}/{portion_name}!{portion_models[portion_name][1]}'
+    return get_and_add_cookie(request, to_add, resp)
 
 
 observation_forms_models = {
@@ -840,8 +840,7 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
     current_pregnancy = current_user.patient.current_pregnancy
     form = observation_forms_models[model_name][0]
     model = observation_forms_models[model_name][1]
-    name = observation_forms_models[model_name][2] if len(observation_forms_models[model_name][2]) < 50 else observation_forms_models[model_name][2][:48] + '...'
-    to_add = f'#/observation/{profile_id}/{model_name}!{name}'
+    to_add = f'#/observation/{profile_id}/{model_name}!{observation_forms_models[model_name][2]}'
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
