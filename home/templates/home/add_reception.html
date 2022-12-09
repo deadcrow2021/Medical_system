@@ -43,11 +43,11 @@
     
     <div class="modification_btns">
         <button type="submit" class="mod_btn btn">Добавить</button>
-        <a href="" class="mod_btn btn">Изменить</a>
+        <a id="change"><button disabled class="mod_btn btn" id="change_btn">Изменить</button></a>
         <form action="" method="POST">
             {% csrf_token %}
             <input type="hidden" name="delete_id" value="-1">
-            <button type="submit" class="mod_btn btn same_btn">Удалить</button>
+            <button disabled type="submit" class="mod_btn btn same_btn" id="del_btn">Удалить</button>
         </form>
     </div>
     {% if notes %}
@@ -113,8 +113,10 @@
     {% endif %}
 </div>
 <script type="text/javascript">
-    var change = document.querySelector('a[class="mod_btn btn"]');
+    var change = document.getElementById('change');
+    var change_btn = document.getElementById('change_btn');
     var delete_id = document.querySelector('input[name="delete_id"]');
+    var del_btn = document.getElementById('del_btn');
     var url = document.URL.split('/').slice(0, 3).join('/') + '/';
     var profile_id = document.querySelector('input[name="profile_id"]').value;
     var choosen = undefined;
@@ -129,14 +131,18 @@
             if (e.currentTarget.selected !== "true") {
                 let notepk = e.currentTarget.children[0].value;
                 e.currentTarget.style.background = "#ffe55b";
-                change.href = url + `account/reception/update/${profile_id}/${notepk}`;
+                change.setAttribute('href', `${url}account/reception/update/${profile_id}/${notepk}`);
+                change_btn.removeAttribute('disabled');
                 delete_id.value = notepk;
+                del_btn.removeAttribute('disabled');
                 e.currentTarget.selected = "true";
                 choosen = e.currentTarget
             } else {
                 e.currentTarget.style = "";
-                change.href = '#';
+                change.removeAttribute('href');
+                change_btn.setAttribute('disabled', '');
                 delete_id.value = "-1";
+                del_btn.setAttribute('disabled', '');
                 e.currentTarget.selected = "false";
                 choosen = undefined;
             }

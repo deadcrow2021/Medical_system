@@ -1046,3 +1046,8 @@ nav {
     display: block;
     line-height: normal;
 }
+
+.mod_btn:disabled,
+.mod_btn:disabled a {
+    color: #585858;
+}
