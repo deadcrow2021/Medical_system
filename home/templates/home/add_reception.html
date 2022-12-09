@@ -14,7 +14,8 @@
         <h3>Планы посещений пациента</h3>
     </div>
     
-    {% if request.user.doctor.role not in rolesR %}
+    {% comment %} {% if request.user.doctor.role not in rolesR %} {% endcomment %}
+    {% if not 1 %}
     <div class="outer_div">
         <div class="border_div">
             <form action="" method="POST">
@@ -41,8 +42,23 @@
     </div>
     {% endif %}
     
+    <div class="form">
+        <div class="form_content">
+            
+        </div>
+    </div>
+    
     <div class="modification_btns">
-        <button type="submit" class="mod_btn btn">Добавить</button>
+        <div>
+            <button type="submit" class="mod_btn btn" id="add">Добавить</button>
+            <div class="relative">
+                <div class="menu__options" style="display: none" id="service">
+                    <div class="menu__element"><button class="menu_btn same_btn">Лабораторная диагностика</button></div>
+                    <div class="menu__element"><button class="menu_btn same_btn">Инструментальная диагностика</button></div>
+                    <div class="menu__element"><button class="menu_btn same_btn">Консультация</button></div>
+                </div>
+            </div>
+        </div>
         <a id="change"><button disabled class="mod_btn btn" id="change_btn">Изменить</button></a>
         <form action="" method="POST">
             {% csrf_token %}
@@ -70,7 +86,7 @@
                         <th>Специальность</th>
                         <th>Номер посещения специалиста</th>
                         <th>Кабинет</th>
-                        <th>Посещено</th>
+                        <th>Статус</th>
                         <th>Действия</th>
                     </tr>
                 </thead>
@@ -148,6 +164,18 @@
             }
         };
     }
+</script>
+<script type="text/javascript">
+    var add_btn = document.getElementById('add');
+    var service = document.getElementById('service')
+    
+    add_btn.onclick = e => {
+        if (service.style.display === 'none') {
+            service.style.display = 'block';
+        } else {
+            service.style.display = 'none';
+        }
+    };
 </script>
 {% else %}
     <h2>Доступ к данной странице запрещен</h2>

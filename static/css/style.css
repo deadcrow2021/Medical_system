@@ -487,6 +487,19 @@ a:hover * {
     height: fit-content;
 }
 
+.menu_btn {
+    width: fit-content;
+    padding: 3px 5px;
+    font-size: 1.3rem;
+    background-color: transparent;
+    color: rgb(0, 56, 94);
+    text-align: left;
+}
+
+.menu_btn:hover {
+    color: #00a5b1;
+}
+
 .menu__element a {
     width: 100%;
     padding: 0%;
@@ -549,10 +562,6 @@ a.btn {
     padding: 10px 20px;
     top: 40px;
     left: -5px;
-}
-
-.relative {
-    position: relative;
 }
 
 .data_btn {
@@ -1050,4 +1059,30 @@ nav {
 .mod_btn:disabled,
 .mod_btn:disabled a {
     color: #585858;
+}
+
+.form {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #00000033;
+    z-index: 2;
+    display: none;
+}
+
+.form_content {
+    background-color: #ecf1f4;
+    border: 3px solid black;
+    border-radius: 10px;
+    width: 700px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
