@@ -139,7 +139,7 @@ def generate_pdf(lines: list):
     canv.save()
     buf.seek(0)
     
-    return FileResponse(buf, as_attachment=True, filename='sampled_patients.pdf')
+    return FileResponse(buf, as_attachment=False, filename='sampled_patients.pdf')
 
 
 observation_template_models = (
@@ -257,6 +257,8 @@ def data_sampling_page(request):
     lines = []
     form = DataSamplingForm()
     to_add: str = f'/data_sampling!Выборка данных'
+    med_org = ';'.join(tuple(x[1] for x in MEDICAL_ORGANIZATION[1:]))
+    
     if request.method == 'POST':
         cards = MedicalCard.objects.select_related('patient')
         form = DataSamplingForm(request.POST)
@@ -299,7 +301,6 @@ def data_sampling_page(request):
                 lines.append(f'Date of birth: {card.date_of_birth}')
                 lines.append('===============')
             return generate_pdf(lines)
-    med_org = ';'.join(tuple(x[1] for x in MEDICAL_ORGANIZATION[1:]))
     
     resp = render(request, 'home/data_sampling.html', { 'form': form, 'mkb_10': mkb10_deseases, 'med_org': med_org })
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
@@ -376,7 +377,9 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     if request.method == "POST":
         delete_id = request.POST.get('delete_id', None)
         if delete_id is not None:
-            ReceptionNotes.objects.get(pk=delete_id).delete()
+            delete_id = int(delete_id)
+            if delete_id > -1:
+                ReceptionNotes.objects.get(pk=delete_id).delete()
             context.update({ 'form': form_class() })
         else:
             form: ReceptionAddForm = form_class(request.POST)
@@ -404,7 +407,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 samd.trigger = 'Выявление направления на оказание медицинских услуг'
                 samd.save()
                 # add_log
-
+                
                 # bot
                 try:
                     async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,

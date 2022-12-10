@@ -6,14 +6,20 @@
 </div>
 
 {% if user.doctor %}
-    {% for key, name in keys_names %}
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn">
-                <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
+<div class="center_div">
+    <div class="cut_width">
+        {% for key, name in keys_names %}
+        <a href="{% url 'observation' current_user.id key %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element same_btn btn">
+                        {{ name }}
+                    </div>
+                </div>
             </div>
-        </div>
+        </a>
+        {% endfor %}
     </div>
-    {% endfor %}
+</div>
 {% endif %}
 {% endblock %}

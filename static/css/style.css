@@ -84,10 +84,6 @@ h4 {
     font-size: 16px;
 }
 
-button:hover {
-    color: #00a5b1;
-}
-
 a:hover * {
     color: #00a5b1;
 }
@@ -100,23 +96,24 @@ a:hover * {
 .navbar__row {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    height: fit-content;
+}
+
+.navbar__row .btn {
+    margin: 0 5px;
+}
+
+.navbar__row * {
+    height: 100px;
 }
 
 .company_btn {
-    position: absolute;
-    left: 0;
-    right: 0;
-    max-width: fit-content;
-    font-size: 32px;
-    font-size: 32px;
-    margin: 20px auto;
-    line-height: 62px;
-    background-color: white;
-    padding: 0 15px;
-    /* border: 1px solid black; */
-    border-radius: 5px;
-    background-color: #fff;
-    color: #000;
+    max-width: 650px;
+    cursor: default;
+    word-break: break-all;
+    overflow-y: hidden;
+    line-height: normal;
 }
 
 .company {
@@ -129,7 +126,8 @@ a:hover * {
     right: 0;
     margin: 0 auto;
     max-width: 50vw;
-    top: 100px;
+    height: auto;
+    top: 130px;
     padding: 0;
     overflow: hidden;
     border: 0;
@@ -145,32 +143,31 @@ a:hover * {
     height: 0;
 }
 
-.navbar__row .btn {
-    margin: 0 5px;
-}
-
 .navbar__element:nth-child(1) {
     flex: 1;
-}
-.navbar__element:nth-child(2) {
-    flex-basis: content;
 }
 
 .navbar__element {
     font-size: 32px;
     margin: 20px 30px;
-    line-height: 62px;
+    line-height: 67px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.navbar__element > a {
+.navbar__element > p > a {
     padding: 15px;
     /* border: 1px solid black; */
     border-radius: 5px;
     background-color: #fff;
     color: #000;
+    display: block;
+    width: fit-content;
+    height: 100%;
 }
 
-.navbar__element > a:hover {
+.navbar__element a:hover {
     color: #018876;
 }
 
@@ -469,21 +466,38 @@ a:hover * {
 
 .relative {
     position: relative;
+    height: auto;
 }
 
 .menu__options {
-    width: min(200%, 230px);
+    width: max-content;
     position: absolute;
     top: 10px;
     background-color: #f6f5f4;
     border: 2px solid black;
     border-radius: 5px;
     line-height: 1.4rem;
+    height: fit-content;
+    z-index: 5;
 }
 
 .menu__element {
     font-size: 1.4rem;
-    margin: 7px 0 7px 7px;
+    margin: 10px;
+    height: fit-content;
+}
+
+.menu_btn {
+    width: fit-content;
+    padding: 3px 5px;
+    font-size: 1.3rem;
+    background-color: transparent;
+    color: rgb(0, 56, 94);
+    text-align: left;
+}
+
+.menu_btn:hover {
+    color: #00a5b1;
 }
 
 .menu__element a {
@@ -513,14 +527,19 @@ a:hover * {
     box-sizing: border-box;
 }
 
+.btn a:visited {
+    color: #15539e;
+}
+
+.btn:hover,
+.btn a:hover {
+    color: #00a5b1;
+}
+
 a.btn {
     height: 100%;
     display: flex;
     align-items: center;
-}
-
-.btn:hover {
-    background-color: rgb(179, 179, 179);
 }
 
 .same_btn {
@@ -543,10 +562,6 @@ a.btn {
     padding: 10px 20px;
     top: 40px;
     left: -5px;
-}
-
-.relative {
-    position: relative;
 }
 
 .data_btn {
@@ -950,7 +965,9 @@ nav {
     /* font-weight: bold; */
     width: fit-content;
 }
-.tab input[type="radio"] { display: none; }
+.tab input[type="radio"] { 
+    display: none;
+}
 .tab-title {
     background: #ccc;         /* Цвет фона */
     padding: 5px 10px;          /* Поля вокруг текста */
@@ -963,6 +980,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 10px 10px 0 0;
     /* white-space: nowrap; */
     /* border-bottom: none;        Снизу линию убираем */
 }
@@ -977,9 +995,10 @@ nav {
     display: none;              /* Прячем вкладку */
     height: 600px;
     overflow-y: scroll;
+    justify-content: flex-start;
 }
-.tab-title:first-of-type {
-    border-radius: 10px 10px 0 0;
+.tab-content > a {
+    height: auto;
 }
 .tab :checked + .tab-title {
     position: relative;         /* Относительное позиционирование */
@@ -1016,4 +1035,54 @@ nav {
 
 .red_text {
     color: rgb(172, 18, 18);
+}
+
+.modification_btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.mod_btn {
+    margin: 0 0px 5px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px;
+    display: block;
+    line-height: normal;
+}
+
+.mod_btn:disabled,
+.mod_btn:disabled a {
+    color: #585858;
+}
+
+.form {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #00000033;
+    z-index: 2;
+    display: none;
+}
+
+.form_content {
+    background-color: #ecf1f4;
+    border: 3px solid black;
+    border-radius: 10px;
+    width: 700px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

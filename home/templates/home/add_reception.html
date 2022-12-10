@@ -7,13 +7,15 @@
     <a href="{% url 'profile' profile_id %}">Вернуться</a>
 </div>
 
+<input type="hidden" name="profile_id" value="{{ profile_id }}">
 {% if request.user.doctor.role not in rolesNA %}
 <div class="center_div">
     <div>
         <h3>Планы посещений пациента</h3>
     </div>
     
-    {% if request.user.doctor.role not in rolesR %}
+    {% comment %} {% if request.user.doctor.role not in rolesR %} {% endcomment %}
+    {% if not 1 %}
     <div class="outer_div">
         <div class="border_div">
             <form action="" method="POST">
@@ -40,6 +42,30 @@
     </div>
     {% endif %}
     
+    <div class="form">
+        <div class="form_content">
+            
+        </div>
+    </div>
+    
+    <div class="modification_btns">
+        <div>
+            <button type="submit" class="mod_btn btn" id="add">Добавить</button>
+            <div class="relative">
+                <div class="menu__options" style="display: none" id="service">
+                    <div class="menu__element"><button class="menu_btn same_btn">Лабораторная диагностика</button></div>
+                    <div class="menu__element"><button class="menu_btn same_btn">Инструментальная диагностика</button></div>
+                    <div class="menu__element"><button class="menu_btn same_btn">Консультация</button></div>
+                </div>
+            </div>
+        </div>
+        <a id="change"><button disabled class="mod_btn btn" id="change_btn">Изменить</button></a>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="delete_id" value="-1">
+            <button disabled type="submit" class="mod_btn btn same_btn" id="del_btn">Удалить</button>
+        </form>
+    </div>
     {% if notes %}
     <div class="block__profile__disease border_div reception_page">
         <div class="block__lines">
@@ -60,13 +86,14 @@
                         <th>Специальность</th>
                         <th>Номер посещения специалиста</th>
                         <th>Кабинет</th>
-                        <th>Посещено</th>
+                        <th>Статус</th>
                         <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for note in notes %}
-                    <tr>
+                    <tr class="chooseable">
+                        <input type="hidden" name="note.pk" value="{{ note.pk }}">
                         <td>
                             {% if user.patient %}
                                 <p>{{ note.patient.get_full_name }}</p>
@@ -101,6 +128,55 @@
         <h3>Посещения не назначены</h3>
     {% endif %}
 </div>
+<script type="text/javascript">
+    var change = document.getElementById('change');
+    var change_btn = document.getElementById('change_btn');
+    var delete_id = document.querySelector('input[name="delete_id"]');
+    var del_btn = document.getElementById('del_btn');
+    var url = document.URL.split('/').slice(0, 3).join('/') + '/';
+    var profile_id = document.querySelector('input[name="profile_id"]').value;
+    var choosen = undefined;
+    
+    var rows = [...document.getElementsByClassName('chooseable')];
+    for (let row of rows) {
+        row.onclick = (e) => {
+            if (choosen !== undefined && choosen !== e.currentTarget) {
+                choosen.style = "";
+                choosen.selected = "false";
+            }
+            if (e.currentTarget.selected !== "true") {
+                let notepk = e.currentTarget.children[0].value;
+                e.currentTarget.style.background = "#ffe55b";
+                change.setAttribute('href', `${url}account/reception/update/${profile_id}/${notepk}`);
+                change_btn.removeAttribute('disabled');
+                delete_id.value = notepk;
+                del_btn.removeAttribute('disabled');
+                e.currentTarget.selected = "true";
+                choosen = e.currentTarget
+            } else {
+                e.currentTarget.style = "";
+                change.removeAttribute('href');
+                change_btn.setAttribute('disabled', '');
+                delete_id.value = "-1";
+                del_btn.setAttribute('disabled', '');
+                e.currentTarget.selected = "false";
+                choosen = undefined;
+            }
+        };
+    }
+</script>
+<script type="text/javascript">
+    var add_btn = document.getElementById('add');
+    var service = document.getElementById('service')
+    
+    add_btn.onclick = e => {
+        if (service.style.display === 'none') {
+            service.style.display = 'block';
+        } else {
+            service.style.display = 'none';
+        }
+    };
+</script>
 {% else %}
     <h2>Доступ к данной странице запрещен</h2>
 {% endif %}
