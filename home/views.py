@@ -371,7 +371,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     form_class = ReceptionAddForm
     rolesR = ('assistant', )
     rolesNA = ('receptionist', )
-    context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA }
+    context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA, 'form': form_class() }
     to_add = f'#/account/reception/add/{profile_id}!Планы посещений пациента'
     
     if request.method == "POST":
@@ -380,7 +380,6 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
             delete_id = int(delete_id)
             if delete_id > -1:
                 ReceptionNotes.objects.get(pk=delete_id).delete()
-            context.update({ 'form': form_class() })
         else:
             form: ReceptionAddForm = form_class(request.POST)
             if form.is_valid():
@@ -392,10 +391,6 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 patient = User.objects.get(pk=profile_id).patient
                 commit.patient = patient
                 reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
-                if reception_note is not None and reception_note.visit_number is not None:
-                    commit.visit_number = reception_note.visit_number + 1
-                else:
-                    commit.visit_number = 1
                 commit.save()
                 
                 samd = SAMD()
@@ -416,8 +411,6 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     pass
                 form: ReceptionAddForm = form_class()
             context.update({ 'form': form })
-    else:
-        context.update({ 'form': form_class() })
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     context.update({ 'notes': notes })
     resp = render(request, template_name, context)

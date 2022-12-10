@@ -111,7 +111,7 @@ class ReceptionViewForm(forms.ModelForm):
         model = ReceptionNotes
         fields = (
             'date_meeting','med_organization', 'specialization',
-            'visit_number', 'cabinet', 'status'
+            'cabinet', 'status'
         )
 
 

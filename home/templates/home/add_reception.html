@@ -42,10 +42,32 @@
     </div>
     {% endif %}
     
-    <div class="form">
-        <div class="form_content">
-            
-        </div>
+    <div class="form" style="display: none">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form_content">
+                <div class="fields__input">
+                    <div class="fields__input__label"><strong>Дата</strong></div>
+                    <div class="fields__input__field"><input type="date" name="" id="" class="form_input"></div>
+                </div>
+                <div class="fields__input">
+                    <div class="fields__input__label"><strong>Услуга</strong></div>
+                    <div class="fields__input__field"><input type="text" class="form_input"></div>
+                </div>
+                <div class="fields__input">
+                    <div class="fields__input__label"><strong>Срок выполнения с:</strong></div>
+                    <div class="fields__input__field"><input type="text" name="" id="" class="form_input"></div>
+                </div>
+                <div class="fields__input">
+                    <div class="fields__input__label"><strong>По:</strong></div>
+                    <div class="fields__input__field"><input type="text" name="" id="" class="form_input"></div>
+                </div>
+                <div class="two_btns">
+                    <button type="reset" class="btn">Отмена</button>
+                    <button type="submit" class="btn">Добавить</button>
+                </div>
+            </div>
+        </form>
     </div>
     
     <div class="modification_btns">
@@ -84,7 +106,6 @@
                         <th>Дата</th>
                         <th>Медицинская организация</th>
                         <th>Специальность</th>
-                        <th>Номер посещения специалиста</th>
                         <th>Кабинет</th>
                         <th>Статус</th>
                         <th>Действия</th>
@@ -107,7 +128,6 @@
                         <td><p class="">{{ note.date_meeting }}</p></td>
                         <td><p>{{ note.get_med_organization_display }}</p></td>
                         <td><p>{{ note.get_specialization_display }}</p></td>
-                        <td><p>{{ note.visit_number }}</p></td>
                         <td><p>{{ note.cabinet }}</p></td>
                         <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td>
                         <td>
@@ -166,16 +186,40 @@
     }
 </script>
 <script type="text/javascript">
-    var add_btn = document.getElementById('add');
-    var service = document.getElementById('service')
-    
-    add_btn.onclick = e => {
-        if (service.style.display === 'none') {
-            service.style.display = 'block';
-        } else {
-            service.style.display = 'none';
+    try {
+        var add_btn = document.getElementById('add');
+        var service = document.getElementById('service')
+        
+        add_btn.onclick = e => {
+            if (service.style.display === 'none') {
+                service.style.display = 'block';
+            } else {
+                service.style.display = 'none';
+            }
+        };
+        
+        var add_btns = document.querySelectorAll('button[class="menu_btn same_btn"]');
+        var banner = document.getElementsByClassName('form')[0];
+        
+        for (let b of add_btns) {
+            b.onclick = e => {
+                if (banner.style.display === 'none') {
+                    banner.style.display = 'flex';
+                    service.style.display = 'none';
+                } else {
+                    banner.style.display = 'none';
+                }
+            };
         }
-    };
+        
+        var two_btns = document.getElementsByClassName('two_btns');
+        var cancel = two_btns[0];
+        var add = two_btns[1];
+        
+        cancel.onclick = e => {
+            banner.style.display = 'none';
+        };
+    } catch (error) { console.log(`${error}`); };
 </script>
 {% else %}
     <h2>Доступ к данной странице запрещен</h2>

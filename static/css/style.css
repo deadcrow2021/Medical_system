@@ -1083,6 +1083,11 @@ nav {
     height: 500px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    padding: 20px;
+}
+
+.form_input {
+    font-size: 30px;
+    border-radius: 0;
 }

@@ -908,16 +908,26 @@ class Doctor(models.Model):
         return f"{self.last_name} {self.first_name} {self.father_name}"
 
 
+class File(models.Model):
+    file = models.FileField('Файл', upload_to='files/')
+
+
 class ReceptionNotes(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     
-    date_meeting = models.DateTimeField('Дата и время приема')
-    med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
+    date_recording = models.DateField('Дата записи', default='2001-01-10')
     specialization = models.CharField('Специальность врача', max_length=30, choices=ROLES)
-    visit_number = models.PositiveSmallIntegerField('Номер посещения специалиста', validators=[MaxValueValidator(999)], blank=True, null=True)
+    med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
     cabinet = models.CharField('Номер кабинета', max_length=10, blank=True)
-    status = models.BooleanField('Статус явки', default=False, null=True)
+    section = models.CharField("Раздел", max_length=30, blank=True, null=True)
+    service = models.CharField("Услуга", max_length=100, blank=True, null=True)
+    deadline_from = models.PositiveSmallIntegerField("Срок выполнения с", blank=True, null=True)
+    deadline_to = models.PositiveSmallIntegerField("Срок выполнения по", blank=True, null=True)
+    status = models.CharField('Статус', max_length=20, default="Требуется запись", blank=True, null=True, choices=RECEPTION_STATUS)
+    date_meeting = models.DateTimeField('Дата и время приема', default=False, null=True)
+    result = models.TextField("Результат", blank=True, null=True)
+    file = models.ForeignKey(File, verbose_name="Файл", on_delete=models.CASCADE, blank=True, null=True)
     
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
