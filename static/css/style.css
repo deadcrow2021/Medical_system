@@ -1021,6 +1021,16 @@ nav {
     margin-right: 20px;
 }
 
+.three_btns {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.three_btns > * {
+    margin: auto 10px;
+}
+
 .name_of_user {
     font-size: 30px;
     display: flex;

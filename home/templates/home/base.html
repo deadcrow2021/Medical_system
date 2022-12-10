@@ -67,34 +67,6 @@
             </div>
             {% elif user.is_superuser %}
             <div class="navbar__element">
-<<<<<<< HEAD
-                    <a class="toggle_btn" onselectstart="return false" onmousedown="return false">Администратор</a>
-                    <div class="relative">
-                        <div class="menu__options" style="display: none">
-                            
-                            <div class="menu__element">
-                                <a href="{% url 'doctors-page' %}">Доктора</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'patients' %}">Пациенты</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'add-doctor' %}">Добавить доктора</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'logs-page' %}">Журнал изменений</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'data-sampling' %}">Выборка данных</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'files-page' %}">Файлы</a>
-                            </div>
-                            <div class="menu__element">
-                                <a href="{% url 'admin-samd' %}">СЭМД документы</a>
-                            </div>
-                            
-=======
                 <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">Администратор</a></p>
                 <div class="relative">
                     <div class="menu__options" style="display: none">
@@ -116,8 +88,11 @@
                         </div>
                         <div class="menu__element">
                             <a href="{% url 'files-page' %}">Файлы</a>
->>>>>>> fda4883233b088b04fe63a29f5c050999cbfc70e
                         </div>
+                        <div class="menu__element">
+                            <a href="{% url 'admin-samd' %}">СЭМД документы</a>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
