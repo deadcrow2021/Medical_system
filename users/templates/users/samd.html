@@ -24,8 +24,8 @@
                     <td><p>{{ doc.get_med_org_display }}</p></td>
                     <td><p>{{ doc.get_sms_type_display }}</p></td>
                     <td><p>{{ doc.get_sms_status_display }}</p></td>
-                    <td><p>{{ doc.signed }} {% if not doc.signed %}
-                        
+                    <td><p>{% if doc.signed %}Подписан{% endif %}{% if not doc.signed %}
+
                         <div class="fields__input">
                             <form action="{% url 'sign-samd' doc.id current_user.id %}" method="post">
                                 {% csrf_token %}

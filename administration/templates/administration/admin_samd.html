@@ -30,7 +30,7 @@
                     <td><p>{{ doc.get_med_org_display }}</p></td>
                     <td><p>{{ doc.get_sms_type_display }}</p></td>
                     <td><p>{{ doc.get_sms_status_display }}</p></td>
-                    <td><p>{{ doc.signed }}</p></td>
+                    <td><p>{% if doc.signed %}Подписано{% else %}Не подписано{% endif %}</p></td>
                 </tr>
                 {% endfor %}
             </tbody>

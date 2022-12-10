@@ -250,7 +250,7 @@ def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
 
 def medical_card(request, profile_id):
     current_user = User.objects.select_related('patient').get(pk=profile_id)
-    form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
+    form = MedicalCardForm(None, instance=current_user.patient.card)
     to_add: str = f'#/medical_card/{profile_id}!Медицинская карта'
     
     risks = current_user.patient.card.risks.all()
@@ -270,8 +270,6 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     
     if request.method == "POST":
         form = MedicalCardForm(request.POST, instance=current_user.patient.card)
-        print(f'{form.non_field_errors()}')
-        print(f'{[(f.label, f.errors) for f in form if len(f.errors) > 0]=}')
         if form.is_valid():
             data = form.save(commit=False)
             date_of_birth = form.cleaned_data['date_of_birth']
@@ -681,15 +679,21 @@ patinet_info_models = {
 }
 
 
-def patient_info_page(request, profile_id):
+def patient_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     instance = PatientInformation.objects.get(patient=current_user.patient)
     form = PatientInformationForm(instance=instance)
+    
+    if request.method == "POST":
+        model_name = request.POST.get('model_name')
+        m_id = request.POST.get('m_id')
+        patinet_info_models[model_name][0].objects.get(pk=m_id).delete()
     
     instances = []
     forms = []
     exists = []
     names = []
+    model_names = []
     for key, val in patinet_info_models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
         print(f'{val[1]=}')
@@ -700,8 +704,9 @@ def patient_info_page(request, profile_id):
             forms.append([])
             exists.append(False)
         names.append(val[2])
+        model_names.append(key)
     
-    tabs = zip(names, exists, forms)
+    tabs = zip(names, exists, forms, model_names)
     print(f'{forms=}')
     print(f'{exists=}')
     # key_value = ((key, val[2]) for key, val in patinet_info_models.items())
@@ -726,7 +731,7 @@ def update_patient_info_page(request, profile_id):
             data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
             data.save()
             # add_log Пациент Х. Обновлена информация о пациенте. Было: Стало:
-
+            
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     else:
         form = PatientInformationForm(instance=instance)
@@ -755,10 +760,6 @@ doctors_examinations_models = {
 }
 
 examination_list_models = {
-    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
-    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
-    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
-    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
     'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
     'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
     'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
@@ -774,16 +775,29 @@ examination_list_models = {
     'urine_sowing':       ( UrineSowing, UrineSowingForm, 'Посев мочи на бессимптомную бактериурию' ),
 }
 
-# current_pregnancy_models = {
-#     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-#     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
-# }
+determine_antibodies = {
+    'antibodies':                ( AntibodiesDeterminationForm, AntibodiesDetermination, 'Антитела к бледной трепонеме' ),
+    'rubella':                   ( RubellaVirusForm, RubellaVirus, 'Вирус краснухи' ),
+    'antiresus_bodies':          ( AntiresusBodiesForm, AntiresusBodies, 'Антирезусные тела' ),
+}
+
+ultrasound_models = {
+    'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ),
+    'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
+    'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
+    'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
+}
+
+current_pregnancy_models = {
+    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+}
 
 portion_models = {
     'pregnant_woman_monitoring': (pregnant_woman_monitoring_models, 'Наблюдение во время настоящей беременности'),
     'examination_list':          (examination_list_models, 'Лист обследования'),
-    #'determine_antibodies':      (determine_antibodies, 'Определение антител'),
-    #'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
+    'determine_antibodies':      (determine_antibodies, 'Определение антител'),
+    'ultrasound':                (ultrasound_models, 'Ультразвуковое обследование'),
     'doctors_examinations':      (doctors_examinations_models, 'Осмотры врачей специалистов'),
     #'current_pregnancy':         (current_pregnancy_models, 'Сведения о настоящей беременности')
 }
@@ -793,8 +807,8 @@ def portion_models_template_page(request: HttpRequest, profile_id: int, template
     new_template_name = 'users/' + template_name + '.html'
     keys_names = ((key, name[2]) for key, name in portion_models[portion_name][0].items())
     resp = render(request, new_template_name, { 'current_user': current_user, 'keys_names': keys_names })
-    return get_and_add_cookie(request, f'#/portion_page/{profile_id}/{template_name}/{portion_name}!\
-                            {portion_models[portion_name][1]}', resp)
+    to_add: str = f'#/portion_page/{profile_id}/{template_name}/{portion_name}!{portion_models[portion_name][1]}'
+    return get_and_add_cookie(request, to_add, resp)
 
 
 observation_forms_models = {
@@ -826,8 +840,7 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
     current_pregnancy = current_user.patient.current_pregnancy
     form = observation_forms_models[model_name][0]
     model = observation_forms_models[model_name][1]
-    name = observation_forms_models[model_name][2] if len(observation_forms_models[model_name][2]) < 50 else observation_forms_models[model_name][2][:48] + '...'
-    to_add = f'#/observation/{profile_id}/{model_name}!{name}'
+    to_add = f'#/observation/{profile_id}/{model_name}!{observation_forms_models[model_name][2]}'
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
@@ -1020,9 +1033,9 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 
 def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
-    form = StatisticsPeriodForm()
+    form = StatisticsForm()
     to_add: str = '/statistics!Статистика'
-
+    
     age_15_45 = 0
     age_less_18 = 0
     birth_number = 0
@@ -1031,7 +1044,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     card_childbirth = 0
     registered_first_trimester = 0
     up_37_week_birth = 0
-
+    
     p_1 = 0
     p_3 = 0
     p_4 = 0
@@ -1087,9 +1100,10 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     }
     
     if request.method == 'POST':
-        form = StatisticsPeriodForm(request.POST)
+        form = StatisticsForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
+            # filter date period
             if form_data['date_to'] and form_data['date_from']:
                 if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
                     form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
@@ -1102,12 +1116,25 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 else:
                     form_data['date_from'] = form_data['date_to']
 
+            # filter age
+            if form_data['age_from'] and form_data['age_to']:
+                if form_data['age_from'] > form_data['age_to']:
+                    form_data['age_from'], form_data['age_to'] = form_data['age_to'], form_data['age_from']
+            else:
+                form_data['age_from'] = 1
+                form_data['age_to'] = 99
+
     patients = Patient.objects.all()
     patients_number = len(patients)
-        
+
     for p in patients:
         card = p.card
-        
+
+        if request.method == 'POST':
+            if form_data['age_from'] and form_data['age_to']:
+                if not (card.age and form_data['age_from'] <= card.age <= form_data['age_to']):
+                    continue
+
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
             registered_first_trimester += 1
 
@@ -1131,19 +1158,19 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         
         if card.complications:
             p_5 += 1
-
+        
         if any(x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list):
             p_12 += len([x.pregnancy_outcome == 'd' for x in pregnancy_outcome_list])
             birth_dead_number = p_12
             p_13 += len([(x.pregnancy_outcome == 'd' and (x.gestation_period_weeks if x.gestation_period_weeks else 0) >= 28) for x in pregnancy_outcome_list])
-
+        
         if any(x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list):
             birth_number += len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
             if request.method == 'POST':
                 for i in pregnancy_outcome_list:
                     if i.childbirth_date and form_data['date_from'] <= i.childbirth_date.date() <= form_data['date_to']:
                         birth_number_period +=len([x.pregnancy_outcome == 'b' for x in pregnancy_outcome_list])
-
+            
             p_15 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
             
             for i in pregnancy_outcome_list:
@@ -1157,7 +1184,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                     p_8 += 1
                 if card.age >= 35:
                     p_7 += 1
-
+        
         if any((x.imt if x.imt else 0) >= 30 for x in p.patient_information.all()):
             p_9 += 1
         
@@ -1200,10 +1227,10 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             
             if card.diagnosis and 'O14.1' in card.diagnosis:
                 p_16 += 1
-
+            
             if card.diagnosis and 'O15' in card.diagnosis:
                 p_20 += 1
-
+        
         normal_pregnancy = [
             'Z32.1', 'Z33', 'Z34.0', 'Z34.8', 'Z35.0', 'Z35.1', 'Z35.2',
             'Z35.3', 'Z35.4', 'Z35.5', 'Z35.6', 'Z35.7', 'Z35.8', 'Z35.9',
@@ -1216,14 +1243,14 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             'O37', 'O38', 'O39', 'O40', 'O41', 'O42', 'O43', 'O44',
             'O45', 'O46', 'O47', 'O48', 'O98', 'O99'
             ]
-
+        
         if request.method == 'POST':
             if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
                 if any(x in (card.diagnosis if card.diagnosis else '') for x in normal_pregnancy):
                     p_25_1 += 1
                 if any(x in (card.diagnosis if card.diagnosis else '') for x in pathology_pregnancy):
                     p_25_2 += 1
-
+                
                 if card.diagnosis and 'O80' in card.diagnosis:
                     p_26_1 += 1
                 if any(x in (card.diagnosis if card.diagnosis else '') for x in ['O81', 'O82', 'O83', 'O84']):
@@ -1442,8 +1469,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         "Всего родильниц, родивших за выбранный период, с разбивкой по возрастным группам (выполнение работ в рамках гарантийных обязательств по контракту)": {
             x: p_27[x]*100/birth_number_period for x in p_27
         },
-        "Структура заболеваемости беременных с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": p_28*100/patients_number,
-        "Структура заболеваемости родильниц с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": p_29*100/patients_number,
+        "Структура заболеваемости беременных с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": f"{p_28*100/patients_number:.3}",
+        "Структура заболеваемости родильниц с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": f"{p_29*100/patients_number:.3}",
         "Распределение всех пациенток по срокам родоразрешения": {
             x: p_31[x]*100/birth_number_period for x in p_31
         }
@@ -1536,16 +1563,24 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/current_pregnancy.html'
     to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
+    context = {}
     
-    models = {
-        'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-        'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' )
-    }
+    if request.method == "POST":
+        if request.POST.get('modify', None) != None:
+            context.update({ 'modify': True })
+        else:
+            for key, val in current_pregnancy_models.items():
+                inst = val[0].objects.get(patient=current_user.patient)
+                form = val[1](request.POST, instance=inst)
+                if form.is_valid():
+                    form.save()
+    
     instances = []
     model_forms = []
     exists = []
+    model_names = []
     
-    for key, val in models.items():
+    for key, val in current_pregnancy_models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
         if (len(instances[-1]) > 0):
             model_forms.append([val[1](instance=i) for i in instances[-1]])
@@ -1553,17 +1588,20 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
         else:
             model_forms.append([])
             exists.append(False)
-    data = zip(model_forms, exists)
-    context = { 'data': data }
+        model_names.append(key)
+    
+    data = zip(model_forms, exists, model_names)
+    context.update({ 'data': data, 'current_user': current_user })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
+
 
 def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/examination_list.html'
     to_add: str = f'#/examination_list/{profile_id}!Лист обследования'
+    context = {}
     
-    # instances = []
     model_forms = []
     exists = []
     names = []
@@ -1583,6 +1621,30 @@ def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse
         names.append(val[2])
     
     data = zip(model_forms, exists, names)
-    context = { 'data': data }
+    context.update({ 'data': data })
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_doctor_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_doctor_vimis.html"
+    to_add: str = f"#/add_doctor_vimis!Добавить доктора из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
+    
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_patient_vimis.html"
+    to_add: str = f"#/add_patient_vimis!Добавить пациента из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
+    
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
