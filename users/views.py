@@ -1137,13 +1137,13 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
             registered_first_trimester += 1
-
+        
         if card.age and 15 <= card.age <= 45:
             age_15_45 += 1
-
+        
         if card.age and card.age < 18:
             age_less_18 += 1
-
+        
         first_exam_list = p.first_examination.all()
         if len([x for x in first_exam_list]) >= 1:
             if first_exam_list[0].gestation_period_weeks and int(first_exam_list[0].gestation_period_weeks) < 12:
@@ -1622,6 +1622,29 @@ def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse
     
     data = zip(model_forms, exists, names)
     context.update({ 'data': data })
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_doctor_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_doctor_vimis.html"
+    to_add: str = f"#/add_doctor_vimis!Добавить доктора из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
+    
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_patient_vimis.html"
+    to_add: str = f"#/add_patient_vimis!Добавить пациента из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 

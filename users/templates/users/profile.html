@@ -11,70 +11,70 @@
         <h3>Индивидуальная карта</h3>
         <a href="{% url 'medical-card' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Медицинская карта</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'patient-info' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Сведения о пациентке</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'current-pregnancy-info' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Сведения о настоящей беременности</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'pregnancy-observation' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Наблюдение во время настоящей беременности</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'profile-models-template' profile.user.id 'hospitalization' %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Сведения о госпитализации во время беременности</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'add-reception' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>План посещений</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'portion-page' profile.user.id 'doctors_examinations' 'doctors_examinations' %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Осмотры врачей специалистов</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'self-monitoring' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Дневник самонаблюдений</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'pregnancy-outcome' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Исход беременности и родов</p>
                 </div>
             </div>
         </a>
         <a href="{% url 'samd' profile.user.id %}">
             <div class="block__lines">
-                <div class="lines__element btn same_btn">
+                <div class="lines__element  same_btn">
                     <p>Журнал документов для ВИМИС</p>
                 </div>
             </div>
@@ -229,7 +229,7 @@
 
 <div class="banner" style="display: none;">
     <div class="lines__element banner__content">
-        <p>Вы действительно хотите удалить пациента?</p>
+        <strong><h3>Вы действительно хотите удалить пациента?</h3></strong>
         <div style="display: flex">
             <button type="button" class="btn cancel_btn" style="margin-right: 30px">Отменить</button>
             <form action="" method="post">

@@ -6,31 +6,38 @@
 </div>
 
 {% if user.doctor %}
-<div class="cut_width">
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                {% comment %} <a href="{% url 'portion-page' current_user.id 'pregnant_woman_monitoring' 'pregnant_woman_monitoring' %}">Наблюдения за беременной</a> {% endcomment %}
-                <a href="{% url 'observation' current_user.id 'pregnant_woman_monitoring' %}">Наблюдения за беременной</a>
+<div class="center_div">
+    <div class="cut_width">
+        <a href="{% url 'observation' current_user.id 'pregnant_woman_monitoring' %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">
+                        Наблюдения за беременной
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <a href="{% url 'portion-page' current_user.id 'examination_list' 'examination_list' %}">Лист обследования</a>
+        </a>
+        <a href="{% url 'portion-page' current_user.id 'examination_list' 'examination_list' %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">
+                        Лист обследования
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    {% for key, name in keys_names %}
-    <div class="block__profile__docs">
-        <div class="block__lines">
-            <div class="lines__element btn same_btn">
-                <a href="{% url 'observation' current_user.id key %}">{{ name }}</a>
+        </a>
+        {% for key, name in keys_names %}
+        <a href="{% url 'observation' current_user.id key %}">
+            <div class="block__profile__docs">
+                <div class="block__lines">
+                    <div class="lines__element btn same_btn">
+                        {{ name }}
+                    </div>
+                </div>
             </div>
-        </div>
+        </a>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endif %}
 

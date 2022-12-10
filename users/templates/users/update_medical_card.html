@@ -6,10 +6,12 @@
 </div>
 
 
-<div class="form__block">
+<div class="form__block" style="min-height: 0">
     <form action="" method="POST">
         {% csrf_token %}
         <div class="fields center_div">
+            <div class="tabs">
+            </div>
             {% for p in form %}
             <div class="fields__input">
                 <div class="fields__input__label">
@@ -22,9 +24,6 @@
             {{ p.errors }}
             {% endfor %}
             {{ form.errors }}
-        </div>
-        <div class="submit-btn">
-            <button type="submit" class="btn">Сохранить</button>
         </div>
     </form>
 </div>
@@ -39,10 +38,8 @@
 </div>
 
 <script type='text/javascript' defer>
-    var old_fields = document.getElementsByClassName('fields')[0];
-    var form = old_fields.parentNode;
-    var fields = document.createElement('div')
-    fields.setAttribute("class", "fields")
+    var fields = document.getElementsByClassName('fields')[0];
+    var tabs = document.getElementsByClassName('tabs')[0];
     
     function set_name_with_border(name, id, count) {
         let elem = document.querySelector(`label[for=id_${id}]`);
@@ -50,11 +47,12 @@
             return;
         elem = elem.parentNode.parentNode.parentNode;
         
-        let label = document.createElement('h3');
-        label.innerText = name + ':';
+        let label = document.createElement('legend');
+        let h3 = document.createElement('h3');
+        h3.innerText = name;
+        label.appendChild(h3);
         
         let inner_div = document.createElement('div');
-        inner_div.setAttribute('class', 'border_div');
         
         for(let i = 0; i < count; i++) {
             let next = elem.nextElementSibling;
@@ -64,11 +62,43 @@
                 break;
         }
         
-        let div = document.createElement('div');
+        let div = document.createElement('fieldset');
         div.setAttribute('class', 'outer_div');
         div.appendChild(label);
         div.appendChild(inner_div);
         fields.prepend(div);
+    }
+    
+    function make_tabs(name, count, fildsets) {
+        let label = document.createElement('label');
+        label.innerText = name;
+        label.classList.add('tab-title');
+        label.setAttribute('for', `${name}`);
+        
+        let input = document.createElement('input');
+        input.setAttribute('type', `radio`);
+        input.setAttribute('id', `${name}`);
+        input.setAttribute('name', `tab-group`);
+        
+        let section = document.createElement('section');
+        section.classList.add('tab-content', 'center_div');
+        
+        if (count > fildsets.length) count = fildsets.length;
+        
+        for(let i = 0; i < count; i++) {
+            section.appendChild(fildsets[i]);
+        }
+        section.innerHTML += `\
+            <div class="submit-btn">\
+                <button type="submit" class="btn">Сохранить</button>\
+            </div>`
+        
+        let div = document.createElement('div');
+        div.setAttribute('class', 'tab');
+        div.appendChild(input);
+        div.appendChild(label);
+        div.appendChild(section);
+        tabs.appendChild(div);
     }
     
     let nodes_id = [
@@ -91,12 +121,25 @@
         set_name_with_border(name, id, count);
     }
     
-    old_fields.remove()
-    form.prepend(fields)
-    
+    var fields = document.getElementsByClassName('fields')[0];
     for (let elem of fields.children) {
         fields.prepend(elem);
     }
+    
+    var tabs_names = [
+        ['Личные данные', 1],
+        ['Контактные данные', 2],
+        ['Дополнительные данные', 4],
+        ['Роды', 10],
+    ]
+    
+    var fieldsets = [...document.querySelectorAll('fieldset')];
+    
+    for (let [name, count] of tabs_names) {
+        make_tabs(name, count, fieldsets.splice(0, count));
+    }
+    
+    document.querySelector('input[id="Личные данные"]').setAttribute('checked', '');
 </script>
 <script type="text/javascript" defer mkb-helper>
     var data = document.getElementsByClassName('data')[0].innerHTML.split(';');

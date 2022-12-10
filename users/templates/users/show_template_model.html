@@ -10,7 +10,9 @@
 </div>
 {% endif %}
 
-<h3>{{ page_name }}</h3>
+<div class="center_div">
+    <h3>{{ page_name }}</h3>
+</div>
 
 {% if exists %}
 {% if model_name == 'appointments' %}
@@ -33,7 +35,23 @@
                     {% for form in forms %}
                     <tr>
                         {% for p in form %}
-                            <td><p>{{ p.value }}</p></td>
+                            <td><p>
+                            {% if p.field.choices %}
+                                {% for i in p.field.choices %}
+                                    {% if p.value == i.0 %}
+                                        {% if not i.0 %}
+                                            ---------
+                                        {% else %}
+                                            {{i.1}}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% elif p.value %}
+                                {{ p.value }}
+                            {% else %}
+                                ---------
+                            {% endif %}
+                            </p></td>
                             {% comment %} <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td> {% endcomment %}
                             {% comment %} <td><p>{{ note.status }}</p></td> {% endcomment %}
                         {% endfor %}
@@ -134,8 +152,8 @@
     </script>
 {% endif %}
 {% else %}
-<div>
-    <h4>Нет данных</h4>
+<div class="center_div forgot_pass">
+    <h3>Нет данных</h3>
 </div>
 {% endif %}
 
