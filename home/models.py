@@ -956,6 +956,20 @@ class MODelivery(models.Model):
         return self.delivery if self.delivery else "Недостаточно данных"
 
 
+class SAMD(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='samd')
+    create_date = models.DateTimeField('Дата создания', auto_now_add=True)
+    sms_status = models.CharField('Статус версии СМС', max_length=300, choices=SMS_STATUS, blank=True)
+    # patient_fio = models.CharField('ФИО пациента', max_length=10, blank=True)
+    # date_of_birth = models.DateField('Дата рождения', blank=True, null=True)
+    sms_type = models.CharField('Тип СМС', max_length=10, choices=SMS_TYPE, blank=True)
+    med_org = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
+    trigger = models.CharField('Триггер', max_length=300, blank=True)
+
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
+    signed = models.BooleanField('Подпись', default=False)
+
+
 class TelegramUsers(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE)
     tg_user_id = models.PositiveBigIntegerField('ID пользователя в Telegram', unique=True)

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from .forms import MODeliveryForm, ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
-from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor
+from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor, SAMD
 from administration.models import ClinicRecomendations
 from .choices import CHANGETYPE
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -385,7 +385,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 doctor = commit.doctor
                 commit.specialization = doctor.role
                 commit.cabinet = doctor.cabinet if doctor.cabinet is not None else 'Не известно'
-                commit.med_organization = doctor.med_org
+                commit.med_organization = doctor.med_org if doctor.med_org is not None else 'Не известно'
                 patient = User.objects.get(pk=profile_id).patient
                 commit.patient = patient
                 reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
@@ -394,6 +394,15 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 else:
                     commit.visit_number = 1
                 commit.save()
+                
+                samd = SAMD()
+                samd.patient = patient
+                samd.doctor = doctor
+                samd.sms_type = '1'
+                samd.sms_status = '3'
+                samd.med_org = doctor.med_org if doctor.med_org is not None else 'Не известно'
+                samd.trigger = 'Выявление направления на оказание медицинских услуг'
+                samd.save()
                 # add_log
 
                 # bot

@@ -601,7 +601,10 @@ class MODeliveryForm(forms.ModelForm):
         fields = 'delivery',
 
 
-class StatisticsPeriodForm(forms.Form):
-    date_from = forms.DateField(label='От', required=False, widget=DateInput())
+class StatisticsForm(forms.Form):
+    date_from = forms.DateField(label='За период от', required=False, widget=DateInput())
     date_to = forms.DateField(label='До', required=False, widget=DateInput())
+    
+    age_from = forms.IntegerField(label='Возраст от', required=False, min_value=1, max_value=99)
+    age_to = forms.IntegerField(label='До', required=False, min_value=1, max_value=99)
 

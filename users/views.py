@@ -807,8 +807,8 @@ def portion_models_template_page(request: HttpRequest, profile_id: int, template
     new_template_name = 'users/' + template_name + '.html'
     keys_names = ((key, name[2]) for key, name in portion_models[portion_name][0].items())
     resp = render(request, new_template_name, { 'current_user': current_user, 'keys_names': keys_names })
-    return get_and_add_cookie(request, f'#/portion_page/{profile_id}/{template_name}/{portion_name}!\
-                            {portion_models[portion_name][1]}', resp)
+    to_add: str = f'#/portion_page/{profile_id}/{template_name}/{portion_name}!{portion_models[portion_name][1]}'
+    return get_and_add_cookie(request, to_add, resp)
 
 
 observation_forms_models = {
@@ -840,8 +840,7 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
     current_pregnancy = current_user.patient.current_pregnancy
     form = observation_forms_models[model_name][0]
     model = observation_forms_models[model_name][1]
-    name = observation_forms_models[model_name][2] if len(observation_forms_models[model_name][2]) < 50 else observation_forms_models[model_name][2][:48] + '...'
-    to_add = f'#/observation/{profile_id}/{model_name}!{name}'
+    to_add = f'#/observation/{profile_id}/{model_name}!{observation_forms_models[model_name][2]}'
     
     if request.method == "POST":
         to_delete = model.objects.get(pk=request.POST['delete'])
@@ -1034,7 +1033,7 @@ def add_examination_template_page(request: HttpRequest, profile_id: int, model_n
 
 def statistics_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/statistics.html'
-    form = StatisticsPeriodForm()
+    form = StatisticsForm()
     to_add: str = '/statistics!Статистика'
     
     age_15_45 = 0
@@ -1101,9 +1100,10 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     }
     
     if request.method == 'POST':
-        form = StatisticsPeriodForm(request.POST)
+        form = StatisticsForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
+            # filter date period
             if form_data['date_to'] and form_data['date_from']:
                 if form_data['date_to'] - form_data['date_from'] < timedelta(days=0):
                     form_data['date_from'], form_data['date_to'] = form_data['date_to'], form_data['date_from']
@@ -1116,12 +1116,25 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 else:
                     form_data['date_from'] = form_data['date_to']
 
+            # filter age
+            if form_data['age_from'] and form_data['age_to']:
+                if form_data['age_from'] > form_data['age_to']:
+                    form_data['age_from'], form_data['age_to'] = form_data['age_to'], form_data['age_from']
+            else:
+                form_data['age_from'] = 1
+                form_data['age_to'] = 99
+
     patients = Patient.objects.all()
     patients_number = len(patients)
-        
+
     for p in patients:
         card = p.card
-        
+
+        if request.method == 'POST':
+            if form_data['age_from'] and form_data['age_to']:
+                if not (card.age and form_data['age_from'] <= card.age <= form_data['age_to']):
+                    continue
+
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
             registered_first_trimester += 1
         
@@ -1456,8 +1469,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         "Всего родильниц, родивших за выбранный период, с разбивкой по возрастным группам (выполнение работ в рамках гарантийных обязательств по контракту)": {
             x: p_27[x]*100/birth_number_period for x in p_27
         },
-        "Структура заболеваемости беременных с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": p_28*100/patients_number,
-        "Структура заболеваемости родильниц с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": p_29*100/patients_number,
+        "Структура заболеваемости беременных с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": f"{p_28*100/patients_number:.3}",
+        "Структура заболеваемости родильниц с группировкой по кодам МКБ-10 (выполнение работ в рамках гарантийных обязательств по контракту)": f"{p_29*100/patients_number:.3}",
         "Распределение всех пациенток по срокам родоразрешения": {
             x: p_31[x]*100/birth_number_period for x in p_31
         }
@@ -1511,29 +1524,6 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
 
-def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
-    template_name: str = 'users/samd.html'
-    to_add = f'#/samd/{profile_id}!Журнал документов для ВИМИС'
-    resp = render(request, template_name, { 'profile_id': profile_id })
-    return get_and_add_cookie(request, to_add, resp)
-
-samd_temlates = {
-    'medical_services_provision_referral': medical_services_provision_referral,
-    'instrumental_research_protocol': instrumental_research_protocol,
-    'laboratory_test_protocol': laboratory_test_protocol,
-    'patient_examination_consultation': patient_examination_consultation,
-    'treatment_in_hospital': treatment_in_hospital,
-    'maternity_hospital_discharge_epicrisis': maternity_hospital_discharge_epicrisis,
-    'cytological_examination_protocol': cytological_examination_protocol,
-    'medical_death_certificate': medical_death_certificate,
-    'medical_perinatal_death_certificate': medical_perinatal_death_certificate,
-}
-
-def generate_samd_page(request: HttpRequest, profile_id: int, samd: str) -> HttpResponse:
-    template_name: str = 'users/generate_samd.html'
-    print(f'{samd_temlates[samd]()}')
-    return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
-
 
 def doctor_profile_page(request: HttpRequest, profile_id: int):
     template_name: str = 'users/doctor_profile.html'
@@ -1541,10 +1531,32 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     form = DoctorCreationForm(request.POST or None, instance=user)
     notes = ReceptionNotes.objects.filter(doctor=user)
     to_add = f'/profile/{profile_id}!Профиль'
-    
+
     resp = render(request, template_name, { 'form': form, 'notes':notes })
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
+
+
+def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
+    template_name: str = 'users/samd.html'
+    current_user = User.objects.get(pk=profile_id) # patient
+    samd_docs = current_user.patient.samd.all()
+    to_add = f'#/samd/{profile_id}!СЭМД документы'
+    resp = render(request, template_name, { 'profile_id': profile_id, 'samd_docs': samd_docs, 'current_user': current_user })
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def sign_document(request, samd_id, profile_id):
+    if request.method == 'POST':
+        my_profile = Doctor.objects.get(user=request.user)
+        user = User.objects.get(id=profile_id)
+        patient = user.patient
+        current_samd = patient.samd.get(id=samd_id)
+        current_samd.signed = True
+        current_samd.sms_status = '4'
+        current_samd.save()
+        return redirect(request.META.get('HTTP_REFERER'))
+    return HttpResponseRedirect(reverse('samd', args=(profile_id,)))
 
 
 def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
@@ -1610,6 +1622,29 @@ def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse
     
     data = zip(model_forms, exists, names)
     context.update({ 'data': data })
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_doctor_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_doctor_vimis.html"
+    to_add: str = f"#/add_doctor_vimis!Добавить доктора из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
+    
+    resp = render(request, template_name, context)
+    return get_and_add_cookie(request, to_add, resp)
+
+
+def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
+    template_name: str = "users/add_patient_vimis.html"
+    to_add: str = f"#/add_patient_vimis!Добавить пациента из ВИМИС"
+    context = {}
+    
+    if request.method == "POST":
+        context.update({ 'no_connection': '1' })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
