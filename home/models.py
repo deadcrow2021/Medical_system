@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator, MinLengthValidator, MaxLengthValidator
+import datetime
 from .choices import *
 
 
@@ -908,23 +909,45 @@ class Doctor(models.Model):
         return f"{self.last_name} {self.first_name} {self.father_name}"
 
 
+class File(models.Model):
+    file = models.FileField('Файл', upload_to='files/')
+
+
 class ReceptionNotes(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, blank=True, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
     
-    date_meeting = models.DateTimeField('Дата и время приема')
+    date_recording = models.DateField('Дата записи')
+    specialization = models.CharField('Специальность врача', max_length=30, choices=ROLES, blank=True, null=True)
     med_organization = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
-    specialization = models.CharField('Специальность врача', max_length=30, choices=ROLES)
-    visit_number = models.PositiveSmallIntegerField('Номер посещения специалиста', validators=[MaxValueValidator(999)], blank=True, null=True)
     cabinet = models.CharField('Номер кабинета', max_length=10, blank=True)
-    status = models.BooleanField('Статус явки', default=False, null=True)
+    section = models.CharField("Раздел", max_length=30, blank=True, null=True)
+    service = models.CharField("Услуга", max_length=120, choices=RECEPTION_SERVICE, default='antibody detection', blank=True, null=True)
+    deadline_from = models.PositiveSmallIntegerField("Срок выполнения с", blank=True, null=True)
+    deadline_to = models.PositiveSmallIntegerField("Срок выполнения по", blank=True, null=True)
+    status = models.CharField('Статус', max_length=20, blank=True, null=True, choices=RECEPTION_STATUS)
+    date_meeting = models.DateTimeField('Дата и время приема', blank=True, null=True)
+    date_completed = models.DateTimeField('Дата выполнения назначения', blank=True, null=True)
+    result = models.TextField("Результат", blank=True, null=True)
+    file = models.ForeignKey(File, verbose_name="Файл", on_delete=models.CASCADE, blank=True, null=True)
     
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
     
     def __str__(self) -> str:
-        return  f'Доктор {self.doctor.first_name} {self.doctor.last_name}, '\
-                f'пациент {self.patient.first_name} {self.patient.last_name}'
+        return f'{self.date_recording}'
+    
+    def deadline(self):
+        if not self.deadline_from or not self.deadline_to:
+            return '-------'
+        if self.deadline_from == self.deadline_to:
+            txt = f'({self.deadline_from} нед)'
+        else:
+            txt = f'({self.deadline_from} - {self.deadline_to} нед)'
+        txt += f' {self.date_recording.strftime("%d.%m.%Y")} - '
+        weeks = self.deadline_to - self.deadline_from + 1
+        txt += f'{(self.date_recording + datetime.timedelta(weeks=weeks)).strftime("%d.%m.%Y")}'
+        return txt
     
     class Meta:
         verbose_name = 'Запись приема'

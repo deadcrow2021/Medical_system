@@ -3,6 +3,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 from .choices import *
 
+class TextInput(forms.TextInput):
+    input_type = 'text'
+
 class DateInput(forms.DateInput):
     input_type = 'date'
 
@@ -101,8 +104,50 @@ class ReceptionAddForm(forms.ModelForm):
             'date_meeting': DateTimeInput()
         }
         labels = {
-            "status": "Статус явки",
             "doctor": "Доктор"
+        }
+
+
+class ReceptionAddAddingForm(forms.ModelForm):
+    serv = RECEPTION_SERVICE
+    class Meta:
+        model = ReceptionNotes
+        fields = (
+            'date_recording', 'service', 'deadline_from', 'deadline_to'
+        )
+        widgets = {
+            'date_recording': DateInput(),
+            'deadline_from': TextInput(),
+            'deadline_to': TextInput(),
+        }
+        labels = {
+            "deadline_to": "По"
+        }
+
+
+class ReceptionAddConfirmForm(forms.ModelForm):
+    class Meta:
+        model = ReceptionNotes
+        fields = (
+            'doctor', 'date_meeting'
+        )
+        widgets = {
+            'date_meeting': DateTimeInput()
+        }
+        labels = {
+            'doctor': "Доктор"
+        }
+
+
+class ReceptionAddResultForm(forms.ModelForm):
+    file_field = forms.FileField(label="Файлы", widget=forms.ClearableFileInput(attrs={ 'multiple': True }))
+    class Meta:
+        model = ReceptionNotes
+        fields = (
+            'date_completed', 'result'
+        )
+        widgets = {
+            'date_completed': DateTimeInput()
         }
 
 
@@ -111,7 +156,7 @@ class ReceptionViewForm(forms.ModelForm):
         model = ReceptionNotes
         fields = (
             'date_meeting','med_organization', 'specialization',
-            'visit_number', 'cabinet', 'status'
+            'cabinet', 'status'
         )
 
 

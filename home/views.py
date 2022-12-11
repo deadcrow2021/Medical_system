@@ -6,7 +6,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .forms import MODeliveryForm, ReceptionAddForm, ReceptionViewForm, RecordCreationForm, DataSamplingForm
+from .forms import *
+from administration.models import Files
 from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor, SAMD
 from administration.models import ClinicRecomendations
 from .choices import CHANGETYPE
@@ -18,7 +19,6 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
-from datetime import date
 from django.core.paginator import Paginator
 from administration.management.commands import bot
 from asgiref.sync import async_to_sync
@@ -316,7 +316,6 @@ class ReceptionView(LoginRequiredMixin, ListView):
 
 def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name = 'home/add_reception.html'
-    form_class = ReceptionAddForm
     rolesR = ('assistant', )
     rolesNA = ('receptionist', )
     context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA }
@@ -327,47 +326,58 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
         if delete_id is not None:
             delete_id = int(delete_id)
             if delete_id > -1:
-                ReceptionNotes.objects.get(pk=delete_id).delete()
-            context.update({ 'form': form_class() })
-        else:
-            form: ReceptionAddForm = form_class(request.POST)
-            if form.is_valid():
-                commit: ReceptionNotes = form.save(commit=False)
-                doctor = commit.doctor
-                commit.specialization = doctor.role
-                commit.cabinet = doctor.cabinet if doctor.cabinet is not None else 'Не известно'
-                commit.med_organization = doctor.med_org if doctor.med_org is not None else 'Не известно'
-                patient = User.objects.get(pk=profile_id).patient
-                commit.patient = patient
-                reception_note = ReceptionNotes.objects.filter(doctor=doctor, patient=patient).first()
-                if reception_note is not None and reception_note.visit_number is not None:
-                    commit.visit_number = reception_note.visit_number + 1
-                else:
-                    commit.visit_number = 1
-                commit.save()
-                
-                samd = SAMD()
-                samd.patient = patient
-                samd.doctor = doctor
-                samd.sms_type = '1'
-                samd.sms_status = '3'
-                samd.med_org = doctor.med_org if doctor.med_org is not None else 'Не известно'
-                samd.trigger = 'Выявление направления на оказание медицинских услуг'
-                samd.save()
-                # add_log
-                
-                # bot
                 try:
-                    async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
-                            f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
-                except:
-                    pass
-                form: ReceptionAddForm = form_class()
-            context.update({ 'form': form })
-    else:
-        context.update({ 'form': form_class() })
-    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+                    ReceptionNotes.objects.get(pk=delete_id).delete()
+                except Exception as e:
+                    print(f'{e}')
+        else:
+            add_type = request.POST.get('type', None)
+            if add_type == "add":
+                form: ReceptionAddAddingForm = ReceptionAddAddingForm(request.POST)
+                if form.is_valid():
+                    commit: ReceptionNotes = form.save(commit=False)
+                    commit.patient = User.objects.select_related('patient').get(pk=profile_id).patient
+                    commit.status = 'required'
+                    commit.save()
+                    
+                    # samd = SAMD()
+                    # samd.patient = patient
+                    # samd.doctor = doctor
+                    # samd.sms_type = '1'
+                    # samd.sms_status = '3'
+                    # samd.med_org = doctor.med_org if doctor.med_org is not None else 'Не известно'
+                    # samd.trigger = 'Выявление направления на оказание медицинских услуг'
+                    # samd.save()
+                    # add_log
+                    
+                    # bot
+                    try:
+                        async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
+                                f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
+                    except:
+                        pass
+            elif add_type == "confirm":
+                row_id = request.POST.get('row_id', None)
+                form = ReceptionAddConfirmForm(request.POST, instance=ReceptionNotes.objects.get(pk=row_id))
+                if form.is_valid():
+                    commit: ReceptionNotes = form.save(commit=False)
+                    commit.status = 'recorded'
+                    commit.save()
+            elif add_type == 'result':
+                row_id = request.POST.get('row_id', None)
+                for f in request.FILES.getlist('file_field'):
+                    Files(**{ 'title': f.name, 'description': 'reception result file', 'document': f }).save()
+                form = ReceptionAddResultForm(request.POST, instance=ReceptionNotes.objects.get(pk=row_id))
+                if form.is_valid():
+                    commit: ReceptionNotes = form.save(commit=False)
+                    commit.status = 'completed'
+                    commit.save()
+    # notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+    notes = ReceptionNotes.objects.filter()
     context.update({ 'notes': notes })
+    context.update({ 'add_form': ReceptionAddAddingForm() })
+    context.update({ 'confirm_form': ReceptionAddConfirmForm() })
+    context.update({ 'result_form': ReceptionAddResultForm() })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
