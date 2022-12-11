@@ -120,7 +120,10 @@ class DataSamplingForm(forms.Form):
     medical_organization = forms.CharField(label='Медицинская организация', max_length=270, required=False)
     # medical_organization = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
     territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
-    age = forms.IntegerField(label='Возраст', validators=[MinValueValidator(1), MaxValueValidator(100)], required=False)
+
+    age_from = forms.IntegerField(label='Возраст от', min_value=1, max_value=99, required=False)
+    age_to = forms.IntegerField(label='До', min_value=1, max_value=99, required=False)
+
     date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
     date_of_death = forms.DateTimeField(label='Дата смерти', required=False, widget=DateTimeInput())
     # city_village = forms.ChoiceField(label='Житель города/села', choices=CITYVILLAGE, required=False)
