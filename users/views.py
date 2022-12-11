@@ -1126,7 +1126,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 form_data['age_to'] = 99
 
     patients = Patient.objects.all()
-    patients_number = len(patients)
+    patients_number = len(patients) if len(patients) else 1
 
     for p in patients:
         card = p.card
@@ -1138,13 +1138,13 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
             registered_first_trimester += 1
-        
+
         if card.age and 15 <= card.age <= 45:
             age_15_45 += 1
-        
+
         if card.age and card.age < 18:
             age_less_18 += 1
-        
+
         first_exam_list = p.first_examination.all()
         if len([x for x in first_exam_list]) >= 1:
             if first_exam_list[0].gestation_period_weeks and int(first_exam_list[0].gestation_period_weeks) < 12:
@@ -1437,7 +1437,7 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         #     x: p_31[x]*100/birth_number_period for x in p_31
         # },
         "Доля поступивших беременных под наблюдение консультации со сроком беременности до 12 недель": p_1*100/patients_number,
-        "Частота прерываний беременности (на 1000 женщин в возрасте 15 - 49 лет)": p_3*1000/age_15_45,
+        "Частота прерываний беременности (на 1000 женщин в возрасте 15 - 49 лет)": p_3*1000/age_15_45 if age_15_45 else 0,
         "Доля обследованных беременных женщин в первом триместре беременности прошедших оценку антенатального развития плода в 11-14 недель беременности от числа поставленных на учет в первый триместр беременности": p_4*100/registered_first_trimester,
         "Частота критических акушерских состояний во время беременности, родов и в течение 42 дней после ее окончания": p_5*1000/birth_number,
         "Доля родов у женщин после лечения бесплодия методами ВРТ от общего числа родов": p_6*100/birth_number,
@@ -1623,29 +1623,6 @@ def examination_list_page(request: HttpRequest, profile_id: int) -> HttpResponse
     
     data = zip(model_forms, exists, names)
     context.update({ 'data': data })
-    resp = render(request, template_name, context)
-    return get_and_add_cookie(request, to_add, resp)
-
-
-def add_doctor_vimis_page(request: HttpRequest) -> HttpResponse:
-    template_name: str = "users/add_doctor_vimis.html"
-    to_add: str = f"#/add_doctor_vimis!Добавить доктора из ВИМИС"
-    context = {}
-    
-    if request.method == "POST":
-        context.update({ 'no_connection': '1' })
-    
-    resp = render(request, template_name, context)
-    return get_and_add_cookie(request, to_add, resp)
-
-
-def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
-    template_name: str = "users/add_patient_vimis.html"
-    to_add: str = f"#/add_patient_vimis!Добавить пациента из ВИМИС"
-    context = {}
-    
-    if request.method == "POST":
-        context.update({ 'no_connection': '1' })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
