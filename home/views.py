@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from .forms import *
+from administration.models import Files
 from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor, SAMD
 from administration.models import ClinicRecomendations
 from .choices import CHANGETYPE
@@ -368,10 +369,9 @@ class ReceptionView(LoginRequiredMixin, ListView):
 
 def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name = 'home/add_reception.html'
-    form_class = ReceptionAddForm
     rolesR = ('assistant', )
     rolesNA = ('receptionist', )
-    context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA, 'form': form_class() }
+    context = { 'profile_id': profile_id, 'rolesR': rolesR, 'rolesNA': rolesNA }
     to_add = f'#/account/reception/add/{profile_id}!Планы посещений пациента'
     
     if request.method == "POST":
@@ -379,7 +379,10 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
         if delete_id is not None:
             delete_id = int(delete_id)
             if delete_id > -1:
-                ReceptionNotes.objects.get(pk=delete_id).delete()
+                try:
+                    ReceptionNotes.objects.get(pk=delete_id).delete()
+                except Exception as e:
+                    print(f'{e}')
         else:
             add_type = request.POST.get('type', None)
             if add_type == "add":
@@ -406,7 +409,6 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                                 f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
                     except:
                         pass
-                    form: ReceptionAddAddingForm = ReceptionAddAddingForm()
             elif add_type == "confirm":
                 row_id = request.POST.get('row_id', None)
                 form = ReceptionAddConfirmForm(request.POST, instance=ReceptionNotes.objects.get(pk=row_id))
@@ -414,18 +416,15 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit: ReceptionNotes = form.save(commit=False)
                     commit.status = 'recorded'
                     commit.save()
-                    
-                    form: ReceptionAddConfirmForm = ReceptionAddConfirmForm()
             elif add_type == 'result':
                 row_id = request.POST.get('row_id', None)
+                for f in request.FILES.getlist('file_field'):
+                    Files(**{ 'title': f.name, 'description': 'reception result file', 'document': f }).save()
                 form = ReceptionAddResultForm(request.POST, instance=ReceptionNotes.objects.get(pk=row_id))
                 if form.is_valid():
                     commit: ReceptionNotes = form.save(commit=False)
                     commit.status = 'completed'
                     commit.save()
-                    
-                    form: ReceptionAddResultForm = ReceptionAddResultForm()
-            context.update({ 'form': form })
     # notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     notes = ReceptionNotes.objects.filter()
     context.update({ 'notes': notes })

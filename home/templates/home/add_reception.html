@@ -14,32 +14,6 @@
         <h3>Планы посещений пациента</h3>
     </div>
     {% comment %} {% if request.user.doctor.role not in rolesR %} {% endcomment %}
-    {% if not 1 %}
-    <div class="outer_div">
-        <div class="border_div">
-            <form action="" method="POST">
-                {% csrf_token %}
-                <div class="fields add_form">
-                    {% for p in form %}
-                    <div class="fields__input">
-                        <div class="fields__input__label">
-                            <strong>{{ p.label_tag }}</strong>
-                        </div>
-                        <div class="fields__input__field">
-                            {{ p }}
-                        </div>
-                    </div>
-                    {{ p.errors }}
-                    {% endfor %}
-                    {{ form.errors }}
-                </div>
-                <div class="submit-btn">
-                    <button type="submit" class="btn">Добавить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    {% endif %}
     
     <div class="form" style="display: none">
     {% comment %} <div class="form" > {% endcomment %}
@@ -60,10 +34,10 @@
                     </div>
                 </div>
                 
-                {{ add_form.errors }}
+                <p id="add_error" class="error"></p>
                 <div class="two_btns">
                     <button type="reset" class="btn">Отмена</button>
-                    <button type="submit" class="btn">Добавить</button>
+                    <button type="submit" class="btn" add>Добавить</button>
                 </div>
             </div>
         </form>
@@ -87,10 +61,10 @@
                     </div>
                 </div>
                 
-                {{ confirm_form.errors }}
+                <p id="confirm_error" class="error"></p>
                 <div class="two_btns">
                     <button type="reset" class="btn">Отмена</button>
-                    <button type="submit" class="btn">Записать</button>
+                    <button type="submit" class="btn" confirm>Записать</button>
                 </div>
             </div>
         </form>
@@ -98,7 +72,7 @@
     </div>
     <div class="form result" style="display: none">
     {% comment %} <div class="form"> {% endcomment %}
-        <form action="" method="POST">
+        <form enctype="multipart/form-data" method="post" action="">
             <input type="hidden" name="type" value="result">
             <input type="hidden" name="row_id" value="-1" result="">
             {% csrf_token %}
@@ -119,11 +93,19 @@
                         {{ result_form.result }}
                     </div>
                 </div>
+                <div class="fields__input">
+                    <div class="fields__input__label">
+                        <strong>{{ result_form.file_field.label }}</strong>
+                    </div>
+                    <div class="fields__input__field">
+                        {{ result_form.file_field }}
+                    </div>
+                </div>
                 
-                {{ result_form.errors }}
+                <p id="result_error" class="error"></p>
                 <div class="two_btns">
                     <button type="reset" class="btn">Отмена</button>
-                    <button type="submit" class="btn">Сохранить</button>
+                    <button type="submit" class="btn" result>Сохранить</button>
                 </div>
             </div>
         </form>
@@ -168,17 +150,17 @@
                         <td>{{ note.patient }}</td>
                         <td>{{ note.date_recording }}</td>
                         {% if note.status == 'recorded' %}
-                        <td><button class="btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
+                        <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
                         {% else %}
                         <td>{{ note.get_service_display }}</td>
                         {% endif %}
                         <td>{{ note.deadline }}</td>
                         {% if note.status == 'required' %}
-                        <td><button class="btn same_btn noborder required">{{ note.get_status_display }}</button></td>
+                        <td><button class="strong btn same_btn noborder required">{{ note.get_status_display }}</button></td>
                         {% elif note.status == 'recorded' %}
-                        <td>{{ note.get_status_display }}: {{ note.date_meeting }}</td>
+                        <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
                         {% elif note.status == 'completed' %}
-                        <td>{{ note.get_status_display }}: {{ note.date_completed }}</td>
+                        <td><span>{{ note.get_status_display }}: {{ note.date_completed }}</span></td>
                         {% endif %}
                     </tr>
                     {% endfor %}
@@ -191,6 +173,7 @@
     {% endif %}
 </div>
 <script type="text/javascript">
+    // choose row, color to YELLOW
     var change = document.getElementById('change');
     var change_btn = document.getElementById('change_btn');
     var delete_id = document.querySelector('input[name="delete_id"]');
@@ -206,7 +189,8 @@
                 choosen.style = "";
                 choosen.selected = "false";
             }
-            if (e.currentTarget.selected !== "true") {
+            console.log(`${e.target.tagName}`);
+            if (e.currentTarget.selected !== "true" && e.target.tagName !== "BUTTON") {
                 let notepk = e.currentTarget.children[0].value;
                 e.currentTarget.style.background = "#ffe55b";
                 change.setAttribute('href', `${url}account/reception/update/${profile_id}/${notepk}`);
@@ -228,10 +212,11 @@
     }
 </script>
 <script type="text/javascript">
+    // add click events to open confirm and result forms
     try {
         var requireds = document.getElementsByClassName('required');
         var confirm = document.getElementsByClassName('confirm')[0];
-        var row_id = document.querySelector('input[confirm=""]');
+        let row_id = document.querySelector('input[confirm=""]');
         
         for (let b of requireds) {
             b.onclick = e => {
@@ -243,7 +228,7 @@
     try {
         var recordeds = document.getElementsByClassName('recorded');
         var result = document.getElementsByClassName('result')[0];
-        var row_id = document.querySelector('input[result=""]');
+        let row_id = document.querySelector('input[result=""]');
         
         for (let b of recordeds) {
             b.onclick = e => {
@@ -252,6 +237,20 @@
             }
         }
     } catch (error) {console.log(`${error}`);}
+</script>
+<script type="text/javascript">
+    // check forms errors
+    add_error.nextElementSibling.children[1].onclick = e => {
+        let prevDiv = add_error.previousElementSibling;
+        let [from, txt, to] = [...prevDiv.children[1].children[2].children];
+        try {
+            if (Number(from.value) > Number(to.value)) {
+                add_error.innerHTML = "Неверный срок выполнения";
+                return false;
+            }
+        } catch (error) {console.log(`${error}`);}
+        // add_error.parentNode.parentNode.submit();
+    };
 </script>
 <script type="text/javascript">
     try {
@@ -314,12 +313,13 @@
         }
     } catch (error) { console.log(`${error}`); };
     try {
+        // add X for close form
         var forms = [...document.getElementsByClassName('form')];
         var xs = [...document.getElementsByClassName('X')];
         
         for (let i = 0; i < forms.length; i++) {
-            form = forms[i];
-            x = xs[i];
+            let form = forms[i];
+            let x = xs[i];
             form.onmouseover = e => {
                 if (e.target === form || e.target === x) {
                     x.style.color = 'rgb(176, 174, 255)';

@@ -470,7 +470,7 @@ SMS_STATUS = {
 
 RECEPTION_STATUS = (
     ('required', 'Требуется запись'),
-    ('recorded', 'Записана'),
+    ('recorded', 'Записана на'),
     ('declined', 'Отклонение'),
     ('completed', 'Выполнено'),
 )
