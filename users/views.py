@@ -267,22 +267,23 @@ def medical_card(request, profile_id):
 
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
+    form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
+    resp = render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
     
-    if request.method == "POST":
-        form = MedicalCardForm(request.POST, instance=current_user.patient.card)
-        if form.is_valid():
-            data = form.save(commit=False)
-            date_of_birth = form.cleaned_data['date_of_birth']
-            if date_of_birth:
-                today = date.today()
-                age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
-                data.age = age
-            data.save()
-            # add_log  обновлена мед карта. Было: Стало:
-            return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
+    if request.method == "POST" and form.is_valid():
+        data: MedicalCard = form.save(commit=False)
+        date_of_birth = form.cleaned_data.get('date_of_birth', None)
+        if date_of_birth:
+            today = date.today()
+            if date_of_birth > today:
+                # form.add_error('date_of_birth', 'Дата рождения не может быть больше сегодняшнего дня')
+                return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
+            data.age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+        data.save()
+        # add_log  обновлена мед карта. Было: Стало:
+        return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
-    form = MedicalCardForm(None, instance=current_user.patient.card)
-    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
+    return resp
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
