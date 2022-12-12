@@ -183,7 +183,7 @@ class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
         fields = ('last_name', 'first_name', 'father_name', 'date_of_birth', 'age', 'series_number_pass', 'when_issued',    # Личные данные
-                'when_whom_issued', 'residence_address', 'registration_address', 'oms_policy', 'snils', 'marital_status',   # Личные данные
+                'when_whom_issued', 'residence_address', 'registration_address', 'territory', 'oms_policy', 'snils', 'marital_status', 'med_org',  # Личные данные
                 'mobile_phone', 'home_phone', 'work_phone', 'email', 'education', 'profession', 'work_place', 'disability', # Контактны данные
                 'trusted_person_fio', 'trusted_person_phone', # Контактны данные
                 'maternity_leave_start', 'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', # Дополнительные данные

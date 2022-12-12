@@ -42,6 +42,7 @@ class MedicalCard(models.Model):
     when_whom_issued = models.CharField("Кем выдан", max_length=100, blank=True, null=True)
     residence_address = models.CharField('Адрес проживания', max_length=100, blank=True, null=True)
     registration_address = models.CharField('Адрес регистрции', max_length=100, blank=True, null=True)
+    territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True, null=True)
     snils        = models.CharField('СНИЛС', max_length=11, blank=True, null=True)
     
@@ -51,6 +52,7 @@ class MedicalCard(models.Model):
     work_phone    = PhoneNumberField('Рабочий телефон', max_length=20, blank=True, null=True)
     email        = models.EmailField('Адрес электронной почты', max_length=60)
     marital_status = models.CharField('Брачное состояние', default='', choices=MARITAL_STATUS, max_length=1, blank=True, null=True)
+    med_org      = models.CharField('На учете МО', max_length=150, choices=MEDICAL_ORGANIZATION, blank=True, null=True)
     
     # trusted person
     trusted_person_fio = models.CharField("ФИО доверенного лица", max_length=300, blank=True, null=True)
