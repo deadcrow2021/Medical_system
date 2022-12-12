@@ -171,7 +171,8 @@ def home_page(request: HttpRequest) -> HttpResponse:
             keys_names.append((key, val))
         user_account = user.patient
         # records = user_account.records.all()
-        notes = (ReceptionViewForm(instance=x) for x in ReceptionNotes.objects.filter(patient=user_account))
+        # notes = (ReceptionViewForm(instance=x) for x in ReceptionNotes.objects.filter(patient=user_account))
+        notes = ReceptionNotes.objects.filter(patient=user_account)
         context |= { 'notes': notes }
         context |= { 'account': user_account }#'records': records }
         context |= { 'keys_names': keys_names }
@@ -340,14 +341,14 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit.status = 'required'
                     commit.save()
                     
-                    # samd = SAMD()
-                    # samd.patient = patient
-                    # samd.doctor = doctor
-                    # samd.sms_type = '1'
-                    # samd.sms_status = '3'
-                    # samd.med_org = doctor.med_org if doctor.med_org is not None else 'Не известно'
-                    # samd.trigger = 'Выявление направления на оказание медицинских услуг'
-                    # samd.save()
+                    samd = SAMD()
+                    samd.patient = commit.patient
+                    samd.doctor = request.user.doctor # doctor
+                    samd.sms_type = '1'
+                    samd.sms_status = '3'
+                    samd.med_org = '' # doctor.med_org if doctor.med_org is not None else 'Не известно'
+                    samd.trigger = 'Выявление направления на оказание медицинских услуг'
+                    samd.save()
                     # add_log
                     
                     # bot
@@ -372,8 +373,8 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit: ReceptionNotes = form.save(commit=False)
                     commit.status = 'completed'
                     commit.save()
-    # notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
-    notes = ReceptionNotes.objects.filter()
+    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+    # notes = ReceptionNotes.objects.filter()
     context.update({ 'notes': notes })
     context.update({ 'add_form': ReceptionAddAddingForm() })
     context.update({ 'confirm_form': ReceptionAddConfirmForm() })

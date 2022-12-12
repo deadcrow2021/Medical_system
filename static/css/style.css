@@ -66,7 +66,7 @@ fieldset legend h3 {
 }
 
 fieldset .user__block__element {
-    font-size: 26px;
+    font-size: calc(1em + 0.5vh + 0.3vw)
 }
 
 h2 {
@@ -105,7 +105,7 @@ a:hover * {
 }
 
 .navbar__row * {
-    height: 100px;
+    /* height: 100px; */
 }
 
 .company_btn {
@@ -127,7 +127,7 @@ a:hover * {
     margin: 0 auto;
     max-width: 50vw;
     height: auto;
-    top: 130px;
+    top: 80px;
     padding: 0;
     overflow: hidden;
     border: 0;
@@ -148,9 +148,9 @@ a:hover * {
 }
 
 .navbar__element {
-    font-size: 32px;
+    font-size: min(4vh, 30px);
     margin: 20px 30px;
-    line-height: 67px;
+    /* line-height: 67px; */
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -162,9 +162,10 @@ a:hover * {
     border-radius: 5px;
     background-color: #fff;
     color: #000;
-    display: block;
+    display: flex;
+    align-items: center;
     width: fit-content;
-    height: 100%;
+    height: 10vh;
 }
 
 .navbar__element a:hover {
@@ -279,11 +280,13 @@ a:hover * {
     margin: 0 20px 0 0;
 }
 
-/* .home_fieldset {} */
+.home_fieldset {
+    width: 100%;
+}
 
 .user__block {
     margin: 10px 0;
-    max-height: 50vh;
+    max-height: 60vh;
     overflow: auto;
 }
 
@@ -396,13 +399,15 @@ a:hover * {
 .account {
     display: flex;
     justify-content: space-evenly;
+    height: fit-content;
+    min-height: 60vh;
     /* display: grid;
     grid-template-columns: 300px 1fr 1fr;
     grid-column-gap: 20px; */
 }
 
 .account > *{
-    flex: 1;
+    /* flex: 1; */
     margin: 0 20px;
 }
 
@@ -452,7 +457,7 @@ a:hover * {
 }
 
 .toggle_btn {
-    font-size: 32px;
+    /* font-size: 32px; */
     color: #15539e;
     background-color: transparent;
     border: 1px solid black;
@@ -711,6 +716,8 @@ th {
 
 .recomendations {
     padding-bottom: 20px;
+    max-height: 60vh;
+    overflow: scroll;
 }
 
 .recomendations li {
@@ -1182,4 +1189,8 @@ nav {
 
 .error:empty {
     display: none;
+}
+
+.img {
+    height: 10vh;
 }

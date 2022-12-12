@@ -27,13 +27,15 @@
                 </div>
             </a>
             {% for key, name in keys_names %}
-            <div class="block__profile__docs">
-                <div class="block__lines">
-                    <div class="lines__element btn same_btn">
-                        <a href="{% url 'observation' user.id key %}">{{ name }}</a>
+            <a href="{% url 'observation' user.id key %}">
+                <div class="block__profile__docs">
+                    <div class="block__lines">
+                        <div class="lines__element btn same_btn">
+                            {{ name }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>
@@ -45,45 +47,44 @@
             <legend>
                 <h3>План посещений:</h3>
             </legend>
-            <div class="notes__block user__block">
-                {% for note in notes %}
-                    <div class="logs__row">
-                        <div class="hide_info">
-                            <div class="notes__row">
-                                {% if user.patient %}
-                                    <div class="notes__element">
-                                        <p><strong>Доктор:</strong> {{ note.instance.doctor.get_full_name }}</p>
-                                    </div>
-                                {% else %}
-                                    <div class="notes__element">
-                                        <p><strong>Пациент:</strong> {{ note.instance.patient.get_full_name }}</p>
-                                    </div>
-                                {% endif %}
-                                {% for p in note %}
-                                    <div class="notes__element">
-                                        <p><strong>{{ p.label_tag }}</strong>
-                                            {% if p.field.choices %}
-                                                {% for i in p.field.choices %}
-                                                    {% if p.value == i.0 %}
-                                                        {% if not i.0 %}
-                                                            ---------
-                                                        {% else %}
-                                                            {{i.1}}
-                                                        {% endif %}
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% elif not p.value %}
-                                                ---------
-                                            {% elif p.value %}
-                                                {{ p.value }}
-                                            {% endif %}</p>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+            
+        <div class="block__profile__disease reception_page">
+            <div class="block__lines">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Пациент</th>
+                            <th>Дата записи</th>
+                            <th>Услуга</th>
+                            <th>Срок выполнения</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in notes %}
+                        <tr class="chooseable">
+                            <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
+                            <td>{{ note.doctor }}</td>
+                            <td>{{ note.date_recording }}</td>
+                            {% if note.status == 'recorded' %}
+                            <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
+                            {% else %}
+                            <td>{{ note.get_service_display }}</td>
+                            {% endif %}
+                            <td>{{ note.deadline }}</td>
+                            {% if note.status == 'required' %}
+                            <td><button class="strong btn same_btn noborder required">{{ note.get_status_display }}</button></td>
+                            {% elif note.status == 'recorded' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
+                            {% elif note.status == 'completed' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_completed }}</span></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
         {% endif %}
         
         {% if user.doctor %}

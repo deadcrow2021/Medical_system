@@ -140,7 +140,7 @@ class ReceptionAddConfirmForm(forms.ModelForm):
 
 
 class ReceptionAddResultForm(forms.ModelForm):
-    file_field = forms.FileField(label="Файлы", widget=forms.ClearableFileInput(attrs={ 'multiple': True }))
+    file_field = forms.FileField(label="Файлы", widget=forms.ClearableFileInput(attrs={ 'multiple': True }), required=False)
     class Meta:
         model = ReceptionNotes
         fields = (
@@ -155,8 +155,7 @@ class ReceptionViewForm(forms.ModelForm):
     class Meta:
         model = ReceptionNotes
         fields = (
-            'date_meeting','med_organization', 'specialization',
-            'cabinet', 'status'
+            '__all__'
         )
 
 

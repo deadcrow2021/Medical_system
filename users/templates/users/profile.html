@@ -178,41 +178,32 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>{% if user.patient %}
-                                Пациент
-                                {% else %}
-                                Доктор
-                                {% endif %}
-                            </th>
-                            {% if user.is_superuser %}
                             <th>Пациент</th>
-                            {% endif %}
-                            <th>Дата</th>
-                            <th>Медицинская организация</th>
-                            <th>Специальность</th>
-                            <th>Кабинет</th>
-                            <th>Посещено</th>
+                            <th>Дата записи</th>
+                            <th>Услуга</th>
+                            <th>Срок выполнения</th>
+                            <th>Статус</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for note in notes %}
-                        <tr>
-                            <td>
-                                {% if user.patient %}
-                                    <p>{{ note.patient.get_full_name }}</p>
-                                {% else %}
-                                    <p>{{ note.doctor.get_full_name }}</p>
-                                {% endif %}
-                            </td>
-                            {% if user.is_superuser %}
-                            <td><p>{{ note.patient.get_full_name }}</p></td>
+                        <tr class="chooseable">
+                            <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
+                            <td>{{ note.patient }}</td>
+                            <td>{{ note.date_recording }}</td>
+                            {% if note.status == 'recorded' %}
+                            <td>{{ note.get_service_display }}</td>
+                            {% else %}
+                            <td>{{ note.get_service_display }}</td>
                             {% endif %}
-                            <td><p class="">{{ note.date_meeting }}</p></td>
-                            <td><p>{{ note.get_med_organization_display }}</p></td>
-                            <td><p>{{ note.get_specialization_display }}</p></td>
-                            <td><p>{{ note.cabinet }}</p></td>
-                            <td><p>{% if note.status == True %}Да{% else %}Нет{% endif %}</p></td>
-                            {% comment %} <td><p>{{ note.status }}</p></td> {% endcomment %}
+                            <td>{{ note.deadline }}</td>
+                            {% if note.status == 'required' %}
+                            <td><span>{{ note.get_status_display }}</span></td>
+                            {% elif note.status == 'recorded' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
+                            {% elif note.status == 'completed' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_completed }}</span></td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
