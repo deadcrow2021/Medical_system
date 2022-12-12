@@ -385,17 +385,26 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
 
 def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -> HttpResponse:
     template_name: str = 'home/update_reception.html'
-    form_class = ReceptionAddForm
+    current_reception = ReceptionNotes.objects.get(pk=note_id)
+    
+    if current_reception.status == "required":
+        form_class = ReceptionAddAddingForm
+    elif current_reception.status == "recorded":
+        form_class = ReceptionAddConfirmForm
+    elif current_reception.status == "completed":
+        form_class = ReceptionAddResultForm
+    else:
+        form_class = ReceptionAddForm
     
     if request.method == "POST":
-        form: ReceptionAddForm = form_class(request.POST, instance=ReceptionNotes.objects.get(pk=note_id))
+        form: ReceptionAddForm = form_class(request.POST, instance=current_reception)
         if form.is_valid():
             form.save()
             # add_log
             request.method = "GET"
             return reception_add_page(request, profile_id)
     
-    form: ReceptionAddForm = form_class(instance=ReceptionNotes.objects.get(pk=note_id))
+    form: ReceptionAddForm = form_class(instance=current_reception)
     return render(request, template_name, { 'form': form })
 
 

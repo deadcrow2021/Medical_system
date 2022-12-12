@@ -12,30 +12,27 @@
         <h3>Планы посещений пациента</h3>
     </div>
     
-    <div class="outer_div">
-        <div class="border_div">
-            <form action="" method="POST">
-                {% csrf_token %}
-                <div class="fields add_form">
-                    {% for p in form %}
-                    <div class="fields__input">
-                        <div class="fields__input__label">
-                            {{ p.label_tag }}
-                        </div>
-                        <div class="fields__input__field">
-                            {{ p }}
-                        </div>
-                    </div>
-                    {{ p.errors }}
-                    {% endfor %}
-                    {{ form.errors }}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="form_content ">
+            {% for p in form %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ p.label_tag }}</strong>
                 </div>
-                <div class="submit-btn">
-                    <button type="submit" class="btn">Сохранить</button>
+                <div class="fields__input__field">
+                    {{ p }}
                 </div>
-            </form>
+            </div>
+            {{ p.errors }}
+            {% endfor %}
+            {{ form.errors }}
+            <p id="add_error" class="error"></p>
+            <div class="submit-btn">
+                <button type="submit" class="btn">Сохранить</button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 <script type="text/javascript" defer>
     var date_inputs = document.querySelectorAll('input[type=datetime-local]');
@@ -56,5 +53,21 @@
         inp.onfocus();
         inp.onblur();
     }
+</script>
+<script type="text/javascript">
+    // check forms errors
+    add_error.nextElementSibling.children[0].onclick = e => {
+        let prevDiv = add_error.previousElementSibling;
+        let to = prevDiv.children[1].children[0];
+        let from = prevDiv.previousElementSibling.children[1].children[0];
+        // let [from, txt, to] = [...prevDiv.children[1].children[2].children];
+        try {
+            if (Number(from.value) > Number(to.value)) {
+                add_error.innerHTML = "Неверный срок выполнения";
+                return false;
+            }
+        } catch (error) {console.log(`${error}`);}
+        // add_error.parentNode.parentNode.submit();
+    };
 </script>
 {% endblock %}

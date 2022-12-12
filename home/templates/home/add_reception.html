@@ -112,65 +112,67 @@
         <div class="X">&#x2715;</div>
     </div>
     
-    <div class="modification_btns">
-        <div>
-            <button type="submit" class="mod_btn btn" id="add">Добавить</button>
-            <div class="relative">
-                <div class="menu__options" style="display: none" id="service">
-                    <div class="menu__element"><button class="menu_btn same_btn">Лабораторная диагностика</button></div>
-                    <div class="menu__element"><button class="menu_btn same_btn">Инструментальная диагностика</button></div>
-                    <div class="menu__element"><button class="menu_btn same_btn">Консультация</button></div>
+    <div>
+        <div class="modification_btns">
+            <div>
+                <button type="submit" class="mod_btn btn" id="add">Добавить</button>
+                <div class="relative">
+                    <div class="menu__options" style="display: none" id="service">
+                        <div class="menu__element"><button class="menu_btn same_btn">Лабораторная диагностика</button></div>
+                        <div class="menu__element"><button class="menu_btn same_btn">Инструментальная диагностика</button></div>
+                        <div class="menu__element"><button class="menu_btn same_btn">Консультация</button></div>
+                    </div>
                 </div>
             </div>
+            <a id="change"><button disabled class="mod_btn btn" id="change_btn">Изменить</button></a>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="delete_id" value="-1">
+                <button disabled type="submit" class="mod_btn btn same_btn" id="del_btn">Удалить</button>
+            </form>
         </div>
-        <a id="change"><button disabled class="mod_btn btn" id="change_btn">Изменить</button></a>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="delete_id" value="-1">
-            <button disabled type="submit" class="mod_btn btn same_btn" id="del_btn">Удалить</button>
-        </form>
-    </div>
-    {% if notes %}
-    <div class="block__profile__disease border_div reception_page">
-        <div class="block__lines">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Пациент</th>
-                        <th>Дата записи</th>
-                        <th>Услуга</th>
-                        <th>Срок выполнения</th>
-                        <th>Статус</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for note in notes %}
-                    <tr class="chooseable">
-                        <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
-                        <td>{{ note.patient }}</td>
-                        <td>{{ note.date_recording }}</td>
-                        {% if note.status == 'recorded' %}
-                        <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
-                        {% else %}
-                        <td>{{ note.get_service_display }}</td>
-                        {% endif %}
-                        <td>{{ note.deadline }}</td>
-                        {% if note.status == 'required' %}
-                        <td><button class="strong btn same_btn noborder required">{{ note.get_status_display }}</button></td>
-                        {% elif note.status == 'recorded' %}
-                        <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
-                        {% elif note.status == 'completed' %}
-                        <td><span>{{ note.get_status_display }}: {{ note.date_completed }}</span></td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        {% if notes %}
+        <div class="block__profile__disease border_div reception_page">
+            <div class="block__lines">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Пациент</th>
+                            <th>Дата записи</th>
+                            <th>Услуга</th>
+                            <th>Срок выполнения</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in notes %}
+                        <tr class="chooseable">
+                            <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
+                            <td>{{ note.patient }}</td>
+                            <td>{{ note.date_recording }}</td>
+                            {% if note.status == 'recorded' %}
+                            <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
+                            {% else %}
+                            <td>{{ note.get_service_display }}</td>
+                            {% endif %}
+                            <td>{{ note.deadline }}</td>
+                            {% if note.status == 'required' %}
+                            <td><button class="strong btn same_btn noborder required">{{ note.get_status_display }}</button></td>
+                            {% elif note.status == 'recorded' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
+                            {% elif note.status == 'completed' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_completed }}</span></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
+        {% else %}
+            <h3>Посещения не назначены</h3>
+        {% endif %}
     </div>
-    {% else %}
-        <h3>Посещения не назначены</h3>
-    {% endif %}
 </div>
 <script type="text/javascript">
     // choose row, color to YELLOW
@@ -321,14 +323,15 @@
             let form = forms[i];
             let x = xs[i];
             form.onmouseover = e => {
-                if (e.target === form || e.target === x) {
+                if (e.target === x) {
                     x.style.color = 'rgb(176, 174, 255)';
+                    x.style.cursor = 'pointer';
                 } else {
                     x.style.color = '#000';
                 }
             };
             form.onclick = e => {
-                if (e.target === form || e.target === form) {
+                if (e.target === x) {
                     form.style.display = 'none';
                 }
             };

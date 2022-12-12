@@ -53,10 +53,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Пациент</th>
-                            <th>Дата записи</th>
+                            <th>Доктор</th>
+                            <th>Медицинская организация</th>
+                            <th>Специальность</th>
+                            <th>Кабинет</th>
                             <th>Услуга</th>
-                            <th>Срок выполнения</th>
+                            <th>Сроки выполнения</th>
                             <th>Статус</th>
                         </tr>
                     </thead>
@@ -65,15 +67,17 @@
                         <tr class="chooseable">
                             <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
                             <td>{{ note.doctor }}</td>
-                            <td>{{ note.date_recording }}</td>
-                            {% if note.status == 'recorded' %}
-                            <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
+                            <td>{{ note.med_organization }}</td>
+                            <td>{{ note.specialization }}</td>
+                            <td>{{ note.cabinet }}</td>
+                            {% if note.status == 'completed' %}
+                            <td><button class="strong btn same_btn noborder completed">{{ note.get_service_display }}</button></td>
                             {% else %}
                             <td>{{ note.get_service_display }}</td>
                             {% endif %}
                             <td>{{ note.deadline }}</td>
                             {% if note.status == 'required' %}
-                            <td><button class="strong btn same_btn noborder required">{{ note.get_status_display }}</button></td>
+                            <td><span>{{ note.get_status_display }}</span></td>
                             {% elif note.status == 'recorded' %}
                             <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
                             {% elif note.status == 'completed' %}
