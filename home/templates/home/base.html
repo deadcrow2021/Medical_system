@@ -23,7 +23,7 @@
             </div>
             {% if not user.patient %}
             <div class="navbar__element">
-                <p><a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" style="height: 70px"></a></p>
+                <p><a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" class="img"></a></p>
             </div>
             {% endif %}
             {% if user.patient %}
@@ -156,6 +156,7 @@
         
         var company = document.getElementsByClassName('company')[0];
         var company_btn = document.getElementsByClassName('company_btn')[0];
+        company.style.top = company.parentNode.parentNode.offsetHeight + 'px';
         
         company_btn.onmouseover = (e) => {
             company.style.maxHeight = company.scrollHeight + 30 + 'px';

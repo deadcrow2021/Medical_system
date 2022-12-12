@@ -5,30 +5,26 @@
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
-<div class="form__block">
-    <div class="outer_div">
-        <div class="border_div">
-            <form action="" method="POST">
-                {% csrf_token %}
-                <div class="fields add_form">
-                    {% for p in form %}
-                    <div class="fields__input">
-                        <div class="fields__input__label">
-                            {{ p.label_tag }}
-                        </div>
-                        <div class="fields__input__field">
-                            {{ p }}
-                        </div>
-                    </div>
-                    {{ p.errors }}
-                    {% endfor %}
-                    {{ form.errors }}
+<div class="form__block ">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="form_content">
+            {% for p in form %}
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ p.label_tag }}</strong>
                 </div>
-                <div class="submit-btn">
-                    <button type="submit" class="btn">Сохранить</button>
+                <div class="fields__input__field">
+                    {{ p }}
                 </div>
-            </form>
+            </div>
+            {{ p.errors }}
+            {% endfor %}
+            {{ form.errors }}
+            <div class="submit-btn center_div">
+                <button type="submit" class="btn">Сохранить</button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 {% endblock %}
