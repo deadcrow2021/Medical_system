@@ -1124,6 +1124,9 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             else:
                 form_data['age_from'] = 1
                 form_data['age_to'] = 99
+            
+            
+            
 
     patients = Patient.objects.all()
     patients_number = len(patients) if len(patients) else 1
@@ -1134,6 +1137,22 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         if request.method == 'POST':
             if form_data['age_from'] and form_data['age_to']:
                 if not (card.age and form_data['age_from'] <= card.age <= form_data['age_to']):
+                    continue
+
+            if form_data['med_org']:
+                if not (card.med_org and card.med_org == form_data['med_org']):
+                    continue
+
+            if form_data['territory']:
+                if not (card.territory and card.territory == form_data['territory']):
+                    continue
+
+            if form_data['date_of_birth']:
+                if not (card.date_of_birth and card.date_of_birth == form_data['date_of_birth']):
+                    continue
+
+            if form_data['diagnosis']:
+                if not (card.diagnosis and card.diagnosis == form_data['diagnosis']):
                     continue
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:

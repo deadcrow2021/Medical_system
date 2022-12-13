@@ -651,7 +651,12 @@ class MODeliveryForm(forms.ModelForm):
 class StatisticsForm(forms.Form):
     date_from = forms.DateField(label='За период от', required=False, widget=DateInput())
     date_to = forms.DateField(label='До', required=False, widget=DateInput())
-    
+
+    med_org = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
+    territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
+
+    date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
+    diagnosis = forms.CharField(label='Диагноз по МКБ-10', max_length=300, required=False)
+
     age_from = forms.IntegerField(label='Возраст от', required=False, min_value=1, max_value=99)
     age_to = forms.IntegerField(label='До', required=False, min_value=1, max_value=99)
-
