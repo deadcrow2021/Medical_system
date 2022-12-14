@@ -353,7 +353,7 @@ def update_profile(request, profile_id):
     
     if user_type == "doctor":
         user_profile = user.doctor
-        form = DoctorCreationForm(request.POST or None, instance=user_profile)
+        form = DoctorUpdateForm(request.POST or None, instance=user_profile)
     else:
         user_profile = user.patient
         form = PatientChangeForm(request.POST or None, instance=user_profile)
@@ -585,6 +585,9 @@ def login_page(request: HttpRequest) -> HttpResponse:
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            if hasattr(user, 'doctor') and not user.doctor.access:
+                messages.warning(request, 'Ваша запись была отключена. Обратитесь к администратору.')
+                return redirect('login')
             login(request, user)
             return redirect('home')
         else:

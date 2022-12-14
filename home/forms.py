@@ -50,6 +50,23 @@ class DoctorCreationForm(forms.ModelForm):
         )
 
 
+class DoctorUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = (
+            'first_name',
+            'last_name',
+            'father_name',
+            'cabinet',
+            'territory',
+            'med_org',
+            'role',
+            'telephone',
+            'email',
+            'access'
+        )
+
+
 class PatientChangeForm(forms.ModelForm):
     class Meta:
         model = Patient

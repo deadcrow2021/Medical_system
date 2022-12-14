@@ -897,6 +897,7 @@ class Doctor(models.Model):
     role         = models.CharField('Должность врача', max_length=30, choices=ROLES, default='----')
     telephone    = PhoneNumberField('Телефонный номер', blank=True, null=True)
     email        = models.EmailField('Email', max_length=60)
+    access       = models.BooleanField('Доступ', default=True)
     
     class Meta:
         verbose_name = 'Доктор'
