@@ -350,13 +350,6 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     samd.trigger = 'Выявление направления на оказание медицинских услуг'
                     samd.save()
                     # add_log
-                    
-                    # bot
-                    try:
-                        async_to_sync(bot.bot.send_message)(patient.telegramusers.tg_user_id,
-                                f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {doctor.get_full_name()}')
-                    except:
-                        pass
             elif add_type == "confirm":
                 row_id = request.POST.get('row_id', None)
                 form = ReceptionAddConfirmForm(request.POST, instance=ReceptionNotes.objects.get(pk=row_id))
@@ -364,6 +357,13 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit: ReceptionNotes = form.save(commit=False)
                     commit.status = 'recorded'
                     commit.save()
+                    
+                    # bot
+                    try:
+                        async_to_sync(bot.bot.send_message)(commit.patient.telegramusers.tg_user_id,
+                                f'Добавлена запись посещения на {commit.date_created.strftime("%d.%m.%y %H:%M")} к доктору {commit.doctor.get_full_name()}')
+                    except:
+                        pass
             elif add_type == 'result':
                 row_id = request.POST.get('row_id', None)
                 files = []
@@ -378,6 +378,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     for f in files:
                         commit.file.add(f.pk)
                     commit.save()
+    
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     # notes = ReceptionNotes.objects.filter()
     context.update({ 'notes': notes })
