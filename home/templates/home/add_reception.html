@@ -52,14 +52,19 @@
             <div class="form_content">
                 <div class="form_form">
                     <div class="form_labels">
+                        <strong>{{ confirm_form.specialization.label }}</strong>
+                        <strong>{{ confirm_form.med_organization.label }}</strong>
                         <strong>{{ confirm_form.doctor.label }}</strong>
                         <strong>{{ confirm_form.date_meeting.label }}</strong>
                     </div>
                     <div class="form_inputs">
+                        {{ confirm_form.specialization }}
+                        {{ confirm_form.med_organization }}
                         {{ confirm_form.doctor }}
                         {{ confirm_form.date_meeting }}
                     </div>
                 </div>
+                <div id="doctor_not_found" class="error" style='display: none; font-size: 20px'><strong>Нет докторов с такими данными</strong></div>
                 
                 <p id="confirm_error" class="error"></p>
                 <div class="two_btns">
@@ -77,30 +82,16 @@
             <input type="hidden" name="row_id" value="-1" result="">
             {% csrf_token %}
             <div class="form_content">
+                {% for p in result_form %}
                 <div class="fields__input">
                     <div class="fields__input__label">
-                        <strong>{{ result_form.date_completed.label }}</strong>
+                        <strong>{{ p.label }}</strong>
                     </div>
                     <div class="fields__input__field">
-                        {{ result_form.date_completed }}
+                        {{ p }}
                     </div>
                 </div>
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <strong>{{ result_form.result.label }}</strong>
-                    </div>
-                    <div class="fields__input__field">
-                        {{ result_form.result }}
-                    </div>
-                </div>
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <strong>{{ result_form.file_field.label }}</strong>
-                    </div>
-                    <div class="fields__input__field">
-                        {{ result_form.file_field }}
-                    </div>
-                </div>
+                {% endfor %}
                 
                 <p id="result_error" class="error"></p>
                 <div class="two_btns">
@@ -137,7 +128,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Пациент</th>
+                            <th>Доктор</th>
                             <th>Дата записи</th>
                             <th>Услуга</th>
                             <th>Срок выполнения</th>
@@ -148,7 +139,7 @@
                         {% for note in notes %}
                         <tr class="chooseable">
                             <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
-                            <td>{{ note.patient }}</td>
+                            {% if note.doctor %}<td>{{ note.doctor }}</td>{% else %}<td>Не назначен</td>{% endif %}
                             <td>{{ note.date_recording }}</td>
                             {% if note.status == 'recorded' %}
                             <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
@@ -174,6 +165,62 @@
         {% endif %}
     </div>
 </div>
+<script type="text/javascript">
+    class Doc {
+        constructor(name, org, role) {
+            this.name = name;
+            this.med_organization = org;
+            this.role = role;
+            this.display = 'block';
+        }
+    }
+    
+    var doctors = [{% for d in doctors %}new Doc("{{ d.get_full_name }}","{{ d.med_org }}","{{ d.role }}"),{% endfor %}];
+    let to_find = [...doctors];
+    for (let d of id_doctor.children) {
+        for (let i = 0; i < to_find.length; i++) {
+            if (d.innerHTML === to_find[i].name) {
+                to_find[i].html = d;
+                to_find = to_find.slice(0, i).concat(to_find.slice(i+1));
+                break;
+            }
+        }
+    }
+    
+    function select_doc(e) {
+        let enable_cnt = 0;
+        for (let d of doctors) {
+            if (d.role !== id_specialization.value || d.med_organization !== id_med_organization.value) {
+                d.display = 'none';
+            } else {
+                enable_cnt++;
+                d.display = 'block';
+            }
+        }
+        for (let i = 0; i < doctors.length; i++) {
+            doctors[i].html.style.display = doctors[i].display;
+        }
+        if (id_specialization.value && id_med_organization.value) {
+            if (enable_cnt > 0) {
+                id_doctor.style.display = 'block';
+                id_doctor.parentNode.previousElementSibling.children[2].style.display = 'block';
+                doctor_not_found.style.display = 'none';
+            } else {
+                doctor_not_found.style.display = 'block';
+                id_doctor.value = "";
+            }
+        } else {
+            id_doctor.style.display = 'none';
+            id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
+        }
+    }
+    
+    id_doctor.style.display = 'none';
+    id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
+    
+    id_specialization.onchange = select_doc;
+    id_med_organization.onchange = select_doc;
+</script>
 <script type="text/javascript">
     // choose row, color to YELLOW
     var change = document.getElementById('change');

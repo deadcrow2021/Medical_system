@@ -379,6 +379,8 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     context.update({ 'add_form': ReceptionAddAddingForm() })
     context.update({ 'confirm_form': ReceptionAddConfirmForm() })
     context.update({ 'result_form': ReceptionAddResultForm() })
+    context.update({ 'doctors': Doctor.objects.all() })
+    
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
