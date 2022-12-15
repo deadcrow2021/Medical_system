@@ -278,7 +278,7 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
             today = date.today()
             if date_of_birth > today:
                 # form.add_error('date_of_birth', 'Дата рождения не может быть больше сегодняшнего дня')
-                return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
+                return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases, 'date_error': '1' })
             data.age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
         data.save()
         # add_log  обновлена мед карта. Было: Стало:

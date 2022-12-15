@@ -24,6 +24,9 @@
             {{ p.errors }}
             {% endfor %}
             {{ form.errors }}
+            {% if date_error == '1' %}
+            <div class="error">Неверная дата рождения</div>
+            {% endif %}
         </div>
     </form>
 </div>
