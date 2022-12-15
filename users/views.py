@@ -190,11 +190,13 @@ def profile(request: HttpRequest, profile_id: int):
         diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
+        print(mo_delivery)
 
         # med_card = user_profile.card
         gestation_period = user_profile.gestation_period_weeks
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
+        med_org = user_profile.med_org
 
         try:
             treating_doctor = user.patient.doctors.all()[0].get_full_name()
@@ -209,11 +211,9 @@ def profile(request: HttpRequest, profile_id: int):
             ('Преэклампсия',               preeclampsia),
             ('Преждевременные роды',       premature_birth),
             ('Баллы перинатального риска', risk_values_sum),
-            ('Лечащий врач',               treating_doctor),
             ('Срок беременности',          gestation_period),
-            ('Дата рождения',              date_of_birth),
             ('Адрес проживания',           residence_address),
-            ('МО родоразрешения',          mo_delivery),
+            ('Медицинская организация',    med_org),
         )
         
         resp = render(request, template_name, {
@@ -225,9 +225,10 @@ def profile(request: HttpRequest, profile_id: int):
             'buttons':           buttons,
             'examinations':      examinations,
             'notes':             notes,
-            'risks':             risks
+            'risks':             risks,
+            'treating_doctor':   treating_doctor,
             # 'preeclampsia':      preeclampsia,
-            # 'mo_delivery':       mo_delivery,
+            'mo_delivery':       mo_delivery,
             # 'premature_birth':   premature_birth,
             # 'risk_values_sum':   risk_values_sum,
             # 'treating_doctor':   treating_doctor,

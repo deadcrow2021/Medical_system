@@ -215,14 +215,15 @@ class MedicalCardForm(forms.ModelForm):
             'maternity_leave_finish': DateInput(),
             'generic_certificate_date': DateInput(),
             'first_visit_date': DateInput(),
-            'childbirth_date': DateInput()
+            'childbirth_date': DateInput(),
+            'when_issued': DateInput()
         }
 
 
 class MedicalCardProfileForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
-        fields = 'first_name', 'last_name', 'father_name', 'mobile_phone', 'email'
+        fields = 'first_name', 'last_name', 'father_name', 'mobile_phone', 'email', 'date_of_birth'
 
 
 class ObstetricRiskCreationForm(forms.ModelForm):
