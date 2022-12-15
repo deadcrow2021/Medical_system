@@ -75,8 +75,9 @@
                         <th><strong>Фамилия:</strong></th>
                         <th><strong>Имя:</strong></th>
                         <th><strong>Отчество:</strong></th>
-                        <th><strong>Дата рождения</strong></th>
-                        <th><strong>СНИЛС</strong></th>
+                        <th><strong>Дата рождения \ Возраст</strong></th>
+                        <th><strong>Срок \ Триместр</strong></th>
+                        <th><strong>Перинатальный риск</strong></th>
                         <th><strong>Ссылка на профиль</strong></th>
                     </tr>
                 </thead>
@@ -85,9 +86,16 @@
                     <tr>
                         <td>{{ patient.last_name }}</td>
                         <td>{{ patient.first_name }}</td>
-                        <td>{{ patient.father_name }}</td>
-                        <td>{{ patient.date_of_birth }}</td>
-                        <td>{{ patient.snils }}</td>
+                        <td>{% if patient.father_name %}{{ patient.father_name }}{% else %}-----{% endif %}</td>
+                        <td>{% if patient.date_of_birth %}{{ patient.date_of_birth }}{% else %}-----{% endif %} {% if patient.age %} | {{ patient.age }} лет{% else %}{% endif %}</td>
+                        <td>
+                            {% if patient.gestation_period_weeks %}Недель {{patient.gestation_period_weeks}} | 
+                                {% if patient.gestation_period_weeks <= 13 %}Первый триместр{% endif %}
+                                {% if patient.gestation_period_weeks >= 27 %}Третий триместр{% endif %}
+                                {% if patient.gestation_period_weeks >= 14 and patient.gestation_period_weeks <= 26 %}Второй триместр{% endif %}
+                            {% endif %}
+                        </td>
+                        <td></td>
                         <td><a href="{% url 'profile' patient.patient.user.id %}">Профиль</a></td>
                     </tr>
                     {% endfor %}

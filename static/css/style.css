@@ -1202,3 +1202,34 @@ nav {
 .mo_delivery_block .form__block {
     min-height: 0;
 }
+
+
+#myProgress {
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #15539e;
+    border-radius: 8px;
+    margin: 10px 0 0 0;
+  }
+  
+#myBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2px 4px;
+    width: 1%;
+    height: 30px;
+    background-color: #b4e1ff;
+    border-radius: 10px;
+    color: black;
+    font-size: 18px;
+}
+
+.mo_classification {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin: 100px 0;
+    border-right: none;
+}

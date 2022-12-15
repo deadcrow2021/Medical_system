@@ -157,7 +157,6 @@ def profile(request: HttpRequest, profile_id: int):
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     to_add = f'#/profile/{profile_id}!Профиль'
-    
     # delete patient
     if request.POST:
         user_profile: User = User.objects.get(pk=profile_id)
@@ -190,13 +189,37 @@ def profile(request: HttpRequest, profile_id: int):
         diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
-        print(mo_delivery)
 
         # med_card = user_profile.card
         gestation_period = user_profile.gestation_period_weeks
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
         med_org = user_profile.med_org
+        
+        try:
+            instance = PatientInformation.objects.get(patient=user.patient)
+            patient_info_form = PatientInformationForm(None, instance=instance)
+        except:
+            patient_info_form = PatientInformationForm()
+        med_card_form = MedicalCardForm(None, instance=user.patient.card)
+        
+        forms = [med_card_form, patient_info_form]
+        
+        for v in current_pregnancy_models.values():
+            try:
+                inst = v[0].objects.get(patient=user.patient)
+                cur_preg_form = v[1](request.POST, instance=inst)
+            except:
+                continue
+            forms.append(cur_preg_form)
+
+        all_fields = 0
+        filled_fields = 0
+        for f in forms:
+            for v in f.initial.values():
+                if v:
+                    filled_fields += 1
+                all_fields += 1
 
         try:
             treating_doctor = user.patient.doctors.all()[0].get_full_name()
@@ -227,8 +250,9 @@ def profile(request: HttpRequest, profile_id: int):
             'notes':             notes,
             'risks':             risks,
             'treating_doctor':   treating_doctor,
-            # 'preeclampsia':      preeclampsia,
             'mo_delivery':       mo_delivery,
+            'quality':     filled_fields / all_fields * 100,
+            # 'preeclampsia':      preeclampsia,
             # 'premature_birth':   premature_birth,
             # 'risk_values_sum':   risk_values_sum,
             # 'treating_doctor':   treating_doctor,
@@ -701,7 +725,7 @@ def patient_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     model_names = []
     for key, val in patinet_info_models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
-        print(f'{val[1]=}')
+        # print(f'{val[1]=}')
         if len(instances[-1]) > 0:
             forms.append([val[1](instance=i) for i in instances[-1]])
             exists.append(True)
@@ -712,8 +736,8 @@ def patient_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
         model_names.append(key)
     
     tabs = zip(names, exists, forms, model_names)
-    print(f'{forms=}')
-    print(f'{exists=}')
+    # print(f'{forms=}')
+    # print(f'{exists=}')
     # key_value = ((key, val[2]) for key, val in patinet_info_models.items())
     roles = ('receptionist', 'obstetrician-gynecologist')
     
@@ -1157,6 +1181,18 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
 
             if form_data['diagnosis']:
                 if not (card.diagnosis and card.diagnosis == form_data['diagnosis']):
+                    continue
+
+            if form_data['gestation_period_weeks']:
+                if not (card.gestation_period_weeks and card.gestation_period_weeks == form_data['gestation_period_weeks']):
+                    continue
+
+            if form_data['mo_delivery']:
+                if not (p.mo_delivery.delivery and p.mo_delivery.delivery == form_data['mo_delivery']):
+                    continue
+
+            if form_data['pregnancy_outcome']:
+                if not (any(x.pregnancy_outcome for x in p.pregnancy_outcome.all()) and p.pregnancy_outcome.pregnancy_outcome == form_data['pregnancy_outcome']):
                     continue
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
