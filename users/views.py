@@ -1502,7 +1502,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     
     context = {
         'form': form,
-        'stats': stats
+        'stats': stats,
+        'mkb_10': mkb10_deseases
     }
     
     # def dict_to_str(d: dict):
