@@ -1193,3 +1193,7 @@ nav {
 .img {
     height: 7vh;
 }
+
+.mo_delivery_block .form__block {
+    min-height: 0;
+}
