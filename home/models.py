@@ -24,7 +24,7 @@ class Patient(models.Model):
         return self.get_full_name()
     
     def get_full_name(self) -> str:
-        return f"{self.last_name} {self.first_name} {self.father_name}"
+        return f"{self.last_name} {self.first_name} {self.father_name}".strip()
 
 
 ##### Medical Forms #####

@@ -386,6 +386,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     context.update({ 'result_form': ReceptionAddResultForm() })
     context.update({ 'doctors': Doctor.objects.all() })
     context.update({ 'results': ReceptionNotes.objects.filter(status='completed') })
+    context.update({ 'patient_name': User.objects.select_related('patient').get(pk=profile_id).patient.get_full_name() })
     
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
