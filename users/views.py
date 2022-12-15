@@ -1555,7 +1555,7 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     user = Doctor.objects.get(pk=profile_id)
     form = DoctorCreationForm(request.POST or None, instance=user)
     notes = ReceptionNotes.objects.filter(doctor=user)
-    to_add = f'/profile/{profile_id}!Профиль'
+    to_add = f'/doctor_profile/{profile_id}!Профиль'
 
     resp = render(request, template_name, { 'form': form, 'notes':notes })
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
