@@ -851,8 +851,9 @@ th {
 
 .message-block {
     position: absolute;
-    top: 45%;
-    left: 45%;
+    z-index: 999;
+    top: 15%;
+    left: 40%;
     width: 300px;
     height: 200px;
     background-color: #ecf1f4;
@@ -1196,4 +1197,6 @@ nav {
 .download_btn {
     font-size: calc(0.8em + 0.5vh + 0.3vw);
     margin: 5px 0;
-}
+
+.mo_delivery_block .form__block {
+    min-height: 0;

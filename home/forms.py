@@ -50,6 +50,23 @@ class DoctorCreationForm(forms.ModelForm):
         )
 
 
+class DoctorUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = (
+            'first_name',
+            'last_name',
+            'father_name',
+            'cabinet',
+            'territory',
+            'med_org',
+            'role',
+            'telephone',
+            'email',
+            'access'
+        )
+
+
 class PatientChangeForm(forms.ModelForm):
     class Meta:
         model = Patient
@@ -182,7 +199,7 @@ class MedicalCardForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
         fields = ('last_name', 'first_name', 'father_name', 'date_of_birth', 'age', 'series_number_pass', 'when_issued',    # Личные данные
-                'when_whom_issued', 'residence_address', 'registration_address', 'oms_policy', 'snils', 'marital_status',   # Личные данные
+                'when_whom_issued', 'residence_address', 'registration_address', 'territory', 'oms_policy', 'snils', 'marital_status', 'med_org',  # Личные данные
                 'mobile_phone', 'home_phone', 'work_phone', 'email', 'education', 'profession', 'work_place', 'disability', # Контактны данные
                 'trusted_person_fio', 'trusted_person_phone', # Контактны данные
                 'maternity_leave_start', 'maternity_leave_finish', 'disability_certificate', 'generic_certificate_number', # Дополнительные данные
@@ -198,14 +215,15 @@ class MedicalCardForm(forms.ModelForm):
             'maternity_leave_finish': DateInput(),
             'generic_certificate_date': DateInput(),
             'first_visit_date': DateInput(),
-            'childbirth_date': DateInput()
+            'childbirth_date': DateInput(),
+            'when_issued': DateInput()
         }
 
 
 class MedicalCardProfileForm(forms.ModelForm):
     class Meta:
         model = MedicalCard
-        fields = 'first_name', 'last_name', 'father_name', 'mobile_phone', 'email'
+        fields = 'first_name', 'last_name', 'father_name', 'mobile_phone', 'email', 'date_of_birth'
 
 
 class ObstetricRiskCreationForm(forms.ModelForm):
@@ -651,7 +669,12 @@ class MODeliveryForm(forms.ModelForm):
 class StatisticsForm(forms.Form):
     date_from = forms.DateField(label='За период от', required=False, widget=DateInput())
     date_to = forms.DateField(label='До', required=False, widget=DateInput())
-    
+
+    med_org = forms.ChoiceField(label='Медицинская организация', choices=MEDICAL_ORGANIZATION, required=False)
+    territory = forms.ChoiceField(label='Территория', choices=TERRITORY, required=False)
+
+    date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
+    diagnosis = forms.CharField(label='Диагноз по МКБ-10', max_length=300, required=False)
+
     age_from = forms.IntegerField(label='Возраст от', required=False, min_value=1, max_value=99)
     age_to = forms.IntegerField(label='До', required=False, min_value=1, max_value=99)
-

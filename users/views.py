@@ -190,11 +190,13 @@ def profile(request: HttpRequest, profile_id: int):
         diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
+        print(mo_delivery)
 
         # med_card = user_profile.card
         gestation_period = user_profile.gestation_period_weeks
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
+        med_org = user_profile.med_org
 
         try:
             treating_doctor = user.patient.doctors.all()[0].get_full_name()
@@ -209,11 +211,9 @@ def profile(request: HttpRequest, profile_id: int):
             ('Преэклампсия',               preeclampsia),
             ('Преждевременные роды',       premature_birth),
             ('Баллы перинатального риска', risk_values_sum),
-            ('Лечащий врач',               treating_doctor),
             ('Срок беременности',          gestation_period),
-            ('Дата рождения',              date_of_birth),
             ('Адрес проживания',           residence_address),
-            ('МО родоразрешения',          mo_delivery),
+            ('Медицинская организация',    med_org),
         )
         
         resp = render(request, template_name, {
@@ -225,9 +225,10 @@ def profile(request: HttpRequest, profile_id: int):
             'buttons':           buttons,
             'examinations':      examinations,
             'notes':             notes,
-            'risks':             risks
+            'risks':             risks,
+            'treating_doctor':   treating_doctor,
             # 'preeclampsia':      preeclampsia,
-            # 'mo_delivery':       mo_delivery,
+            'mo_delivery':       mo_delivery,
             # 'premature_birth':   premature_birth,
             # 'risk_values_sum':   risk_values_sum,
             # 'treating_doctor':   treating_doctor,
@@ -353,7 +354,7 @@ def update_profile(request, profile_id):
     
     if user_type == "doctor":
         user_profile = user.doctor
-        form = DoctorCreationForm(request.POST or None, instance=user_profile)
+        form = DoctorUpdateForm(request.POST or None, instance=user_profile)
     else:
         user_profile = user.patient
         form = PatientChangeForm(request.POST or None, instance=user_profile)
@@ -585,6 +586,9 @@ def login_page(request: HttpRequest) -> HttpResponse:
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            if hasattr(user, 'doctor') and not user.doctor.access:
+                messages.warning(request, 'Ваша запись была отключена. Обратитесь к администратору.')
+                return redirect('login')
             login(request, user)
             return redirect('home')
         else:
@@ -1124,6 +1128,9 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             else:
                 form_data['age_from'] = 1
                 form_data['age_to'] = 99
+            
+            
+            
 
     patients = Patient.objects.all()
     patients_number = len(patients) if len(patients) else 1
@@ -1134,6 +1141,22 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         if request.method == 'POST':
             if form_data['age_from'] and form_data['age_to']:
                 if not (card.age and form_data['age_from'] <= card.age <= form_data['age_to']):
+                    continue
+
+            if form_data['med_org']:
+                if not (card.med_org and card.med_org == form_data['med_org']):
+                    continue
+
+            if form_data['territory']:
+                if not (card.territory and card.territory == form_data['territory']):
+                    continue
+
+            if form_data['date_of_birth']:
+                if not (card.date_of_birth and card.date_of_birth == form_data['date_of_birth']):
+                    continue
+
+            if form_data['diagnosis']:
+                if not (card.diagnosis and card.diagnosis == form_data['diagnosis']):
                     continue
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:

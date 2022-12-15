@@ -107,6 +107,10 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td><strong>Лечащий врач:</strong></td>
+                        <td>{{ treating_doctor }}</td>
+                    </tr>
                 </tbody>
             </table>
             <table>
@@ -115,8 +119,8 @@
                     <td><strong>{{ name }}</strong></td>
                     <td>
                     {% if val %}
-                        {% if name == 'МО родоразрешения' and user.doctor.role == 'obstetrician-gynecologist' %}
-                            <a href="{% url 'update-mo-delivery' profile.user.id %}">{{ val }}</a>
+                        {% if name == 'Срок беременности' and user.doctor.role == 'obstetrician-gynecologist' %}
+                            {{ val }} недель
                         {% else %}
                             {{ val }}
                         {% endif %}
@@ -126,6 +130,10 @@
                     </td>
                 </tr>
                 {% endfor %}
+                <tr>
+                    <td><strong>МО родоразрешения: </strong></td>
+                    <td><a href="{% url 'update-mo-delivery' profile.user.id %}">{% if mo_delivery.delivery %}{{ mo_delivery.get_delivery_display }}{% else %}Введите данные{% endif %}</a></td>
+                </tr>
             </table>
         </div>
         
