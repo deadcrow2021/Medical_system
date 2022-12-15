@@ -1224,3 +1224,12 @@ nav {
     color: black;
     font-size: 18px;
 }
+
+.mo_classification {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin: 100px 0;
+    border-right: none;
+}

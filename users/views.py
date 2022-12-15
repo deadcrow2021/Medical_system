@@ -196,15 +196,21 @@ def profile(request: HttpRequest, profile_id: int):
         residence_address = user_profile.residence_address
         med_org = user_profile.med_org
         
-        instance = PatientInformation.objects.get(patient=user.patient)
-        patient_info_form = PatientInformationForm(None, instance=instance)
+        try:
+            instance = PatientInformation.objects.get(patient=user.patient)
+            patient_info_form = PatientInformationForm(None, instance=instance)
+        except:
+            patient_info_form = PatientInformationForm()
         med_card_form = MedicalCardForm(None, instance=user.patient.card)
         
         forms = [med_card_form, patient_info_form]
         
         for v in current_pregnancy_models.values():
-            inst = v[0].objects.get(patient=user.patient)
-            cur_preg_form = v[1](request.POST, instance=inst)
+            try:
+                inst = v[0].objects.get(patient=user.patient)
+                cur_preg_form = v[1](request.POST, instance=inst)
+            except:
+                continue
             forms.append(cur_preg_form)
 
         all_fields = 0
@@ -214,7 +220,6 @@ def profile(request: HttpRequest, profile_id: int):
                 if v:
                     filled_fields += 1
                 all_fields += 1
-        print(filled_fields, all_fields)
 
         try:
             treating_doctor = user.patient.doctors.all()[0].get_full_name()

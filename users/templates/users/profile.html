@@ -163,23 +163,25 @@
         {% endif %}
         
         {% if user.doctor %}
-        <div class="fields__input" style="margin-top: 20px">
-            <form action="{% url 'follow-unfollow' %}" method="post">
-                {% csrf_token %}
-                <div class="fields__input__field hide">
-                    <input type="hidden" name="profile_pk" value="{{profile.pk}}">
+            {% if not profile.doctors.all.0 or profile.doctors.all.0 == user.doctor %}
+                <div class="fields__input" style="margin-top: 20px">
+                    <form action="{% url 'follow-unfollow' %}" method="post">
+                        {% csrf_token %}
+                        <div class="fields__input__field hide">
+                            <input type="hidden" name="profile_pk" value="{{profile.pk}}">
+                        </div>
+                        {% if follow %}
+                        <div class="">
+                            <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
+                        </div>
+                        {% else %}
+                        <div class="">
+                            <button id="follow-btn" class="btn" type="submit">Привязать</button>
+                        </div>
+                        {% endif %}
+                    </form>
                 </div>
-                {% if follow %}
-                <div class="">
-                    <button id="unfollow-btn" class="btn" type="submit">Отвязать</button>
-                </div>
-                {% else %}
-                <div class="">
-                    <button id="follow-btn" class="btn" type="submit">Привязать</button>
-                </div>
-                {% endif %}
-            </form>
-        </div>
+            {% endif %}
         {% endif %}
         {% comment %} {% if not user.patient %}
         <a href="{% url 'update-profile' profile.user.id %}">
@@ -198,7 +200,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Пациент</th>
                             <th>Дата записи</th>
                             <th>Услуга</th>
                             <th>Срок выполнения</th>
@@ -209,7 +210,6 @@
                         {% for note in notes %}
                         <tr class="chooseable">
                             <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
-                            <td>{{ note.patient }}</td>
                             <td>{{ note.date_recording }}</td>
                             {% if note.status == 'recorded' %}
                             <td>{{ note.get_service_display }}</td>
