@@ -1197,6 +1197,8 @@ nav {
 .download_btn {
     font-size: calc(0.8em + 0.5vh + 0.3vw);
     margin: 5px 0;
+}
 
 .mo_delivery_block .form__block {
     min-height: 0;
+}

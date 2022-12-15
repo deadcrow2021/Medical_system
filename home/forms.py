@@ -208,7 +208,7 @@ class MedicalCardForm(forms.ModelForm):
                 'father_blood_group', 'father_blood_rh', 'father_date_of_determination',
                 'pregnancy_count', 'births_by_term',
                 'gestation_period_weeks', 'first_visit_date', 'childbirth_date', 'childbirth_gestation_period',
-                'med_org', 'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases')
+                'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases')
         widgets = {
             'date_of_birth': DateInput(),
             'maternity_leave_start': DateInput(),
