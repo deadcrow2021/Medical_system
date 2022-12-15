@@ -302,7 +302,7 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
             today = date.today()
             if date_of_birth > today:
                 # form.add_error('date_of_birth', 'Дата рождения не может быть больше сегодняшнего дня')
-                return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
+                return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases, 'date_error': '1' })
             data.age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
         data.save()
         # add_log  обновлена мед карта. Было: Стало:
@@ -1538,7 +1538,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
     
     context = {
         'form': form,
-        'stats': stats
+        'stats': stats,
+        'mkb_10': mkb10_deseases
     }
     
     # def dict_to_str(d: dict):
@@ -1590,8 +1591,8 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     user = Doctor.objects.get(pk=profile_id)
     form = DoctorCreationForm(request.POST or None, instance=user)
     notes = ReceptionNotes.objects.filter(doctor=user)
-    to_add = f'/profile/{profile_id}!Профиль'
-
+    to_add = f'/doctor_profile/{profile_id}!Профиль'
+    
     resp = render(request, template_name, { 'form': form, 'notes':notes })
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp

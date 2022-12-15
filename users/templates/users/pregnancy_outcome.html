@@ -41,7 +41,7 @@
                 </div>
                 {% endfor %}
                 {{ form.errors }}
-                <div style="display: flex;">
+                <div class="two_btns">
                     <button type="submit" class="delete_btn btn">Удалить</button>
                     <input type="hidden" name="delete_pk" value="{{ form.instance.pk }}">
                     <a href="{% url 'add-pregnancy-outcome' current_user.id form.instance.pk %}" class="btn">Изменить</a>

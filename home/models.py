@@ -24,7 +24,7 @@ class Patient(models.Model):
         return self.get_full_name()
     
     def get_full_name(self) -> str:
-        return f"{self.last_name} {self.first_name} {self.father_name}"
+        return f"{self.last_name} {self.first_name} {self.father_name}".strip()
 
 
 ##### Medical Forms #####
@@ -41,7 +41,7 @@ class MedicalCard(models.Model):
     when_issued = models.DateField("Когда выдан", blank=True, null=True)
     when_whom_issued = models.CharField("Кем выдан", max_length=100, blank=True, null=True)
     residence_address = models.CharField('Адрес проживания', max_length=100, blank=True, null=True)
-    registration_address = models.CharField('Адрес регистрции', max_length=100, blank=True, null=True)
+    registration_address = models.CharField('Адрес регистрации', max_length=100, blank=True, null=True)
     territory    = models.CharField('Территория', max_length=25, choices=TERRITORY, default='Ульяновский')
     oms_policy   = models.CharField('Полис ОМС', max_length=16, blank=True, null=True)
     snils        = models.CharField('СНИЛС', max_length=11, blank=True, null=True)

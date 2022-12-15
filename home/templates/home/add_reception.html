@@ -11,7 +11,7 @@
 {% if request.user.doctor.role not in rolesNA %}
 <div class="center_div">
     <div>
-        <h3>Планы посещений пациента</h3>
+        <h3>Планы посещений пациента: {{ patient_name }}</h3>
     </div>
     {% comment %} {% if request.user.doctor.role not in rolesR %} {% endcomment %}
     

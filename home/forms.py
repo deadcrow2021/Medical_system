@@ -206,9 +206,10 @@ class MedicalCardForm(forms.ModelForm):
                 'generic_certificate_date', 'allergy', 'allergy_description',
                 'mother_blood_group', 'mother_blood_rh', 'mother_date_of_determination',
                 'father_blood_group', 'father_blood_rh', 'father_date_of_determination',
-                'pregnancy_count', 'births_by_term',
-                'gestation_period_weeks', 'first_visit_date', 'childbirth_date', 'childbirth_gestation_period',
-                'med_org', 'diagnosis', 'complications', 'somatic_diseases', 'gynecological_diseases')
+                'diagnosis', 'complications',
+                'pregnancy_count', 'births_by_term', 'gestation_period_weeks', 'first_visit_date', 
+                'childbirth_date', 'childbirth_gestation_period',
+                'somatic_diseases', 'gynecological_diseases')
         widgets = {
             'date_of_birth': DateInput(),
             'maternity_leave_start': DateInput(),
