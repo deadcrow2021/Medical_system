@@ -678,3 +678,7 @@ class StatisticsForm(forms.Form):
 
     age_from = forms.IntegerField(label='Возраст от', required=False, min_value=1, max_value=99)
     age_to = forms.IntegerField(label='До', required=False, min_value=1, max_value=99)
+    
+    gestation_period_weeks = forms.IntegerField(label='Срок беременности (недели)', min_value=1, max_value=99, required=False)
+    mo_delivery = forms.ChoiceField(label='Группа акушерского стационара', choices=MO_DELIVERY, required=False)
+    pregnancy_outcome = forms.ChoiceField(label='Исход беременности', choices=PREGNANCY_OUTCOME, required=False)

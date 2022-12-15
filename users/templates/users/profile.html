@@ -79,7 +79,19 @@
                 </div>
             </div>
         </a>
-        
+        <div class="block__lines">
+            <div class="">
+                <div id="status">
+                    <div id="myProgress">
+                        <div id="myBar" style="width: {{quality|floatformat:0 }}%">
+                            <div>
+                                {{quality|floatformat:2 }} %
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     {% elif user.is_superuser %}
     <div></div>

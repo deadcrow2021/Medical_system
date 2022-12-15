@@ -1197,6 +1197,30 @@ nav {
 .download_btn {
     font-size: calc(0.8em + 0.5vh + 0.3vw);
     margin: 5px 0;
+}
 
 .mo_delivery_block .form__block {
     min-height: 0;
+}
+
+
+#myProgress {
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #15539e;
+    border-radius: 8px;
+    margin: 10px 0 0 0;
+  }
+  
+#myBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2px 4px;
+    width: 1%;
+    height: 30px;
+    background-color: #b4e1ff;
+    border-radius: 10px;
+    color: black;
+    font-size: 18px;
+}
