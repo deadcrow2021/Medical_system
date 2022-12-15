@@ -52,14 +52,19 @@
             <div class="form_content">
                 <div class="form_form">
                     <div class="form_labels">
+                        <strong>{{ confirm_form.specialization.label }}</strong>
+                        <strong>{{ confirm_form.med_organization.label }}</strong>
                         <strong>{{ confirm_form.doctor.label }}</strong>
                         <strong>{{ confirm_form.date_meeting.label }}</strong>
                     </div>
                     <div class="form_inputs">
+                        {{ confirm_form.specialization }}
+                        {{ confirm_form.med_organization }}
                         {{ confirm_form.doctor }}
                         {{ confirm_form.date_meeting }}
                     </div>
                 </div>
+                <div id="doctor_not_found" class="error" style='display: none; font-size: 20px'><strong>Нет докторов с такими данными</strong></div>
                 
                 <p id="confirm_error" class="error"></p>
                 <div class="two_btns">
@@ -71,36 +76,22 @@
         <div class="X">&#x2715;</div>
     </div>
     <div class="form result" style="display: none">
-    {% comment %} <div class="form"> {% endcomment %}
+    {% comment %} <div class="form result"> {% endcomment %}
         <form enctype="multipart/form-data" method="post" action="">
             <input type="hidden" name="type" value="result">
             <input type="hidden" name="row_id" value="-1" result="">
             {% csrf_token %}
             <div class="form_content">
+                {% for p in result_form %}
                 <div class="fields__input">
                     <div class="fields__input__label">
-                        <strong>{{ result_form.date_completed.label }}</strong>
+                        <strong>{{ p.label }}</strong>
                     </div>
                     <div class="fields__input__field">
-                        {{ result_form.date_completed }}
+                        {{ p }}
                     </div>
                 </div>
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <strong>{{ result_form.result.label }}</strong>
-                    </div>
-                    <div class="fields__input__field">
-                        {{ result_form.result }}
-                    </div>
-                </div>
-                <div class="fields__input">
-                    <div class="fields__input__label">
-                        <strong>{{ result_form.file_field.label }}</strong>
-                    </div>
-                    <div class="fields__input__field">
-                        {{ result_form.file_field }}
-                    </div>
-                </div>
+                {% endfor %}
                 
                 <p id="result_error" class="error"></p>
                 <div class="two_btns">
@@ -109,6 +100,31 @@
                 </div>
             </div>
         </form>
+        <div class="X">&#x2715;</div>
+    </div>
+    <div class="form result_display" style="display: none">
+    {% comment %} <div class="form result_display"> {% endcomment %}
+        <div class="form_content">
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ result_form.date_completed.label }}</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {{ result_form.date_completed.value }}
+                </div>
+            </div>
+            <div class="fields__input">
+                <div class="fields__input__label">
+                    <strong>{{ result_form.result.label }}</strong>
+                </div>
+                <div class="fields__input__field noborder">
+                    {{ result_form.result.value }}
+                </div>
+            </div>
+            <div class="">
+            </div>
+            <button type="close" class="btn">Отмена</button>
+        </div>
         <div class="X">&#x2715;</div>
     </div>
     
@@ -137,7 +153,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Пациент</th>
+                            <th>Доктор</th>
                             <th>Дата записи</th>
                             <th>Услуга</th>
                             <th>Срок выполнения</th>
@@ -148,10 +164,21 @@
                         {% for note in notes %}
                         <tr class="chooseable">
                             <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
-                            <td>{{ note.patient }}</td>
+                            {% if note.doctor %}<td>{{ note.doctor }}</td>{% else %}<td>Не назначен</td>{% endif %}
                             <td>{{ note.date_recording }}</td>
                             {% if note.status == 'recorded' %}
                             <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
+                            {% elif note.status == 'completed' %}
+                            <td><button class="strong btn same_btn noborder completed">{{ note.get_service_display }}
+                                <input type="hidden" name="date_completed" value="{{ note.date_completed }}">
+                                <input type="hidden" name="result" value="{{ note.result }}">
+                                <div class="hide">
+                                    Файлы
+                                {% for f in note.file.all %}
+                                    <input type="hidden" name="{{ f.file }}" value="{{ f.file.url }}">
+                                {% endfor %}
+                                </div>
+                            </button></td>
                             {% else %}
                             <td>{{ note.get_service_display }}</td>
                             {% endif %}
@@ -175,6 +202,94 @@
     </div>
 </div>
 <script type="text/javascript">
+    // display result form
+    let close_btn = document.querySelector('button[type="close"]');
+    var open_btns = document.getElementsByClassName('completed');
+    var display_result_form = document.getElementsByClassName('result_display')[0];
+    
+    for (let open_btn of open_btns) {
+        open_btn.onclick = e => {
+            let rows = display_result_form.children[0].children;
+            for (let i = 0; i < 2; i++) {
+                let inp = rows[i].children[1];
+                inp.innerText = e.target.children[i].value;
+            }
+            
+            if (e.target.children[2].children.length > 0) {
+                rows[2].innerHTML = `<div class="fields__input__label">
+                                        <strong>Файлы</strong>
+                                    </div>`;
+                for (let file of e.target.children[2].children) {
+                    rows[2].innerHTML += `<a href="${file.value}" class="btn download_btn noborder">${file.name}</a>`;
+                }
+            } else {
+                rows[2].innerHTML = "";
+            }
+            display_result_form.style.display = 'flex';
+        };
+    }
+    
+    close_btn.onclick = e => {
+        close_btn.parentNode.parentNode.style.display = 'none';
+    };
+</script>
+<script type="text/javascript">
+    class Doc {
+        constructor(name, org, role) {
+            this.name = name;
+            this.med_organization = org;
+            this.role = role;
+            this.display = 'block';
+        }
+    }
+    
+    var doctors = [{% for d in doctors %}new Doc("{{ d.get_full_name }}","{{ d.med_org }}","{{ d.role }}"),{% endfor %}];
+    let to_find = [...doctors];
+    for (let d of id_doctor.children) {
+        for (let i = 0; i < to_find.length; i++) {
+            if (d.innerHTML === to_find[i].name) {
+                to_find[i].html = d;
+                to_find = to_find.slice(0, i).concat(to_find.slice(i+1));
+                break;
+            }
+        }
+    }
+    
+    function select_doc(e) {
+        let enable_cnt = 0;
+        for (let d of doctors) {
+            if (d.role !== id_specialization.value || d.med_organization !== id_med_organization.value) {
+                d.display = 'none';
+            } else {
+                enable_cnt++;
+                d.display = 'block';
+            }
+        }
+        for (let i = 0; i < doctors.length; i++) {
+            doctors[i].html.style.display = doctors[i].display;
+        }
+        if (id_specialization.value && id_med_organization.value) {
+            if (enable_cnt > 0) {
+                id_doctor.style.display = 'block';
+                id_doctor.parentNode.previousElementSibling.children[2].style.display = 'block';
+                doctor_not_found.style.display = 'none';
+            } else {
+                doctor_not_found.style.display = 'block';
+                id_doctor.value = "";
+            }
+        } else {
+            id_doctor.style.display = 'none';
+            id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
+        }
+    }
+    
+    id_doctor.style.display = 'none';
+    id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
+    
+    id_specialization.onchange = select_doc;
+    id_med_organization.onchange = select_doc;
+</script>
+<script type="text/javascript">
     // choose row, color to YELLOW
     var change = document.getElementById('change');
     var change_btn = document.getElementById('change_btn');
@@ -191,7 +306,6 @@
                 choosen.style = "";
                 choosen.selected = "false";
             }
-            console.log(`${e.target.tagName}`);
             if (e.currentTarget.selected !== "true" && e.target.tagName !== "BUTTON") {
                 let notepk = e.currentTarget.children[0].value;
                 e.currentTarget.style.background = "#ffe55b";
@@ -239,6 +353,18 @@
             }
         }
     } catch (error) {console.log(`${error}`);}
+    try {
+        var recordeds = document.getElementsByClassName('recorded');
+        var result = document.getElementsByClassName('result')[0];
+        let row_id = document.querySelector('input[result=""]');
+        
+        for (let b of recordeds) {
+            b.onclick = e => {
+                result.style.display = 'flex';
+                row_id.value = b.parentNode.parentNode.children[0].value;
+            }
+        }
+    } catch (error) {console.log(`${error}`);}
 </script>
 <script type="text/javascript">
     // check forms errors
@@ -256,6 +382,7 @@
 </script>
 <script type="text/javascript">
     try {
+        // open add form
         var add_btn = document.getElementById('add');
         var service = document.getElementById('service');
         var section = "Лабораторная диагностика";

@@ -909,7 +909,7 @@ class Doctor(models.Model):
         return self.get_full_name()
     
     def get_full_name(self) -> str:
-        return f"{self.last_name} {self.first_name} {self.father_name}"
+        return f"{self.last_name} {self.first_name} {self.father_name}".strip()
 
 
 class File(models.Model):
@@ -932,7 +932,7 @@ class ReceptionNotes(models.Model):
     date_meeting = models.DateTimeField('Дата и время приема', blank=True, null=True)
     date_completed = models.DateTimeField('Дата выполнения назначения', blank=True, null=True)
     result = models.TextField("Результат", blank=True, null=True)
-    file = models.ForeignKey(File, verbose_name="Файл", on_delete=models.CASCADE, blank=True, null=True)
+    file = models.ManyToManyField(File, verbose_name="Файл", blank=True)
     
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
