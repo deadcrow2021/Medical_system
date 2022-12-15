@@ -1192,3 +1192,8 @@ nav {
 .img {
     height: 7vh;
 }
+
+.download_btn {
+    font-size: calc(0.8em + 0.5vh + 0.3vw);
+    margin: 5px 0;
+}

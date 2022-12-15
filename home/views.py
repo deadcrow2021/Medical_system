@@ -366,12 +366,17 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit.save()
             elif add_type == 'result':
                 row_id = request.POST.get('row_id', None)
+                files = []
                 for f in request.FILES.getlist('file_field'):
-                    Files(**{ 'title': f.name, 'description': 'reception result file', 'document': f }).save()
+                    new_file = File(**{ 'file': f })
+                    files.append(new_file)
+                    new_file.save()
                 form = ReceptionAddResultForm(request.POST, instance=ReceptionNotes.objects.get(pk=row_id))
                 if form.is_valid():
                     commit: ReceptionNotes = form.save(commit=False)
                     commit.status = 'completed'
+                    for f in files:
+                        commit.file.add(f.pk)
                     commit.save()
     notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
     # notes = ReceptionNotes.objects.filter()
@@ -380,6 +385,7 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     context.update({ 'confirm_form': ReceptionAddConfirmForm() })
     context.update({ 'result_form': ReceptionAddResultForm() })
     context.update({ 'doctors': Doctor.objects.all() })
+    context.update({ 'results': ReceptionNotes.objects.filter(status='completed') })
     
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)

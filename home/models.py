@@ -929,7 +929,7 @@ class ReceptionNotes(models.Model):
     date_meeting = models.DateTimeField('Дата и время приема', blank=True, null=True)
     date_completed = models.DateTimeField('Дата выполнения назначения', blank=True, null=True)
     result = models.TextField("Результат", blank=True, null=True)
-    file = models.ForeignKey(File, verbose_name="Файл", on_delete=models.CASCADE, blank=True, null=True)
+    file = models.ManyToManyField(File, verbose_name="Файл", blank=True)
     
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
