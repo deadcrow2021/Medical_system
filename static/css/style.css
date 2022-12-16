@@ -1147,8 +1147,9 @@ nav {
     max-width: 50%;
 }
 
-/* .form_inputs input, */
-.form_inputs * {
+.form_inputs input,
+.form_inputs select {
+/* .form_inputs * { */
     border: 1px solid black;
 }
 

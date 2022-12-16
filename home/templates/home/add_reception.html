@@ -53,8 +53,8 @@
                 <div class="form_form">
                     <div class="form_labels">
                         <strong>{{ confirm_form.specialization.label }}</strong>
-                        <strong class="none_height smoothly">{{ confirm_form.med_organization.label }}</strong>
-                        <strong class="none_height smoothly">{{ confirm_form.doctor.label }}</strong>
+                        <strong style="border: 0" class="none_height smoothly">{{ confirm_form.med_organization.label }}</strong>
+                        <strong style="border: 0" class="none_height smoothly">{{ confirm_form.doctor.label }}</strong>
                         <strong>{{ confirm_form.date_meeting.label }}</strong>
                     </div>
                     <div class="form_inputs">
@@ -68,7 +68,7 @@
                 
                 <p id="confirm_error" class="error"></p>
                 <div class="two_btns">
-                    <button type="reset" class="btn">Отмена</button>
+                    <button type="" class="btn" id="flex_cancel">Отмена</button>
                     <button type="submit" class="btn" confirm>Записать</button>
                 </div>
             </div>
@@ -233,7 +233,7 @@
         close_btn.parentNode.parentNode.style.display = 'none';
     };
 </script>
-<script type="text/javascript">
+<script type="text/javascript" >
     // filter doctors depending on parameters
     class Doc {
         constructor(name, org, role) {
@@ -267,34 +267,6 @@
                 to_find = to_find.slice(0, i).concat(to_find.slice(i+1));
                 break;
             }
-        }
-    }
-    
-    function select_doc(e) {
-        let enable_cnt = 0;
-        for (let d of doctors) {
-            if (d.role !== id_specialization.value || d.med_organization !== id_med_organization.value) {
-                d.display = 'none';
-            } else {
-                enable_cnt++;
-                d.display = 'block';
-            }
-        }
-        for (let i = 0; i < doctors.length; i++) {
-            doctors[i].html.style.display = doctors[i].display;
-        }
-        if (id_specialization.value && id_med_organization.value) {
-            if (enable_cnt > 0) {
-                id_doctor.style.display = 'block';
-                id_doctor.parentNode.previousElementSibling.children[2].style.display = 'block';
-                doctor_not_found.style.display = 'none';
-            } else {
-                doctor_not_found.style.display = 'block';
-                id_doctor.value = "";
-            }
-        } else {
-            id_doctor.style.display = 'none';
-            id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
         }
     }
     
@@ -369,6 +341,13 @@
             off_style(id_doctor, 2);
             id_doctor.value = '';
         }
+    };
+    id_specialization.onchange();
+    flex_cancel.onclick = e => {
+        flex_cancel.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+        id_specialization.value = '';
+        id_specialization.onchange();
+        return false;
     };
 </script>
 <script type="text/javascript">
@@ -542,10 +521,19 @@
             form.onclick = e => {
                 if (e.target === x) {
                     form.style.display = 'none';
+                    flex_cancel.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+                    id_specialization.value = '';
+                    id_specialization.onchange();
                 }
             };
         }
     } catch (error) { console.log(`${error}`); };
+</script>
+<script type="text/javascript">
+    document.body.style.display = 'none';
+    window.addEventListener("DOMContentLoaded", e => {
+        document.body.style.display = 'block';
+    });
 </script>
 {% else %}
     <h2>Доступ к данной странице запрещен</h2>
