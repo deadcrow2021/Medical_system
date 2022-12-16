@@ -251,7 +251,7 @@ def profile(request: HttpRequest, profile_id: int):
             'risks':             risks,
             'treating_doctor':   treating_doctor,
             'mo_delivery':       mo_delivery,
-            'quality':     filled_fields / all_fields * 100,
+            'quality':           filled_fields / all_fields * 100,
             # 'preeclampsia':      preeclampsia,
             # 'premature_birth':   premature_birth,
             # 'risk_values_sum':   risk_values_sum,
