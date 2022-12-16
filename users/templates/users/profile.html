@@ -142,10 +142,12 @@
                     </td>
                 </tr>
                 {% endfor %}
+                {% if user.doctor %}
                 <tr>
                     <td><strong>МО родоразрешения: </strong></td>
                     <td><a href="{% url 'update-mo-delivery' profile.user.id %}">{% if mo_delivery.delivery %}{{ mo_delivery.get_delivery_display }}{% else %}Введите данные{% endif %}</a></td>
                 </tr>
+                {% endif %}
             </table>
         </div>
         
@@ -238,7 +240,7 @@
 
 <div class="banner" style="display: none;">
     <div class="lines__element banner__content">
-        <strong><h3>Вы действительно хотите удалить пациента?</h3></strong>
+        <strong><h3>Вы действительно хотите удалить пользователя?</h3></strong>
         <div style="display: flex">
             <button type="button" class="btn cancel_btn" style="margin-right: 30px">Отменить</button>
             <form action="" method="post">

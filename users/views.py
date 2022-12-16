@@ -1626,33 +1626,34 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
     to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
     context = {}
     
-    if request.method == "POST":
-        if request.POST.get('modify', None) != None:
-            context.update({ 'modify': True })
-        else:
-            for key, val in current_pregnancy_models.items():
-                inst = val[0].objects.get(patient=current_user.patient)
-                form = val[1](request.POST, instance=inst)
-                if form.is_valid():
-                    form.save()
-    
-    instances = []
-    model_forms = []
-    exists = []
-    model_names = []
-    
-    for key, val in current_pregnancy_models.items():
-        instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
-        if (len(instances[-1]) > 0):
-            model_forms.append([val[1](instance=i) for i in instances[-1]])
-            exists.append(True)
-        else:
-            model_forms.append([])
-            exists.append(False)
-        model_names.append(key)
-    
-    data = zip(model_forms, exists, model_names)
-    context.update({ 'data': data, 'current_user': current_user })
+    try:
+        if request.method == "POST":
+            if request.POST.get('modify', None) != None:
+                context.update({ 'modify': True })
+            else:
+                for key, val in current_pregnancy_models.items():
+                    inst = val[0].objects.get(patient=current_user.patient)
+                    form = val[1](request.POST, instance=inst)
+                    if form.is_valid():
+                        form.save()
+        
+        instances = []
+        model_forms = []
+        exists = []
+        model_names = []
+        for key, val in current_pregnancy_models.items():
+            instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
+            if (len(instances[-1]) > 0):
+                model_forms.append([val[1](instance=i) for i in instances[-1]])
+                exists.append(True)
+            else:
+                model_forms.append([])
+                exists.append(False)
+            model_names.append(key)
+        data = zip(model_forms, exists, model_names)
+        context.update({ 'data': data, 'current_user': current_user })
+    except:
+        pass
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
