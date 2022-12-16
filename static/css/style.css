@@ -66,7 +66,7 @@ fieldset legend h3 {
 }
 
 fieldset .user__block__element {
-    font-size: calc(1em + 0.5vh + 0.3vw)
+    font-size: calc(1em + 0.5vh + 0.3vw);
 }
 
 h2 {
@@ -76,7 +76,7 @@ h2 {
 
 h3 {
     font-weight: bold;
-    font-size: 24px;
+    font-size: calc(1em + 0.5vh + 0.3vw);
 }
 
 h4 {
@@ -180,7 +180,7 @@ a:hover * {
 }
 
 .lines__element {
-    font-size: 18px;
+    font-size: calc(0.6em + 0.5vh + 0.3vw);
     margin: 7px 0 8px 0;
 }
 
@@ -774,12 +774,12 @@ th {
     margin-right: 30px;
 }
 
-.profile_data tr {
-    font-size: 20px;
+.profile_data tr,
+.profile_data td {
+    font-size: calc(0.6em + 0.4vh + 0.25vw);
 }
 
 .profile_data td {
-    font-size: 20px;
     /* border-top: 1px solid black; */
     padding: 5px;
     border-bottom: 1px solid rgb(121, 121, 121);
