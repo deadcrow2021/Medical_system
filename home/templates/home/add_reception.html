@@ -43,8 +43,8 @@
         </form>
         <div class="X">&#x2715;</div>
     </div>
-    <div class="form confirm" style="display: none">
-    {% comment %} <div class="form" > {% endcomment %}
+    {% comment %} <div class="form confirm" style="display: none"> {% endcomment %}
+    <div class="form confirm">
         <form action="" method="POST">
             <input type="hidden" name="type" value="confirm">
             <input type="hidden" name="row_id" value="-1" confirm="">
@@ -53,8 +53,8 @@
                 <div class="form_form">
                     <div class="form_labels">
                         <strong>{{ confirm_form.specialization.label }}</strong>
-                        <strong>{{ confirm_form.med_organization.label }}</strong>
-                        <strong>{{ confirm_form.doctor.label }}</strong>
+                        <strong class="none_height smoothly">{{ confirm_form.med_organization.label }}</strong>
+                        <strong class="none_height smoothly">{{ confirm_form.doctor.label }}</strong>
                         <strong>{{ confirm_form.date_meeting.label }}</strong>
                     </div>
                     <div class="form_inputs">
@@ -234,6 +234,7 @@
     };
 </script>
 <script type="text/javascript">
+    // filter doctors depending on parameters
     class Doc {
         constructor(name, org, role) {
             this.name = name;
@@ -283,11 +284,44 @@
         }
     }
     
-    id_doctor.style.display = 'none';
-    id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
+    var id_med_organization_height = id_med_organization.offsetHeight + 'px';
+    var id_doctor_height = id_doctor.offsetHeight + 'px';
     
-    id_specialization.onchange = select_doc;
-    id_med_organization.onchange = select_doc;
+    id_med_organization.classList.add('none_height', 'smoothly');
+    id_doctor.classList.add('none_height', 'smoothly');
+    
+    id_med_organization.parentNode.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+    
+    function on_style(elem, idx) {
+        elem.style.maxHeight = id_med_organization_height;
+        elem.style.border = '1px solid black';
+        elem.style.margin = '10px 0';
+        elem.parentNode.previousElementSibling.children[idx].style.maxHeight = id_med_organization_height;
+        elem.parentNode.previousElementSibling.children[idx].style.margin = 'auto 0';
+    }
+    function off_style(elem, idx) {
+        elem.style.maxHeight = '0';
+        elem.style.border = '0';
+        elem.style.margin = '0';
+        elem.parentNode.previousElementSibling.children[idx].style.maxHeight = '0';
+        elem.parentNode.previousElementSibling.children[idx].style.margin = '0';
+    }
+    
+    id_specialization.onchange = e => {
+        if (id_specialization.value !== '') {
+            on_style(id_med_organization, 1);
+        } else {
+            off_style(id_med_organization, 1);
+            off_style(id_doctor, 2);
+        }
+    };
+    id_med_organization.onchange = e => {
+        if (id_med_organization.value !== '') {
+            on_style(id_doctor, 2);
+        } else {
+            off_style(id_doctor, 2);
+        }
+    };
 </script>
 <script type="text/javascript">
     // choose row, color to YELLOW

@@ -936,7 +936,7 @@ nav {
 }
 
 .nav_link {
-    font-size: 22px;
+    font-size: calc(0.6em + 0.5vh + 0.3vw);
     color: #1d1d1d;
     line-height: 35px;
     height: 100%;
@@ -1144,11 +1144,11 @@ nav {
     display: flex;
     flex-direction: column;
     flex: 1;
-    max-width: 60%;
+    max-width: 50%;
 }
 
-.form_inputs input,
-.form_inputs select {
+/* .form_inputs input, */
+.form_inputs * {
     border: 1px solid black;
 }
 
@@ -1206,17 +1206,16 @@ nav {
 
 #myProgress {
     width: 100%;
-    background-color: rgb(255, 255, 255);
     border: 1px solid #15539e;
     border-radius: 8px;
     margin: 10px 0 0 0;
-  }
-  
+}
+
 #myBar {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 2px 4px;
+    overflow: hidden;
     width: 1%;
     height: 30px;
     background-color: #b4e1ff;
@@ -1232,4 +1231,16 @@ nav {
     justify-content: center;
     margin: 100px 0;
     border-right: none;
+}
+
+.smoothly {
+    transition: all ease 0.5s;
+}
+
+.none_height {
+    max-height: 0;
+    overflow: hidden;
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
