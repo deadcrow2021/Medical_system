@@ -13,19 +13,40 @@
 {% if user.is_authenticated %}
     <div class="navbar">
         <div class="navbar__row">
+            <!-- MAIN -->
             <div class="navbar__element">
                 <p><a href="{% url 'home' %}">Главная</a></p>
             </div>
+            <!-- LONG INSCRIPTION -->
             <div class="navbar__element">
                 {% comment %} <span class="company_btn" onselectstart="return false" onmousedown="return false">АСМИК</span> {% endcomment %}
                 <p><a class="company_btn" onselectstart="return false" onmousedown="return false">Акушерская система мониторинга и контроля (АСМиК)</a></p>
                 <div class="company" >Информационная система «Региональный акушерский мониторинг»</div>
             </div>
+            <!-- NOTIFICATION BUTTON -->
+            <div class="navbar__element">
+                <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false"><img src="{% static 'images/notification.png' %}" alt="Статистика" class="img"></a></p>
+                <div class="relative">
+                    <div class="menu__options"  style="display: none">
+                        {% for notification in request.user.notifications.all %}
+                        <div class="menu__element">
+                            <a href="{{ notification.link }}">
+                                {{ notification.title }}
+                                <p>{{ notification.description }}</p>
+                                <input type="hidden" name="notification_id" value="{{ description.pk }}">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- STATISTICTS BUTTON -->
             {% if not user.patient %}
             <div class="navbar__element">
                 <p><a href="{% url 'statistics' %}"><img src="{% static 'images/statistics.png' %}" alt="Статистика" class="img"></a></p>
             </div>
             {% endif %}
+            <!-- USER BUTTON -->
             {% if user.patient %}
             <div class="navbar__element">
                 <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</a></p>
@@ -144,15 +165,17 @@
     
     
     <script type="text/javascript" defer>
-        var menu = document.getElementsByClassName('menu__options')[0];
-        var button = document.getElementsByClassName('toggle_btn')[0];
+        var toggle_btns = document.getElementsByClassName('toggle_btn');
         
-        button.onclick = (e) => {
-            if (menu.style.display !== 'none')
-                menu.style.display = 'none';
-            else
-                menu.style.display = 'block';
-        };
+        for (let toggle_btn of toggle_btns) {
+            let next_elem = toggle_btn.parentNode.nextElementSibling.children[0];
+            toggle_btn.onclick = (e) => {
+                if (next_elem.style.display !== 'none')
+                    next_elem.style.display = 'none';
+                else
+                    next_elem.style.display = 'block';
+            };
+        }
         
         var company = document.getElementsByClassName('company')[0];
         var company_btn = document.getElementsByClassName('company_btn')[0];
