@@ -25,12 +25,12 @@
             </div>
             <!-- NOTIFICATION BUTTON -->
             <div class="navbar__element">
-                <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false"><img src="{% static 'images/notification.png' %}" alt="Статистика" class="img"></a></p>
+                <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false"><img src="{% static 'images/notification.png' %}" alt="Уведомления" class="img"></a></p>
                 <div class="relative">
-                    <div class="menu__options"  style="display: none">
+                    <div class="menu__options">
                         {% for notification in request.user.notifications.all %}
                         <div class="menu__element">
-                            <a href="{{ notification.link }}">
+                            <a href="{{ notification.link }}" class="notification_link">
                                 {{ notification.title }}
                                 <p>{{ notification.description }}</p>
                                 <input type="hidden" name="notification_id" value="{{ description.pk }}">
@@ -191,6 +191,21 @@
             company.style.padding = '0px';
             company.style.border = '0';
         };
+    </script>
+    <script type="text/javascript" defer>
+        var notification = document.querySelector('img[alt="Уведомления"]').parentNode.parentNode;
+        var notification_menu = notification.nextElementSibling.children[0];
+        notification_menu.style.maxWidth = document.body.offsetWidth - notification_menu.getBoundingClientRect().x + 'px';
+        notification_menu.style.display = 'none';
+        let links = document.getElementsByClassName('notification_link');
+        
+        try {
+            if (notification_menu.children.length > 0) {
+                notification.children[0].children[0].src = document.URL.split('/').slice(0,3).join('/') + '/' + "static/images/have_notification.png";
+            } else {
+                notification.children[0].children[0].src = "static/images/notification.png";
+            }
+        } catch (error) { console.log(`${error}`); }
     </script>
     <script src="{% static 'js/script.js' %}" defer></script>
     <script type="text/javascript" defer>

@@ -1011,3 +1011,6 @@ class Notifications(models.Model):
     link = models.CharField('Ссылка', max_length=100, blank=True, null=True)
     read = models.BooleanField('Просмотрено', default=False)
     created = models.DateTimeField('Дата создания', auto_now_add=True)
+    
+    class Meta:
+        ordering = ['read', '-created']
