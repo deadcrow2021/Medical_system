@@ -55,6 +55,7 @@ fieldset {
     border: 1px solid black;
     border-radius: 20px;
     padding: 0 20px;
+    backdrop-filter: blur(8px);
 }
 
 fieldset.outer_div {
@@ -112,6 +113,7 @@ a:hover * {
     word-break: break-word;
     overflow-y: hidden;
     line-height: normal;
+    text-align: center;
 }
 
 .company {
@@ -177,6 +179,7 @@ a:hover * {
 .block__lines {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .lines__element {
@@ -472,12 +475,14 @@ a:hover * {
     width: max-content;
     position: absolute;
     top: 10px;
-    background-color: #f6f5f4;
+    /* background-color: #f6f5f4; */
     border: 2px solid black;
     border-radius: 5px;
     line-height: 1.4rem;
     height: fit-content;
     z-index: 3;
+    background-color: #eeea;
+    backdrop-filter: blur(4px);
 }
 
 .menu__element {
@@ -491,7 +496,8 @@ a:hover * {
     padding: 3px 5px;
     font-size: 1.3rem;
     background-color: transparent;
-    color: rgb(0, 56, 94);
+    /* color: rgb(0, 56, 94); */
+    color: rgb(1, 38, 63);
     text-align: left;
 }
 
@@ -643,6 +649,8 @@ a.btn {
 	width: 100%;
 	border: none;
     border-spacing: 0;
+    backdrop-filter: blur(8px);
+    background-color: #fff7;
 	/* margin-bottom: 20px; */
 }
 .table thead th {
@@ -1007,6 +1015,7 @@ nav {
     height: 600px;
     overflow-y: scroll;
     justify-content: flex-start;
+    backdrop-filter: blur(8px);
 }
 .tab-content > a {
     height: auto;
@@ -1244,4 +1253,31 @@ nav {
     border: 0;
     padding: 0;
     margin: 0;
+}
+
+
+.background_img {
+    position: absolute;
+    z-index: -5;
+    width: 100vw;
+    height: 100vh;
+    object-fit: fill;
+}
+
+.notification_link * {
+    padding: 5px 0;
+}
+
+.notification_title {
+    font-weight: bold;
+    font-size: calc(0.5em + 0.5vh + 0.3vw);
+}
+
+.notification_description {
+    border-bottom: 1px solid #000a;
+    font-size: calc(0.4em + 0.5vh + 0.3vw);
+}
+
+.notification_description::before {
+    content: "― ";
 }

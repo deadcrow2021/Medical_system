@@ -10,6 +10,7 @@
     <link rel="icon" href="data:;base64,=">
 </head>
 <body>
+    <img class="background_img" src="{% static 'images/background.png' %}" alt="dsg">
 {% if user.is_authenticated %}
     <div class="navbar">
         <div class="navbar__row">
@@ -20,8 +21,8 @@
             <!-- LONG INSCRIPTION -->
             <div class="navbar__element">
                 {% comment %} <span class="company_btn" onselectstart="return false" onmousedown="return false">АСМИК</span> {% endcomment %}
-                <p><a class="company_btn" onselectstart="return false" onmousedown="return false">Акушерская система мониторинга и контроля (АСМиК)</a></p>
-                <div class="company" >Информационная система «Региональный акушерский мониторинг»</div>
+                <p><a class="company_btn" onselectstart="return false" onmousedown="return false">Информационная система «Региональный акушерский мониторинг»</a></p>
+                <div class="company">Акушерская система мониторинга и контроля (АСМиК)</div>
             </div>
             <!-- NOTIFICATION BUTTON -->
             <div class="navbar__element">
@@ -31,11 +32,12 @@
                         {% for notification in request.user.notifications.all %}
                         <div class="menu__element">
                             <a href="{{ notification.link }}" class="notification_link">
-                                {{ notification.title }}
-                                <p>{{ notification.description }}</p>
+                                <p class="notification_title">{{ notification.title }}</p>
+                                <p class="notification_description">{{ notification.description }}</p>
                                 <input type="hidden" name="notification_id" value="{{ description.pk }}">
                             </a>
                         </div>
+                        <hr>
                         {% endfor %}
                     </div>
                 </div>
