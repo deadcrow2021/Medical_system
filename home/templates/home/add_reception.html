@@ -43,8 +43,8 @@
         </form>
         <div class="X">&#x2715;</div>
     </div>
-    <div class="form confirm" style="display: none">
-    {% comment %} <div class="form" > {% endcomment %}
+    {% comment %} <div class="form confirm" style="display: none"> {% endcomment %}
+    <div class="form confirm">
         <form action="" method="POST">
             <input type="hidden" name="type" value="confirm">
             <input type="hidden" name="row_id" value="-1" confirm="">
@@ -53,8 +53,8 @@
                 <div class="form_form">
                     <div class="form_labels">
                         <strong>{{ confirm_form.specialization.label }}</strong>
-                        <strong>{{ confirm_form.med_organization.label }}</strong>
-                        <strong>{{ confirm_form.doctor.label }}</strong>
+                        <strong style="border: 0" class="none_height smoothly">{{ confirm_form.med_organization.label }}</strong>
+                        <strong style="border: 0" class="none_height smoothly">{{ confirm_form.doctor.label }}</strong>
                         <strong>{{ confirm_form.date_meeting.label }}</strong>
                     </div>
                     <div class="form_inputs">
@@ -68,7 +68,7 @@
                 
                 <p id="confirm_error" class="error"></p>
                 <div class="two_btns">
-                    <button type="reset" class="btn">Отмена</button>
+                    <button type="" class="btn" id="flex_cancel">Отмена</button>
                     <button type="submit" class="btn" confirm>Записать</button>
                 </div>
             </div>
@@ -233,7 +233,8 @@
         close_btn.parentNode.parentNode.style.display = 'none';
     };
 </script>
-<script type="text/javascript">
+<script type="text/javascript" >
+    // filter doctors depending on parameters
     class Doc {
         constructor(name, org, role) {
             this.name = name;
@@ -243,7 +244,21 @@
         }
     }
     
+    // make doctors
     var doctors = [{% for d in doctors %}new Doc("{{ d.get_full_name }}","{{ d.med_org }}","{{ d.role }}"),{% endfor %}];
+    // make med_organization object, where role related to array of med_orgs
+    var med_orgs = new Object();
+    for (let el of doctors) {
+        if (med_orgs.hasOwnProperty(el.role)) {
+            med_orgs[el.role].add(el.med_organization);
+        } else {
+            med_orgs[el.role] = new Set();
+        }
+    };
+    for (let [k, v] of Object.entries(med_orgs)) {
+        med_orgs[k] = [...v];
+    }
+    // set html elements to doctors
     let to_find = [...doctors];
     for (let d of id_doctor.children) {
         for (let i = 0; i < to_find.length; i++) {
@@ -255,39 +270,85 @@
         }
     }
     
-    function select_doc(e) {
-        let enable_cnt = 0;
-        for (let d of doctors) {
-            if (d.role !== id_specialization.value || d.med_organization !== id_med_organization.value) {
-                d.display = 'none';
-            } else {
-                enable_cnt++;
-                d.display = 'block';
-            }
-        }
-        for (let i = 0; i < doctors.length; i++) {
-            doctors[i].html.style.display = doctors[i].display;
-        }
-        if (id_specialization.value && id_med_organization.value) {
-            if (enable_cnt > 0) {
-                id_doctor.style.display = 'block';
-                id_doctor.parentNode.previousElementSibling.children[2].style.display = 'block';
-                doctor_not_found.style.display = 'none';
-            } else {
-                doctor_not_found.style.display = 'block';
-                id_doctor.value = "";
-            }
-        } else {
-            id_doctor.style.display = 'none';
-            id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
-        }
+    var id_med_organization_height = id_med_organization.offsetHeight + 'px';
+    var id_doctor_height = id_doctor.offsetHeight + 'px';
+    
+    id_med_organization.classList.add('none_height', 'smoothly');
+    id_doctor.classList.add('none_height', 'smoothly');
+    
+    id_med_organization.parentNode.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+    
+    function on_style(elem, idx) {
+        elem.style.maxHeight = id_med_organization_height;
+        elem.style.border = '1px solid black';
+        elem.style.margin = '10px 0';
+        elem.parentNode.previousElementSibling.children[idx].style.maxHeight = id_med_organization_height;
+        elem.parentNode.previousElementSibling.children[idx].style.margin = 'auto 0';
+    }
+    function off_style(elem, idx) {
+        elem.style.maxHeight = '0';
+        elem.style.border = '0';
+        elem.style.margin = '0';
+        elem.parentNode.previousElementSibling.children[idx].style.maxHeight = '0';
+        elem.parentNode.previousElementSibling.children[idx].style.margin = '0';
     }
     
-    id_doctor.style.display = 'none';
-    id_doctor.parentNode.previousElementSibling.children[2].style.display = 'none';
-    
-    id_specialization.onchange = select_doc;
-    id_med_organization.onchange = select_doc;
+    id_specialization.onchange = e => {
+        if (id_specialization.value !== '') {
+            on_style(id_med_organization, 1);
+            id_med_organization.value = '';
+            id_med_organization.onchange();
+            var mas = med_orgs[id_specialization.value];
+            for (let ch of id_med_organization.children) {
+                if (mas.includes(ch.value)) {
+                    ch.style.display = 'block';
+                } else {
+                    ch.style.display = 'none';
+                }
+            }
+        } else {
+            off_style(id_med_organization, 1);
+            off_style(id_doctor, 2);
+            id_med_organization.value = '';
+            id_doctor.value = '';
+        }
+    };
+    id_med_organization.onchange = e => {
+        if (id_med_organization.value !== '') {
+            on_style(id_doctor, 2);
+            id_doctor.value = '';
+            // var enable_cnt = 0;
+            for (let d of doctors) {
+                if (d.role !== id_specialization.value || d.med_organization !== id_med_organization.value) {
+                    d.display = 'none';
+                } else {
+                    // enable_cnt++;
+                    d.display = 'block';
+                }
+            }
+            for (let i = 0; i < doctors.length; i++) {
+                doctors[i].html.style.display = doctors[i].display;
+            }
+            // if (enable_cnt > 0) {
+            //     id_doctor.style.display = 'block';
+            //     id_doctor.parentNode.previousElementSibling.children[2].style.display = 'block';
+            //     doctor_not_found.style.display = 'none';
+            // } else {
+            //     doctor_not_found.style.display = 'block';
+            //     id_doctor.value = "";
+            // }
+        } else {
+            off_style(id_doctor, 2);
+            id_doctor.value = '';
+        }
+    };
+    id_specialization.onchange();
+    flex_cancel.onclick = e => {
+        flex_cancel.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+        id_specialization.value = '';
+        id_specialization.onchange();
+        return false;
+    };
 </script>
 <script type="text/javascript">
     // choose row, color to YELLOW
@@ -460,6 +521,9 @@
             form.onclick = e => {
                 if (e.target === x) {
                     form.style.display = 'none';
+                    flex_cancel.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+                    id_specialization.value = '';
+                    id_specialization.onchange();
                 }
             };
         }

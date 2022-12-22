@@ -991,7 +991,7 @@ class SAMD(models.Model):
     sms_type = models.CharField('Тип СМС', max_length=10, choices=SMS_TYPE, blank=True)
     med_org = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
     trigger = models.CharField('Триггер', max_length=300, blank=True)
-
+    
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
     signed = models.BooleanField('Подпись', default=False)
 
@@ -1002,3 +1002,15 @@ class TelegramUsers(models.Model):
     
     def __str__(self) -> str:
         return self.patient.get_full_name()
+
+
+class Notifications(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    title = models.CharField('Заголовок', max_length=100, blank=True, null=True)
+    description = models.TextField('Описание', blank=True, null=True)
+    link = models.CharField('Ссылка', max_length=100, blank=True, null=True)
+    read = models.BooleanField('Просмотрено', default=False)
+    created = models.DateTimeField('Дата создания', auto_now_add=True)
+    
+    class Meta:
+        ordering = ['read', '-created']

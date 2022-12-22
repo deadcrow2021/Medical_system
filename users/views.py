@@ -29,6 +29,7 @@ from random import randint
 from med_system.funcs import get_and_add_cookie
 from urllib.parse import quote
 import time
+import json
 
 
 def user_is_doctor(user):
@@ -226,9 +227,9 @@ def profile(request: HttpRequest, profile_id: int):
         except:
             treating_doctor = 'Нет врача'
 
-        preeclampsia = calc_preeclampsia(user_profile)
-        premature_birth = calc_premature_birth(user_profile)
-        risk_values_sum = calc_risk_values_sum(user_profile)
+        preeclampsia = calc_preeclampsia(user_profile.patient)
+        premature_birth = calc_premature_birth(user_profile.patient)
+        risk_values_sum = calc_risk_values_sum(user_profile.patient)
         
         risks = (
             ('Преэклампсия',               preeclampsia),
@@ -251,7 +252,7 @@ def profile(request: HttpRequest, profile_id: int):
             'risks':             risks,
             'treating_doctor':   treating_doctor,
             'mo_delivery':       mo_delivery,
-            'quality':     filled_fields / all_fields * 100,
+            'quality':           filled_fields / all_fields * 100,
             # 'preeclampsia':      preeclampsia,
             # 'premature_birth':   premature_birth,
             # 'risk_values_sum':   risk_values_sum,
@@ -883,7 +884,8 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
         forms = [form]
         exists = False
     
-    context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 'model_name': model_name, 'page_name': observation_forms_models[model_name][2] }
+    context = { 'current_user': current_user, 'forms': forms, 'exists': exists, 
+                'model_name': model_name, 'page_name': observation_forms_models[model_name][2] }
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
@@ -891,7 +893,7 @@ def observation_template_page(request: HttpRequest, profile_id: int, model_name:
 def update_observation_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
     template_name: str = 'users/update_template_model.html'
     success_url: str = 'observation'
-    current_user = User.objects.get(pk=profile_id)
+    current_user = User.objects.select_related('patient').get(pk=profile_id)
     model = observation_forms_models[model_name][0]
     
     if request.method == "POST":
@@ -906,6 +908,24 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
             data = form.save(commit=False)
             data.current_pregnancy = current_pregnancy
             data.save()
+            
+            # risk notification
+            results = []
+            if calc_preeclampsia(current_user.patient) == 'Высокий':
+                results.append('Высокий риск преэклампсии')
+            if calc_premature_birth(current_user.patient) == 'Высокий':
+                results.append('Высокий риск преждевременных родов')
+            if calc_risk_values_sum(current_user.patient) == 10:
+                results.append('Высокий риск преждевременных родов')
+            for risk in results:
+                Notifications.objects.create(**{
+                    'user': request.user,
+                    'title': 'Высокий риск',
+                    'description': risk,
+                    'link': f'/profile/{current_user.pk}',
+                    'read': False,
+                }).save()
+            
             # add_log
             return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
     
@@ -1710,3 +1730,16 @@ def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
     
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
+
+
+def JSONApi(request: HttpRequest) -> HttpResponse:
+    ans = {
+        'a': 123,
+        'Hel': 'lo',
+    }
+    
+    if request.method == "POST":
+        print(f"{request.POST.__dict__=}")
+        print(f'{json.loads(request.body).get("tag")=}')
+    
+    return HttpResponse(json.dumps(ans), content_type="application/json")
