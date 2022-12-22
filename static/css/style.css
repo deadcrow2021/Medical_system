@@ -489,6 +489,7 @@ a:hover * {
     font-size: 1.4rem;
     margin: 10px;
     height: fit-content;
+    position: relative;
 }
 
 .menu_btn {
@@ -1280,4 +1281,14 @@ nav {
 
 .notification_description::before {
     content: "― ";
+}
+
+.delete_notification {
+    position: absolute;
+    top: 0;
+    right: 0%;
+    font-size: max(20px, 2rem);
+    width: fit-content;
+    background-color: transparent;
+    color: rgb(1, 38, 63);
 }

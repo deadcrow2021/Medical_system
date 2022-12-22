@@ -10,7 +10,7 @@
     <link rel="icon" href="data:;base64,=">
 </head>
 <body>
-    <img class="background_img" src="{% static 'images/background.png' %}" alt="dsg">
+    <img class="background_img" src="{% static 'images/background.png' %}" alt="">
 {% if user.is_authenticated %}
     <div class="navbar">
         <div class="navbar__row">
@@ -36,6 +36,7 @@
                                 <p class="notification_description">{{ notification.description }}</p>
                                 <input type="hidden" name="notification_id" value="{{ description.pk }}">
                             </a>
+                            <button type="submit" class="delete_notification" value="{{ notification.pk }}">✕</button>
                         </div>
                         <hr>
                         {% endfor %}
@@ -232,6 +233,16 @@
                                     </span>`;
             }
         })
+    </script>
+    <script type="text/javascript">
+        var delete_notification_buttons = document.getElementsByClassName('delete_notification');
+        for (let btn of delete_notification_buttons) {
+            btn.onclick = e => {
+                send_data_to_api_async({ func: "delete_notification", notification_id: btn.value }).then(res => { window.location.reload(); });
+            };
+        }
+        // Тестовое уведомление
+        // Какой-то длинный текст чтобы проверить работоспособность уведомлений
     </script>
 </body>
 </html>
