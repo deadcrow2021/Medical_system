@@ -444,6 +444,28 @@ def patients_page(request: HttpRequest) -> HttpResponse:
     return resp
 
 
+def patients_vimis(request: HttpRequest) -> HttpResponse:
+    template_name = 'users/patients_vimis.html'
+    form = VimisSearchPatientsForm()
+    if request.method == 'POST':
+        form = VimisSearchPatientsForm(request.POST or None)
+        form1 = VimisSearchPatientsIdForm(request.POST or None)
+        print(request.POST)
+        print(form.__dict__)
+        # if form.is_valid()
+    return render(request, template_name, {'form':form})
+
+
+def patients_vimis_id(request: HttpRequest) -> HttpResponse:
+    template_name = 'users/patients_vimis_id.html'
+    form = VimisSearchPatientsIdForm()
+    if request.method == 'POST':
+        form = VimisSearchPatientsIdForm(request.POST or None)
+        print(form.__dict__)
+        # if form.is_valid()
+    return render(request, template_name, {'form':form})
+
+
 def recent_patients(request: HttpRequest):
     patients = Patient.objects.all()
     form = PatientFilterForm()
