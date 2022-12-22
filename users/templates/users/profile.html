@@ -85,7 +85,7 @@
                     <div id="myProgress">
                         <div id="myBar" style="width: {{quality|floatformat:0 }}%">
                             <div>
-                                {{quality|floatformat:2 }} %
+                                {{quality|floatformat:0 }}%
                             </div>
                         </div>
                     </div>
@@ -202,6 +202,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Доктор</th>
                             <th>Дата записи</th>
                             <th>Услуга</th>
                             <th>Срок выполнения</th>
@@ -212,6 +213,7 @@
                         {% for note in notes %}
                         <tr class="chooseable">
                             <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
+                            {% if note.doctor %} <td>{{ note.doctor }}</td> {% else %} <td>Не назначен</td> {% endif %}
                             <td>{{ note.date_recording }}</td>
                             {% if note.status == 'recorded' %}
                             <td>{{ note.get_service_display }}</td>

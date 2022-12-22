@@ -72,3 +72,30 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     } catch (error) { console.log(`${error}`); }
 });
+
+async function send_data_to_api_async(data) {
+    var csrf = document.cookie.match(new RegExp("csrftoken=(.*);"))[1];
+    
+    // data = JSON.stringify({
+    //     headline: "Testing",
+    //     tag: "Testing",
+    //     background_image: "Testing",
+    //     content: "Testing",
+    //     user: 1
+    // });
+    try {
+        data = JSON.stringify(data);
+    } catch (error) { console.log(`Произошла ошибка с преобразованием объекта в JSON\n${error}`); }
+    
+    var response = await fetch('/api', {
+        method: "POST",
+        headers: { 
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrf,
+        },
+        body: data,
+    });
+    
+    return response.json();
+}

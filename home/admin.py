@@ -52,3 +52,4 @@ admin.site.register(UltrasoundExamination_30_34)
 admin.site.register(MODelivery)
 
 admin.site.register(TelegramUsers)
+admin.site.register(Notifications)

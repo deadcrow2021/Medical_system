@@ -40,4 +40,5 @@ urlpatterns = [
     path('examination_list/<profile_id>', views.examination_list_page, name='examination-list'),
     path('add_doctor_vimis', views.add_doctor_vimis_page, name='add-doctor-vimis'),
     path('add_patient_vimis', views.add_patient_vimis_page, name='add-patient-vimis'),
+    path('api', views.JSONApi, name='api')
 ]
