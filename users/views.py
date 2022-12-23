@@ -30,6 +30,7 @@ from med_system.funcs import get_and_add_cookie
 from urllib.parse import quote
 import time
 import json
+# import APIFunctions
 
 
 def user_is_doctor(user):
@@ -1756,12 +1757,20 @@ def add_patient_vimis_page(request: HttpRequest) -> HttpResponse:
 
 def JSONApi(request: HttpRequest) -> HttpResponse:
     ans = {
-        'a': 123,
-        'Hel': 'lo',
+        # 'a': 123,
+        # 'Hel': 'lo',
     }
     
     if request.method == "POST":
-        print(f"{request.POST.__dict__=}")
-        print(f'{json.loads(request.body).get("tag")=}')
+        response: dict = json.loads(request.body)
+        func = response.get('func', None)
+        if func != None:
+            match func:
+                case "delete_notification":
+                    notification_id = response.get('notification_id')
+                    Notifications.objects.get(pk=notification_id).delete()
+                case _:
+                    pass
+        # print(f'{json.loads(request.body)=}')
     
     return HttpResponse(json.dumps(ans), content_type="application/json")
