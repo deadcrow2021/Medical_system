@@ -79,18 +79,6 @@ class PatientChangeForm(forms.ModelForm):
         )
 
 
-class DiseaseCreationForm(forms.ModelForm):
-    class Meta:
-        model = MedicalHistory
-        fields = (
-            'disease',
-            'date_cured',
-        )
-        widgets = {
-            'date_cured': DateInput(),
-        }
-
-
 class RecordCreationForm(forms.ModelForm):
     class Meta:
         model = SelfMonitoringRecords
@@ -652,14 +640,6 @@ class HospitalizationInformationForm(forms.ModelForm):
             'date_filling': DateInput()
         }
 
-
-class TurnoutScheduleForm(forms.ModelForm):
-    class Meta:
-        model = TurnoutSchedule
-        fields = 'number', 'date', 'gestation_period_weeks',
-        widgets = {
-            'date': DateInput()
-        }
 
 class MODeliveryForm(forms.ModelForm):
     class Meta:

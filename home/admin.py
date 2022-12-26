@@ -3,7 +3,6 @@ from .models import *
 
 admin.site.register(Patient)
 admin.site.register(Doctor)
-admin.site.register(MedicalHistory)
 admin.site.register(SelfMonitoringRecords)
 admin.site.register(File)
 admin.site.register(ReceptionNotes)

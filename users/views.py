@@ -15,7 +15,6 @@ from django.utils.crypto import get_random_string
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .search_patterns import *
 import django.contrib.messages as messages
 from home.views import add_log
 from .mkb10 import mkb10_deseases
@@ -64,27 +63,6 @@ def translate_name(name):
 
 def sum_risk_values(risk_objs):
     return sum([int(x.risk_value) for x in risk_objs])
-
-
-
-def add_disease(request, profile_id):
-    # user: User = User.objects.get(id=profile_id)
-    form = DiseaseCreationForm()
-    if request.method == 'POST':
-        form = DiseaseCreationForm(request.POST)
-        if form.is_valid():
-            disease = form.save(commit=False)
-            patient = Patient.objects.get(user__id=profile_id)
-            disease.patient = patient
-            add_log(request.user,
-                    f'пациент {patient.get_full_name()}',
-                    CHANGETYPE.Добавлена_история_болезни,
-                    '-',
-                    f'Болезнь: {form.cleaned_data["disease"]};')
-            disease.save()
-            return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
-    context = { 'form': form, 'deseases': mkb10_deseases }
-    return render(request, 'users/add_disease.html', context)
 
 
 def follow_unfollow_patient(request):
@@ -410,6 +388,7 @@ def patients_page(request: HttpRequest) -> HttpResponse:
     
     if request.method == "POST":
         users = MedicalCard.objects
+        print(users.all())
         for f in tuple(request.POST.items())[1:]:
             if len(f[1]) > 0:
                 match f[0]:
@@ -967,7 +946,6 @@ name_model = {
     'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ), #####
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ), ######
     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ), ######
-    # 'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
     'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ), #####
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ), #####
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ), #####

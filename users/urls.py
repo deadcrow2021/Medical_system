@@ -17,7 +17,6 @@ urlpatterns = [
     path('examination_template_page/<profile_id>/<model_name>', views.examination_template_page, name='examination-template-page'),
     path('add_examination_template_page/<profile_id>/<model_name>/<model_id>', views.add_examination_template_page, name='add-examination-template-page'),
     path('profile/update/<profile_id>', views.update_profile, name='update-profile'),
-    path('profile/<profile_id>/add_disease', views.add_disease, name='add-disease'),
     path('switch_follow', views.follow_unfollow_patient, name='follow-unfollow'),
     path('medical_card/<profile_id>', views.medical_card, name='medical-card'),
     path('update_medical_card/<profile_id>', views.update_medical_card, name='update-medical-card'),
