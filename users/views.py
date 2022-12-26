@@ -7,7 +7,7 @@ from datetime import date
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView
 from home.forms import *
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, MedicalCard, PregnancyOutcome
@@ -23,7 +23,6 @@ from home.choices import CHANGETYPE
 from django.utils import timezone
 from django.core.mail import send_mail
 from .generate_samd import *
-from home.views import generate_pdf
 from django.core.paginator import Paginator
 from random import randint
 from med_system.funcs import get_and_add_cookie
