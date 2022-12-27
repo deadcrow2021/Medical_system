@@ -976,6 +976,9 @@ class SAMD(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
     signed = models.BooleanField('Подпись', default=False)
 
+    model = models.CharField('Модель', max_length=300, blank=True)
+    model_id = models.IntegerField('id для модели', blank=True, null=True)
+
 
 class TelegramUsers(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE)

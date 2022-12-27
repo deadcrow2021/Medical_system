@@ -165,7 +165,6 @@ def profile(request: HttpRequest, profile_id: int):
             else:
                 follow = False
         form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
-        diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
 
@@ -221,7 +220,6 @@ def profile(request: HttpRequest, profile_id: int):
         resp = render(request, template_name, {
             'profile':           user_profile.patient,
             'user_type':         user_type,
-            'diseases':          diseases,
             'form':              form,
             'follow':            follow,
             'buttons':           buttons,
@@ -953,6 +951,10 @@ name_model = {
     'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ), #####
 }
 
+# samd_models = {
+#     'hospitalization': ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ),
+# }
+
 
 def profile_models_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
@@ -1001,6 +1003,13 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
                     data.imt = mass / ((height / 100) ** 2)
                 else:
                     data.imt = 0
+
+            # if model_name == 'hospitalization':
+            #     samd_doc = SAMD(patient=current_user.patient, sms_status='3', sms_type='2')
+            #     print(samd_doc.__dict__)
+            #     samd_doc.save()
+            #     print(current_user.patient)
+            # print(model_name)
             
             data.patient = patient
             data.save()
