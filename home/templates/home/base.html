@@ -168,15 +168,24 @@
     
     
     <script type="text/javascript" defer>
-        var toggle_btns = document.getElementsByClassName('toggle_btn');
-        
+        var toggle_btns = [...document.getElementsByClassName('toggle_btn')];
+        var next_elems = new Array();
         for (let toggle_btn of toggle_btns) {
-            let next_elem = toggle_btn.parentNode.nextElementSibling.children[0];
+            next_elems.push(toggle_btn.parentNode.nextElementSibling.children[0]);
+        }
+        
+        for (let i = 0; i < toggle_btns.length; i++) {
+            let toggle_btn = toggle_btns[i];
+            let next_elem = next_elems[i];
             toggle_btn.onclick = (e) => {
-                if (next_elem.style.display !== 'none')
+                if (next_elem.style.display !== 'none') {
                     next_elem.style.display = 'none';
-                else
+                } else {
+                    for (let tmp_btn of next_elems) {
+                        tmp_btn.style.display = 'none';
+                    }
                     next_elem.style.display = 'block';
+                }
             };
         }
         
@@ -238,7 +247,8 @@
         var delete_notification_buttons = document.getElementsByClassName('delete_notification');
         for (let btn of delete_notification_buttons) {
             btn.onclick = e => {
-                send_data_to_api_async({ func: "delete_notification", notification_id: btn.value }).then(res => { window.location.reload(); });
+                send_data_to_api_async({ func: "delete_notification", notification_id: btn.value })
+                    .then(res => { window.location.reload(); });
             };
         }
         // Тестовое уведомление
