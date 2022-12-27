@@ -147,7 +147,8 @@
                 <button disabled type="submit" class="mod_btn btn same_btn" id="del_btn">Удалить</button>
             </form>
         </div>
-        {% if notes %}
+        {% if notes or done_notes %}
+        <h3>В процессе</h3>
         <div class="block__profile__disease border_div reception_page">
             <div class="block__lines">
                 <table class="table">
@@ -162,6 +163,55 @@
                     </thead>
                     <tbody>
                         {% for note in notes %}
+                        <tr class="chooseable">
+                            <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
+                            {% if note.doctor %}<td>{{ note.doctor }}</td>{% else %}<td>Не назначен</td>{% endif %}
+                            <td>{{ note.date_recording }}</td>
+                            {% if note.status == 'recorded' %}
+                            <td><button class="strong btn same_btn noborder recorded">{{ note.get_service_display }}</button></td>
+                            {% elif note.status == 'completed' %}
+                            <td><button class="strong btn same_btn noborder completed">{{ note.get_service_display }}
+                                <input type="hidden" name="date_completed" value="{{ note.date_completed }}">
+                                <input type="hidden" name="result" value="{{ note.result }}">
+                                <div class="hide">
+                                    Файлы
+                                {% for f in note.file.all %}
+                                    <input type="hidden" name="{{ f.file }}" value="{{ f.file.url }}">
+                                {% endfor %}
+                                </div>
+                            </button></td>
+                            {% else %}
+                            <td>{{ note.get_service_display }}</td>
+                            {% endif %}
+                            <td>{{ note.deadline }}</td>
+                            {% if note.status == 'required' %}
+                            <td><button class="strong btn same_btn noborder required">{{ note.get_status_display }}</button></td>
+                            {% elif note.status == 'recorded' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_meeting }}</span></td>
+                            {% elif note.status == 'completed' %}
+                            <td><span>{{ note.get_status_display }}: {{ note.date_completed }}</span></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <h3 style="margin-top: 20px">Выполнено</h3>
+        <div class="block__profile__disease border_div reception_page">
+            <div class="block__lines">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Доктор</th>
+                            <th>Дата записи</th>
+                            <th>Услуга</th>
+                            <th>Срок выполнения</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in done_notes %}
                         <tr class="chooseable">
                             <input type="hidden" name="{{ note.pk }}" value="{{ note.pk }}">
                             {% if note.doctor %}<td>{{ note.doctor }}</td>{% else %}<td>Не назначен</td>{% endif %}
