@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.core.validators import MaxValueValidator, MinLengthValidator, MaxLengthValidator
+from django.core.validators import MaxValueValidator
 import datetime
 from .choices import *
 
@@ -851,14 +851,6 @@ class HospitalizationInformation(models.Model):
     date_filling = models.DateField('Дата заполнения', blank=True, null=True)
 
 
-# График явок
-class TurnoutSchedule(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='shedule')
-    number = models.PositiveSmallIntegerField('Номер', validators=[MaxValueValidator(999)], unique=True)
-    date = models.DateField('Дата', blank=True, null=True)
-    gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
-
-
 #############
 
 
@@ -871,17 +863,6 @@ class SelfMonitoringRecords(models.Model):
     
     def __str__(self) -> str:
         return self.title
-
-
-class MedicalHistory(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
-    disease = models.CharField('Заболевание', max_length=270)
-    date_created = models.DateTimeField('Дата создания', auto_now_add=True)
-    date_cured = models.DateTimeField('Дата излечения', blank=True, null=True)
-    date_updated = models.DateTimeField('Дата изменения', auto_now=True)
-    
-    def __str__(self) -> str:
-        return self.disease
 
 
 class Doctor(models.Model):
@@ -994,6 +975,9 @@ class SAMD(models.Model):
     
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
     signed = models.BooleanField('Подпись', default=False)
+
+    model = models.CharField('Модель', max_length=300, blank=True)
+    model_id = models.IntegerField('id для модели', blank=True, null=True)
 
 
 class TelegramUsers(models.Model):

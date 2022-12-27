@@ -4,10 +4,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView
 from .forms import *
-from administration.models import Files
 from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor, SAMD
 from administration.models import ClinicRecomendations
 from .choices import CHANGETYPE

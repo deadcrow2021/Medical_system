@@ -1,0 +1,35 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="title__block">
+    <h2>Поиск в ВИМИС по id</h2>
+</div>
+
+<div class="form__block">
+    <div class="outer_div" style="width: 60%">
+        <div class="border_div">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="fields width_100">
+                    {% for p in form %}
+                    <div class="fields__input width_100">
+                        <div class="fields__input__label">
+                            <strong>{{ p.label_tag }}</strong>
+                        </div>
+                        <div class="fields__input__field " style="flex: 0 0 70%">
+                            {{ p }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="submit-btn">
+                    <button type="submit" class="btn">Выбрать</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="center_div" style="position: absolute; left: 0"><h4>{{ nodata }}</h4></div>
+    </div>
+</div>
+
+{% endblock %}

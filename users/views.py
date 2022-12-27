@@ -7,7 +7,7 @@ from datetime import date
 from typing import Any, Optional
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView
 from home.forms import *
 from django.urls import reverse_lazy
 from home.models import Doctor, Patient, MedicalCard, PregnancyOutcome
@@ -15,7 +15,6 @@ from django.utils.crypto import get_random_string
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .search_patterns import *
 import django.contrib.messages as messages
 from home.views import add_log
 from .mkb10 import mkb10_deseases
@@ -23,7 +22,6 @@ from home.choices import CHANGETYPE
 from django.utils import timezone
 from django.core.mail import send_mail
 from .generate_samd import *
-from home.views import generate_pdf
 from django.core.paginator import Paginator
 from random import randint
 from med_system.funcs import get_and_add_cookie
@@ -65,27 +63,6 @@ def translate_name(name):
 
 def sum_risk_values(risk_objs):
     return sum([int(x.risk_value) for x in risk_objs])
-
-
-
-def add_disease(request, profile_id):
-    # user: User = User.objects.get(id=profile_id)
-    form = DiseaseCreationForm()
-    if request.method == 'POST':
-        form = DiseaseCreationForm(request.POST)
-        if form.is_valid():
-            disease = form.save(commit=False)
-            patient = Patient.objects.get(user__id=profile_id)
-            disease.patient = patient
-            add_log(request.user,
-                    f'пациент {patient.get_full_name()}',
-                    CHANGETYPE.Добавлена_история_болезни,
-                    '-',
-                    f'Болезнь: {form.cleaned_data["disease"]};')
-            disease.save()
-            return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
-    context = { 'form': form, 'deseases': mkb10_deseases }
-    return render(request, 'users/add_disease.html', context)
 
 
 def follow_unfollow_patient(request):
@@ -188,7 +165,6 @@ def profile(request: HttpRequest, profile_id: int):
             else:
                 follow = False
         form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
-        diseases = user_profile.patient.history.all()
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
 
@@ -244,7 +220,6 @@ def profile(request: HttpRequest, profile_id: int):
         resp = render(request, template_name, {
             'profile':           user_profile.patient,
             'user_type':         user_type,
-            'diseases':          diseases,
             'form':              form,
             'follow':            follow,
             'buttons':           buttons,
@@ -466,6 +441,28 @@ def patients_page(request: HttpRequest) -> HttpResponse:
     resp = render(request, template_name, context)
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='Strict')
     return resp
+
+
+def patients_vimis(request: HttpRequest) -> HttpResponse:
+    template_name = 'users/patients_vimis.html'
+    form = VimisSearchPatientsForm()
+    if request.method == 'POST':
+        form = VimisSearchPatientsForm(request.POST or None)
+        form1 = VimisSearchPatientsIdForm(request.POST or None)
+        print(request.POST)
+        print(form.__dict__)
+        # if form.is_valid()
+    return render(request, template_name, {'form':form})
+
+
+def patients_vimis_id(request: HttpRequest) -> HttpResponse:
+    template_name = 'users/patients_vimis_id.html'
+    form = VimisSearchPatientsIdForm()
+    if request.method == 'POST':
+        form = VimisSearchPatientsIdForm(request.POST or None)
+        print(form.__dict__)
+        # if form.is_valid()
+    return render(request, template_name, {'form':form})
 
 
 def recent_patients(request: HttpRequest):
@@ -969,13 +966,16 @@ name_model = {
     'father':             ( FatherInfo, FatherInfoForm, 'Сведения об отце ребенка' ), #####
     'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ), ######
     'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ), ######
-    # 'shedule':            ( TurnoutSchedule, TurnoutScheduleForm, 'График явок' ),
     'hospitalization':    ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ), #####
     'ultrasound_1':       ( UltrasoundFisrtTrimester, UltrasoundFisrtTrimesterForm, 'Узи 1 триместра' ), #####
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ), #####
     'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ), #####
     'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ), #####
 }
+
+# samd_models = {
+#     'hospitalization': ( HospitalizationInformation, HospitalizationInformationForm, 'Сведения о госпитализации во время беременности' ),
+# }
 
 
 def profile_models_template_page(request: HttpRequest, profile_id: int, model_name: str) -> HttpResponse:
@@ -1025,6 +1025,13 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
                     data.imt = mass / ((height / 100) ** 2)
                 else:
                     data.imt = 0
+
+            # if model_name == 'hospitalization':
+            #     samd_doc = SAMD(patient=current_user.patient, sms_status='3', sms_type='2')
+            #     print(samd_doc.__dict__)
+            #     samd_doc.save()
+            #     print(current_user.patient)
+            # print(model_name)
             
             data.patient = patient
             data.save()

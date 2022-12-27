@@ -1,17 +1,15 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from itertools import chain
 from typing import Any
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from home.models import Doctor, Patient, ChangeControlLog
+from home.models import Doctor, ChangeControlLog
 from .models import Files
 from home.models import SAMD
 from .forms import FileUploadForm
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView
 from django.contrib import messages
-from .search_patterns import *
 from django.core.paginator import Paginator
 from home.views import add_log
 from med_system.funcs import get_and_add_cookie

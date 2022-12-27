@@ -79,18 +79,6 @@ class PatientChangeForm(forms.ModelForm):
         )
 
 
-class DiseaseCreationForm(forms.ModelForm):
-    class Meta:
-        model = MedicalHistory
-        fields = (
-            'disease',
-            'date_cured',
-        )
-        widgets = {
-            'date_cured': DateInput(),
-        }
-
-
 class RecordCreationForm(forms.ModelForm):
     class Meta:
         model = SelfMonitoringRecords
@@ -653,14 +641,6 @@ class HospitalizationInformationForm(forms.ModelForm):
         }
 
 
-class TurnoutScheduleForm(forms.ModelForm):
-    class Meta:
-        model = TurnoutSchedule
-        fields = 'number', 'date', 'gestation_period_weeks',
-        widgets = {
-            'date': DateInput()
-        }
-
 class MODeliveryForm(forms.ModelForm):
     class Meta:
         model = MODelivery
@@ -683,3 +663,14 @@ class StatisticsForm(forms.Form):
     gestation_period_weeks = forms.IntegerField(label='Срок беременности (недели)', min_value=1, max_value=99, required=False)
     mo_delivery = forms.ChoiceField(label='Группа акушерского стационара', choices=MO_DELIVERY, required=False)
     pregnancy_outcome = forms.ChoiceField(label='Исход беременности', choices=PREGNANCY_OUTCOME, required=False)
+
+
+class VimisSearchPatientsForm(forms.Form):
+    first_name = forms.CharField(label='Имя', max_length=150, required=False)
+    last_name = forms.CharField(label='Фамилия', max_length=150, required=False)
+    father_name = forms.CharField(label='Отчество', max_length=150, required=False)
+    date_of_birth = forms.DateField(label='Дата рождения', required=False, widget=DateInput())
+    gender = forms.ChoiceField(label='Пол', choices=GENDERS, required=False)
+
+class VimisSearchPatientsIdForm(forms.Form):
+    id = forms.IntegerField(label='Идентификатор пациента', required=False)
