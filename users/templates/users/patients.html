@@ -54,6 +54,14 @@
                         <div class="search_filters">
                             <label for="residence_address"><strong>Адрес:</strong></label>
                             <input type="text" name="residence_address" value="{{ prev_data.residence_address }}" placeholder="Адрес проживания">
+                            <label for="time_interval"><strong>Временной промежуток:</strong></label>
+                            <select name="time_interval" id="id_time_interval">
+                                <option value="">За все время</option>
+                                <option value="d" {% if prev_data.time_interval == 'd' %}selected=""{% endif %}>Текущий день</option>
+                                <option value="w" {% if prev_data.time_interval == 'w' %}selected=""{% endif %}>Текущая неделя</option>
+                                <option value="m" {% if prev_data.time_interval == 'm' %}selected=""{% endif %}>Текущий месяц</option>
+                                <option value="30" {% if prev_data.time_interval == '30' %}selected=""{% endif %}>30 дней</option>
+                            </select>
                         </div>
                     </div>
                     <div class="">

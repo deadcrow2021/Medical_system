@@ -385,8 +385,7 @@ def patients_page(request: HttpRequest) -> HttpResponse:
     to_add: str = f'/patients!Пациенты'
     
     if request.method == "POST":
-        users = MedicalCard.objects
-        print(users.all())
+        users = MedicalCard.objects.select_related('patient')
         for f in tuple(request.POST.items())[1:]:
             if len(f[1]) > 0:
                 match f[0]:
@@ -398,6 +397,29 @@ def patients_page(request: HttpRequest) -> HttpResponse:
                         users = users.filter(father_name__startswith=f[1])
                     case 'snils':
                         users = users.filter(snils__startswith=f[1])
+                    case 'time_interval':
+                        patients = Patient.objects.select_related('card')
+                        time_interval = f[1]
+                        offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+                        today = timezone.now()
+                        dt = today - timedelta(seconds=offset)
+                        dt = dt.replace(hour=0, minute=0, second=0, microsecond=0).date()
+                        
+                        match time_interval:
+                            case 'd':
+                                patients = patients.filter(date_updated__gte=dt,)
+                            case 'w':
+                                week_start = dt - timedelta(days=dt.weekday())
+                                patients = patients.filter(date_updated__gte=week_start,)
+                            case 'm':
+                                mounth_start = dt - timedelta(days=dt.day-1)
+                                patients = patients.filter(date_updated__gte=mounth_start,)
+                            case '30':
+                                mounth_ago = dt - timedelta(days=30)
+                                patients = patients.filter(date_updated__gte=mounth_ago,)
+                        
+                        print(f"{patients=}")
+                        users = users.filter(patient__in=patients)
                     case _:
                         users = users.filter(**dict((f,)))
         

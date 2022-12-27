@@ -377,9 +377,11 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                         commit.file.add(f.pk)
                     commit.save()
     
-    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id)
+    notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id).exclude(status='completed')
+    done_notes = ReceptionNotes.objects.filter(patient__user__pk=profile_id, status='completed')
     # notes = ReceptionNotes.objects.filter()
     context.update({ 'notes': notes })
+    context.update({ 'done_notes': done_notes })
     context.update({ 'add_form': ReceptionAddAddingForm() })
     context.update({ 'confirm_form': ReceptionAddConfirmForm() })
     context.update({ 'result_form': ReceptionAddResultForm() })
