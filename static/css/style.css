@@ -46,8 +46,10 @@ a * {
     color: #00385e;
 }
 
+select,
+option,
 input {
-    background-color: #fffc;
+    background-color: #fff8;
 }
 
 table {
@@ -844,6 +846,7 @@ th {
 .search_filters_container {
     display: flex;
     justify-content: space-around;
+    height: fit-content;
 }
 
 .search_filters {
