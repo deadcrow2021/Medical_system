@@ -1,0 +1,11 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="back__button">
+    <button type="button" onclick="history.back()" class="btn">Вернуться</button>
+</div>
+{% for p in pathes %}
+    <p><a href="{% url 'samd_xml_view' profile_id p %}">{{ p }}</a></p>
+{% endfor %}
+
+{% endblock %}

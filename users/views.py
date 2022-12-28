@@ -26,6 +26,7 @@ from django.core.paginator import Paginator
 from random import randint
 from med_system.funcs import get_and_add_cookie
 from urllib.parse import quote
+from .samd_replace_fields import generate_samd, encode_samd
 import time
 import json
 # import APIFunctions
@@ -1648,6 +1649,31 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
     return resp
 
+samd_names = {
+    '1': 'priem_osmotr_vracha_specialista.xml',
+    '2': 'protocol_instrumentalnogo_issledovaniya.xml',
+    '3': 'vipisnoy_epikriz_iz_stacionara.xml',
+    '4': 'vipisnoy_epikriz_iz_roddoma.xml',
+    '5': 'protokol_rodov.xml',
+    '6': 'izvesheniye_o_kas.xml',
+    '7': 'zaklucheniye_po_rezultatam_riska.xml',
+    '8': 'protokol_med_manipulyatsii.xml',
+}
+
+# sms_type: samd_names
+samd = {
+    '1': ('1', '2'),
+    '2': ('1', '2'),
+    '3': ('2'),
+    ##########
+    # '4': (),
+    '5': ('1', '2', '3'),
+    '6': ('1', '2', '4', '5'), 
+    # '7': (),
+    '8': ('6'),
+    '9': ('7'),
+    
+}
 
 def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     template_name: str = 'users/samd.html'
@@ -1656,6 +1682,67 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     to_add = f'#/samd/{profile_id}!СЭМД документы'
     resp = render(request, template_name, { 'profile_id': profile_id, 'samd_docs': samd_docs, 'current_user': current_user })
     return get_and_add_cookie(request, to_add, resp)
+
+
+def samd_view(request: HttpRequest, profile_id: int, samd_type) -> HttpResponse:
+    template_name: str = 'users/samd_view.html'
+    current_user = User.objects.get(pk=profile_id) # patient
+    # pathes = [os.path.join(BASE_DIR, f'samd/{samd_names[x]}') for x in samd[samd_type]]
+    pathes = [samd_names[x] for x in samd[samd_type]]
+    return render(request, template_name, { 'profile_id': profile_id, 'current_user': current_user, 'samd_types': samd[samd_type], 'pathes': pathes })
+
+# with open(os.path.join(BASE_DIR, 'users/samd/SMSV3.xml'), 'r', encoding='utf-8') as f:
+#         return (f.read(), requests.get('https://ips-test.rosminzdrav.ru/9d15f52ee7f2c?wsdl', verify=False))
+
+def samd_xml_view(request: HttpRequest, profile_id: int, xml_name):
+    current_user = User.objects.get(pk=profile_id) # patient
+    with open(os.path.join(BASE_DIR, f'samd/{xml_name}'), 'r', encoding="utf8") as file:
+        return render(request, 'users/samd_xml_view.html', {'content':generate_samd(file.read(), current_user.patient)})
+
+
+xml = '''<?xml version="1.0" encoding="UTF-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" xmlns:a="http://www.w3.org/2005/08/addressing" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+  <s:Header>
+    <a:Action>sendDocument</a:Action>
+    <transportHeader xmlns="http://egisz.rosminzdrav.ru" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      <authInfo>
+        <clientEntityId>ee37f0089b0d2</clientEntityId>
+      </authInfo>
+    </transportHeader>
+    <a:MessageID>123</a:MessageID>
+    <a:ReplyTo>
+      <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+    </a:ReplyTo>
+    <a:To>https://ips-test.rosminzdrav.ru/ee37f0089b0d2</a:To>
+    <wsse:Security>
+    </wsse:Security>
+  </s:Header>
+  <s:Body xmlns:d2p1="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" d2p1:Id="BodyID-de50a37c-7d9b-4132-9453-ef063ddd4b39">
+    <sendDocument xmlns="http://receiver.service.nr.eu.rt.ru/">
+      <vmcl xmlns="">3</vmcl>
+      <docType xmlns="">1</docType>
+      <docTypeVersion xmlns="">2</docTypeVersion>
+      <triggerPoint xmlns="">1</triggerPoint>
+      <interimMsg xmlns="">1</interimMsg>
+      <document xmlns="">{% content %}</document>
+    </sendDocument>
+  </s:Body>
+</s:Envelope>
+'''
+
+def send_xml(request: HttpRequest, profile_id: int, samd_type):
+    current_user = User.objects.get(pk=profile_id) # patient
+    pathes = [samd_names[x] for x in samd[samd_type]]
+    for p in pathes:
+        with open(os.path.join(BASE_DIR, f'samd/{p}'), 'r', encoding="utf8") as file:
+            r = requests.post('https://ips-test.rosminzdrav.ru/ee37f0089b0d2', data=xml.replace('{% content %}', encode_samd(generate_samd(file.read(), current_user.patient))), headers={'Content-Type': 'application/xml'}, verify=False)
+            print(r._content.decode())
+    return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
+
+
+def receive_response(request):
+    if request.method == 'POST':
+        msg = ResponseMessages()
 
 
 def sign_document(request, samd_id, profile_id):

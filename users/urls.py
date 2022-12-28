@@ -34,7 +34,12 @@ urlpatterns = [
     path('self_monitoring/<profile_id>', views.self_monitoring, name='self-monitoring'),
     path('portion_page/<profile_id>/<template_name>/<portion_name>', views.portion_models_template_page, name='portion-page'),
     path('statistics', views.statistics_page, name='statistics'),
+
     path('samd/<profile_id>', views.samd_page, name='samd'),
+    path('samd/<profile_id>/type_<samd_type>', views.samd_view, name='samd_view'),
+    path('xml_samd/<profile_id>/<xml_name>', views.samd_xml_view, name='samd_xml_view'),
+    path('send_samd/<profile_id>/type_<samd_type>', views.send_xml, name='send_xml'),
+
     path('samd/sign<samd_id>/<profile_id>', views.sign_document, name='sign-samd'),
     # path('generate_samd/<profile_id>/<samd>', views.generate_samd_page, name='generate-samd'),
     path('current_pregnancy/<profile_id>', views.current_pregnancy_info_page, name='current-pregnancy-info'),

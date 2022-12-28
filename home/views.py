@@ -339,14 +339,6 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit.status = 'required'
                     commit.save()
                     
-                    samd = SAMD()
-                    samd.patient = commit.patient
-                    samd.doctor = request.user.doctor # doctor
-                    samd.sms_type = '1'
-                    samd.sms_status = '3'
-                    samd.med_org = '' # doctor.med_org if doctor.med_org is not None else 'Не известно'
-                    samd.trigger = 'Выявление направления на оказание медицинских услуг'
-                    samd.save()
                     # add_log
             elif add_type == "confirm":
                 row_id = request.POST.get('row_id', None)
@@ -356,6 +348,15 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     commit.status = 'recorded'
                     commit.save()
                     
+                    samd = SAMD()
+                    samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
+                    samd.doctor = request.user.doctor
+                    samd.sms_type = '1'
+                    samd.sms_status = '3'
+                    samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
+                    samd.trigger = 'Выявление осмотра (консультации) пациента'
+                    samd.save()
+
                     # bot
                     try:
                         async_to_sync(bot.bot.send_message)(commit.patient.telegramusers.tg_user_id,
