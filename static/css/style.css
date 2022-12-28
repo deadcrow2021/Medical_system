@@ -661,7 +661,7 @@ a.btn {
 	width: 100%;
 	border: none;
     border-spacing: 0;
-    backdrop-filter: blur(8px);
+    /* backdrop-filter: blur(8px); */
     background-color: #fff7;
 	/* margin-bottom: 20px; */
 }
@@ -1030,7 +1030,7 @@ nav {
     height: 600px;
     overflow-y: scroll;
     justify-content: flex-start;
-    backdrop-filter: blur(8px);
+    /* backdrop-filter: blur(8px); */
 }
 .tab-content > a {
     height: auto;
