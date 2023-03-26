@@ -1371,28 +1371,28 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             for i in [x.childbirth_date for x in pregnancy_outcome_list]:
                 if card.age and i and (form_data['date_from'] <= i.date() <= form_data['date_to']):
                     if card.age <= 14:
-                        p_27['to_14'] += 1
+                        p_27['До 14 лет'] += 1
                     elif 15 <= card.age <= 17:
-                        p_27['15_17'] += 1
+                        p_27['От 15 до 17 лет'] += 1
                     elif 18 <= card.age <= 24:
-                        p_27['18_24'] += 1
-                        p_27['18_34'] += 1
+                        p_27['От 18 до 24 лет'] += 1
+                        p_27['От 18 до 34 лет'] += 1
                     elif 25 <= card.age <= 29:
-                        p_27['25_29'] += 1
-                        p_27['18_34'] += 1
+                        p_27['От 25 до 29 лет'] += 1
+                        p_27['От 18 до 34 лет'] += 1
                     elif 30 <= card.age <= 34:
-                        p_27['30_34'] += 1
-                        p_27['35_44'] += 1
+                        p_27['От 30 до 34 лет'] += 1
+                        p_27['От 35 до 44 лет'] += 1
                     elif 35 <= card.age <= 39:
-                        p_27['35_39'] += 1
-                        p_27['35_44'] += 1
+                        p_27['От 35 до 39 лет'] += 1
+                        p_27['От 35 до 44 лет'] += 1
                     elif 40 <= card.age <= 44:
-                        p_27['40_44'] += 1
-                        p_27['35_44'] += 1
+                        p_27['От 40 до 44 лет'] += 1
+                        p_27['От 35 до 44 лет'] += 1
                     elif 45 <= card.age <= 49:
-                        p_27['45_49'] += 1
+                        p_27['От 45 до 49 лет'] += 1
                     elif 50 <= card.age:
-                        p_27['50_up'] += 1
+                        p_27['От 50 лет'] += 1
                     break
         else:
             if any(x in (card.diagnosis if card.diagnosis else '') for x in normal_pregnancy):
@@ -1407,28 +1407,28 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
 
             if card.age and any(x.childbirth_date for x in pregnancy_outcome_list):
                 if card.age <= 14:
-                    p_27['to_14'] += 1
+                    p_27['До 14 лет'] += 1
                 elif 15 <= card.age <= 17:
-                    p_27['15_17'] += 1
+                    p_27['От 15 до 17 лет'] += 1
                 elif 18 <= card.age <= 24:
-                    p_27['18_24'] += 1
-                    p_27['18_34'] += 1
+                    p_27['От 18 до 24 лет'] += 1
+                    p_27['От 18 до 34 лет'] += 1
                 elif 25 <= card.age <= 29:
-                    p_27['25_29'] += 1
-                    p_27['18_34'] += 1
+                    p_27['От 25 до 29 лет'] += 1
+                    p_27['От 18 до 34 лет'] += 1
                 elif 30 <= card.age <= 34:
-                    p_27['30_34'] += 1
-                    p_27['35_44'] += 1
+                    p_27['От 30 до 34 лет'] += 1
+                    p_27['От 35 до 44 лет'] += 1
                 elif 35 <= card.age <= 39:
-                    p_27['35_39'] += 1
-                    p_27['35_44'] += 1
+                    p_27['От 35 до 39 лет'] += 1
+                    p_27['От 35 до 44 лет'] += 1
                 elif 40 <= card.age <= 44:
-                    p_27['40_44'] += 1
-                    p_27['35_44'] += 1
+                    p_27['От 40 до 44 лет'] += 1
+                    p_27['От 35 до 44 лет'] += 1
                 elif 45 <= card.age <= 49:
-                    p_27['45_49'] += 1
+                    p_27['От 45 до 49 лет'] += 1
                 elif 50 <= card.age:
-                    p_27['50_up'] += 1
+                    p_27['От 50 лет'] += 1
     
         if card.diagnosis:
             p_28 += 1
@@ -1440,50 +1440,50 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 if card.childbirth_gestation_period:
                     card_childbirth += 1
                     if 22 <= card.childbirth_gestation_period <= 23:
-                        p_31['22_23'] += 1
+                        p_31['От 22 до 23 лет'] += 1
                     if 24 <= card.childbirth_gestation_period <= 25:
-                        p_31['24_25'] += 1
-                        p_31['24_27'] += 1
+                        p_31['От 24 до 25 лет'] += 1
+                        p_31['От 24 до 27 лет'] += 1
                     if 26 <= card.childbirth_gestation_period <= 27:
-                        p_31['26_27'] += 1
-                        p_31['24_27'] += 1
+                        p_31['От 26 до 27 лет'] += 1
+                        p_31['От 24 до 27 лет'] += 1
                     if 28 <= card.childbirth_gestation_period <= 30:
-                        p_31['28_30'] += 1
-                        p_31['28_36'] += 1
+                        p_31['От 28 до 30 лет'] += 1
+                        p_31['От 28 до 36 лет'] += 1
                     if 31 <= card.childbirth_gestation_period <= 33:
-                        p_31['31_33'] += 1
-                        p_31['28_36'] += 1
+                        p_31['От 31 до 33 лет'] += 1
+                        p_31['От 28 до 36 лет'] += 1
                     if 34 <= card.childbirth_gestation_period <= 36:
-                        p_31['34_36'] += 1
-                        p_31['28_36'] += 1
+                        p_31['От 34 до 36 лет'] += 1
+                        p_31['От 28 до 36 лет'] += 1
                     if 37 <= card.childbirth_gestation_period <= 41:
-                        p_31['37_41'] += 1
+                        p_31['От 37 до 41 лет'] += 1
                     if card.childbirth_gestation_period >= 42:
-                        p_31['42_up'] += 1
+                        p_31['От 42 лет'] += 1
         else:
             if card.childbirth_gestation_period:
                 card_childbirth += 1
                 if 22 <= card.childbirth_gestation_period <= 23:
-                    p_31['22_23'] += 1
+                    p_31['От 22 до 23 лет'] += 1
                 if 24 <= card.childbirth_gestation_period <= 25:
-                    p_31['24_25'] += 1
-                    p_31['24_27'] += 1
+                    p_31['От 24 до 25 лет'] += 1
+                    p_31['От 24 до 27 лет'] += 1
                 if 26 <= card.childbirth_gestation_period <= 27:
-                    p_31['26_27'] += 1
-                    p_31['24_27'] += 1
+                    p_31['От 26 до 27 лет'] += 1
+                    p_31['От 24 до 27 лет'] += 1
                 if 28 <= card.childbirth_gestation_period <= 30:
-                    p_31['28_30'] += 1
-                    p_31['28_36'] += 1
+                    p_31['От 28 до 30 лет'] += 1
+                    p_31['От 28 до 36 лет'] += 1
                 if 31 <= card.childbirth_gestation_period <= 33:
-                    p_31['31_33'] += 1
-                    p_31['28_36'] += 1
+                    p_31['От 31 до 33 лет'] += 1
+                    p_31['От 28 до 36 лет'] += 1
                 if 34 <= card.childbirth_gestation_period <= 36:
-                    p_31['34_36'] += 1
-                    p_31['28_36'] += 1
+                    p_31['От 34 до 36 лет'] += 1
+                    p_31['От 28 до 36 лет'] += 1
                 if 37 <= card.childbirth_gestation_period <= 41:
-                    p_31['37_41'] += 1
+                    p_31['От 37 до 41 лет'] += 1
                 if card.childbirth_gestation_period >= 42:
-                    p_31['42_up'] += 1
+                    p_31['От 42 лет'] += 1
         septic_diseases = ['O08.0', 'O08.3', 'O41.1', 'O75.1', 'O85', 'O86', 'O86.0', 'O86.1', 'O86.2', 'O86.3', 'O86.4', 'O86.8', 'O88.3']
         for i in (x for x in p.previous_pregnancy.all()):
             if i.complications and (x in i.complications for x in septic_diseases):
