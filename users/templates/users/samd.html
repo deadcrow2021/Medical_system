@@ -14,6 +14,7 @@
                     <th>Медицинская организация</th>
                     <th>Тип СМС</th>
                     <th>Статус СМС</th>
+                    <th>Действия</th>
                     <th>Подпись</th>
                 </tr>
             </thead>
@@ -24,6 +25,7 @@
                     <td><p>{{ doc.get_med_org_display }}</p></td>
                     <td><p>{{ doc.get_sms_type_display }}</p></td>
                     <td><p>{{ doc.get_sms_status_display }}</p></td>
+                    <td><p></p><a href="{% url 'samd_view' profile_id doc.sms_type %}">Просмотреть</a> | <a href="{% url 'send_xml' profile_id doc.sms_type %}">Отправить</a></td>
                     <td><p>{% if doc.signed %}Подписан{% endif %}{% if not doc.signed %}
 
                         <div class="fields__input">

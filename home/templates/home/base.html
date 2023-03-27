@@ -215,7 +215,7 @@
             if (notification_menu.children.length > 0) {
                 notification.children[0].children[0].src = document.URL.split('/').slice(0,3).join('/') + '/' + "static/images/have_notification.png";
             } else {
-                notification.children[0].children[0].src = "static/images/notification.png";
+                notification.children[0].children[0].src = document.URL.split('/').slice(0,3).join('/') + '/' + "static/images/notification.png";
             }
         } catch (error) { console.log(`${error}`); }
     </script>

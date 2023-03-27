@@ -146,7 +146,10 @@
                 if (Number(e.currentTarget.style.maxHeight.slice(0, -2)) > Number(h.slice(0, -2)))
                     e.currentTarget.style.maxHeight = h;
                 else
+                {
                     e.currentTarget.style.maxHeight = e.currentTarget.scrollHeight + "px";
+                    e.currentTarget.style.backdropFilter = "blur(8px)";
+                }
             })
         }
     </script>

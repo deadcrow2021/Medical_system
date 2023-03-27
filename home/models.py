@@ -965,6 +965,8 @@ class MODelivery(models.Model):
 
 class SAMD(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='samd')
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
+
     create_date = models.DateTimeField('Дата создания', auto_now_add=True)
     sms_status = models.CharField('Статус версии СМС', max_length=300, choices=SMS_STATUS, blank=True)
     # patient_fio = models.CharField('ФИО пациента', max_length=10, blank=True)
@@ -973,11 +975,8 @@ class SAMD(models.Model):
     med_org = models.CharField('Медицинская организация', max_length=10, choices=MEDICAL_ORGANIZATION, blank=True)
     trigger = models.CharField('Триггер', max_length=300, blank=True)
     
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
     signed = models.BooleanField('Подпись', default=False)
-
-    model = models.CharField('Модель', max_length=300, blank=True)
-    model_id = models.IntegerField('id для модели', blank=True, null=True)
+    was_send = models.BooleanField('Отправлен', default=False)
 
 
 class TelegramUsers(models.Model):
@@ -998,3 +997,7 @@ class Notifications(models.Model):
     
     class Meta:
         ordering = ['read', '-created']
+
+
+class ResponseMessages(models.Model):
+    msg_id = models.CharField('Идентификатор сообщения', max_length=300, blank=True)
