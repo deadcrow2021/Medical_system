@@ -531,6 +531,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                       [form.cleaned_data['email']])
             user.save()
             
+            
             user_type = 'doctor' if self.form_class == DoctorCreationForm else 'patient'
             if user_type == 'patient':
                 # med_card = MedicalCard()
@@ -558,6 +559,17 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 mo_delivery = MODelivery()
                 mo_delivery.patient = patient
                 mo_delivery.save()
+
+                samd = SAMD()
+                # samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
+                samd.patient = patient
+                # samd.doctor = request.user.doctor
+                samd.sms_type = '2'
+                samd.sms_status = '3'
+                samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
+                samd.trigger = 'Выявление факта постановки на учет по беременности'
+                samd.save()
+
             else:
                 personal.user = user
             personal.save()
@@ -1027,7 +1039,17 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
                 else:
                     data.imt = 0
 
-            # if model_name == 'hospitalization':
+            if model_name == 'hospitalization': 
+                samd = SAMD()
+                # samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
+                samd.patient = current_user.patient
+                samd.doctor = request.user.doctor
+                samd.sms_type = '5'
+                samd.sms_status = '3'
+                samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
+                samd.trigger = 'Выявление госпитализации (получение пациентом медицинской помощи в условиях стационара (дневного стационара))'
+                samd.save()
+                
             #     samd_doc = SAMD(patient=current_user.patient, sms_status='3', sms_type='2')
             #     print(samd_doc.__dict__)
             #     samd_doc.save()
@@ -1650,17 +1672,18 @@ def doctor_profile_page(request: HttpRequest, profile_id: int):
     return resp
 
 samd_names = {
-    '1': 'priem_osmotr_vracha_specialista.xml',
-    '2': 'protocol_instrumentalnogo_issledovaniya.xml',
-    '3': 'vipisnoy_epikriz_iz_stacionara.xml',
-    '4': 'vipisnoy_epikriz_iz_roddoma.xml',
-    '5': 'protokol_rodov.xml',
-    '6': 'izvesheniye_o_kas.xml',
-    '7': 'zaklucheniye_po_rezultatam_riska.xml',
-    '8': 'protokol_med_manipulyatsii.xml',
+    '1': ('priem_osmotr_vracha_specialista.xml', 'Прием (осмотр) врача-специалиста'),
+    '2': ('protocol_instrumentalnogo_issledovaniya.xml', 'Протокол инструментального исследования'),
+    '3': ('vipisnoy_epikriz_iz_stacionara.xml', 'Выписной эпикриз из стационара по отдельным профилям медицинской помощи'),
+    '4': ('vipisnoy_epikriz_iz_roddoma.xml', 'Выписной эпикриз из родильного дома'),
+    '5': ('protokol_rodov.xml', 'Протокол родов'),
+    '6': ('izvesheniye_o_kas.xml', 'Извещение о случае критического акушерского состояния'),
+    '7': ('zaklucheniye_po_rezultatam_riska.xml', 'Заключение по результатам расчета индивидуального риска'),
+    '8': ('protokol_med_manipulyatsii.xml', 'Протокол медицинской манипуляции'),
 }
 
 # sms_type: samd_names
+# Триг. точка: номер СЭМД-бета в. (samd_names)
 samd = {
     '1': ('1', '2'),
     '2': ('1', '2'),
@@ -1672,7 +1695,6 @@ samd = {
     # '7': (),
     '8': ('6'),
     '9': ('7'),
-    
 }
 
 def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
@@ -1697,7 +1719,8 @@ def samd_view(request: HttpRequest, profile_id: int, samd_type) -> HttpResponse:
 def samd_xml_view(request: HttpRequest, profile_id: int, xml_name):
     current_user = User.objects.get(pk=profile_id) # patient
     with open(os.path.join(BASE_DIR, f'samd/{xml_name}'), 'r', encoding="utf8") as file:
-        return render(request, 'users/samd_xml_view.html', {'content':generate_samd(file.read(), current_user.patient)})
+        content = generate_samd(file.read(), current_user.patient).split('\n')
+        return render(request, 'users/samd_xml_view.html', {'content': content})
 
 
 xml = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -1732,7 +1755,7 @@ xml = '''<?xml version="1.0" encoding="UTF-8"?>
 
 def send_xml(request: HttpRequest, profile_id: int, samd_type):
     current_user = User.objects.get(pk=profile_id) # patient
-    pathes = [samd_names[x] for x in samd[samd_type]]
+    pathes = [samd_names[x][0] for x in samd[samd_type]]
     for p in pathes:
         with open(os.path.join(BASE_DIR, f'samd/{p}'), 'r', encoding="utf8") as file:
             r = requests.post('https://ips-test.rosminzdrav.ru/ee37f0089b0d2', data=xml.replace('{% content %}', encode_samd(generate_samd(file.read(), current_user.patient))), headers={'Content-Type': 'application/xml'}, verify=False)
@@ -1753,6 +1776,9 @@ def sign_document(request, samd_id, profile_id):
         current_samd = patient.samd.get(id=samd_id)
         current_samd.signed = True
         current_samd.sms_status = '4'
+        if not current_samd.doctor:
+            current_samd.doctor = request.user.doctor
+            current_samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
         current_samd.save()
         return redirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect(reverse('samd', args=(profile_id,)))
