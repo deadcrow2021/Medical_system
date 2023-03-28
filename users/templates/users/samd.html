@@ -25,15 +25,21 @@
                     <td><p>{{ doc.get_med_org_display }}</p></td>
                     <td><p>{{ doc.get_sms_type_display }}</p></td>
                     <td><p>{{ doc.get_sms_status_display }}</p></td>
-                    <td><p></p><a href="{% url 'samd_view' profile_id doc.sms_type %}">Просмотреть</a> | <a href="{% url 'send_xml' profile_id doc.sms_type %}">Отправить</a></td>
+                    <td><p>
+                        <a href="{% url 'samd_view' profile_id doc.sms_type %}">Просмотреть</a> | 
+                        {% if not doc.signed %}
+                            Требуется подпись
+                        {% else %}
+                            <a href="{% url 'send_xml' profile_id doc.sms_type %}">
+                                Отправить
+                            </a>
+                        {% endif %}
+                    </p></td>
                     <td><p>{% if doc.signed %}Подписан{% endif %}{% if not doc.signed %}
 
                         <div class="fields__input">
                             <form action="{% url 'sign-samd' doc.id current_user.id %}" method="post">
                                 {% csrf_token %}
-                                <!-- <div class="fields__input__field hide">
-                                    <input type="hidden" name="profile_pk" value="{{profile.pk}}">
-                                </div> -->
                                 <div class="">
                                     <button id="unfollow-btn" class="btn" type="submit">Подписать</button>
                                 </div>

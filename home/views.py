@@ -346,15 +346,22 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                 if form.is_valid():
                     commit: ReceptionNotes = form.save(commit=False)
                     commit.status = 'recorded'
+                    service = commit.service
                     commit.save()
-                    
+
                     samd = SAMD()
                     samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
                     samd.doctor = request.user.doctor
-                    samd.sms_type = '1'
+                    print(commit.__dict__)
+                    print(service)
+                    if 'B01.' in service: # консультация
+                        samd.sms_type = '1'
+                        samd.trigger = 'Выявление осмотра (консультации) пациента'
+                    else: # Диагностика
+                        samd.sms_type = '3'
+                        samd.trigger = 'Выявление диагностических исследований'
                     samd.sms_status = '3'
                     samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
-                    samd.trigger = 'Выявление осмотра (консультации) пациента'
                     samd.save()
 
                     # bot

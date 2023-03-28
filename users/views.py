@@ -209,6 +209,27 @@ def profile(request: HttpRequest, profile_id: int):
         premature_birth = calc_premature_birth(user_profile.patient)
         risk_values_sum = calc_risk_values_sum(user_profile.patient)
         
+        samds = user.patient.samd.all()
+        if not any(x.sms_type == '8' for x in samds) and any(x == 'Высокий' for x in (preeclampsia, premature_birth)):
+            samd = SAMD()
+            samd.patient = user.patient
+            samd.doctor = request.user.doctor
+            samd.sms_type = '8'
+            samd.sms_status = '3'
+            samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
+            samd.trigger = 'Выявление извещения о критическом акушерском состоянии'
+            samd.save()
+
+        if not any(x.sms_type == '9' for x in samds) and risk_values_sum if risk_values_sum else 0 >= 10:
+            samd = SAMD()
+            samd.patient = user.patient
+            samd.doctor = request.user.doctor
+            samd.sms_type = '9'
+            samd.sms_status = '3'
+            samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
+            samd.trigger = 'Выявление извещения о критическом акушерском состоянии'
+            samd.save()
+
         risks = (
             ('Преэклампсия',               preeclampsia),
             ('Преждевременные роды',       premature_birth),
@@ -323,6 +344,15 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
                 patient = Patient.objects.get(user=current_user)
                 outcome.patient = patient
                 outcome.save()
+                
+                samd = SAMD()
+                samd.patient = patient
+                samd.doctor = request.user.doctor
+                samd.sms_type = '6'
+                samd.sms_status = '3'
+                samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
+                samd.trigger = 'Выявление факта завершения беременности'
+                samd.save()
                 # add_log Пациент Х. Добавлен исход беременности
             return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
     else:
@@ -1688,7 +1718,6 @@ samd = {
     '1': ('1', '2'),
     '2': ('1', '2'),
     '3': ('2'),
-    ##########
     # '4': (),
     '5': ('1', '2', '3'),
     '6': ('1', '2', '4', '5'), 
