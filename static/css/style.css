@@ -53,7 +53,7 @@ input {
 }
 
 table {
-    backdrop-filter: blur(4px);
+    /* backdrop-filter: blur(4px); */
 }
 
 thead {
@@ -65,7 +65,7 @@ fieldset {
     border: 1px solid black;
     border-radius: 20px;
     padding: 0 20px;
-    backdrop-filter: blur(8px);
+    /* backdrop-filter: blur(8px); */
 }
 
 fieldset.outer_div {
@@ -661,7 +661,7 @@ a.btn {
 	width: 100%;
 	border: none;
     border-spacing: 0;
-    backdrop-filter: blur(8px);
+    /* backdrop-filter: blur(8px); */
     background-color: #fff7;
 	/* margin-bottom: 20px; */
 }
@@ -698,6 +698,7 @@ a.btn {
     /* margin: 0 20px; */
     max-height: 30vh;
     overflow: scroll;
+    padding: 0;
 }
 
 th {
@@ -1030,7 +1031,7 @@ nav {
     height: 600px;
     overflow-y: scroll;
     justify-content: flex-start;
-    backdrop-filter: blur(8px);
+    /* backdrop-filter: blur(8px); */
 }
 .tab-content > a {
     height: auto;
