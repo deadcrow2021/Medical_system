@@ -1309,3 +1309,7 @@ nav {
     background-color: transparent;
     color: rgb(1, 38, 63);
 }
+
+.blur4px {
+    backdrop-filter: blur(4px);
+}

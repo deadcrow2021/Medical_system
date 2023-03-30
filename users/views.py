@@ -1681,6 +1681,11 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id) # patient
     samd_docs = current_user.patient.samd.all()
     to_add = f'#/samd/{profile_id}!СЭМД документы'
+    
+    print(f"{samd_docs=}")
+    if len(samd_docs) < 1:
+        samd_docs = []
+    
     resp = render(request, template_name, { 'profile_id': profile_id, 'samd_docs': samd_docs, 'current_user': current_user })
     return get_and_add_cookie(request, to_add, resp)
 

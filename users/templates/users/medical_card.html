@@ -110,7 +110,7 @@
         }
         
         let div = document.createElement('fieldset');
-        div.setAttribute('class', 'outer_div');
+        div.classList.add('outer_div', 'blur4px')
         div.appendChild(label);
         div.appendChild(inner_div);
         fields.prepend(div);
