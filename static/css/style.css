@@ -52,9 +52,9 @@ input {
     background-color: #fff8;
 }
 
-table {
-    /* backdrop-filter: blur(4px); */
-}
+/* table {
+    backdrop-filter: blur(4px);
+} */
 
 thead {
     position: sticky;
