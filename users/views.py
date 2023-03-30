@@ -1005,7 +1005,7 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
 
 def add_profile_models_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
-    success_url = "profile-models-template"
+    success_url = "patient-info"
     model = name_model[model_name][1]
     
     if request.method == "POST":
@@ -1037,7 +1037,8 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
             data.patient = patient
             data.save()
             # add_log
-            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
+            # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     
     if int(model_id) > -1:
         instance = name_model[model_name][0].objects.get(pk=model_id)
