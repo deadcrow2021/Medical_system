@@ -780,7 +780,10 @@ def update_patient_info_page(request, profile_id):
         form = PatientInformationForm(request.POST, instance=instance)
         if form.is_valid():
             data = form.save(commit=False)
-            data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+            if form.cleaned_data['height'] != 0:
+                data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+            else:
+                data.imt = None
             data.save()
             # add_log Пациент Х. Обновлена информация о пациенте. Было: Стало:
             
