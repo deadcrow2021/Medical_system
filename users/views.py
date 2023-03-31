@@ -1771,12 +1771,12 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/current_pregnancy.html'
     to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
-    context = {}
+    context = { 'modify': 0 }
     
     try:
         if request.method == "POST":
             if request.POST.get('modify', None) != None:
-                context.update({ 'modify': True })
+                context.update({ 'modify': 1 })
             else:
                 for key, val in current_pregnancy_models.items():
                     inst = val[0].objects.get(patient=current_user.patient)
@@ -1794,8 +1794,8 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
                 model_forms.append([val[1](instance=i) for i in instances[-1]])
                 exists.append(True)
             else:
-                model_forms.append([])
-                exists.append(False)
+                model_forms.append([val[1]])
+                exists.append(True)
             model_names.append(key)
         data = zip(model_forms, exists, model_names)
         context.update({ 'data': data, 'current_user': current_user })
