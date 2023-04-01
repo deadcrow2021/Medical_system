@@ -52,9 +52,9 @@ input {
     background-color: #fff8;
 }
 
-table {
-    /* backdrop-filter: blur(4px); */
-}
+/* table {
+    backdrop-filter: blur(4px);
+} */
 
 thead {
     position: sticky;
@@ -1308,4 +1308,8 @@ nav {
     width: fit-content;
     background-color: transparent;
     color: rgb(1, 38, 63);
+}
+
+.blur4px {
+    backdrop-filter: blur(4px);
 }

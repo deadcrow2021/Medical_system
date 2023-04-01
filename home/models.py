@@ -139,7 +139,7 @@ class ComplicationRisk(models.Model):
 
 class PregnancyOutcome(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_outcome')
-    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', validators=[MaxValueValidator(99)], unique=True)
+    pregnancy_count = models.PositiveSmallIntegerField('Беременность по счету', validators=[MaxValueValidator(99)])
     childbirth_date = models.DateTimeField('Дата исхода беременности', blank=True, null=True)
     pregnancy_outcome = models.CharField('Исход беременности', max_length=10, choices=PREGNANCY_OUTCOME, blank=True, null=True)
     

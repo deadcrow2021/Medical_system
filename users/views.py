@@ -822,7 +822,10 @@ def update_patient_info_page(request, profile_id):
         form = PatientInformationForm(request.POST, instance=instance)
         if form.is_valid():
             data = form.save(commit=False)
-            data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+            if form.cleaned_data['height'] != 0:
+                data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
+            else:
+                data.imt = None
             data.save()
             # add_log Пациент Х. Обновлена информация о пациенте. Было: Стало:
             
@@ -1047,7 +1050,7 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
 
 def add_profile_models_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
-    success_url = "profile-models-template"
+    success_url = "patient-info"
     model = name_model[model_name][1]
     
     if request.method == "POST":
@@ -1089,7 +1092,8 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
             data.patient = patient
             data.save()
             # add_log
-            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
+            # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
     
     if int(model_id) > -1:
         instance = name_model[model_name][0].objects.get(pk=model_id)
@@ -1731,6 +1735,11 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id) # patient
     samd_docs = current_user.patient.samd.all()
     to_add = f'#/samd/{profile_id}!СЭМД документы'
+    
+    print(f"{samd_docs=}")
+    if len(samd_docs) < 1:
+        samd_docs = []
+    
     resp = render(request, template_name, { 'profile_id': profile_id, 'samd_docs': samd_docs, 'current_user': current_user })
     return get_and_add_cookie(request, to_add, resp)
 
@@ -1817,12 +1826,12 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/current_pregnancy.html'
     to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
-    context = {}
+    context = { 'modify': 0 }
     
     try:
         if request.method == "POST":
             if request.POST.get('modify', None) != None:
-                context.update({ 'modify': True })
+                context.update({ 'modify': 1 })
             else:
                 for key, val in current_pregnancy_models.items():
                     inst = val[0].objects.get(patient=current_user.patient)
@@ -1840,8 +1849,8 @@ def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpRe
                 model_forms.append([val[1](instance=i) for i in instances[-1]])
                 exists.append(True)
             else:
-                model_forms.append([])
-                exists.append(False)
+                model_forms.append([val[1]])
+                exists.append(True)
             model_names.append(key)
         data = zip(model_forms, exists, model_names)
         context.update({ 'data': data, 'current_user': current_user })

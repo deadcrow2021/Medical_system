@@ -67,7 +67,7 @@
     
     function set_name_with_border(name, id, count) {
         let elem = document.querySelector(`label[for=id_${id}]`);
-        if (elem === null) {
+        {% comment %} if (elem === null) {
             document.body.innerHTML += `\
                 <fieldset class="outer_div">
                     <div class="fields__input">
@@ -77,7 +77,7 @@
                     </div>
                 </fieldset>`
             return;
-        }
+        } {% endcomment %}
         elem = elem.parentNode.parentNode.parentNode;
         
         let inner_div = document.createElement('div');
