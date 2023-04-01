@@ -965,7 +965,7 @@ class MODelivery(models.Model):
 
 class SAMD(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='samd')
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd')
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='samd', blank=True, null=True)
 
     create_date = models.DateTimeField('Дата создания', auto_now_add=True)
     sms_status = models.CharField('Статус версии СМС', max_length=300, choices=SMS_STATUS, blank=True)

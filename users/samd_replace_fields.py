@@ -17,7 +17,8 @@ def generate_samd(samd_text, patient_obj):
                             .replace('{% first_name %}', patient_obj.first_name if patient_obj.first_name else '')
                             .replace('{% Father_name %}', patient_obj.father_name if patient_obj.father_name else '')
                             .replace('{% birth_date %}', patient_obj.card.date_of_birth.strftime('%m/%d/%Y') if patient_obj.card.date_of_birth else '')
-                            .replace('{% reception_code %}', ''))
+                            .replace('{% reception_code %}', '')
+                            .replace('\t', '....'))
     except:
         samd_text = (samd_text.replace('{% passport_series %}', '')
                             .replace('{% passport_number %}', '')
@@ -33,7 +34,8 @@ def generate_samd(samd_text, patient_obj):
                             .replace('{% first_name %}', '')
                             .replace('{% Father_name %}', '')
                             .replace('{% birth_date %}', '')
-                            .replace('{% reception_code %}', ''))
+                            .replace('{% reception_code %}', '')
+                            .replace('\t', '....'))
     return samd_text
 
 

@@ -4,8 +4,17 @@
 <div class="back__button">
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
-{% for p in pathes %}
-    <p><a href="{% url 'samd_xml_view' profile_id p %}">{{ p }}</a></p>
-{% endfor %}
-
+<div class="center_div">
+    <div class="cut_width">
+        {% for p in pathes %}
+        <div class="block__profile__docs">
+            <div class="block__lines">
+                <div class="lines__element btn center_div">
+                    <p><a href="{% url 'samd_xml_view' profile_id p.0 %}">{{ p.1 }}</a></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
