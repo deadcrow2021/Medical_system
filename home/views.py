@@ -142,6 +142,18 @@ def calc_risk_values_sum(user_profile: Patient) -> str | int:
         return 'Введено не числовое значение'
 
 
+def create_samd_model(patient, doctor, sms_type, sms_status, med_org, trigger):
+    samd = SAMD()
+    samd.patient = patient
+    samd.doctor = doctor
+    samd.sms_type = sms_type
+    samd.sms_status = sms_status
+    samd.med_org = med_org if med_org is not None else 'Неизвестно'
+    samd.trigger = trigger
+    return samd
+
+### views ###
+
 @login_required
 def home_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'home/home.html'
@@ -349,20 +361,16 @@ def reception_add_page(request: HttpRequest, profile_id: int) -> HttpResponse:
                     service = commit.service
                     commit.save()
 
-                    samd = SAMD()
-                    samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
-                    samd.doctor = request.user.doctor
-                    print(commit.__dict__)
-                    print(service)
+                    patient = User.objects.select_related('patient').get(pk=profile_id).patient
                     if 'B01.' in service: # консультация
-                        samd.sms_type = '1'
-                        samd.trigger = 'Выявление осмотра (консультации) пациента'
+                        sms_type = '1'
+                        trigger = 'Выявление осмотра (консультации) пациента'
                     else: # Диагностика
-                        samd.sms_type = '3'
-                        samd.trigger = 'Выявление диагностических исследований'
-                    samd.sms_status = '3'
-                    samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
-                    samd.save()
+                        sms_type = '3'
+                        trigger = 'Выявление диагностических исследований'
+                    create_samd_model(patient, request.user.doctor, sms_type,
+                                      '3', request.user.doctor.med_org,
+                                      trigger).save()
 
                     # bot
                     try:
