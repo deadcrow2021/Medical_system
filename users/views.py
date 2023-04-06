@@ -568,7 +568,7 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 mo_delivery.patient = patient
                 mo_delivery.save()
 
-                create_samd_model(patient, None,
+                create_samd_model(patient, request.user.doctor,
                                   '2', '3', request.user.doctor.med_org,
                                   'Выявление факта постановки на учет по беременности').save()
             else:
