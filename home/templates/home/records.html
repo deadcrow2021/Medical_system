@@ -9,6 +9,7 @@
 </div>
 
 
+{% if records %}
 <div class="user__block border_div" style="width: fit-content">
     <div class="user__block__row">
         {% for record in records %}
@@ -31,6 +32,7 @@
         {% endfor %}
     </div>
 </div>
+{% endif %}
 <script type="text/javascript">
 </script>
 {% endblock %}
