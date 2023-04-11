@@ -16,7 +16,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 import django.contrib.messages as messages
-from home.views import add_log
+from home.views import add_log, create_samd_model
 from .mkb10 import mkb10_deseases
 from home.choices import CHANGETYPE
 from django.utils import timezone
@@ -29,7 +29,6 @@ from urllib.parse import quote
 from .samd_replace_fields import generate_samd, encode_samd
 import time
 import json
-# import APIFunctions
 
 
 def user_is_doctor(user):
@@ -130,6 +129,7 @@ def calc_risk_values_sum(user_profile: Patient) -> str | int:
     except:
         return 'Введено не числовое значение'
 
+### views ###
 
 def profile(request: HttpRequest, profile_id: int):
     follow = False
@@ -169,7 +169,6 @@ def profile(request: HttpRequest, profile_id: int):
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
 
-        # med_card = user_profile.card
         gestation_period = user_profile.gestation_period_weeks
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
@@ -211,24 +210,13 @@ def profile(request: HttpRequest, profile_id: int):
         
         samds = user.patient.samd.all()
         if not any(x.sms_type == '8' for x in samds) and any(x == 'Высокий' for x in (preeclampsia, premature_birth)):
-            samd = SAMD()
-            samd.patient = user.patient
-            samd.doctor = request.user.doctor
-            samd.sms_type = '8'
-            samd.sms_status = '3'
-            samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
-            samd.trigger = 'Выявление извещения о критическом акушерском состоянии'
-            samd.save()
-
+            create_samd_model(user.patient, request.user.doctor, '8', '3',
+                              request.user.doctor.med_org,
+                              'Выявление извещения о критическом акушерском состоянии').save()
         if not any(x.sms_type == '9' for x in samds) and risk_values_sum if risk_values_sum else 0 >= 10:
-            samd = SAMD()
-            samd.patient = user.patient
-            samd.doctor = request.user.doctor
-            samd.sms_type = '9'
-            samd.sms_status = '3'
-            samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
-            samd.trigger = 'Выявление извещения о критическом акушерском состоянии'
-            samd.save()
+            create_samd_model(user.patient, request.user.doctor,
+                              '9', '3', request.user.doctor.med_org,
+                              'Выявление извещения о критическом акушерском состоянии').save()
 
         risks = (
             ('Преэклампсия',               preeclampsia),
@@ -345,15 +333,10 @@ def add_pregnancy_outcome(request: HttpRequest, profile_id: int, outcome_id: int
                 patient = Patient.objects.get(user=current_user)
                 outcome.patient = patient
                 outcome.save()
-                
-                samd = SAMD()
-                samd.patient = patient
-                samd.doctor = request.user.doctor
-                samd.sms_type = '6'
-                samd.sms_status = '3'
-                samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
-                samd.trigger = 'Выявление факта завершения беременности'
-                samd.save()
+
+                create_samd_model(patient, request.user.doctor,
+                                  '6', '3', request.user.doctor.med_org,
+                                  'Выявление факта завершения беременности').save()
                 # add_log Пациент Х. Добавлен исход беременности
             return HttpResponseRedirect(reverse('pregnancy-outcome', args=(profile_id,)))
     else:
@@ -449,8 +432,6 @@ def patients_page(request: HttpRequest) -> HttpResponse:
                             case '30':
                                 mounth_ago = dt - timedelta(days=30)
                                 patients = patients.filter(date_updated__gte=mounth_ago,)
-                        
-                        print(f"{patients=}")
                         users = users.filter(patient__in=patients)
                     case _:
                         users = users.filter(**dict((f,)))
@@ -481,8 +462,6 @@ def patients_vimis(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = VimisSearchPatientsForm(request.POST or None)
         form1 = VimisSearchPatientsIdForm(request.POST or None)
-        print(request.POST)
-        print(form.__dict__)
         # if form.is_valid()
     return render(request, template_name, {'form':form})
 
@@ -492,7 +471,6 @@ def patients_vimis_id(request: HttpRequest) -> HttpResponse:
     form = VimisSearchPatientsIdForm()
     if request.method == 'POST':
         form = VimisSearchPatientsIdForm(request.POST or None)
-        print(form.__dict__)
         # if form.is_valid()
     return render(request, template_name, {'form':form})
 
@@ -591,16 +569,9 @@ class RegisterView(UserIsNotPatient, LoginRequiredMixin, CreateView):
                 mo_delivery.patient = patient
                 mo_delivery.save()
 
-                samd = SAMD()
-                # samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
-                samd.patient = patient
-                # samd.doctor = request.user.doctor
-                samd.sms_type = '2'
-                samd.sms_status = '3'
-                samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
-                samd.trigger = 'Выявление факта постановки на учет по беременности'
-                samd.save()
-
+                create_samd_model(patient, request.user.doctor,
+                                  '2', '3', request.user.doctor.med_org,
+                                  'Выявление факта постановки на учет по беременности').save()
             else:
                 personal.user = user
             personal.save()
@@ -791,7 +762,6 @@ def patient_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     model_names = []
     for key, val in patinet_info_models.items():
         instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
-        # print(f'{val[1]=}')
         if len(instances[-1]) > 0:
             forms.append([val[1](instance=i) for i in instances[-1]])
             exists.append(True)
@@ -802,8 +772,6 @@ def patient_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
         model_names.append(key)
     
     tabs = zip(names, exists, forms, model_names)
-    # print(f'{forms=}')
-    # print(f'{exists=}')
     # key_value = ((key, val[2]) for key, val in patinet_info_models.items())
     roles = ('receptionist', 'obstetrician-gynecologist')
     
@@ -823,10 +791,8 @@ def update_patient_info_page(request, profile_id):
         form = PatientInformationForm(request.POST, instance=instance)
         if form.is_valid():
             data = form.save(commit=False)
-            if form.cleaned_data['height'] != 0:
+            if form.cleaned_data['height'] and form.cleaned_data['mass']:
                 data.imt = form.cleaned_data['mass'] / ((form.cleaned_data['height'] / 100) ** 2)
-            else:
-                data.imt = None
             data.save()
             # add_log Пациент Х. Обновлена информация о пациенте. Было: Стало:
             
@@ -1082,13 +1048,9 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
                 samd.sms_status = '3'
                 samd.med_org = request.user.doctor.med_org if request.user.doctor.med_org is not None else 'Неизвестно'
                 samd.trigger = 'Выявление госпитализации (получение пациентом медицинской помощи в условиях стационара (дневного стационара))'
-                samd.save()
-                
-            #     samd_doc = SAMD(patient=current_user.patient, sms_status='3', sms_type='2')
-            #     print(samd_doc.__dict__)
-            #     samd_doc.save()
-            #     print(current_user.patient)
-            # print(model_name)
+                create_samd_model(current_user.patient, request.user.doctor,
+                                  '5', '3', request.user.doctor.med_org, 
+                                  'Выявление госпитализации (получение пациентом медицинской помощи в условиях стационара (дневного стационара))').save()
             
             data.patient = patient
             data.save()
@@ -1736,8 +1698,6 @@ def samd_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id) # patient
     samd_docs = current_user.patient.samd.all()
     to_add = f'#/samd/{profile_id}!СЭМД документы'
-    
-    print(f"{samd_docs=}")
     if len(samd_docs) < 1:
         samd_docs = []
     
@@ -1798,7 +1758,6 @@ def send_xml(request: HttpRequest, profile_id: int, samd_type):
     for p in pathes:
         with open(os.path.join(BASE_DIR, f'samd/{p}'), 'r', encoding="utf8") as file:
             r = requests.post('https://ips-test.rosminzdrav.ru/ee37f0089b0d2', data=xml.replace('{% content %}', encode_samd(generate_samd(file.read(), current_user.patient))), headers={'Content-Type': 'application/xml'}, verify=False)
-            print(r._content.decode())
     return HttpResponseRedirect(reverse('samd', kwargs={ 'profile_id': profile_id }))
 
 
@@ -1931,6 +1890,5 @@ def JSONApi(request: HttpRequest) -> HttpResponse:
                     Notifications.objects.get(pk=notification_id).delete()
                 case _:
                     pass
-        # print(f'{json.loads(request.body)=}')
     
     return HttpResponse(json.dumps(ans), content_type="application/json")
