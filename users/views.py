@@ -252,10 +252,11 @@ def profile(request: HttpRequest, profile_id: int):
 
 def self_monitoring(request: HttpResponse, profile_id: int) -> HttpResponse:
     user: User = User.objects.get(id=profile_id)
-    records = user.patient.records.all()
+    records = user.patient.records.all().order_by('-date_updated')
     exists: bool = True if len(records) > 0 else False
     rolesNA = ('assistant', 'receptionist')
     to_add = f'#/self_monitoring/{profile_id}!Дневник самонаблюдений'
+    
     resp = render(request, 'users/self_monitoring.html', { 'curent_user': user, 'records': records, 'exists': exists, 'rolesNA': rolesNA })
     return get_and_add_cookie(request, to_add, resp)
 
