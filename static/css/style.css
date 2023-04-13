@@ -1313,3 +1313,8 @@ nav {
 .blur4px {
     backdrop-filter: blur(4px);
 }
+
+.overflow-hidden{
+    overflow: hidden;
+    min-height: fit-content;
+}

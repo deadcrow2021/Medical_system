@@ -177,6 +177,11 @@
         for (let i = 0; i < toggle_btns.length; i++) {
             let toggle_btn = toggle_btns[i];
             let next_elem = next_elems[i];
+            
+            // if have no elements in dropdown menu then down show border
+            if (next_elem.children[0].children.length <= 0) 
+                continue;
+            
             toggle_btn.onclick = (e) => {
                 if (next_elem.style.display !== 'none') {
                     next_elem.style.display = 'none';
@@ -249,7 +254,8 @@
         for (let btn of delete_notification_buttons) {
             btn.onclick = e => {
                 send_data_to_api_async({ func: "delete_notification", notification_id: btn.value })
-                    .then(res => { window.location.reload(); });
+                    .then(res => { window.location.reload(); })
+                    .catch(reason => { alert('Уведомление не было удалено'); });
             };
         }
         // Тестовое уведомление
