@@ -393,7 +393,6 @@ def update_profile(request, profile_id):
     return render(request, 'users/update_profile.html', context)
 
 
-# class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
 def patients_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/patients.html'
     page_number: int = request.GET.get('page', 1)
@@ -443,6 +442,7 @@ def patients_page(request: HttpRequest) -> HttpResponse:
         
         prev_data = request.POST.copy()
         context = { 'prev_data': prev_data }
+        page_number = 1
     else:
         context = {}
         users = MedicalCard.objects.all()
