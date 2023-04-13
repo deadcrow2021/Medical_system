@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     } catch (error) { console.log(`${error}`); }
     
     try {
+        // ываыва;
         var date_inputs = document.querySelectorAll('input[type=date]');
         for (let inp of date_inputs) {
             // inp.style.width = '200px';

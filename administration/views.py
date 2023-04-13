@@ -13,7 +13,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from home.views import add_log
 from med_system.funcs import get_and_add_cookie
-from urllib.parse import quote
+from urllib.parse import quote, unquote
+import json
 
 def user_is_admin(user):
     return not (hasattr(user, 'doctor') or hasattr(user, 'patient'))
@@ -30,6 +31,12 @@ def doctors(request: HttpRequest):
     template_name: str = 'administration/doctors.html'
     page_number: int = request.GET.get('page', 1)
     to_add = f'/doctors!Доктора'
+    
+    prev_data = request.POST.dict()
+    if len(prev_data) < 1:
+        context = { 'prev_data': json.loads(unquote(request.COOKIES.get('prev_data', '{}'))) }
+    else:
+        context = { 'prev_data': prev_data }
     
     if request.method == 'POST':
         users = Doctor.objects
@@ -49,10 +56,8 @@ def doctors(request: HttpRequest):
                 users = users.all()
             else:
                 users = []
-        prev_data = request.POST.copy()
-        context = { 'prev_data': prev_data }
+        page_number = 1
     else:
-        context = {}
         users = Doctor.objects.all()
     
     paginator = Paginator(users, 8)
@@ -60,6 +65,7 @@ def doctors(request: HttpRequest):
     context |= { 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator }
     resp = render(request, template_name, context)
     resp.set_cookie('nav', quote(to_add, safe='!#/'), samesite='strict')
+    resp.set_cookie('prev_data', quote(str(context.get('prev_data')).replace("'", '"')), samesite='strict')
     return resp
 
 @login_required
