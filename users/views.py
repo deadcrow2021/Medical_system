@@ -282,7 +282,6 @@ def medical_card(request, profile_id):
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
-    resp = render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
     
     if request.method == "POST" and form.is_valid():
         data: MedicalCard = form.save(commit=False)
@@ -297,7 +296,7 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
         # add_log  обновлена мед карта. Было: Стало:
         return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
-    return resp
+    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
@@ -948,11 +947,12 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
             results = []
             if calc_preeclampsia(current_user.patient) == 'Высокий':
                 results.append('Высокий риск преэклампсии')
-            if calc_premature_birth(current_user.patient) == 'Высокий':
-                results.append('Высокий риск преждевременных родов')
-            if calc_risk_values_sum(current_user.patient) == 10:
+            if calc_premature_birth(current_user.patient) == 'Высокий' \
+                or calc_risk_values_sum(current_user.patient) == 10:
                 results.append('Высокий риск преждевременных родов')
             for risk in results:
+                if Notifications.objects.filter(user=request.user, title='Высокий риск', description=risk).exists():
+                    continue
                 Notifications.objects.create(**{
                     'user': request.user,
                     'title': 'Высокий риск',
