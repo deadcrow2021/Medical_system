@@ -137,6 +137,7 @@ def profile(request: HttpRequest, profile_id: int):
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     to_add = f'#/profile/{profile_id}!Профиль'
+    
     # delete patient
     if request.POST:
         user_profile: User = User.objects.get(pk=profile_id)
@@ -168,11 +169,11 @@ def profile(request: HttpRequest, profile_id: int):
         form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
-
+        
         gestation_period = user_profile.gestation_period_weeks
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
-        med_org = user_profile.med_org
+        med_org = user_profile.get_med_org_display()
         
         try:
             instance = PatientInformation.objects.get(patient=user.patient)
