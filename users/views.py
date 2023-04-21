@@ -1264,7 +1264,8 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                     continue
 
             if form_data['pregnancy_outcome']:
-                if not (any(x.pregnancy_outcome for x in p.pregnancy_outcome.all()) and p.pregnancy_outcome.pregnancy_outcome == form_data['pregnancy_outcome']):
+                if not (any(x.pregnancy_outcome for x in p.pregnancy_outcome.all()) and \
+                        any(x.pregnancy_outcome == form_data['pregnancy_outcome'] for x in p.pregnancy_outcome.all())):
                     continue
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:

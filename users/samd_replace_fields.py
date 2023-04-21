@@ -2,8 +2,8 @@ from base64 import b64encode
 
 
 def generate_samd(samd_text, patient_obj):
-    replace_tags = (('{% passport_series %}', patient_obj.card.series_number_pass[:4] if patient_obj.card.series_number_pass else ''),
-                    ('{% passport_number %}', patient_obj.card.series_number_pass[4:] if patient_obj.card.series_number_pass else ''),
+    replace_tags = (('{% passport_series %}', str(patient_obj.card.series_number_pass)[:4] if patient_obj.card.series_number_pass else ''),
+                    ('{% passport_number %}', str(patient_obj.card.series_number_pass)[4:] if patient_obj.card.series_number_pass else ''),
                     ('{% IssueOrgName %}', patient_obj.card.when_whom_issued if patient_obj.card.when_whom_issued else ''),
                     ('{% IssueOrgCode %}', ''),
                     ('{% oms_series %}', ''),
