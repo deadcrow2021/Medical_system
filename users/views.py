@@ -137,6 +137,7 @@ def profile(request: HttpRequest, profile_id: int):
     user: User = User.objects.get(id=profile_id)
     user_type = 'doctor' if hasattr(user, 'doctor') else 'patient'
     to_add = f'#/profile/{profile_id}!Профиль'
+    
     # delete patient
     if request.POST:
         user_profile: User = User.objects.get(pk=profile_id)
@@ -168,11 +169,11 @@ def profile(request: HttpRequest, profile_id: int):
         form = MedicalCardProfileForm(request.POST or None, instance=user_profile)
         notes = ReceptionNotes.objects.filter(patient=user.patient)
         mo_delivery = user_profile.patient.mo_delivery
-
+        
         gestation_period = user_profile.gestation_period_weeks
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
-        med_org = user_profile.med_org
+        med_org = user_profile.get_med_org_display()
         
         try:
             instance = PatientInformation.objects.get(patient=user.patient)
@@ -281,7 +282,6 @@ def medical_card(request, profile_id):
 def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
     form = MedicalCardForm(request.POST or None, instance=current_user.patient.card)
-    resp = render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
     
     if request.method == "POST" and form.is_valid():
         data: MedicalCard = form.save(commit=False)
@@ -296,7 +296,7 @@ def update_medical_card(request: HttpRequest, profile_id: int) -> HttpResponse:
         # add_log  обновлена мед карта. Было: Стало:
         return HttpResponseRedirect(reverse('medical-card', args=(profile_id,)))
     
-    return resp
+    return render(request, 'users/update_medical_card.html', { 'form': form, 'profile_id': profile_id, 'mkb_10': mkb10_deseases })
 
 
 def pregnancy_outcome(request: HttpRequest, profile_id: int):
@@ -393,7 +393,6 @@ def update_profile(request, profile_id):
     return render(request, 'users/update_profile.html', context)
 
 
-# class PatientsView(UserIsNotPatient, LoginRequiredMixin, ListView):
 def patients_page(request: HttpRequest) -> HttpResponse:
     template_name: str = 'users/patients.html'
     page_number: int = request.GET.get('page', 1)
@@ -443,6 +442,7 @@ def patients_page(request: HttpRequest) -> HttpResponse:
         
         prev_data = request.POST.copy()
         context = { 'prev_data': prev_data }
+        page_number = 1
     else:
         context = {}
         users = MedicalCard.objects.all()
@@ -947,11 +947,12 @@ def update_observation_template_page(request: HttpRequest, profile_id: int, mode
             results = []
             if calc_preeclampsia(current_user.patient) == 'Высокий':
                 results.append('Высокий риск преэклампсии')
-            if calc_premature_birth(current_user.patient) == 'Высокий':
-                results.append('Высокий риск преждевременных родов')
-            if calc_risk_values_sum(current_user.patient) == 10:
+            if calc_premature_birth(current_user.patient) == 'Высокий' \
+                or calc_risk_values_sum(current_user.patient) == 10:
                 results.append('Высокий риск преждевременных родов')
             for risk in results:
+                if Notifications.objects.filter(user=request.user, title='Высокий риск', description=risk).exists():
+                    continue
                 Notifications.objects.create(**{
                     'user': request.user,
                     'title': 'Высокий риск',

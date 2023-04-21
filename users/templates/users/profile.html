@@ -129,7 +129,7 @@
                 {% for name, val in risks %}
                 <tr>
                     <td><strong>{{ name }}</strong></td>
-                    <td>
+                    <td style="max-width: 450px">
                     {% if val %}
                         {% if name == 'Срок беременности' and user.doctor.role == 'obstetrician-gynecologist' %}
                             {{ val }} недель

@@ -226,7 +226,7 @@ class AppointmentList(models.Model):
     analysis = models.CharField('Анализ', max_length=1000, blank=True, null=True)
     appointment = models.CharField('Назначения', max_length=1000, blank=True, null=True)
     disability_certificate = models.CharField('Листок нетрудоспособности', max_length=1000, blank=True, null=True)
-    next_visit_date = models.DateField('Дата', blank=True, null=True)
+    next_visit_date = models.DateField('Дата следующего визита', blank=True, null=True)
 
 
 class TakingMedications(models.Model):

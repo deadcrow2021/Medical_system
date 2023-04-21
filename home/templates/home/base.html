@@ -27,7 +27,7 @@
             <!-- NOTIFICATION BUTTON -->
             <div class="navbar__element">
                 <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false"><img src="{% static 'images/notification.png' %}" alt="Уведомления" class="img"></a></p>
-                <div class="relative" style="display: none">
+                <div class="relative">
                     <div class="menu__options">
                         {% for notification in request.user.notifications.all %}
                         <div class="menu__element">
@@ -38,7 +38,6 @@
                             </a>
                             <button type="submit" class="delete_notification" value="{{ notification.pk }}">✕</button>
                         </div>
-                        <hr>
                         {% endfor %}
                     </div>
                 </div>
@@ -53,7 +52,7 @@
             {% if user.patient %}
             <div class="navbar__element">
                 <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.patient.last_name }} {{ user.patient.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.patient.father_name|make_list|first }}.{% endif %}</a></p>
-                <div class="relative" style="display: none">
+                <div class="relative">
                     <div class="menu__options">
                         <div class="menu__element">
                             <a href="{% url 'files-page' %}">Файлы</a>
@@ -64,7 +63,7 @@
             {% elif user.doctor %}
             <div class="navbar__element">
                 <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">{{ user.doctor.last_name }} {{ user.doctor.first_name|make_list|first }}. {% if user.doctor.father_name %}{{ user.doctor.father_name|make_list|first }}.{% endif %}</a></p>
-                <div class="relative" style="display: none">
+                <div class="relative">
                     <div class="menu__options">
                         <div class="menu__element">
                             <a href="{% url 'doc-profile' request.user.doctor.id %}">Профиль</a>
@@ -92,7 +91,7 @@
             {% elif user.is_superuser %}
             <div class="navbar__element">
                 <p><a class="toggle_btn" onselectstart="return false" onmousedown="return false">Администратор</a></p>
-                <div class="relative" style="display: none">
+                <div class="relative">
                     <div class="menu__options">
                         
                         <div class="menu__element">
@@ -168,6 +167,22 @@
     
     
     <script type="text/javascript" defer>
+        var notification = document.querySelector('img[alt="Уведомления"]').parentNode.parentNode;
+        var notification_menu = notification.nextElementSibling.children[0];
+        
+        notification_menu.style.maxWidth = document.body.offsetWidth - notification_menu.getBoundingClientRect().x + 'px';
+        let links = document.getElementsByClassName('notification_link');
+        
+        try {
+            let url_prefix = document.URL.split('/').slice(0,3).join('/') + '/' + "static/images/";
+            if (notification_menu.children.length > 0) {
+                notification.children[0].children[0].src = url_prefix + "have_notification.png";
+            } else {
+                notification.children[0].children[0].src = url_prefix + "notification.png";
+            }
+        } catch (error) { console.log(`${error}`); }
+    </script>
+    <script type="text/javascript" defer>
         var toggle_btns = [...document.getElementsByClassName('toggle_btn')];
         var next_elems = new Array();
         for (let toggle_btn of toggle_btns) {
@@ -177,6 +192,12 @@
         for (let i = 0; i < toggle_btns.length; i++) {
             let toggle_btn = toggle_btns[i];
             let next_elem = next_elems[i];
+            next_elem.style.display = 'none'; // hide all "relative" elements
+            
+            // if have no elements in dropdown menu then down show border
+            if (next_elem.children[0].children.length <= 0) 
+                continue;
+            
             toggle_btn.onclick = (e) => {
                 if (next_elem.style.display !== 'none') {
                     next_elem.style.display = 'none';
@@ -203,22 +224,6 @@
             company.style.padding = '0px';
             company.style.border = '0';
         };
-    </script>
-    <script type="text/javascript" defer>
-        var notification = document.querySelector('img[alt="Уведомления"]').parentNode.parentNode;
-        var notification_menu = notification.nextElementSibling.children[0];
-        notification_menu.style.maxWidth = document.body.offsetWidth - notification_menu.getBoundingClientRect().x + 'px';
-        {% comment %} notification_menu.style.display = 'none'; {% endcomment %}
-        let links = document.getElementsByClassName('notification_link');
-        
-        try {
-            let url_prefix = document.URL.split('/').slice(0,3).join('/') + '/' + "static/images/";
-            if (notification_menu.children.length > 0) {
-                notification.children[0].children[0].src = url_prefix + "have_notification.png";
-            } else {
-                notification.children[0].children[0].src = url_prefix + "notification.png";
-            }
-        } catch (error) { console.log(`${error}`); }
     </script>
     <script src="{% static 'js/script.js' %}" defer></script>
     <script type="text/javascript" defer>
@@ -249,7 +254,8 @@
         for (let btn of delete_notification_buttons) {
             btn.onclick = e => {
                 send_data_to_api_async({ func: "delete_notification", notification_id: btn.value })
-                    .then(res => { window.location.reload(); });
+                    .then(res => { window.location.reload(); })
+                    .catch(reason => { alert('Уведомление не было удалено'); });
             };
         }
         // Тестовое уведомление

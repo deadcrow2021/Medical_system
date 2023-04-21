@@ -205,7 +205,9 @@ class MedicalCardForm(forms.ModelForm):
             'generic_certificate_date': DateInput(),
             'first_visit_date': DateInput(),
             'childbirth_date': DateInput(),
-            'when_issued': DateInput()
+            'when_issued': DateInput(),
+            'mother_date_of_determination': DateInput(),
+            'father_date_of_determination': DateInput()
         }
 
 
