@@ -17,21 +17,25 @@
             {% for p in form %}
             <div class="fields__input same_btn">
                 <div class="fields__input__label width_100">
-                    <label class="form-label" for="{{ p.id_for_label }}"><strong>{{ p.label }}</strong></label>
+                    <strong>{{ p.label }}</strong>
                 </div>
                 <div class="fields__input__field width_100">
                     <p>{{ p }}</p>
                 </div>
             </div>
-            <div class="fields__input">
+            {% comment %} <div class="fields__input">
                 <div class="fields__input__label">
-                    {{ f.errors }}
+                    {{ p.errors }}
                 </div>
-            </div>
+            </div> {% endcomment %}
             {% endfor %}
         </div>
         <div class="submit-btn">
-            <button type="submit">Загрузить</button>
+            {% if new_file == 1 %}
+                <button type="submit">Загрузить</button>
+            {% else %}
+                <button type="submit">Изменить</button>
+            {% endif %}
         </div>
     </form>
 </div>

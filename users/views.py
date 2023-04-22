@@ -884,9 +884,9 @@ doctors_examinations_models = {
 }
 
 examination_list_models = {
-    'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
-    'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
-    'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
+    # 'antibodies':         ( AntibodiesDetermination, AntibodiesDeterminationForm, 'Антитела к бледной трепонеме' ),
+    # 'rubella':            ( RubellaVirus, RubellaVirusForm, 'Вирус краснухи' ),
+    # 'antiresus_bodies':   ( AntiresusBodies, AntiresusBodiesForm, 'Антирезусные тела' ),
     'blood_analysis':     ( BloodAnalysis, BloodAnalysisForm, 'Анализ крови' ),
     'biochemical_blood':  ( BiochemicalBloodAnalysis, BiochemicalBloodAnalysisForm, 'Биохимический анализ крови' ),
     'сoagulogram':        ( Coagulogram, CoagulogramForm, 'Коагулограмма' ),
