@@ -226,10 +226,15 @@ def data_sampling_page(request):
             
             # age = form_data['age']
             
+            print(f"\n\n{'='*100}\n{form_data['medical_organization']=}\n{'='*100}\n\n")
             if form_data['mkb_10']:
                 cards = cards.filter(diagnosis = form_data['mkb_10'])
             if form_data['medical_organization']:
-                cards = cards.filter(med_org=form_data['medical_organization'])
+                for tup in MEDICAL_ORGANIZATION:
+                    if form_data['medical_organization'] == tup[1]:
+                        cards = cards.filter(med_org=tup[0])
+                        break
+                # cards = cards.filter(med_org=form_data['medical_organization'])
             if form_data['territory'] and form_data['territory'] != '':
                 cards = cards.filter(residence_address=form_data['territory'])
 
@@ -254,7 +259,7 @@ def data_sampling_page(request):
                 lines.append(f'Фамилия: {card.last_name}')
                 lines.append(f'Отчество: {card.father_name}')
                 lines.append(f'Диагноз: {card.diagnosis}')
-                lines.append(f'Мед. организация: {card.med_org}')
+                lines.append(f'Мед. организация: {card.get_med_org_display()}')
                 lines.append(f'Адрес проживания: {card.residence_address}')
                 lines.append(f'Возраст: {card.age}')
                 lines.append(f'Дата рождения: {card.date_of_birth}')

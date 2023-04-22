@@ -125,11 +125,11 @@
     search_field_orgs.onkeyup = (e) => {
         let pattern = search_field_orgs.value.toLowerCase();
         let sliced_data = orgs_data.filter(x => x.toLowerCase().includes(pattern)).slice(0, 5);
-        {% comment %} if (sliced_data.length < 1) {
+        if (sliced_data.length < 1) {
             orgs_buttons[0].parentNode.classList.add('hide');
         } else {
             orgs_buttons[0].parentNode.classList.remove('hide');
-        } {% endcomment %}
+        }
         for (let i = 0; i < 5; i++)
             orgs_buttons[i].innerHTML = sliced_data[i] ? sliced_data[i] : '';
     }

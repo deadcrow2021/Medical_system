@@ -83,12 +83,11 @@ def files_page(request):
     return resp
 
 
-class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
-    form_class = FileUploadForm
+def upload_files_page(request: HttpRequest, file_id: int) -> HttpResponse:
     template_name: str = 'administration/upload_files.html'
     success_url: str = reverse_lazy('files-page')
     
-    def post(self, request: HttpRequest, file_id: int, *args: Any, **kwargs: Any) -> HttpResponse:
+    if request.method == "POST":
         if int(file_id) > -1:
             file = Files.objects.get(pk=file_id)
             form = FileUploadForm(request.POST, request.FILES, instance=file)
@@ -99,17 +98,19 @@ class UploadFilesView(UserIsAdmin, LoginRequiredMixin, CreateView):
             form.save(commit=True)
             add_log(request.user, f'Добавлен файл.', '-', '-', f'Файл {form.cleaned_data["title"]} был создан.')
             messages.success(request, message='Файл успешно добавлен')
-            return redirect(self.success_url)
+            return redirect(success_url)
         else:
-            return render(request, self.template_name, { 'form': form })
+            return render(request, template_name, { 'form': form })
     
-    def get(self, request: HttpRequest, file_id: int, *args: str, **kwargs: Any) -> HttpResponse:
-        if int(file_id) > -1:
-            file = Files.objects.get(pk=file_id)
-            form = FileUploadForm(request.POST, request.FILES, instance=file)
-        else:
-            form = FileUploadForm(request.POST, request.FILES)
-        return render(request, self.template_name, { 'form': form })
+    context = {}
+    if int(file_id) > -1:
+        file = Files.objects.get(pk=file_id)
+        form = FileUploadForm(request.POST, request.FILES, instance=file)
+    else:
+        context = { "new_file": 1 }
+        form = FileUploadForm(request.POST, request.FILES)
+    context |= { 'form': form }
+    return render(request, template_name, context)
 
 
 # class ChangeLogsView(UserIsAdmin, LoginRequiredMixin, ListView):

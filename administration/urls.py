@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path('doctors', views.doctors, name='doctors-page'),
     path('files', views.files_page, name='files-page'),
-    path('upload_files/<file_id>', views.UploadFilesView.as_view(), name='upload-files-page'),
+    path('upload_files/<file_id>', views.upload_files_page, name='upload-files-page'),
     path('logs', views.logs_page, name='logs-page'),
     path('admin_samd', views.admin_samd, name='admin-samd'),
 ]

@@ -1318,3 +1318,7 @@ nav {
     overflow: hidden;
     min-height: fit-content;
 }
+
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
