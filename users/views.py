@@ -129,6 +129,64 @@ def calc_risk_values_sum(user_profile: Patient) -> str | int:
     except:
         return 'Введено не числовое значение'
 
+
+def calc_robson_group(patient: Patient) -> int | str:
+    pregnancy = patient.pregnancy_info.first()
+    cs_number = len([x for x in patient.previous_pregnancy.all() if x.outcome == '2']) # количество кесаревых сечений
+    fetal_pos = patient.current_pregnancy.pregnant_woman_monitoring.last()
+
+    if pregnancy:
+        # один плод
+        if pregnancy.pregnancy_1 == '1' or pregnancy.fetus_number == 1:
+            
+            if fetal_pos and fetal_pos.fetal_position in ('прод', 'кос'): # положене плода
+                return 9
+            
+            if patient.uzi_exam_2.last():
+                if patient.uzi_exam_2.last().presentation == '0': # головное предлежание
+                    if pregnancy.gestation_period and pregnancy.gestation_period < 37:
+                        return 10
+
+            if pregnancy.pregnancy == '1': # первые роды
+                if patient.uzi_exam_2.last():
+                    if patient.uzi_exam_2.last().presentation == '0': # головное предлежание
+                    
+                        if pregnancy.gestation_period and pregnancy.gestation_period >= 37:
+                            if pregnancy.pregnancy_outcome and pregnancy.pregnancy_outcome == '1': # спонтан
+                                return 1
+                            elif pregnancy.pregnancy_outcome and pregnancy.pregnancy_outcome == '2': # индуц
+                                return '2a'
+                            elif pregnancy.pregnancy_outcome and pregnancy.pregnancy_outcome == '3':
+                                return '2b'
+                    elif patient.uzi_exam_2.last().presentation == '1': # тазовое предлежание
+                        return 6
+            
+            if pregnancy.pregnancy == '2': # повторные
+                if patient.uzi_exam_2.last():
+                    if patient.uzi_exam_2.last().presentation == '0': # головное предлежание
+                    
+                        if pregnancy.gestation_period and pregnancy.gestation_period >= 37:
+                            if cs_number == 1:
+                                return '5.1'
+                            elif cs_number > 1:
+                                return '5.2'
+
+                            if pregnancy.pregnancy_outcome and pregnancy.pregnancy_outcome == '1': # спонтан
+                                return 3
+                            elif pregnancy.pregnancy_outcome and pregnancy.pregnancy_outcome == '2': # индуц
+                                return '4a'
+                            elif pregnancy.pregnancy_outcome and pregnancy.pregnancy_outcome == '3':
+                                return '4b'
+                    elif patient.uzi_exam_2.last().presentation == '1': # тазовое предлежание
+                        return 7
+        # многоплодие
+        elif pregnancy.pregnancy_1 == '2' or (pregnancy.fetus_number and pregnancy.fetus_number > 1):
+            return 8
+
+    else:
+        return 'Нет данных о беременности'
+
+
 ### views ###
 
 def profile(request: HttpRequest, profile_id: int):
@@ -174,6 +232,7 @@ def profile(request: HttpRequest, profile_id: int):
         date_of_birth = user_profile.date_of_birth
         residence_address = user_profile.residence_address
         med_org = user_profile.get_med_org_display()
+        robson_group = calc_robson_group(user.patient)
         
         try:
             instance = PatientInformation.objects.get(patient=user.patient)
@@ -226,6 +285,7 @@ def profile(request: HttpRequest, profile_id: int):
             ('Срок беременности',          gestation_period),
             ('Адрес проживания',           residence_address),
             ('Медицинская организация',    med_org),
+            ('Группа Робсона',             robson_group),
         )
         
         resp = render(request, template_name, {

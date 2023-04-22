@@ -635,14 +635,14 @@ class DoctorExaminationsObstetricianGynecologist(models.Model):
 class CurrentPregnancyinfo(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='pregnancy_info')
     pregnancy = models.CharField('Беременность', max_length=1, choices=PREGNANCY, blank=True)
+    pregnancy_outcome = models.CharField('Завершение беременности', max_length=1, choices=PREGNANCY_OUTCOME2, blank=True)
     # if ВРТ
     try_number = models.PositiveSmallIntegerField('Номер попытки', validators=[MaxValueValidator(999)], blank=True, null=True)
     embryo_transfer = models.CharField('Перенос эмбрионов', max_length=1, choices=EMBRYO, blank=True)
     embryo_date = models.DateField('Дата переноса эмбриона', blank=True, null=True)
     embryo_number = models.PositiveSmallIntegerField('Число перенесенных эмбрионов', validators=[MaxValueValidator(999)], blank=True, null=True)
     mother_age = models.PositiveSmallIntegerField('Возраст матери/донора на дату криоконсервации ', validators=[MaxValueValidator(99)], blank=True, null=True)
-    
-    upcoming_births = models.CharField('Предстоящие роды', max_length=1, choices=UPCOMING_BIRTH, blank=True)
+
     pregnancy_1 = models.CharField('Беременность', max_length=1, choices=PREGNANCY_1, blank=True)
     fetus_number = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(9)], blank=True, null=True)
     last_menstruation = models.DateField('Последняя менструация', blank=True, null=True)

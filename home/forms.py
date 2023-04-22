@@ -536,8 +536,8 @@ class DoctorExaminationsObstetricianGynecologistForm(forms.ModelForm):
 class CurrentPregnancyinfoForm(forms.ModelForm):
     class Meta:
         model = CurrentPregnancyinfo
-        fields = 'pregnancy', 'try_number', 'embryo_transfer', 'embryo_date', \
-                'embryo_number', 'mother_age', 'upcoming_births', 'pregnancy_1', \
+        fields = 'pregnancy', 'pregnancy_outcome', 'try_number', 'embryo_transfer', 'embryo_date', \
+                'embryo_number', 'mother_age', 'pregnancy_1', \
                 'fetus_number', 'last_menstruation', 'first_uzi', 'gestation_period', \
                 'pregnancy_accounting_date', 'pregnancy_accounting_period', \
                 'fetus_first_stirring', 'suppose_birth_date',
