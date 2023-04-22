@@ -665,6 +665,12 @@ class StatisticsForm(forms.Form):
     gestation_period_weeks = forms.IntegerField(label='Срок беременности (недели)', min_value=1, max_value=99, required=False)
     mo_delivery = forms.ChoiceField(label='Группа акушерского стационара', choices=MO_DELIVERY, required=False)
     pregnancy_outcome = forms.ChoiceField(label='Исход беременности', choices=PREGNANCY_OUTCOME, required=False)
+    conception_type = forms.ChoiceField(label='Тип зачатия', choices=CONCEPTION_TYPE, required=False)
+
+    child_weight_from = forms.IntegerField(label='Масса тела при рождении. От (г.)', required=False, min_value=1, max_value=1)
+    child_weight_to = forms.IntegerField(label='До (г.)', required=False, min_value=1, max_value=99999)
+    
+    gender = forms.ChoiceField(label='Пол ребенка', choices=GENDERS, required=False)
 
 
 class VimisSearchPatientsForm(forms.Form):

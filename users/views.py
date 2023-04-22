@@ -1230,7 +1230,16 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
 
     patients = Patient.objects.all()
     patients_number = len(patients) if len(patients) else 1
-
+    
+    pregnancy_type = {
+        'nature': ('1', '2', '3'),
+        'vrt': ('4')
+    }
+#       ('', '-----'),
+#     ('1', 'Первая'),
+#     ('2', 'Повторная'),
+#     ('3', 'Наступила спонтанно'),
+#     ('4', 'Индуцирована с помощью ВРТ'),
     for p in patients:
         card = p.card
 
@@ -1267,6 +1276,12 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 if not (any(x.pregnancy_outcome for x in p.pregnancy_outcome.all()) and \
                         any(x.pregnancy_outcome == form_data['pregnancy_outcome'] for x in p.pregnancy_outcome.all())):
                     continue
+
+            if form_data['conception_type']:
+                preg_info = p.pregnancy_info.first()
+                if not (preg_info and preg_info.pregnancy in pregnancy_type[form_data['conception_type']]):
+                    continue
+
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:
             registered_first_trimester += 1
