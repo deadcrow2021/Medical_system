@@ -102,7 +102,7 @@ def calc_premature_birth(user_profile: Patient) -> str:
         if  any(x.outcome in ('1', '4') for x in user_profile.previous_pregnancy.all()) or \
                 user_profile.card.age >= 35 or \
                 (any(x <= 25 for x in user_profile.first_examination.all()) and last_pregnancy.gestation_period >= 24) or \
-                last_pregnancy.pregnancy == '4' or \
+                last_pregnancy.pregnancy_outcome == '2' or \
                 last_pregnancy.pregnancy_1 == '2' or \
                 user_profile.patient_information.latest('id').sti:
             return 'Высокий'
@@ -1399,45 +1399,46 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         if card.gestation_period_weeks and card.gestation_period_weeks < 12:
             p_11 += 1
         
-        pregnancy_info_list = [x for x in p.pregnancy_info.all()]
-        if len(pregnancy_info_list) == 1 and pregnancy_info_list[0].pregnancy == '1':
-            p_10 += 1
-            if request.method == 'POST':
-                if form_data['date_from'] <= pregnancy_info_list[0].last_menstruation <= form_data['date_to']:
-                    if any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+        pregnancy_info_obj = p.pregnancy_info.last()
+        if pregnancy_info_obj:
+            if pregnancy_info_obj.pregnancy and pregnancy_info_obj.pregnancy == '1':
+                p_10 += 1
+                if request.method == 'POST':
+                    if pregnancy_info_obj.last_menstruation and form_data['date_from'] <= pregnancy_info_obj.last_menstruation <= form_data['date_to']:
+                        if pregnancy_info_obj.pregnancy_1 == '1' and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                            p_18 += 1
+                else:
+                    if pregnancy_info_obj.pregnancy_1 == '1' and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
                         p_18 += 1
+            
+            if pregnancy_info_obj.pregnancy_outcome == '2':
+                p_6 += 1
+            
+            if pregnancy_info_obj.pregnancy_1 == '2':
+                p_14 += 1
+            
+            if request.method == 'POST':
+                if pregnancy_info_obj.last_menstruation and form_data['date_from'] <= pregnancy_info_obj.last_menstruation <= form_data['date_to']:
+                    if  any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
+                            and pregnancy_info_obj.pregnancy_1 == '1' and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                        p_19 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
+                if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
+                    if card.diagnosis and 'O14.1' in card.diagnosis:
+                        p_16 += 1
+                    if card.diagnosis and 'O15' in card.diagnosis:
+                        p_20 += 1
+                    if not card.med_org:
+                        p_17 += 1
             else:
-                if any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
-                    p_18 += 1
-        
-        if any(x.pregnancy == '4' for x in pregnancy_info_list):
-            p_6 += len([x.pregnancy == '4' for x in pregnancy_info_list])
-        
-        if any(x.pregnancy_1 == '2' for x in pregnancy_info_list):
-            p_14 += len([x.pregnancy_1 == '2' for x in pregnancy_info_list])
-        
-        if request.method == 'POST':
-            if pregnancy_info_list and pregnancy_info_list[0].last_menstruation and form_data['date_from'] <= pregnancy_info_list[0].last_menstruation <= form_data['date_to']:
-                if len(pregnancy_info_list) >= 2 and any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
-                        and any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
+                if any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
+                        and pregnancy_info_obj.pregnancy_1 == '1' and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
                     p_19 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
-            if card.childbirth_date and form_data['date_from'] <= card.childbirth_date <= form_data['date_to']:
+                
                 if card.diagnosis and 'O14.1' in card.diagnosis:
                     p_16 += 1
+                
                 if card.diagnosis and 'O15' in card.diagnosis:
                     p_20 += 1
-                if not card.med_org:
-                    p_17 += 1
-        else:
-            if len(pregnancy_info_list) >= 2 and any(x.if_childbirth == 'ocs' for x in pregnancy_outcome_list) \
-                    and any(x.pregnancy_1 == '1' for x in pregnancy_info_list) and any(x.presentation == '1' for x in p.uzi_exam_2.all()):
-                p_19 += len([x.if_childbirth == 'ocs' for x in pregnancy_outcome_list])
-            
-            if card.diagnosis and 'O14.1' in card.diagnosis:
-                p_16 += 1
-            
-            if card.diagnosis and 'O15' in card.diagnosis:
-                p_20 += 1
         
         normal_pregnancy = [
             'Z32.1', 'Z33', 'Z34.0', 'Z34.8', 'Z35.0', 'Z35.1', 'Z35.2',
