@@ -133,5 +133,21 @@
     // document.querySelector('.tabs').prepend(document.querySelector('.tabs').children[4]);
     // document.querySelector('.tabs').prepend(document.querySelector('.tabs').children[4]);
     document.getElementById('Сведения №1').setAttribute('checked', '');
+
+    let height = document.getElementById('id_height')
+    let mass = document.getElementById('id_mass')
+    let imt = document.getElementById('id_imt')
+
+    height.addEventListener('input', () => {
+        if (mass.value) {
+            imt.value = (((mass.value)**2) / height.value).toFixed(0)
+        }
+    });
+
+    mass.addEventListener('input', () => {
+        if (height.value) {
+            imt.value = (((mass.value)**2) / height.value).toFixed(0)
+        }
+    });
 </script>
 {% endblock %}

@@ -43,6 +43,24 @@
 </div>
 
 <script type="text/javascript" defer mkb-helper>
+
+    let height = document.getElementById('id_height')
+    let mass = document.getElementById('id_mass')
+    let imt = document.getElementById('id_imt')
+
+    height.addEventListener('input', () => {
+        if (mass.value) {
+            imt.value = (((mass.value)**2) / height.value).toFixed(0)
+        }
+    });
+
+    mass.addEventListener('input', () => {
+        if (height.value) {
+            imt.value = (((mass.value)**2) / height.value).toFixed(0)
+        }
+    });
+
+
     var data = document.getElementsByClassName('data')[0].innerHTML.split(';');
     var search_field = document.getElementById('id_diagnosis');
     var buttons = document.getElementsByClassName('data_btn');
