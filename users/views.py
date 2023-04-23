@@ -1073,7 +1073,7 @@ def profile_models_template_page(request: HttpRequest, profile_id: int, model_na
 
 def add_profile_models_template_page(request: HttpRequest, profile_id: int, model_name: str, model_id: int) -> HttpResponse:
     current_user = User.objects.get(pk=profile_id)
-    success_url = "patient-info"
+    success_url = "profile-models-template"
     model = name_model[model_name][1]
     
     if request.method == "POST":
@@ -1094,7 +1094,7 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
                     data.imt = mass / ((height / 100) ** 2)
                 else:
                     data.imt = 0
-
+            
             if model_name == 'hospitalization': 
                 samd = SAMD()
                 # samd.patient = User.objects.select_related('patient').get(pk=profile_id).patient
@@ -1112,7 +1112,7 @@ def add_profile_models_template_page(request: HttpRequest, profile_id: int, mode
             data.save()
             # add_log
             # return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
-            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id }))
+            return HttpResponseRedirect(reverse(success_url, kwargs={ 'profile_id': profile_id, 'model_name': model_name }))
     
     if int(model_id) > -1:
         instance = name_model[model_name][0].objects.get(pk=model_id)
