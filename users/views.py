@@ -29,6 +29,7 @@ from urllib.parse import quote
 from .samd_replace_fields import generate_samd, encode_samd
 import time
 import json
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def user_is_doctor(user):
@@ -459,7 +460,7 @@ def patients_page(request: HttpRequest) -> HttpResponse:
     to_add: str = f'/patients!Пациенты'
     
     if request.method == "POST":
-        users = MedicalCard.objects.select_related('patient')
+        users = MedicalCard.objects
         for f in tuple(request.POST.items())[1:]:
             if len(f[1]) > 0:
                 match f[0]:
@@ -491,14 +492,12 @@ def patients_page(request: HttpRequest) -> HttpResponse:
                             case '30':
                                 mounth_ago = dt - timedelta(days=30)
                                 patients = patients.filter(date_updated__gte=mounth_ago,)
-                        users = users.filter(patient__in=patients)
+                        users = users.select_related('patient').filter(patient__in=patients)
                     case _:
                         users = users.filter(**dict((f,)))
         
-        if not isinstance(users, MedicalCard.objects.__class__):
-            users = tuple(x for x in users)
-        else:
-            users = tuple(users.all())
+        if isinstance(users, MedicalCard.objects.__class__):
+            users = users.all()
         
         prev_data = request.POST.copy()
         context = { 'prev_data': prev_data }
@@ -507,6 +506,7 @@ def patients_page(request: HttpRequest) -> HttpResponse:
         context = {}
         users = MedicalCard.objects.all()
     
+    users = users.order_by('patient__-date_updated')
     paginator = Paginator(users, 7)
     page_obj = paginator.get_page(page_number)
     context.update({ 'users': paginator.page(page_number), 'page_obj': page_obj, 'paginator': paginator })
@@ -910,11 +910,6 @@ ultrasound_models = {
     'risk_assessment':    ( ComprehensiveRiskAssessment, ComprehensiveRiskAssessmentForm, 'Комплексная оценка рисков (11-14 недель)' ),
     'uzi_exam_1':         ( UltrasoundExamination_19_21, UltrasoundExamination_19_21Form, 'Ультразвуковое обследование (19-21 недели)' ),
     'uzi_exam_2':         ( UltrasoundExamination_30_34, UltrasoundExamination_30_34Form, 'Ультразвуковое обследование (30-34 недели)' ),
-}
-
-current_pregnancy_models = {
-    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
-    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
 }
 
 portion_models = {
@@ -1860,40 +1855,50 @@ def sign_document(request, samd_id, profile_id):
     return HttpResponseRedirect(reverse('samd', args=(profile_id,)))
 
 
+current_pregnancy_models = {
+    'pregnancy_info':     ( CurrentPregnancyinfo, CurrentPregnancyinfoForm, 'Сведения о настоящей беременности' ),
+    'first_examination':  ( FirstExamination, FirstExaminationForm, 'Первое обследование беременной' ),
+}
+
+
 def current_pregnancy_info_page(request: HttpRequest, profile_id: int) -> HttpResponse:
     current_user: User = User.objects.get(pk=profile_id)
     template_name: str = 'users/current_pregnancy.html'
     to_add: str = f"#/current_pregnancy/{profile_id}!Сведения о настоящей беременности"
     context = { 'modify': 0 }
     
-    try:
-        if request.method == "POST":
-            if request.POST.get('modify', None) != None:
-                context.update({ 'modify': 1 })
-            else:
-                for key, val in current_pregnancy_models.items():
+    if request.method == "POST":
+        # нажатие кнопки "изменить"
+        if request.POST.get('modify', None) != None:
+            context.update({ 'modify': 1 })
+        # нажатие кнопки "сохранить"
+        else:
+            for key, val in current_pregnancy_models.items():
+                try:
                     inst = val[0].objects.get(patient=current_user.patient)
-                    form = val[1](request.POST, instance=inst)
-                    if form.is_valid():
-                        form.save()
-        
-        instances = []
-        model_forms = []
-        exists = []
-        model_names = []
-        for key, val in current_pregnancy_models.items():
-            instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
-            if (len(instances[-1]) > 0):
-                model_forms.append([val[1](instance=i) for i in instances[-1]])
-                exists.append(True)
-            else:
-                model_forms.append([val[1]])
-                exists.append(True)
-            model_names.append(key)
-        data = zip(model_forms, exists, model_names)
-        context.update({ 'data': data, 'current_user': current_user })
-    except:
-        pass
+                except ObjectDoesNotExist:
+                    inst = val[0].objects.create(patient=current_user.patient)
+                except Exception as ex:
+                    print(f"Undefined Exception: {ex}")
+                form = val[1](request.POST, instance=inst)
+                if form.is_valid():
+                    form.save()
+    
+    instances = []
+    model_forms = []
+    exists = []
+    model_names = []
+    for key, val in current_pregnancy_models.items():
+        instances.append(tuple(val[0].objects.filter(patient=current_user.patient)))
+        if (len(instances[-1]) > 0):
+            model_forms.append([val[1](instance=i) for i in instances[-1]])
+            exists.append(True)
+        else:
+            model_forms.append([val[1]])
+            exists.append(True)
+        model_names.append(key)
+    data = zip(model_forms, exists, model_names)
+    context.update({ 'data': data, 'current_user': current_user })
     resp = render(request, template_name, context)
     return get_and_add_cookie(request, to_add, resp)
 
