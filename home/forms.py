@@ -234,7 +234,8 @@ class PregnancyOutcomeForm(forms.ModelForm):
         model = PregnancyOutcome
         fields = 'pregnancy_count', 'childbirth_date', \
                 'pregnancy_outcome', 'if_childbirth', 'if_abortion', 'death_time', \
-                'disease', 'gestation_period_weeks', 'number_of_fetuses'
+                'disease', 'gestation_period_weeks', 'number_of_fetuses', \
+                'child_gender', 'child_weight'
         widgets = {
             'childbirth_date': DateTimeInput(),
             'death_time': DateTimeInput()

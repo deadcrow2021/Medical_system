@@ -1284,9 +1284,6 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
             else:
                 form_data['age_from'] = 1
                 form_data['age_to'] = 99
-            
-            
-            
 
     patients = Patient.objects.all()
     patients_number = len(patients) if len(patients) else 1
@@ -1295,14 +1292,11 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
         'nature': ('1', '2', '3'),
         'vrt': ('4')
     }
-#       ('', '-----'),
-#     ('1', 'Первая'),
-#     ('2', 'Повторная'),
-#     ('3', 'Наступила спонтанно'),
-#     ('4', 'Индуцирована с помощью ВРТ'),
+
     for p in patients:
         card = p.card
 
+        # if use filter form
         if request.method == 'POST':
             if form_data['age_from'] and form_data['age_to']:
                 if not (card.age and form_data['age_from'] <= card.age <= form_data['age_to']):
@@ -1341,6 +1335,17 @@ def statistics_page(request: HttpRequest) -> HttpResponse:
                 preg_info = p.pregnancy_info.first()
                 if not (preg_info and preg_info.pregnancy in pregnancy_type[form_data['conception_type']]):
                     continue
+
+            if form_data['child_weight_from'] and form_data['child_weight_to']:
+                if not (any(x.child_weight for x in p.pregnancy_outcome.all()) and \
+                        any(form_data['child_weight_from'] <= x.child_weight <= form_data['child_weight_to'] for x in p.pregnancy_outcome.all())):
+                    continue
+
+            if form_data['gender']:
+                if not (any(x.child_gender for x in p.pregnancy_outcome.all()) and \
+                        any(x.child_gender == form_data['gender'] for x in p.pregnancy_outcome.all())):
+                    continue
+            ###
 
 
         if card.gestation_period_weeks and card.gestation_period_weeks <= 14:

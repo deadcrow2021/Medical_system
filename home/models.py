@@ -153,6 +153,9 @@ class PregnancyOutcome(models.Model):
     
     gestation_period_weeks = models.PositiveSmallIntegerField('Срок беременности (недели)', validators=[MaxValueValidator(99)], blank=True, null=True)
     number_of_fetuses = models.PositiveSmallIntegerField('Количество плодов', validators=[MaxValueValidator(10)], blank=True, null=True)
+    
+    child_gender = models.CharField('Пол ребенка', max_length=10, choices=GENDERS, blank=True, null=True)
+    child_weight = models.PositiveSmallIntegerField('Вес ребенка (г.)', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Исход беременности'
