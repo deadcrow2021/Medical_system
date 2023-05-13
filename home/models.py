@@ -859,10 +859,29 @@ class HospitalizationInformation(models.Model):
 
 class SelfMonitoringRecords(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')
-    title = models.CharField('Краткое описание', max_length=150)
-    description = models.TextField('Описание', max_length=1000, blank=True)
+    title = models.CharField('Краткое описание', max_length=150, blank=True)
+    description = models.TextField('Комментарии', max_length=1000, blank=True)
     date_created = models.DateTimeField('Дата создания', auto_now_add=True)
     date_updated = models.DateTimeField('Дата изменения', auto_now=True)
+    
+    # Sugar in blood
+    breakfast_before = models.DecimalField('До', decimal_places=2, max_digits=10, null=True, blank=True)
+    breakfast_2h = models.DecimalField('Через 2ч. после еды', decimal_places=2, max_digits=10, null=True, blank=True)
+    dinner_before = models.DecimalField('До', decimal_places=2, max_digits=10, null=True, blank=True)
+    dinner_2h = models.DecimalField('Через 2ч. после еды', decimal_places=2, max_digits=10, null=True, blank=True)
+    supper_before = models.DecimalField('До', decimal_places=2, max_digits=10, null=True, blank=True)
+    supper_2h = models.DecimalField('Через 2ч. после еды', decimal_places=2, max_digits=10, null=True, blank=True)
+    at_inght = models.DecimalField('На ночь', decimal_places=2, max_digits=10, null=True, blank=True)
+    
+    # bread units
+    breakfast_bu = models.PositiveSmallIntegerField('Завтрак', blank=True, null=True)
+    dinner_bu = models.PositiveSmallIntegerField('Обед', blank=True, null=True)
+    supper_bu = models.PositiveSmallIntegerField('Ужин', blank=True, null=True)
+    
+    # insulin / pills
+    breakfast_i_p = models.CharField('Утро', max_length=150, null=True, blank=True)
+    dinner_i_p = models.CharField('День', max_length=150, null=True, blank=True)
+    supper_i_p = models.CharField('Вечер', max_length=150, null=True, blank=True)
     
     def __str__(self) -> str:
         return self.title

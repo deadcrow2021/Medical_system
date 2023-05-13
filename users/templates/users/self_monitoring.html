@@ -8,21 +8,68 @@
 {% if request.user.doctor.role not in rolesNA %}
     {% if user.doctor %}
         {% if exists %}
-            {% for record in records %}
-            <div class="outer_div">
-                <div class="border_div">
-                    <div class="user__block__element">
-                        <p><strong>Название:</strong> {{ record.title }}</p>
-                    </div>
-                    <div class="user__block__element">
-                        <p><strong>Описание:</strong> {{ record.description }}</p>
-                    </div>
-                    <div class="user__block__element">
-                        <p><strong>Дата последнего изменения:</strong> {{ record.date_updated }}</p>
-                    </div>
+            <div class="block__profile__disease border_div">
+                <div class="block__lines">
+
+                    <table class="table table_records">
+                        <thead>
+                            <tr>
+                                <th rowspan="3">Добавлено</th>
+                                <th rowspan="3">Последнее изменение</th>
+                                <th colspan="7">Сахар крови</th>
+                                <th colspan="3">Хлебные единицы</th>
+                                <th colspan="3">Инсулин</th>
+                                <th rowspan="3">Комментарий</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Завтрак</th>
+                                <th colspan="2">Обед</th>
+                                <th colspan="2">Ужин</th>
+                                <th rowspan="2">На ночь</th>
+                                <th rowspan="2">Завтрак</th>
+                                <th rowspan="2">Обед</th>
+                                <th rowspan="2">Ужин</th>
+                                <th colspan="3">Таблетки</th>
+                            </tr>
+                            <tr>
+                                <th>До</th>
+                                <th>Через 2ч. после еды</th>
+                                <th>До</th>
+                                <th>Через 2ч. после еды</th>
+                                <th>До</th>
+                                <th>Через 2ч. после еды</th>
+                                <th>Утро</th>
+                                <th>День</th>
+                                <th>Вечер</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for record in records %}
+                            <tr>
+                                <td>{% if record.date_created %}{{record.date_created}}{% else %}{% endif %}</td>
+                                <td>{% if record.date_updated %}{{record.date_updated}}{% else %}{% endif %}</td>
+                                <td>{% if record.breakfast_before %}{{ record.breakfast_before }}{% else %}{% endif %}</td>
+                                <td>{% if record.breakfast_2h %}{{ record.breakfast_2h }}{% else %}{% endif %}</td>
+                                <td>{% if record.dinner_before %}{{ record.dinner_before }}{% else %}{% endif %}</td>
+                                <td>{% if record.dinner_2h %}{{ record.dinner_2h }}{% else %}{% endif %}</td>
+                                <td>{% if record.supper_before %}{{ record.supper_before }}{% else %}{% endif %}</td>
+                                <td>{% if record.supper_2h %}{{ record.supper_2h }}{% else %}{% endif %}</td>
+                                <td>{% if record.at_inght %}{{ record.at_inght }}{% else %}{% endif %}</td>
+                                <td>{% if record.breakfast_bu %}{{ record.breakfast_bu }}{% else %}{% endif %}</td>
+                                <td>{% if record.dinner_bu %}{{ record.dinner_bu }}{% else %}{% endif %}</td>
+                                <td>{% if record.supper_bu %}{{ record.supper_bu }}{% else %}{% endif %}</td>
+                                <td>{% if record.breakfast_i_p %}{{ record.breakfast_i_p }}{% else %}{% endif %}</td>
+                                <td>{% if record.dinner_i_p %}{{ record.dinner_i_p }}{% else %}{% endif %}</td>
+                                <td>{% if record.supper_i_p %}{{ record.supper_i_p }}{% else %}{% endif %}</td>
+                                <td>{% if record.description %}{{ record.description }}{% else %}{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
-            {% endfor %}
         {% else %}
         <h3>Нет наблюдений</h3>
         {% endif %}

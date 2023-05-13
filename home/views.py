@@ -285,7 +285,8 @@ def add_selfmonitor_record(request):
                     user,
                     CHANGETYPE.Добавлена_запись_в_журнал_самонаблюдения,
                     '-',
-                    f'Название: {form.cleaned_data["title"]}, Описание: {form.cleaned_data["description"]}')
+                    # f'Название: {form.cleaned_data["title"]}, Описание: {form.cleaned_data["description"]}')
+                    f'Название: ---, Описание: {form.cleaned_data["description"]}')
             record.save()
             return redirect('records')
     context = {'form': form}
@@ -440,13 +441,26 @@ def update_reception_page(request: HttpRequest, profile_id: int, note_id: int) -
 
 
 def records_page(request: HttpRequest) -> HttpResponse:
-    user: User = User.objects.get(pk=request.user.id)
-    records = user.patient.records.all()
+    # user: User = User.objects.get(pk=request.user.id)
+    records = request.user.patient.records.all().order_by('-date_updated')
     template_name = 'home/records.html'
     to_add = f'#/account/records!Записи самонаблюдений'
     
     resp = render(request, template_name, { 'records': records })
     return get_and_add_cookie(request, to_add, resp)
+
+
+def update_reception_page(request: HttpRequest, record_id: int) -> HttpResponse:
+    current_reception = request.user.patient.records.get(pk=record_id)
+    if request.method == "POST":
+        form = RecordCreationForm(request.POST, instance=current_reception)
+        if form.is_valid():
+            form.save()
+            # add_log
+            return redirect('records')
+    
+    form: ReceptionAddForm = RecordCreationForm(instance=current_reception)
+    return render(request, 'home/add_record.html', { 'form': form })
 
 
 def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:

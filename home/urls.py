@@ -10,6 +10,7 @@ urlpatterns = [
     path('account/reception/update/<profile_id>/<note_id>', views.update_reception_page, name='update-reception'),
     path('account/records', views.records_page, name='records'),
     path('account/records/add', views.add_selfmonitor_record, name='add-record'),
+    path('account/records/update/<record_id>', views.update_reception_page, name='update-record'),
     path('data_sampling', views.data_sampling_page, name='data-sampling'),
     path('update_mo_delivery/<profile_id>', views.update_mo_delivery, name='update-mo-delivery'),
 ]

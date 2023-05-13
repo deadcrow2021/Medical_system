@@ -83,9 +83,12 @@ class RecordCreationForm(forms.ModelForm):
     class Meta:
         model = SelfMonitoringRecords
         fields = (
-            'title',
-            'description',
-        )
+            # 'title',
+            'description', 'breakfast_before', 'breakfast_2h',
+            'dinner_before', 'dinner_2h', 'supper_before', 'supper_2h',
+            'at_inght', 'breakfast_bu', 'dinner_bu', 'supper_bu',
+            'breakfast_i_p', 'dinner_i_p', 'supper_i_p'
+            )
 
 
 class PatientFilterForm(forms.Form):
