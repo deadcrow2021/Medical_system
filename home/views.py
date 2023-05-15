@@ -474,3 +474,11 @@ def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:
             return HttpResponseRedirect(reverse('profile', args=(profile_id,)))
     
     return render(request, 'home/mo_delivery_update.html', { 'form': form, 'profile_id': profile_id })
+
+
+def statistics_report(request: HttpRequest) -> HttpResponse:
+    template_name = 'home/statistics_report.html'
+    to_add = f'#/account/records!Записи самонаблюдений'
+    
+    resp = render(request, template_name)
+    return get_and_add_cookie(request, to_add, resp)

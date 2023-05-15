@@ -13,4 +13,5 @@ urlpatterns = [
     path('account/records/update/<record_id>', views.update_reception_page, name='update-record'),
     path('data_sampling', views.data_sampling_page, name='data-sampling'),
     path('update_mo_delivery/<profile_id>', views.update_mo_delivery, name='update-mo-delivery'),
+    path('statistics_report', views.statistics_report, name='statistics-report'),
 ]
