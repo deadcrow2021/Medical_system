@@ -5,10 +5,352 @@
     <button type="button" onclick="history.back()" class="btn">Вернуться</button>
 </div>
 
-<div class="block__profile__disease border_div">
-    <div class="block__lines">
-    123
+
+<div style="display: flex;">
+
+    <div class="sr_block">
+        <div class="sr_title">
+            Государственные отчеты
+        </div>
+    
+        <div class="sr_content">
+            <div class="sr_forms_list">
+                <div class="sr_form_title">
+                    Форма 9
+                </div>
+                <div class="sr_form_title">
+                    Форма 12
+                </div>
+                <div class="sr_form_title">
+                    Форма 13
+                </div>
+                <div class="sr_form_title">
+                    Форма 14
+                </div>
+                <div class="sr_form_title">
+                    Форма 14 - ДС
+                </div>
+                <div class="sr_form_title">
+                    Форма 30
+                </div>
+                <div class="sr_form_title">
+                    Форма 32
+                </div>
+                <div class="sr_form_title">
+                    Форма 34
+                </div>
+            </div>
+    
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 9
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 9 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 12
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 12 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+                
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 13
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 13 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+                
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 14
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 14 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+                
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 14 - ДС
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' '14_ds' %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+                
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 30
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 30 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+                
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 32
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 32 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+                
+            <div class="sr_form_content hide">
+                <div class="sr_form_content_title">
+                    Форма 34
+                </div>
+    
+                <div class="sr_form_content_content">
+                    <form action="{% url 'download-report' 34 %}" method="POST">
+                        {% csrf_token %}
+    
+                        <div class="form_content">
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>МО</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="mo">
+                                </div>
+                            </div>
+        
+                            <div class="fields__input">
+                                <div class="fields__input__label">
+                                    <strong>Дата</strong>
+                                </div>
+                                <div class="fields__input__field">
+                                    <input type="text" name="date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">Сформировать отчет</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+    
+        </div>
     </div>
+
+    <div style="flex: 1;">
+    </div>
+
 </div>
+
+<script type="text/javascript">
+
+const form_titles = document.getElementsByClassName('sr_form_title')
+const forms_number = form_titles.length
+
+const forms = document.getElementsByClassName('sr_form_content')
+
+for (let i = 0; i < form_titles.length; i++) {
+    form_titles[i].addEventListener('click', () => {
+
+        for (const j of forms) {
+            if (!j.classList.contains('hide')) {
+                j.classList.toggle('hide')
+            }
+        }
+
+        forms[i].classList.toggle('hide')
+
+    })
+}
+
+
+</script>
+
 
 {% endblock %}

@@ -14,4 +14,5 @@ urlpatterns = [
     path('data_sampling', views.data_sampling_page, name='data-sampling'),
     path('update_mo_delivery/<profile_id>', views.update_mo_delivery, name='update-mo-delivery'),
     path('statistics_report', views.statistics_report, name='statistics-report'),
+    path('download_report/<report_id>', views.download_report, name='download-report'),
 ]

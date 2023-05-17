@@ -1349,3 +1349,46 @@ table.table_records th {
 	color: #fff; 
 	font-weight: normal;
 }
+
+.sr_block {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+}
+
+.sr_title {
+    padding: 10xp auto;
+    border: 1px solid black;
+}
+
+.sr_content {
+    display: flex;
+    flex-direction: row;
+}
+
+
+.sr_forms_list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+}
+
+.sr_form_content {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+}
+
+.sr_form_content_title {
+    border: 1px solid black;
+}
+
+.sr_form_title {
+    margin: 5px 10px;
+    font-size: 18px;
+}
+
+
+.hide {
+    display: none;
+}

@@ -5,6 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.views.generic import ListView
+from med_system.settings import BASE_DIR
 from .forms import *
 from .models import Patient, ChangeControlLog, ReceptionNotes, MedicalCard, Doctor, SAMD
 from administration.models import ClinicRecomendations
@@ -25,6 +26,7 @@ from home.choices import MEDICAL_ORGANIZATION
 from med_system.funcs import get_and_add_cookie
 from urllib.parse import quote
 import io
+import os
 
 def user_is_admin(user):
     return not (hasattr(user, 'doctor') or hasattr(user, 'patient'))
@@ -482,3 +484,12 @@ def statistics_report(request: HttpRequest) -> HttpResponse:
     
     resp = render(request, template_name)
     return get_and_add_cookie(request, to_add, resp)
+
+
+def download_report(request: HttpRequest, report_id: int):
+    print(report_id)
+    path = os.path.join(BASE_DIR, f'statistics_reports/{report_id}.docx')
+    with open(path, 'rb') as file:
+        response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
+        response['Content-Disposition'] = 'inline; filename=' + os.path.basename(path)
+        return response
