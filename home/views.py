@@ -25,6 +25,7 @@ from users.mkb10 import mkb10_deseases
 from home.choices import MEDICAL_ORGANIZATION
 from med_system.funcs import get_and_add_cookie
 from urllib.parse import quote
+from statistics_reports.edit_docx import edit_doc
 import io
 import os
 
@@ -480,16 +481,23 @@ def update_mo_delivery(request: HttpRequest, profile_id: int) -> HttpResponse:
 
 def statistics_report(request: HttpRequest) -> HttpResponse:
     template_name = 'home/statistics_report.html'
-    to_add = f'#/account/records!Записи самонаблюдений'
+    to_add = f'#/statistics_report!Статистические отчеты'
     
     resp = render(request, template_name)
     return get_and_add_cookie(request, to_add, resp)
 
 
 def download_report(request: HttpRequest, report_id: int):
-    print(report_id)
     path = os.path.join(BASE_DIR, f'statistics_reports/{report_id}.docx')
-    with open(path, 'rb') as file:
-        response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
-        response['Content-Disposition'] = 'inline; filename=' + os.path.basename(path)
-        return response
+    file = open(path, 'rb')
+    edit_doc(file).save('test.docx')
+    file.close()
+    
+    doc = open(os.path.join(BASE_DIR, 'test.docx'), 'rb')
+    response = HttpResponse(doc.read(), content_type="application/vnd.ms-excel")
+    response['Content-Disposition'] = 'inline; filename=' + os.path.basename(path)
+    doc.close()
+
+    os.remove(os.path.join(BASE_DIR, 'test.docx'))
+
+    return response
