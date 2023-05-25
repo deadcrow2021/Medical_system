@@ -1357,8 +1357,10 @@ table.table_records th {
 }
 
 .sr_title {
-    padding: 10xp auto;
+    padding: 10px;
     border: 1px solid black;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .sr_content {
@@ -1380,7 +1382,10 @@ table.table_records th {
 }
 
 .sr_form_content_title {
-    border: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .sr_form_title {
@@ -1388,6 +1393,9 @@ table.table_records th {
     font-size: 18px;
 }
 
+.sr_form_content_content {
+    margin: 10px;
+}
 
 .hide {
     display: none;
